@@ -310,3 +310,137 @@
                 name: 'red',
                 params: [
                   {
+                    name: 'color',
+                    description:
+                      '<p><a href="#/p5.Color">p5.Color</a> object, color components,\n                                        or CSS color</p>\n',
+                    type: 'p5.Color|Number[]|String'
+                  }
+                ],
+                class: 'p5',
+                module: 'Color'
+              },
+              saturation: {
+                name: 'saturation',
+                params: [
+                  {
+                    name: 'color',
+                    description:
+                      '<p><a href="#/p5.Color">p5.Color</a> object, color components,\n                                        or CSS color</p>\n',
+                    type: 'p5.Color|Number[]|String'
+                  }
+                ],
+                class: 'p5',
+                module: 'Color'
+              },
+              background: {
+                name: 'background',
+                class: 'p5',
+                module: 'Color',
+                overloads: [
+                  {
+                    params: [
+                      {
+                        name: 'color',
+                        description:
+                          '<p>any value created by the <a href="#/p5/color">color()</a> function</p>\n',
+                        type: 'p5.Color'
+                      }
+                    ],
+                    chainable: 1
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'colorstring',
+                        description:
+                          '<p>color string, possible formats include: integer\n                        rgb() or rgba(), percentage rgb() or rgba(),\n                        3-digit hex, 6-digit hex</p>\n',
+                        type: 'String'
+                      },
+                      {
+                        name: 'a',
+                        description:
+                          '<p>opacity of the background relative to current\n                            color range (default is 0-255)</p>\n',
+                        type: 'Number',
+                        optional: true
+                      }
+                    ],
+                    chainable: 1
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'gray',
+                        description: '<p>specifies a value between white and black</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'a',
+                        description: '',
+                        type: 'Number',
+                        optional: true
+                      }
+                    ],
+                    chainable: 1
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'v1',
+                        description:
+                          '<p>red or hue value (depending on the current color\n                       mode)</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'v2',
+                        description:
+                          '<p>green or saturation value (depending on the current\n                       color mode)</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'v3',
+                        description:
+                          '<p>blue or brightness value (depending on the current\n                       color mode)</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'a',
+                        description: '',
+                        type: 'Number',
+                        optional: true
+                      }
+                    ],
+                    chainable: 1
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'values',
+                        description:
+                          '<p>an array containing the red, green, blue\n                                and alpha components of the color</p>\n',
+                        type: 'Number[]'
+                      }
+                    ],
+                    chainable: 1
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'image',
+                        description:
+                          '<p>image created with <a href="#/p5/loadImage">loadImage()</a> or <a href="#/p5/createImage">createImage()</a>,\n                            to set as background\n                            (must be same size as the sketch window)</p>\n',
+                        type: 'p5.Image'
+                      },
+                      {
+                        name: 'a',
+                        description: '',
+                        type: 'Number',
+                        optional: true
+                      }
+                    ],
+                    chainable: 1
+                  }
+                ]
+              },
+              clear: {
+                name: 'clear',
+                class: 'p5',
