@@ -54,3 +54,128 @@
     }
     return r;
   })()(
+    {
+      1: [
+        function(_dereq_, module, exports) {
+          module.exports = {
+            p5: {
+              describe: {
+                name: 'describe',
+                params: [
+                  {
+                    name: 'text',
+                    description: '<p>description of the canvas</p>\n',
+                    type: 'String'
+                  },
+                  {
+                    name: 'display',
+                    description: '<p>either LABEL or FALLBACK (Optional)</p>\n',
+                    type: 'Constant',
+                    optional: true
+                  }
+                ],
+                class: 'p5',
+                module: 'Environment'
+              },
+              describeElement: {
+                name: 'describeElement',
+                params: [
+                  {
+                    name: 'name',
+                    description: '<p>name of the element</p>\n',
+                    type: 'String'
+                  },
+                  {
+                    name: 'text',
+                    description: '<p>description of the element</p>\n',
+                    type: 'String'
+                  },
+                  {
+                    name: 'display',
+                    description: '<p>either LABEL or FALLBACK (Optional)</p>\n',
+                    type: 'Constant',
+                    optional: true
+                  }
+                ],
+                class: 'p5',
+                module: 'Environment'
+              },
+              textOutput: {
+                name: 'textOutput',
+                params: [
+                  {
+                    name: 'display',
+                    description: '<p>either FALLBACK or LABEL (Optional)</p>\n',
+                    type: 'Constant',
+                    optional: true
+                  }
+                ],
+                class: 'p5',
+                module: 'Environment'
+              },
+              gridOutput: {
+                name: 'gridOutput',
+                params: [
+                  {
+                    name: 'display',
+                    description: '<p>either FALLBACK or LABEL (Optional)</p>\n',
+                    type: 'Constant',
+                    optional: true
+                  }
+                ],
+                class: 'p5',
+                module: 'Environment'
+              },
+              alpha: {
+                name: 'alpha',
+                params: [
+                  {
+                    name: 'color',
+                    description:
+                      '<p><a href="#/p5.Color">p5.Color</a> object, color components,\n                                        or CSS color</p>\n',
+                    type: 'p5.Color|Number[]|String'
+                  }
+                ],
+                class: 'p5',
+                module: 'Color'
+              },
+              blue: {
+                name: 'blue',
+                params: [
+                  {
+                    name: 'color',
+                    description:
+                      '<p><a href="#/p5.Color">p5.Color</a> object, color components,\n                                        or CSS color</p>\n',
+                    type: 'p5.Color|Number[]|String'
+                  }
+                ],
+                class: 'p5',
+                module: 'Color'
+              },
+              brightness: {
+                name: 'brightness',
+                params: [
+                  {
+                    name: 'color',
+                    description:
+                      '<p><a href="#/p5.Color">p5.Color</a> object, color components,\n                                        or CSS color</p>\n',
+                    type: 'p5.Color|Number[]|String'
+                  }
+                ],
+                class: 'p5',
+                module: 'Color'
+              },
+              color: {
+                name: 'color',
+                class: 'p5',
+                module: 'Color',
+                overloads: [
+                  {
+                    params: [
+                      {
+                        name: 'gray',
+                        description:
+                          '<p>number specifying value between white and black.</p>\n',
+                        type: 'Number'
+                      },
+                      {
