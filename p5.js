@@ -179,3 +179,134 @@
                         type: 'Number'
                       },
                       {
+                        name: 'alpha',
+                        description:
+                          '<p>alpha value relative to current color range\n                                (default is 0-255)</p>\n',
+                        type: 'Number',
+                        optional: true
+                      }
+                    ]
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'v1',
+                        description:
+                          '<p>red or hue value relative to\n                                the current color range</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'v2',
+                        description:
+                          '<p>green or saturation value\n                                relative to the current color range</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'v3',
+                        description:
+                          '<p>blue or brightness value\n                                relative to the current color range</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'alpha',
+                        description: '',
+                        type: 'Number',
+                        optional: true
+                      }
+                    ]
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'value',
+                        description: '<p>a color string</p>\n',
+                        type: 'String'
+                      }
+                    ]
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'values',
+                        description:
+                          '<p>an array containing the red,green,blue &\n                                and alpha components of the color</p>\n',
+                        type: 'Number[]'
+                      }
+                    ]
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'color',
+                        description: '',
+                        type: 'p5.Color'
+                      }
+                    ]
+                  }
+                ]
+              },
+              green: {
+                name: 'green',
+                params: [
+                  {
+                    name: 'color',
+                    description:
+                      '<p><a href="#/p5.Color">p5.Color</a> object, color components,\n                                        or CSS color</p>\n',
+                    type: 'p5.Color|Number[]|String'
+                  }
+                ],
+                class: 'p5',
+                module: 'Color'
+              },
+              hue: {
+                name: 'hue',
+                params: [
+                  {
+                    name: 'color',
+                    description:
+                      '<p><a href="#/p5.Color">p5.Color</a> object, color components,\n                                        or CSS color</p>\n',
+                    type: 'p5.Color|Number[]|String'
+                  }
+                ],
+                class: 'p5',
+                module: 'Color'
+              },
+              lerpColor: {
+                name: 'lerpColor',
+                params: [
+                  {
+                    name: 'c1',
+                    description: '<p>interpolate from this color</p>\n',
+                    type: 'p5.Color'
+                  },
+                  {
+                    name: 'c2',
+                    description: '<p>interpolate to this color</p>\n',
+                    type: 'p5.Color'
+                  },
+                  {
+                    name: 'amt',
+                    description: '<p>number between 0 and 1</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5',
+                module: 'Color'
+              },
+              lightness: {
+                name: 'lightness',
+                params: [
+                  {
+                    name: 'color',
+                    description:
+                      '<p><a href="#/p5.Color">p5.Color</a> object, color components,\n                                        or CSS color</p>\n',
+                    type: 'p5.Color|Number[]|String'
+                  }
+                ],
+                class: 'p5',
+                module: 'Color'
+              },
+              red: {
+                name: 'red',
+                params: [
+                  {
