@@ -585,3 +585,119 @@
                     ],
                     chainable: 1
                   }
+                ]
+              },
+              noFill: {
+                name: 'noFill',
+                class: 'p5',
+                module: 'Color'
+              },
+              noStroke: {
+                name: 'noStroke',
+                class: 'p5',
+                module: 'Color'
+              },
+              stroke: {
+                name: 'stroke',
+                class: 'p5',
+                module: 'Color',
+                overloads: [
+                  {
+                    params: [
+                      {
+                        name: 'v1',
+                        description:
+                          '<p>red or hue value relative to\n                                the current color range</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'v2',
+                        description:
+                          '<p>green or saturation value\n                                relative to the current color range</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'v3',
+                        description:
+                          '<p>blue or brightness value\n                                relative to the current color range</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'alpha',
+                        description: '',
+                        type: 'Number',
+                        optional: true
+                      }
+                    ],
+                    chainable: 1
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'value',
+                        description: '<p>a color string</p>\n',
+                        type: 'String'
+                      }
+                    ],
+                    chainable: 1
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'gray',
+                        description: '<p>a gray value</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'alpha',
+                        description: '',
+                        type: 'Number',
+                        optional: true
+                      }
+                    ],
+                    chainable: 1
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'values',
+                        description:
+                          '<p>an array containing the red,green,blue &\n                                and alpha components of the color</p>\n',
+                        type: 'Number[]'
+                      }
+                    ],
+                    chainable: 1
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'color',
+                        description: '<p>the stroke color</p>\n',
+                        type: 'p5.Color'
+                      }
+                    ],
+                    chainable: 1
+                  }
+                ]
+              },
+              erase: {
+                name: 'erase',
+                params: [
+                  {
+                    name: 'strengthFill',
+                    description:
+                      "<p>A number (0-255) for the strength of erasing for a shape's fill.\n                                       This will default to 255 when no argument is given, which\n                                       is full strength.</p>\n",
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'strengthStroke',
+                    description:
+                      "<p>A number (0-255) for the strength of erasing for a shape's stroke.\n                                       This will default to 255 when no argument is given, which\n                                       is full strength.</p>\n",
+                    type: 'Number',
+                    optional: true
+                  }
+                ],
+                class: 'p5',
+                module: 'Color'
+              },
