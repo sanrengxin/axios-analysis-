@@ -444,3 +444,144 @@
               clear: {
                 name: 'clear',
                 class: 'p5',
+                module: 'Color'
+              },
+              colorMode: {
+                name: 'colorMode',
+                class: 'p5',
+                module: 'Color',
+                overloads: [
+                  {
+                    params: [
+                      {
+                        name: 'mode',
+                        description:
+                          '<p>either RGB, HSB or HSL, corresponding to\n                         Red/Green/Blue and Hue/Saturation/Brightness\n                         (or Lightness)</p>\n',
+                        type: 'Constant'
+                      },
+                      {
+                        name: 'max',
+                        description: '<p>range for all values</p>\n',
+                        type: 'Number',
+                        optional: true
+                      }
+                    ],
+                    chainable: 1
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'mode',
+                        description: '',
+                        type: 'Constant'
+                      },
+                      {
+                        name: 'max1',
+                        description:
+                          '<p>range for the red or hue depending on the\n                             current color mode</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'max2',
+                        description:
+                          '<p>range for the green or saturation depending\n                             on the current color mode</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'max3',
+                        description:
+                          '<p>range for the blue or brightness/lightness\n                             depending on the current color mode</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'maxA',
+                        description: '<p>range for the alpha</p>\n',
+                        type: 'Number',
+                        optional: true
+                      }
+                    ],
+                    chainable: 1
+                  }
+                ]
+              },
+              fill: {
+                name: 'fill',
+                class: 'p5',
+                module: 'Color',
+                overloads: [
+                  {
+                    params: [
+                      {
+                        name: 'v1',
+                        description:
+                          '<p>red or hue value relative to\n                                the current color range</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'v2',
+                        description:
+                          '<p>green or saturation value\n                                relative to the current color range</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'v3',
+                        description:
+                          '<p>blue or brightness value\n                                relative to the current color range</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'alpha',
+                        description: '',
+                        type: 'Number',
+                        optional: true
+                      }
+                    ],
+                    chainable: 1
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'value',
+                        description: '<p>a color string</p>\n',
+                        type: 'String'
+                      }
+                    ],
+                    chainable: 1
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'gray',
+                        description: '<p>a gray value</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'alpha',
+                        description: '',
+                        type: 'Number',
+                        optional: true
+                      }
+                    ],
+                    chainable: 1
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'values',
+                        description:
+                          '<p>an array containing the red,green,blue &\n                                and alpha components of the color</p>\n',
+                        type: 'Number[]'
+                      }
+                    ],
+                    chainable: 1
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'color',
+                        description: '<p>the fill color</p>\n',
+                        type: 'p5.Color'
+                      }
+                    ],
+                    chainable: 1
+                  }
