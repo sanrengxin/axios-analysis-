@@ -838,3 +838,128 @@
                     description: '<p>diameter of the circle.</p>\n',
                     type: 'Number'
                   }
+                ],
+                class: 'p5',
+                module: 'Shape'
+              },
+              line: {
+                name: 'line',
+                class: 'p5',
+                module: 'Shape',
+                overloads: [
+                  {
+                    params: [
+                      {
+                        name: 'x1',
+                        description: '<p>the x-coordinate of the first point</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'y1',
+                        description: '<p>the y-coordinate of the first point</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'x2',
+                        description: '<p>the x-coordinate of the second point</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'y2',
+                        description: '<p>the y-coordinate of the second point</p>\n',
+                        type: 'Number'
+                      }
+                    ],
+                    chainable: 1
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'x1',
+                        description: '',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'y1',
+                        description: '',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'z1',
+                        description: '<p>the z-coordinate of the first point</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'x2',
+                        description: '',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'y2',
+                        description: '',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'z2',
+                        description: '<p>the z-coordinate of the second point</p>\n',
+                        type: 'Number'
+                      }
+                    ],
+                    chainable: 1
+                  }
+                ]
+              },
+              point: {
+                name: 'point',
+                class: 'p5',
+                module: 'Shape',
+                overloads: [
+                  {
+                    params: [
+                      {
+                        name: 'x',
+                        description: '<p>the x-coordinate</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'y',
+                        description: '<p>the y-coordinate</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'z',
+                        description: '<p>the z-coordinate (for WebGL mode)</p>\n',
+                        type: 'Number',
+                        optional: true
+                      }
+                    ],
+                    chainable: 1
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'coordinate_vector',
+                        description: '<p>the coordinate vector</p>\n',
+                        type: 'p5.Vector'
+                      }
+                    ],
+                    chainable: 1
+                  }
+                ]
+              },
+              quad: {
+                name: 'quad',
+                class: 'p5',
+                module: 'Shape',
+                overloads: [
+                  {
+                    params: [
+                      {
+                        name: 'x1',
+                        description: '<p>the x-coordinate of the first point</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'y1',
+                        description: '<p>the y-coordinate of the first point</p>\n',
+                        type: 'Number'
