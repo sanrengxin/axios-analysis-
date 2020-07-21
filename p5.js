@@ -963,3 +963,112 @@
                         name: 'y1',
                         description: '<p>the y-coordinate of the first point</p>\n',
                         type: 'Number'
+                      },
+                      {
+                        name: 'x2',
+                        description: '<p>the x-coordinate of the second point</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'y2',
+                        description: '<p>the y-coordinate of the second point</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'x3',
+                        description: '<p>the x-coordinate of the third point</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'y3',
+                        description: '<p>the y-coordinate of the third point</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'x4',
+                        description: '<p>the x-coordinate of the fourth point</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'y4',
+                        description: '<p>the y-coordinate of the fourth point</p>\n',
+                        type: 'Number'
+                      }
+                    ],
+                    chainable: 1
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'x1',
+                        description: '',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'y1',
+                        description: '',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'z1',
+                        description: '<p>the z-coordinate of the first point</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'x2',
+                        description: '',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'y2',
+                        description: '',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'z2',
+                        description: '<p>the z-coordinate of the second point</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'x3',
+                        description: '',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'y3',
+                        description: '',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'z3',
+                        description: '<p>the z-coordinate of the third point</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'x4',
+                        description: '',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'y4',
+                        description: '',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'z4',
+                        description: '<p>the z-coordinate of the fourth point</p>\n',
+                        type: 'Number'
+                      }
+                    ],
+                    chainable: 1
+                  }
+                ]
+              },
+              rect: {
+                name: 'rect',
+                class: 'p5',
+                module: 'Shape',
+                overloads: [
+                  {
+                    params: [
+                      {
