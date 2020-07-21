@@ -701,3 +701,140 @@
                 class: 'p5',
                 module: 'Color'
               },
+              noErase: {
+                name: 'noErase',
+                class: 'p5',
+                module: 'Color'
+              },
+              arc: {
+                name: 'arc',
+                params: [
+                  {
+                    name: 'x',
+                    description: "<p>x-coordinate of the arc's ellipse</p>\n",
+                    type: 'Number'
+                  },
+                  {
+                    name: 'y',
+                    description: "<p>y-coordinate of the arc's ellipse</p>\n",
+                    type: 'Number'
+                  },
+                  {
+                    name: 'w',
+                    description: "<p>width of the arc's ellipse by default</p>\n",
+                    type: 'Number'
+                  },
+                  {
+                    name: 'h',
+                    description: "<p>height of the arc's ellipse by default</p>\n",
+                    type: 'Number'
+                  },
+                  {
+                    name: 'start',
+                    description: '<p>angle to start the arc, specified in radians</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'stop',
+                    description: '<p>angle to stop the arc, specified in radians</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'mode',
+                    description:
+                      '<p>optional parameter to determine the way of drawing\n                        the arc. either CHORD, PIE or OPEN</p>\n',
+                    type: 'Constant',
+                    optional: true
+                  },
+                  {
+                    name: 'detail',
+                    description:
+                      '<p>optional parameter for WebGL mode only. This is to\n                        specify the number of vertices that makes up the\n                        perimeter of the arc. Default value is 25.</p>\n',
+                    type: 'Number',
+                    optional: true
+                  }
+                ],
+                class: 'p5',
+                module: 'Shape'
+              },
+              ellipse: {
+                name: 'ellipse',
+                class: 'p5',
+                module: 'Shape',
+                overloads: [
+                  {
+                    params: [
+                      {
+                        name: 'x',
+                        description: '<p>x-coordinate of the center of ellipse.</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'y',
+                        description: '<p>y-coordinate of the center of ellipse.</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'w',
+                        description: '<p>width of the ellipse.</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'h',
+                        description: '<p>height of the ellipse.</p>\n',
+                        type: 'Number',
+                        optional: true
+                      }
+                    ],
+                    chainable: 1
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'x',
+                        description: '',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'y',
+                        description: '',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'w',
+                        description: '',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'h',
+                        description: '',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'detail',
+                        description:
+                          '<p>number of radial sectors to draw (for WebGL mode)</p>\n',
+                        type: 'Integer'
+                      }
+                    ]
+                  }
+                ]
+              },
+              circle: {
+                name: 'circle',
+                params: [
+                  {
+                    name: 'x',
+                    description: '<p>x-coordinate of the centre of the circle.</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'y',
+                    description: '<p>y-coordinate of the centre of the circle.</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'd',
+                    description: '<p>diameter of the circle.</p>\n',
+                    type: 'Number'
+                  }
