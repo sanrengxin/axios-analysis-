@@ -1072,3 +1072,139 @@
                   {
                     params: [
                       {
+                        name: 'x',
+                        description: '<p>x-coordinate of the rectangle.</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'y',
+                        description: '<p>y-coordinate of the rectangle.</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'w',
+                        description: '<p>width of the rectangle.</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'h',
+                        description: '<p>height of the rectangle.</p>\n',
+                        type: 'Number',
+                        optional: true
+                      },
+                      {
+                        name: 'tl',
+                        description: '<p>optional radius of top-left corner.</p>\n',
+                        type: 'Number',
+                        optional: true
+                      },
+                      {
+                        name: 'tr',
+                        description: '<p>optional radius of top-right corner.</p>\n',
+                        type: 'Number',
+                        optional: true
+                      },
+                      {
+                        name: 'br',
+                        description: '<p>optional radius of bottom-right corner.</p>\n',
+                        type: 'Number',
+                        optional: true
+                      },
+                      {
+                        name: 'bl',
+                        description: '<p>optional radius of bottom-left corner.</p>\n',
+                        type: 'Number',
+                        optional: true
+                      }
+                    ],
+                    chainable: 1
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'x',
+                        description: '',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'y',
+                        description: '',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'w',
+                        description: '',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'h',
+                        description: '',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'detailX',
+                        description:
+                          '<p>number of segments in the x-direction (for WebGL mode)</p>\n',
+                        type: 'Integer',
+                        optional: true
+                      },
+                      {
+                        name: 'detailY',
+                        description:
+                          '<p>number of segments in the y-direction (for WebGL mode)</p>\n',
+                        type: 'Integer',
+                        optional: true
+                      }
+                    ],
+                    chainable: 1
+                  }
+                ]
+              },
+              square: {
+                name: 'square',
+                params: [
+                  {
+                    name: 'x',
+                    description: '<p>x-coordinate of the square.</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'y',
+                    description: '<p>y-coordinate of the square.</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 's',
+                    description: '<p>side size of the square.</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'tl',
+                    description: '<p>optional radius of top-left corner.</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'tr',
+                    description: '<p>optional radius of top-right corner.</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'br',
+                    description: '<p>optional radius of bottom-right corner.</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'bl',
+                    description: '<p>optional radius of bottom-left corner.</p>\n',
+                    type: 'Number',
+                    optional: true
+                  }
+                ],
+                class: 'p5',
+                module: 'Shape'
+              },
+              triangle: {
+                name: 'triangle',
