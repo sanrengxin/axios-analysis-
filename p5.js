@@ -1208,3 +1208,133 @@
               },
               triangle: {
                 name: 'triangle',
+                params: [
+                  {
+                    name: 'x1',
+                    description: '<p>x-coordinate of the first point</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'y1',
+                    description: '<p>y-coordinate of the first point</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'x2',
+                    description: '<p>x-coordinate of the second point</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'y2',
+                    description: '<p>y-coordinate of the second point</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'x3',
+                    description: '<p>x-coordinate of the third point</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'y3',
+                    description: '<p>y-coordinate of the third point</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5',
+                module: 'Shape'
+              },
+              ellipseMode: {
+                name: 'ellipseMode',
+                params: [
+                  {
+                    name: 'mode',
+                    description: '<p>either CENTER, RADIUS, CORNER, or CORNERS</p>\n',
+                    type: 'Constant'
+                  }
+                ],
+                class: 'p5',
+                module: 'Shape'
+              },
+              noSmooth: {
+                name: 'noSmooth',
+                class: 'p5',
+                module: 'Shape'
+              },
+              rectMode: {
+                name: 'rectMode',
+                params: [
+                  {
+                    name: 'mode',
+                    description: '<p>either CORNER, CORNERS, CENTER, or RADIUS</p>\n',
+                    type: 'Constant'
+                  }
+                ],
+                class: 'p5',
+                module: 'Shape'
+              },
+              smooth: {
+                name: 'smooth',
+                class: 'p5',
+                module: 'Shape'
+              },
+              strokeCap: {
+                name: 'strokeCap',
+                params: [
+                  {
+                    name: 'cap',
+                    description: '<p>either ROUND, SQUARE or PROJECT</p>\n',
+                    type: 'Constant'
+                  }
+                ],
+                class: 'p5',
+                module: 'Shape'
+              },
+              strokeJoin: {
+                name: 'strokeJoin',
+                params: [
+                  {
+                    name: 'join',
+                    description: '<p>either MITER, BEVEL, ROUND</p>\n',
+                    type: 'Constant'
+                  }
+                ],
+                class: 'p5',
+                module: 'Shape'
+              },
+              strokeWeight: {
+                name: 'strokeWeight',
+                params: [
+                  {
+                    name: 'weight',
+                    description: '<p>the weight of the stroke (in pixels)</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5',
+                module: 'Shape'
+              },
+              bezier: {
+                name: 'bezier',
+                class: 'p5',
+                module: 'Shape',
+                overloads: [
+                  {
+                    params: [
+                      {
+                        name: 'x1',
+                        description: '<p>x-coordinate for the first anchor point</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'y1',
+                        description: '<p>y-coordinate for the first anchor point</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'x2',
+                        description: '<p>x-coordinate for the first control point</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'y2',
+                        description: '<p>y-coordinate for the first control point</p>\n',
