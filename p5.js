@@ -1473,3 +1473,143 @@
                 ],
                 class: 'p5',
                 module: 'Shape'
+              },
+              bezierTangent: {
+                name: 'bezierTangent',
+                params: [
+                  {
+                    name: 'a',
+                    description: '<p>coordinate of first point on the curve</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'b',
+                    description: '<p>coordinate of first control point</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'c',
+                    description: '<p>coordinate of second control point</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'd',
+                    description: '<p>coordinate of second point on the curve</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 't',
+                    description: '<p>value between 0 and 1</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5',
+                module: 'Shape'
+              },
+              curve: {
+                name: 'curve',
+                class: 'p5',
+                module: 'Shape',
+                overloads: [
+                  {
+                    params: [
+                      {
+                        name: 'x1',
+                        description:
+                          '<p>x-coordinate for the beginning control point</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'y1',
+                        description:
+                          '<p>y-coordinate for the beginning control point</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'x2',
+                        description: '<p>x-coordinate for the first point</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'y2',
+                        description: '<p>y-coordinate for the first point</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'x3',
+                        description: '<p>x-coordinate for the second point</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'y3',
+                        description: '<p>y-coordinate for the second point</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'x4',
+                        description: '<p>x-coordinate for the ending control point</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'y4',
+                        description: '<p>y-coordinate for the ending control point</p>\n',
+                        type: 'Number'
+                      }
+                    ],
+                    chainable: 1
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'x1',
+                        description: '',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'y1',
+                        description: '',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'z1',
+                        description:
+                          '<p>z-coordinate for the beginning control point</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'x2',
+                        description: '',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'y2',
+                        description: '',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'z2',
+                        description: '<p>z-coordinate for the first point</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'x3',
+                        description: '',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'y3',
+                        description: '',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'z3',
+                        description: '<p>z-coordinate for the second point</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'x4',
+                        description: '',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'y4',
