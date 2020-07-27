@@ -1613,3 +1613,139 @@
                       },
                       {
                         name: 'y4',
+                        description: '',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'z4',
+                        description: '<p>z-coordinate for the ending control point</p>\n',
+                        type: 'Number'
+                      }
+                    ],
+                    chainable: 1
+                  }
+                ]
+              },
+              curveDetail: {
+                name: 'curveDetail',
+                params: [
+                  {
+                    name: 'resolution',
+                    description: '<p>resolution of the curves</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5',
+                module: 'Shape'
+              },
+              curveTightness: {
+                name: 'curveTightness',
+                params: [
+                  {
+                    name: 'amount',
+                    description:
+                      '<p>amount of deformation from the original vertices</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5',
+                module: 'Shape'
+              },
+              curvePoint: {
+                name: 'curvePoint',
+                params: [
+                  {
+                    name: 'a',
+                    description: '<p>coordinate of first control point of the curve</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'b',
+                    description: '<p>coordinate of first point</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'c',
+                    description: '<p>coordinate of second point</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'd',
+                    description: '<p>coordinate of second control point</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 't',
+                    description: '<p>value between 0 and 1</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5',
+                module: 'Shape'
+              },
+              curveTangent: {
+                name: 'curveTangent',
+                params: [
+                  {
+                    name: 'a',
+                    description: '<p>coordinate of first control point</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'b',
+                    description: '<p>coordinate of first point on the curve</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'c',
+                    description: '<p>coordinate of second point on the curve</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'd',
+                    description: '<p>coordinate of second conrol point</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 't',
+                    description: '<p>value between 0 and 1</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5',
+                module: 'Shape'
+              },
+              beginContour: {
+                name: 'beginContour',
+                class: 'p5',
+                module: 'Shape'
+              },
+              beginShape: {
+                name: 'beginShape',
+                params: [
+                  {
+                    name: 'kind',
+                    description:
+                      '<p>either POINTS, LINES, TRIANGLES, TRIANGLE_FAN\n                               TRIANGLE_STRIP, QUADS, QUAD_STRIP or TESS</p>\n',
+                    type: 'Constant',
+                    optional: true
+                  }
+                ],
+                class: 'p5',
+                module: 'Shape'
+              },
+              bezierVertex: {
+                name: 'bezierVertex',
+                class: 'p5',
+                module: 'Shape',
+                overloads: [
+                  {
+                    params: [
+                      {
+                        name: 'x2',
+                        description: '<p>x-coordinate for the first control point</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'y2',
+                        description: '<p>y-coordinate for the first control point</p>\n',
