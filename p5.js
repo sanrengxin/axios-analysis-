@@ -1749,3 +1749,145 @@
                       {
                         name: 'y2',
                         description: '<p>y-coordinate for the first control point</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'x3',
+                        description: '<p>x-coordinate for the second control point</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'y3',
+                        description: '<p>y-coordinate for the second control point</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'x4',
+                        description: '<p>x-coordinate for the anchor point</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'y4',
+                        description: '<p>y-coordinate for the anchor point</p>\n',
+                        type: 'Number'
+                      }
+                    ],
+                    chainable: 1
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'x2',
+                        description: '',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'y2',
+                        description: '',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'z2',
+                        description:
+                          '<p>z-coordinate for the first control point (for WebGL mode)</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'x3',
+                        description: '',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'y3',
+                        description: '',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'z3',
+                        description:
+                          '<p>z-coordinate for the second control point (for WebGL mode)</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'x4',
+                        description: '',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'y4',
+                        description: '',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'z4',
+                        description:
+                          '<p>z-coordinate for the anchor point (for WebGL mode)</p>\n',
+                        type: 'Number'
+                      }
+                    ],
+                    chainable: 1
+                  }
+                ]
+              },
+              curveVertex: {
+                name: 'curveVertex',
+                class: 'p5',
+                module: 'Shape',
+                overloads: [
+                  {
+                    params: [
+                      {
+                        name: 'x',
+                        description: '<p>x-coordinate of the vertex</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'y',
+                        description: '<p>y-coordinate of the vertex</p>\n',
+                        type: 'Number'
+                      }
+                    ],
+                    chainable: 1
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'x',
+                        description: '',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'y',
+                        description: '',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'z',
+                        description: '<p>z-coordinate of the vertex (for WebGL mode)</p>\n',
+                        type: 'Number',
+                        optional: true
+                      }
+                    ],
+                    chainable: 1
+                  }
+                ]
+              },
+              endContour: {
+                name: 'endContour',
+                class: 'p5',
+                module: 'Shape'
+              },
+              endShape: {
+                name: 'endShape',
+                params: [
+                  {
+                    name: 'mode',
+                    description: '<p>use CLOSE to close the shape</p>\n',
+                    type: 'Constant',
+                    optional: true
+                  }
+                ],
+                class: 'p5',
+                module: 'Shape'
+              },
+              quadraticVertex: {
