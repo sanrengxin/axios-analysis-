@@ -1891,3 +1891,129 @@
                 module: 'Shape'
               },
               quadraticVertex: {
+                name: 'quadraticVertex',
+                class: 'p5',
+                module: 'Shape',
+                overloads: [
+                  {
+                    params: [
+                      {
+                        name: 'cx',
+                        description: '<p>x-coordinate for the control point</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'cy',
+                        description: '<p>y-coordinate for the control point</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'x3',
+                        description: '<p>x-coordinate for the anchor point</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'y3',
+                        description: '<p>y-coordinate for the anchor point</p>\n',
+                        type: 'Number'
+                      }
+                    ],
+                    chainable: 1
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'cx',
+                        description: '',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'cy',
+                        description: '',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'cz',
+                        description:
+                          '<p>z-coordinate for the control point (for WebGL mode)</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'x3',
+                        description: '',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'y3',
+                        description: '',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'z3',
+                        description:
+                          '<p>z-coordinate for the anchor point (for WebGL mode)</p>\n',
+                        type: 'Number'
+                      }
+                    ],
+                    chainable: 1
+                  }
+                ]
+              },
+              vertex: {
+                name: 'vertex',
+                class: 'p5',
+                module: 'Shape',
+                overloads: [
+                  {
+                    params: [
+                      {
+                        name: 'x',
+                        description: '<p>x-coordinate of the vertex</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'y',
+                        description: '<p>y-coordinate of the vertex</p>\n',
+                        type: 'Number'
+                      }
+                    ],
+                    chainable: 1
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'x',
+                        description: '',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'y',
+                        description: '',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'z',
+                        description: '<p>z-coordinate of the vertex</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'u',
+                        description: "<p>the vertex's texture u-coordinate</p>\n",
+                        type: 'Number',
+                        optional: true
+                      },
+                      {
+                        name: 'v',
+                        description: "<p>the vertex's texture v-coordinate</p>\n",
+                        type: 'Number',
+                        optional: true
+                      }
+                    ],
+                    chainable: 1
+                  }
+                ]
+              },
+              P2D: {
+                name: 'P2D',
+                class: 'p5',
+                module: 'Constants'
