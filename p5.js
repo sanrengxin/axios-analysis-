@@ -2017,3 +2017,139 @@
                 name: 'P2D',
                 class: 'p5',
                 module: 'Constants'
+              },
+              WEBGL: {
+                name: 'WEBGL',
+                class: 'p5',
+                module: 'Constants'
+              },
+              ARROW: {
+                name: 'ARROW',
+                class: 'p5',
+                module: 'Constants'
+              },
+              CROSS: {
+                name: 'CROSS',
+                class: 'p5',
+                module: 'Constants'
+              },
+              HAND: {
+                name: 'HAND',
+                class: 'p5',
+                module: 'Constants'
+              },
+              MOVE: {
+                name: 'MOVE',
+                class: 'p5',
+                module: 'Constants'
+              },
+              TEXT: {
+                name: 'TEXT',
+                class: 'p5',
+                module: 'Constants'
+              },
+              WAIT: {
+                name: 'WAIT',
+                class: 'p5',
+                module: 'Constants'
+              },
+              HALF_PI: {
+                name: 'HALF_PI',
+                class: 'p5',
+                module: 'Constants'
+              },
+              PI: {
+                name: 'PI',
+                class: 'p5',
+                module: 'Constants'
+              },
+              QUARTER_PI: {
+                name: 'QUARTER_PI',
+                class: 'p5',
+                module: 'Constants'
+              },
+              TAU: {
+                name: 'TAU',
+                class: 'p5',
+                module: 'Constants'
+              },
+              TWO_PI: {
+                name: 'TWO_PI',
+                class: 'p5',
+                module: 'Constants'
+              },
+              DEGREES: {
+                name: 'DEGREES',
+                class: 'p5',
+                module: 'Constants'
+              },
+              RADIANS: {
+                name: 'RADIANS',
+                class: 'p5',
+                module: 'Constants'
+              },
+              CORNER: {
+                name: 'CORNER',
+                class: 'p5',
+                module: 'Constants'
+              },
+              CORNERS: {
+                name: 'CORNERS',
+                class: 'p5',
+                module: 'Constants'
+              },
+              RADIUS: {
+                name: 'RADIUS',
+                class: 'p5',
+                module: 'Constants'
+              },
+              RIGHT: {
+                name: 'RIGHT',
+                class: 'p5',
+                module: 'Constants'
+              },
+              LEFT: {
+                name: 'LEFT',
+                class: 'p5',
+                module: 'Constants'
+              },
+              CENTER: {
+                name: 'CENTER',
+                class: 'p5',
+                module: 'Constants'
+              },
+              TOP: {
+                name: 'TOP',
+                class: 'p5',
+                module: 'Constants'
+              },
+              BOTTOM: {
+                name: 'BOTTOM',
+                class: 'p5',
+                module: 'Constants'
+              },
+              BASELINE: {
+                name: 'BASELINE',
+                class: 'p5',
+                module: 'Constants'
+              },
+              POINTS: {
+                name: 'POINTS',
+                class: 'p5',
+                module: 'Constants'
+              },
+              LINES: {
+                name: 'LINES',
+                class: 'p5',
+                module: 'Constants'
+              },
+              LINE_STRIP: {
+                name: 'LINE_STRIP',
+                class: 'p5',
+                module: 'Constants'
+              },
+              LINE_LOOP: {
+                name: 'LINE_LOOP',
+                class: 'p5',
+                module: 'Constants'
+              },
