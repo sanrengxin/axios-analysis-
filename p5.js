@@ -2153,3 +2153,129 @@
                 class: 'p5',
                 module: 'Constants'
               },
+              TRIANGLES: {
+                name: 'TRIANGLES',
+                class: 'p5',
+                module: 'Constants'
+              },
+              TRIANGLE_FAN: {
+                name: 'TRIANGLE_FAN',
+                class: 'p5',
+                module: 'Constants'
+              },
+              TRIANGLE_STRIP: {
+                name: 'TRIANGLE_STRIP',
+                class: 'p5',
+                module: 'Constants'
+              },
+              QUADS: {
+                name: 'QUADS',
+                class: 'p5',
+                module: 'Constants'
+              },
+              QUAD_STRIP: {
+                name: 'QUAD_STRIP',
+                class: 'p5',
+                module: 'Constants'
+              },
+              TESS: {
+                name: 'TESS',
+                class: 'p5',
+                module: 'Constants'
+              },
+              CLOSE: {
+                name: 'CLOSE',
+                class: 'p5',
+                module: 'Constants'
+              },
+              OPEN: {
+                name: 'OPEN',
+                class: 'p5',
+                module: 'Constants'
+              },
+              CHORD: {
+                name: 'CHORD',
+                class: 'p5',
+                module: 'Constants'
+              },
+              PIE: {
+                name: 'PIE',
+                class: 'p5',
+                module: 'Constants'
+              },
+              PROJECT: {
+                name: 'PROJECT',
+                class: 'p5',
+                module: 'Constants'
+              },
+              SQUARE: {
+                name: 'SQUARE',
+                class: 'p5',
+                module: 'Constants'
+              },
+              ROUND: {
+                name: 'ROUND',
+                class: 'p5',
+                module: 'Constants'
+              },
+              BEVEL: {
+                name: 'BEVEL',
+                class: 'p5',
+                module: 'Constants'
+              },
+              MITER: {
+                name: 'MITER',
+                class: 'p5',
+                module: 'Constants'
+              },
+              RGB: {
+                name: 'RGB',
+                class: 'p5',
+                module: 'Constants'
+              },
+              HSB: {
+                name: 'HSB',
+                class: 'p5',
+                module: 'Constants'
+              },
+              HSL: {
+                name: 'HSL',
+                class: 'p5',
+                module: 'Constants'
+              },
+              AUTO: {
+                name: 'AUTO',
+                class: 'p5',
+                module: 'Constants'
+              },
+              ALT: {
+                name: 'ALT',
+                class: 'p5',
+                module: 'Constants'
+              },
+              BACKSPACE: {
+                name: 'BACKSPACE',
+                class: 'p5',
+                module: 'Constants'
+              },
+              CONTROL: {
+                name: 'CONTROL',
+                class: 'p5',
+                module: 'Constants'
+              },
+              DELETE: {
+                name: 'DELETE',
+                class: 'p5',
+                module: 'Constants'
+              },
+              DOWN_ARROW: {
+                name: 'DOWN_ARROW',
+                class: 'p5',
+                module: 'Constants'
+              },
+              ENTER: {
+                name: 'ENTER',
+                class: 'p5',
+                module: 'Constants'
+              },
+              ESCAPE: {
