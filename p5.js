@@ -2279,3 +2279,126 @@
                 module: 'Constants'
               },
               ESCAPE: {
+                name: 'ESCAPE',
+                class: 'p5',
+                module: 'Constants'
+              },
+              LEFT_ARROW: {
+                name: 'LEFT_ARROW',
+                class: 'p5',
+                module: 'Constants'
+              },
+              OPTION: {
+                name: 'OPTION',
+                class: 'p5',
+                module: 'Constants'
+              },
+              RETURN: {
+                name: 'RETURN',
+                class: 'p5',
+                module: 'Constants'
+              },
+              RIGHT_ARROW: {
+                name: 'RIGHT_ARROW',
+                class: 'p5',
+                module: 'Constants'
+              },
+              SHIFT: {
+                name: 'SHIFT',
+                class: 'p5',
+                module: 'Constants'
+              },
+              TAB: {
+                name: 'TAB',
+                class: 'p5',
+                module: 'Constants'
+              },
+              UP_ARROW: {
+                name: 'UP_ARROW',
+                class: 'p5',
+                module: 'Constants'
+              },
+              BLEND: {
+                name: 'BLEND',
+                class: 'p5',
+                module: 'Constants'
+              },
+              REMOVE: {
+                name: 'REMOVE',
+                class: 'p5',
+                module: 'Constants'
+              },
+              ADD: {
+                name: 'ADD',
+                class: 'p5',
+                module: 'Constants'
+              },
+              DARKEST: {
+                name: 'DARKEST',
+                class: 'p5',
+                module: 'Constants'
+              },
+              LIGHTEST: {
+                name: 'LIGHTEST',
+                class: 'p5',
+                module: 'Constants'
+              },
+              DIFFERENCE: {
+                name: 'DIFFERENCE',
+                class: 'p5',
+                module: 'Constants'
+              },
+              SUBTRACT: {
+                name: 'SUBTRACT',
+                class: 'p5',
+                module: 'Constants'
+              },
+              EXCLUSION: {
+                name: 'EXCLUSION',
+                class: 'p5',
+                module: 'Constants'
+              },
+              MULTIPLY: {
+                name: 'MULTIPLY',
+                class: 'p5',
+                module: 'Constants'
+              },
+              SCREEN: {
+                name: 'SCREEN',
+                class: 'p5',
+                module: 'Constants'
+              },
+              REPLACE: {
+                name: 'REPLACE',
+                class: 'p5',
+                module: 'Constants'
+              },
+              OVERLAY: {
+                name: 'OVERLAY',
+                class: 'p5',
+                module: 'Constants'
+              },
+              HARD_LIGHT: {
+                name: 'HARD_LIGHT',
+                class: 'p5',
+                module: 'Constants'
+              },
+              SOFT_LIGHT: {
+                name: 'SOFT_LIGHT',
+                class: 'p5',
+                module: 'Constants'
+              },
+              DODGE: {
+                name: 'DODGE',
+                class: 'p5',
+                module: 'Constants'
+              },
+              BURN: {
+                name: 'BURN',
+                class: 'p5',
+                module: 'Constants'
+              },
+              THRESHOLD: {
+                name: 'THRESHOLD',
+                class: 'p5',
+                module: 'Constants'
