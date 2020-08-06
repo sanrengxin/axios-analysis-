@@ -2402,3 +2402,109 @@
                 name: 'THRESHOLD',
                 class: 'p5',
                 module: 'Constants'
+              },
+              GRAY: {
+                name: 'GRAY',
+                class: 'p5',
+                module: 'Constants'
+              },
+              OPAQUE: {
+                name: 'OPAQUE',
+                class: 'p5',
+                module: 'Constants'
+              },
+              INVERT: {
+                name: 'INVERT',
+                class: 'p5',
+                module: 'Constants'
+              },
+              POSTERIZE: {
+                name: 'POSTERIZE',
+                class: 'p5',
+                module: 'Constants'
+              },
+              DILATE: {
+                name: 'DILATE',
+                class: 'p5',
+                module: 'Constants'
+              },
+              ERODE: {
+                name: 'ERODE',
+                class: 'p5',
+                module: 'Constants'
+              },
+              BLUR: {
+                name: 'BLUR',
+                class: 'p5',
+                module: 'Constants'
+              },
+              NORMAL: {
+                name: 'NORMAL',
+                class: 'p5',
+                module: 'Constants'
+              },
+              ITALIC: {
+                name: 'ITALIC',
+                class: 'p5',
+                module: 'Constants'
+              },
+              BOLD: {
+                name: 'BOLD',
+                class: 'p5',
+                module: 'Constants'
+              },
+              BOLDITALIC: {
+                name: 'BOLDITALIC',
+                class: 'p5',
+                module: 'Constants'
+              },
+              LINEAR: {
+                name: 'LINEAR',
+                class: 'p5',
+                module: 'Constants'
+              },
+              QUADRATIC: {
+                name: 'QUADRATIC',
+                class: 'p5',
+                module: 'Constants'
+              },
+              BEZIER: {
+                name: 'BEZIER',
+                class: 'p5',
+                module: 'Constants'
+              },
+              CURVE: {
+                name: 'CURVE',
+                class: 'p5',
+                module: 'Constants'
+              },
+              STROKE: {
+                name: 'STROKE',
+                class: 'p5',
+                module: 'Constants'
+              },
+              FILL: {
+                name: 'FILL',
+                class: 'p5',
+                module: 'Constants'
+              },
+              TEXTURE: {
+                name: 'TEXTURE',
+                class: 'p5',
+                module: 'Constants'
+              },
+              IMMEDIATE: {
+                name: 'IMMEDIATE',
+                class: 'p5',
+                module: 'Constants'
+              },
+              IMAGE: {
+                name: 'IMAGE',
+                class: 'p5',
+                module: 'Constants'
+              },
+              NEAREST: {
+                name: 'NEAREST',
+                class: 'p5',
+                module: 'Constants'
+              },
