@@ -2798,3 +2798,125 @@
                 class: 'p5',
                 module: 'Foundation'
               },
+              boolean: {
+                name: 'boolean',
+                params: [
+                  {
+                    name: 'n',
+                    description: '<p>value to parse</p>\n',
+                    type: 'String|Boolean|Number|Array'
+                  }
+                ],
+                class: 'p5',
+                module: 'Data'
+              },
+              string: {
+                name: 'string',
+                class: 'p5',
+                module: 'Foundation'
+              },
+              number: {
+                name: 'number',
+                class: 'p5',
+                module: 'Foundation'
+              },
+              object: {
+                name: 'object',
+                class: 'p5',
+                module: 'Foundation'
+              },
+              class: {
+                name: 'class',
+                class: 'p5',
+                module: 'Foundation'
+              },
+              for: {
+                name: 'for',
+                class: 'p5',
+                module: 'Foundation'
+              },
+              while: {
+                name: 'while',
+                class: 'p5',
+                module: 'Foundation'
+              },
+              createCanvas: {
+                name: 'createCanvas',
+                params: [
+                  {
+                    name: 'w',
+                    description: '<p>width of the canvas</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'h',
+                    description: '<p>height of the canvas</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'renderer',
+                    description: '<p>either P2D or WEBGL</p>\n',
+                    type: 'Constant',
+                    optional: true
+                  }
+                ],
+                class: 'p5',
+                module: 'Rendering'
+              },
+              resizeCanvas: {
+                name: 'resizeCanvas',
+                params: [
+                  {
+                    name: 'w',
+                    description: '<p>width of the canvas</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'h',
+                    description: '<p>height of the canvas</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'noRedraw',
+                    description: "<p>don't redraw the canvas immediately</p>\n",
+                    type: 'Boolean',
+                    optional: true
+                  }
+                ],
+                class: 'p5',
+                module: 'Rendering'
+              },
+              noCanvas: {
+                name: 'noCanvas',
+                class: 'p5',
+                module: 'Rendering'
+              },
+              createGraphics: {
+                name: 'createGraphics',
+                params: [
+                  {
+                    name: 'w',
+                    description: '<p>width of the offscreen graphics buffer</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'h',
+                    description: '<p>height of the offscreen graphics buffer</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'renderer',
+                    description:
+                      '<p>either P2D or WEBGL\n                              undefined defaults to p2d</p>\n',
+                    type: 'Constant',
+                    optional: true
+                  }
+                ],
+                class: 'p5',
+                module: 'Rendering'
+              },
+              blendMode: {
+                name: 'blendMode',
+                params: [
+                  {
+                    name: 'mode',
