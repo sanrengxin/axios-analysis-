@@ -2508,3 +2508,143 @@
                 class: 'p5',
                 module: 'Constants'
               },
+              REPEAT: {
+                name: 'REPEAT',
+                class: 'p5',
+                module: 'Constants'
+              },
+              CLAMP: {
+                name: 'CLAMP',
+                class: 'p5',
+                module: 'Constants'
+              },
+              MIRROR: {
+                name: 'MIRROR',
+                class: 'p5',
+                module: 'Constants'
+              },
+              LANDSCAPE: {
+                name: 'LANDSCAPE',
+                class: 'p5',
+                module: 'Constants'
+              },
+              PORTRAIT: {
+                name: 'PORTRAIT',
+                class: 'p5',
+                module: 'Constants'
+              },
+              GRID: {
+                name: 'GRID',
+                class: 'p5',
+                module: 'Constants'
+              },
+              AXES: {
+                name: 'AXES',
+                class: 'p5',
+                module: 'Constants'
+              },
+              LABEL: {
+                name: 'LABEL',
+                class: 'p5',
+                module: 'Constants'
+              },
+              FALLBACK: {
+                name: 'FALLBACK',
+                class: 'p5',
+                module: 'Constants'
+              },
+              print: {
+                name: 'print',
+                params: [
+                  {
+                    name: 'contents',
+                    description:
+                      '<p>any combination of Number, String, Object, Boolean,\n                      Array to print</p>\n',
+                    type: 'Any'
+                  }
+                ],
+                class: 'p5',
+                module: 'Environment'
+              },
+              frameCount: {
+                name: 'frameCount',
+                class: 'p5',
+                module: 'Environment'
+              },
+              deltaTime: {
+                name: 'deltaTime',
+                class: 'p5',
+                module: 'Environment'
+              },
+              focused: {
+                name: 'focused',
+                class: 'p5',
+                module: 'Environment'
+              },
+              cursor: {
+                name: 'cursor',
+                params: [
+                  {
+                    name: 'type',
+                    description:
+                      "<p>Built-In: either ARROW, CROSS, HAND, MOVE, TEXT and WAIT\n                              Native CSS properties: 'grab', 'progress', 'cell' etc.\n                              External: path for cursor's images\n                              (Allowed File extensions: .cur, .gif, .jpg, .jpeg, .png)\n                              For more information on Native CSS cursors and url visit:\n                              <a href=\"https://developer.mozilla.org/en-US/docs/Web/CSS/cursor\">https://developer.mozilla.org/en-US/docs/Web/CSS/cursor</a></p>\n",
+                    type: 'String|Constant'
+                  },
+                  {
+                    name: 'x',
+                    description:
+                      '<p>the horizontal active spot of the cursor (must be less than 32)</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'y',
+                    description:
+                      '<p>the vertical active spot of the cursor (must be less than 32)</p>\n',
+                    type: 'Number',
+                    optional: true
+                  }
+                ],
+                class: 'p5',
+                module: 'Environment'
+              },
+              frameRate: {
+                name: 'frameRate',
+                class: 'p5',
+                module: 'Environment',
+                overloads: [
+                  {
+                    params: [
+                      {
+                        name: 'fps',
+                        description:
+                          '<p>number of frames to be displayed every second</p>\n',
+                        type: 'Number'
+                      }
+                    ],
+                    chainable: 1
+                  },
+                  {
+                    params: []
+                  }
+                ]
+              },
+              noCursor: {
+                name: 'noCursor',
+                class: 'p5',
+                module: 'Environment'
+              },
+              displayWidth: {
+                name: 'displayWidth',
+                class: 'p5',
+                module: 'Environment'
+              },
+              displayHeight: {
+                name: 'displayHeight',
+                class: 'p5',
+                module: 'Environment'
+              },
+              windowWidth: {
+                name: 'windowWidth',
+                class: 'p5',
+                module: 'Environment'
