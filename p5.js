@@ -2920,3 +2920,145 @@
                 params: [
                   {
                     name: 'mode',
+                    description:
+                      '<p>blend mode to set for canvas.\n               either BLEND, DARKEST, LIGHTEST, DIFFERENCE, MULTIPLY,\n               EXCLUSION, SCREEN, REPLACE, OVERLAY, HARD_LIGHT,\n               SOFT_LIGHT, DODGE, BURN, ADD, REMOVE or SUBTRACT</p>\n',
+                    type: 'Constant'
+                  }
+                ],
+                class: 'p5',
+                module: 'Rendering'
+              },
+              drawingContext: {
+                name: 'drawingContext',
+                class: 'p5',
+                module: 'Rendering'
+              },
+              noLoop: {
+                name: 'noLoop',
+                class: 'p5',
+                module: 'Structure'
+              },
+              loop: {
+                name: 'loop',
+                class: 'p5',
+                module: 'Structure'
+              },
+              isLooping: {
+                name: 'isLooping',
+                class: 'p5',
+                module: 'Structure'
+              },
+              push: {
+                name: 'push',
+                class: 'p5',
+                module: 'Structure'
+              },
+              pop: {
+                name: 'pop',
+                class: 'p5',
+                module: 'Structure'
+              },
+              redraw: {
+                name: 'redraw',
+                params: [
+                  {
+                    name: 'n',
+                    description: '<p>Redraw for n-times. The default value is 1.</p>\n',
+                    type: 'Integer',
+                    optional: true
+                  }
+                ],
+                class: 'p5',
+                module: 'Structure'
+              },
+              p5: {
+                name: 'p5',
+                params: [
+                  {
+                    name: 'sketch',
+                    description: '<p>a function containing a p5.js sketch</p>\n',
+                    type: 'Object'
+                  },
+                  {
+                    name: 'node',
+                    description:
+                      '<p>ID or pointer to HTML DOM node to contain sketch in</p>\n',
+                    type: 'String|Object'
+                  }
+                ],
+                class: 'p5',
+                module: 'Structure'
+              },
+              applyMatrix: {
+                name: 'applyMatrix',
+                params: [
+                  {
+                    name: 'a',
+                    description:
+                      '<p>numbers which define the 2x3 matrix to be multiplied</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'b',
+                    description:
+                      '<p>numbers which define the 2x3 matrix to be multiplied</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'c',
+                    description:
+                      '<p>numbers which define the 2x3 matrix to be multiplied</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'd',
+                    description:
+                      '<p>numbers which define the 2x3 matrix to be multiplied</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'e',
+                    description:
+                      '<p>numbers which define the 2x3 matrix to be multiplied</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'f',
+                    description:
+                      '<p>numbers which define the 2x3 matrix to be multiplied</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5',
+                module: 'Transform'
+              },
+              resetMatrix: {
+                name: 'resetMatrix',
+                class: 'p5',
+                module: 'Transform'
+              },
+              rotate: {
+                name: 'rotate',
+                params: [
+                  {
+                    name: 'angle',
+                    description:
+                      '<p>the angle of rotation, specified in radians\n                       or degrees, depending on current angleMode</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'axis',
+                    description: '<p>(in 3d) the axis to rotate around</p>\n',
+                    type: 'p5.Vector|Number[]',
+                    optional: true
+                  }
+                ],
+                class: 'p5',
+                module: 'Transform'
+              },
+              rotateX: {
+                name: 'rotateX',
+                params: [
+                  {
+                    name: 'angle',
+                    description:
