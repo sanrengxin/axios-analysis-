@@ -2648,3 +2648,153 @@
                 name: 'windowWidth',
                 class: 'p5',
                 module: 'Environment'
+              },
+              windowHeight: {
+                name: 'windowHeight',
+                class: 'p5',
+                module: 'Environment'
+              },
+              windowResized: {
+                name: 'windowResized',
+                class: 'p5',
+                module: 'Environment'
+              },
+              width: {
+                name: 'width',
+                class: 'p5',
+                module: 'Environment'
+              },
+              height: {
+                name: 'height',
+                class: 'p5',
+                module: 'Environment'
+              },
+              fullscreen: {
+                name: 'fullscreen',
+                params: [
+                  {
+                    name: 'val',
+                    description:
+                      '<p>whether the sketch should be in fullscreen mode\nor not</p>\n',
+                    type: 'Boolean',
+                    optional: true
+                  }
+                ],
+                class: 'p5',
+                module: 'Environment'
+              },
+              pixelDensity: {
+                name: 'pixelDensity',
+                class: 'p5',
+                module: 'Environment',
+                overloads: [
+                  {
+                    params: [
+                      {
+                        name: 'val',
+                        description: '<p>whether or how much the sketch should scale</p>\n',
+                        type: 'Number'
+                      }
+                    ],
+                    chainable: 1
+                  },
+                  {
+                    params: []
+                  }
+                ]
+              },
+              displayDensity: {
+                name: 'displayDensity',
+                class: 'p5',
+                module: 'Environment'
+              },
+              getURL: {
+                name: 'getURL',
+                class: 'p5',
+                module: 'Environment'
+              },
+              getURLPath: {
+                name: 'getURLPath',
+                class: 'p5',
+                module: 'Environment'
+              },
+              getURLParams: {
+                name: 'getURLParams',
+                class: 'p5',
+                module: 'Environment'
+              },
+              preload: {
+                name: 'preload',
+                class: 'p5',
+                module: 'Structure'
+              },
+              setup: {
+                name: 'setup',
+                class: 'p5',
+                module: 'Structure'
+              },
+              draw: {
+                name: 'draw',
+                class: 'p5',
+                module: 'Structure'
+              },
+              remove: {
+                name: 'remove',
+                class: 'p5',
+                module: 'Structure'
+              },
+              disableFriendlyErrors: {
+                name: 'disableFriendlyErrors',
+                class: 'p5',
+                module: 'Structure'
+              },
+              let: {
+                name: 'let',
+                class: 'p5',
+                module: 'Foundation'
+              },
+              const: {
+                name: 'const',
+                class: 'p5',
+                module: 'Foundation'
+              },
+              '===': {
+                name: '===',
+                class: 'p5',
+                module: 'Foundation'
+              },
+              '>': {
+                name: '>',
+                class: 'p5',
+                module: 'Foundation'
+              },
+              '>=': {
+                name: '>=',
+                class: 'p5',
+                module: 'Foundation'
+              },
+              '<': {
+                name: '<',
+                class: 'p5',
+                module: 'Foundation'
+              },
+              '<=': {
+                name: '<=',
+                class: 'p5',
+                module: 'Foundation'
+              },
+              'if-else': {
+                name: 'if-else',
+                class: 'p5',
+                module: 'Foundation'
+              },
+              function: {
+                name: 'function',
+                class: 'p5',
+                module: 'Foundation'
+              },
+              return: {
+                name: 'return',
+                class: 'p5',
+                module: 'Foundation'
+              },
