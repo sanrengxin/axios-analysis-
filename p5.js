@@ -3200,3 +3200,148 @@
                   }
                 ]
               },
+              storeItem: {
+                name: 'storeItem',
+                params: [
+                  {
+                    name: 'key',
+                    description: '',
+                    type: 'String'
+                  },
+                  {
+                    name: 'value',
+                    description: '',
+                    type: 'String|Number|Object|Boolean|p5.Color|p5.Vector'
+                  }
+                ],
+                class: 'p5',
+                module: 'Data'
+              },
+              getItem: {
+                name: 'getItem',
+                params: [
+                  {
+                    name: 'key',
+                    description:
+                      '<p>name that you wish to use to store in local storage</p>\n',
+                    type: 'String'
+                  }
+                ],
+                class: 'p5',
+                module: 'Data'
+              },
+              clearStorage: {
+                name: 'clearStorage',
+                class: 'p5',
+                module: 'Data'
+              },
+              removeItem: {
+                name: 'removeItem',
+                params: [
+                  {
+                    name: 'key',
+                    description: '',
+                    type: 'String'
+                  }
+                ],
+                class: 'p5',
+                module: 'Data'
+              },
+              createStringDict: {
+                name: 'createStringDict',
+                class: 'p5',
+                module: 'Data',
+                overloads: [
+                  {
+                    params: [
+                      {
+                        name: 'key',
+                        description: '',
+                        type: 'String'
+                      },
+                      {
+                        name: 'value',
+                        description: '',
+                        type: 'String'
+                      }
+                    ]
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'object',
+                        description: '<p>object</p>\n',
+                        type: 'Object'
+                      }
+                    ]
+                  }
+                ]
+              },
+              createNumberDict: {
+                name: 'createNumberDict',
+                class: 'p5',
+                module: 'Data',
+                overloads: [
+                  {
+                    params: [
+                      {
+                        name: 'key',
+                        description: '',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'value',
+                        description: '',
+                        type: 'Number'
+                      }
+                    ]
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'object',
+                        description: '<p>object</p>\n',
+                        type: 'Object'
+                      }
+                    ]
+                  }
+                ]
+              },
+              select: {
+                name: 'select',
+                params: [
+                  {
+                    name: 'selectors',
+                    description: '<p>CSS selector string of element to search for</p>\n',
+                    type: 'String'
+                  },
+                  {
+                    name: 'container',
+                    description:
+                      '<p>CSS selector string, <a href="#/p5.Element">p5.Element</a>, or\n                                            HTML element to search within</p>\n',
+                    type: 'String|p5.Element|HTMLElement',
+                    optional: true
+                  }
+                ],
+                class: 'p5',
+                module: 'DOM'
+              },
+              selectAll: {
+                name: 'selectAll',
+                params: [
+                  {
+                    name: 'selectors',
+                    description: '<p>CSS selector string of elements to search for</p>\n',
+                    type: 'String'
+                  },
+                  {
+                    name: 'container',
+                    description:
+                      '<p>CSS selector string, <a href="#/p5.Element">p5.Element</a>\n                                            , or HTML element to search within</p>\n',
+                    type: 'String|p5.Element|HTMLElement',
+                    optional: true
+                  }
+                ],
+                class: 'p5',
+                module: 'DOM'
+              },
