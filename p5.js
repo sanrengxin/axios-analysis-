@@ -3345,3 +3345,131 @@
                 class: 'p5',
                 module: 'DOM'
               },
+              removeElements: {
+                name: 'removeElements',
+                class: 'p5',
+                module: 'DOM'
+              },
+              changed: {
+                name: 'changed',
+                params: [
+                  {
+                    name: 'fxn',
+                    description:
+                      '<p>function to be fired when the value of\n                               an element changes.\n                               if <code>false</code> is passed instead, the previously\n                               firing function will no longer fire.</p>\n',
+                    type: 'Function|Boolean'
+                  }
+                ],
+                class: 'p5',
+                module: 'DOM'
+              },
+              input: {
+                name: 'input',
+                params: [
+                  {
+                    name: 'fxn',
+                    description:
+                      '<p>function to be fired when any user input is\n                               detected within the element.\n                               if <code>false</code> is passed instead, the previously\n                               firing function will no longer fire.</p>\n',
+                    type: 'Function|Boolean'
+                  }
+                ],
+                class: 'p5',
+                module: 'DOM'
+              },
+              createDiv: {
+                name: 'createDiv',
+                params: [
+                  {
+                    name: 'html',
+                    description: '<p>inner HTML for element created</p>\n',
+                    type: 'String',
+                    optional: true
+                  }
+                ],
+                class: 'p5',
+                module: 'DOM'
+              },
+              createP: {
+                name: 'createP',
+                params: [
+                  {
+                    name: 'html',
+                    description: '<p>inner HTML for element created</p>\n',
+                    type: 'String',
+                    optional: true
+                  }
+                ],
+                class: 'p5',
+                module: 'DOM'
+              },
+              createSpan: {
+                name: 'createSpan',
+                params: [
+                  {
+                    name: 'html',
+                    description: '<p>inner HTML for element created</p>\n',
+                    type: 'String',
+                    optional: true
+                  }
+                ],
+                class: 'p5',
+                module: 'DOM'
+              },
+              createImg: {
+                name: 'createImg',
+                class: 'p5',
+                module: 'DOM',
+                overloads: [
+                  {
+                    params: [
+                      {
+                        name: 'src',
+                        description: '<p>src path or url for image</p>\n',
+                        type: 'String'
+                      },
+                      {
+                        name: 'alt',
+                        description:
+                          '<p><a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Img#Attributes">alternate text</a> to be used if image does not load. You can use also an empty string (<code>""</code>) if that an image is not intended to be viewed.</p>\n',
+                        type: 'String'
+                      }
+                    ]
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'src',
+                        description: '',
+                        type: 'String'
+                      },
+                      {
+                        name: 'alt',
+                        description: '',
+                        type: 'String'
+                      },
+                      {
+                        name: 'crossOrigin',
+                        description:
+                          '<p><a href="https://developer.mozilla.org/en-US/docs/Web/HTML/CORS_settings_attributes">crossOrigin property</a> of the <code>img</code> element; use either \'anonymous\' or \'use-credentials\' to retrieve the image with cross-origin access (for later use with <code>canvas</code>. if an empty string(<code>""</code>) is passed, CORS is not used</p>\n',
+                        type: 'String'
+                      },
+                      {
+                        name: 'successCallback',
+                        description:
+                          '<p>callback to be called once image data is loaded with the <a href="#/p5.Element">p5.Element</a> as argument</p>\n',
+                        type: 'Function',
+                        optional: true
+                      }
+                    ]
+                  }
+                ]
+              },
+              createA: {
+                name: 'createA',
+                params: [
+                  {
+                    name: 'href',
+                    description: '<p>url of page to link to</p>\n',
+                    type: 'String'
+                  },
+                  {
