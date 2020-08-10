@@ -3062,3 +3062,141 @@
                   {
                     name: 'angle',
                     description:
+                      '<p>the angle of rotation, specified in radians\n                       or degrees, depending on current angleMode</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5',
+                module: 'Transform'
+              },
+              rotateY: {
+                name: 'rotateY',
+                params: [
+                  {
+                    name: 'angle',
+                    description:
+                      '<p>the angle of rotation, specified in radians\n                       or degrees, depending on current angleMode</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5',
+                module: 'Transform'
+              },
+              rotateZ: {
+                name: 'rotateZ',
+                params: [
+                  {
+                    name: 'angle',
+                    description:
+                      '<p>the angle of rotation, specified in radians\n                       or degrees, depending on current angleMode</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5',
+                module: 'Transform'
+              },
+              scale: {
+                name: 'scale',
+                class: 'p5',
+                module: 'Transform',
+                overloads: [
+                  {
+                    params: [
+                      {
+                        name: 's',
+                        description:
+                          '<p>percent to scale the object, or percentage to\n                     scale the object in the x-axis if multiple arguments\n                     are given</p>\n',
+                        type: 'Number|p5.Vector|Number[]'
+                      },
+                      {
+                        name: 'y',
+                        description: '<p>percent to scale the object in the y-axis</p>\n',
+                        type: 'Number',
+                        optional: true
+                      },
+                      {
+                        name: 'z',
+                        description:
+                          '<p>percent to scale the object in the z-axis (webgl only)</p>\n',
+                        type: 'Number',
+                        optional: true
+                      }
+                    ],
+                    chainable: 1
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'scales',
+                        description: '<p>per-axis percents to scale the object</p>\n',
+                        type: 'p5.Vector|Number[]'
+                      }
+                    ],
+                    chainable: 1
+                  }
+                ]
+              },
+              shearX: {
+                name: 'shearX',
+                params: [
+                  {
+                    name: 'angle',
+                    description:
+                      '<p>angle of shear specified in radians or degrees,\n                       depending on current angleMode</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5',
+                module: 'Transform'
+              },
+              shearY: {
+                name: 'shearY',
+                params: [
+                  {
+                    name: 'angle',
+                    description:
+                      '<p>angle of shear specified in radians or degrees,\n                       depending on current angleMode</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5',
+                module: 'Transform'
+              },
+              translate: {
+                name: 'translate',
+                class: 'p5',
+                module: 'Transform',
+                overloads: [
+                  {
+                    params: [
+                      {
+                        name: 'x',
+                        description: '<p>left/right translation</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'y',
+                        description: '<p>up/down translation</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'z',
+                        description: '<p>forward/backward translation (webgl only)</p>\n',
+                        type: 'Number',
+                        optional: true
+                      }
+                    ],
+                    chainable: 1
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'vector',
+                        description: '<p>the vector to translate by</p>\n',
+                        type: 'p5.Vector'
+                      }
+                    ],
+                    chainable: 1
+                  }
+                ]
+              },
