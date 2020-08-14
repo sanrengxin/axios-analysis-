@@ -3747,3 +3747,129 @@
                     name: 'callback',
                     description:
                       '<p>function to be called once\n                                  stream has loaded</p>\n',
+                    type: 'Function',
+                    optional: true
+                  }
+                ],
+                class: 'p5',
+                module: 'DOM'
+              },
+              createElement: {
+                name: 'createElement',
+                params: [
+                  {
+                    name: 'tag',
+                    description: '<p>tag for the new element</p>\n',
+                    type: 'String'
+                  },
+                  {
+                    name: 'content',
+                    description: '<p>html content to be inserted into the element</p>\n',
+                    type: 'String',
+                    optional: true
+                  }
+                ],
+                class: 'p5',
+                module: 'DOM'
+              },
+              deviceOrientation: {
+                name: 'deviceOrientation',
+                class: 'p5',
+                module: 'Events'
+              },
+              accelerationX: {
+                name: 'accelerationX',
+                class: 'p5',
+                module: 'Events'
+              },
+              accelerationY: {
+                name: 'accelerationY',
+                class: 'p5',
+                module: 'Events'
+              },
+              accelerationZ: {
+                name: 'accelerationZ',
+                class: 'p5',
+                module: 'Events'
+              },
+              pAccelerationX: {
+                name: 'pAccelerationX',
+                class: 'p5',
+                module: 'Events'
+              },
+              pAccelerationY: {
+                name: 'pAccelerationY',
+                class: 'p5',
+                module: 'Events'
+              },
+              pAccelerationZ: {
+                name: 'pAccelerationZ',
+                class: 'p5',
+                module: 'Events'
+              },
+              rotationX: {
+                name: 'rotationX',
+                class: 'p5',
+                module: 'Events'
+              },
+              rotationY: {
+                name: 'rotationY',
+                class: 'p5',
+                module: 'Events'
+              },
+              rotationZ: {
+                name: 'rotationZ',
+                class: 'p5',
+                module: 'Events'
+              },
+              pRotationX: {
+                name: 'pRotationX',
+                class: 'p5',
+                module: 'Events'
+              },
+              pRotationY: {
+                name: 'pRotationY',
+                class: 'p5',
+                module: 'Events'
+              },
+              pRotationZ: {
+                name: 'pRotationZ',
+                class: 'p5',
+                module: 'Events'
+              },
+              turnAxis: {
+                name: 'turnAxis',
+                class: 'p5',
+                module: 'Events'
+              },
+              setMoveThreshold: {
+                name: 'setMoveThreshold',
+                params: [
+                  {
+                    name: 'value',
+                    description: '<p>The threshold value</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5',
+                module: 'Events'
+              },
+              setShakeThreshold: {
+                name: 'setShakeThreshold',
+                params: [
+                  {
+                    name: 'value',
+                    description: '<p>The threshold value</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5',
+                module: 'Events'
+              },
+              deviceMoved: {
+                name: 'deviceMoved',
+                class: 'p5',
+                module: 'Events'
+              },
+              deviceTurned: {
+                name: 'deviceTurned',
