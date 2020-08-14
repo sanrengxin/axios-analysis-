@@ -3617,3 +3617,133 @@
                     params: []
                   }
                 ]
+              },
+              createColorPicker: {
+                name: 'createColorPicker',
+                params: [
+                  {
+                    name: 'value',
+                    description: '<p>default color of element</p>\n',
+                    type: 'String|p5.Color',
+                    optional: true
+                  }
+                ],
+                class: 'p5',
+                module: 'DOM'
+              },
+              createInput: {
+                name: 'createInput',
+                class: 'p5',
+                module: 'DOM',
+                overloads: [
+                  {
+                    params: [
+                      {
+                        name: 'value',
+                        description: '<p>default value of the input box</p>\n',
+                        type: 'String'
+                      },
+                      {
+                        name: 'type',
+                        description:
+                          '<p>type of text, ie text, password etc. Defaults to text.\n  Needs a value to be specified first.</p>\n',
+                        type: 'String',
+                        optional: true
+                      }
+                    ]
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'value',
+                        description: '',
+                        type: 'String',
+                        optional: true
+                      }
+                    ]
+                  }
+                ]
+              },
+              createFileInput: {
+                name: 'createFileInput',
+                params: [
+                  {
+                    name: 'callback',
+                    description: '<p>callback function for when a file is loaded</p>\n',
+                    type: 'Function'
+                  },
+                  {
+                    name: 'multiple',
+                    description:
+                      '<p>optional, to allow multiple files to be selected</p>\n',
+                    type: 'Boolean',
+                    optional: true
+                  }
+                ],
+                class: 'p5',
+                module: 'DOM'
+              },
+              createVideo: {
+                name: 'createVideo',
+                params: [
+                  {
+                    name: 'src',
+                    description:
+                      '<p>path to a video file, or array of paths for\n                            supporting different browsers</p>\n',
+                    type: 'String|String[]'
+                  },
+                  {
+                    name: 'callback',
+                    description:
+                      "<p>callback function to be called upon\n                            'canplaythrough' event fire, that is, when the\n                            browser can play the media, and estimates that\n                            enough data has been loaded to play the media\n                            up to its end without having to stop for\n                            further buffering of content</p>\n",
+                    type: 'Function',
+                    optional: true
+                  }
+                ],
+                class: 'p5',
+                module: 'DOM'
+              },
+              createAudio: {
+                name: 'createAudio',
+                params: [
+                  {
+                    name: 'src',
+                    description:
+                      '<p>path to an audio file, or array of paths\n                            for supporting different browsers</p>\n',
+                    type: 'String|String[]',
+                    optional: true
+                  },
+                  {
+                    name: 'callback',
+                    description:
+                      "<p>callback function to be called upon\n                            'canplaythrough' event fire, that is, when the\n                            browser can play the media, and estimates that\n                            enough data has been loaded to play the media\n                            up to its end without having to stop for\n                            further buffering of content</p>\n",
+                    type: 'Function',
+                    optional: true
+                  }
+                ],
+                class: 'p5',
+                module: 'DOM'
+              },
+              VIDEO: {
+                name: 'VIDEO',
+                class: 'p5',
+                module: 'DOM'
+              },
+              AUDIO: {
+                name: 'AUDIO',
+                class: 'p5',
+                module: 'DOM'
+              },
+              createCapture: {
+                name: 'createCapture',
+                params: [
+                  {
+                    name: 'type',
+                    description:
+                      '<p>type of capture, either VIDEO or\n                                  AUDIO if none specified, default both,\n                                  or a Constraints object</p>\n',
+                    type: 'String|Constant|Object'
+                  },
+                  {
+                    name: 'callback',
+                    description:
+                      '<p>function to be called once\n                                  stream has loaded</p>\n',
