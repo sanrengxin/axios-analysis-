@@ -3473,3 +3473,147 @@
                     type: 'String'
                   },
                   {
+                    name: 'html',
+                    description: '<p>inner html of link element to display</p>\n',
+                    type: 'String'
+                  },
+                  {
+                    name: 'target',
+                    description:
+                      '<p>target where new link should open,\n                            could be _blank, _self, _parent, _top.</p>\n',
+                    type: 'String',
+                    optional: true
+                  }
+                ],
+                class: 'p5',
+                module: 'DOM'
+              },
+              createSlider: {
+                name: 'createSlider',
+                params: [
+                  {
+                    name: 'min',
+                    description: '<p>minimum value of the slider</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'max',
+                    description: '<p>maximum value of the slider</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'value',
+                    description: '<p>default value of the slider</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'step',
+                    description:
+                      '<p>step size for each tick of the slider (if step is set to 0, the slider will move continuously from the minimum to the maximum value)</p>\n',
+                    type: 'Number',
+                    optional: true
+                  }
+                ],
+                class: 'p5',
+                module: 'DOM'
+              },
+              createButton: {
+                name: 'createButton',
+                params: [
+                  {
+                    name: 'label',
+                    description: '<p>label displayed on the button</p>\n',
+                    type: 'String'
+                  },
+                  {
+                    name: 'value',
+                    description: '<p>value of the button</p>\n',
+                    type: 'String',
+                    optional: true
+                  }
+                ],
+                class: 'p5',
+                module: 'DOM'
+              },
+              createCheckbox: {
+                name: 'createCheckbox',
+                params: [
+                  {
+                    name: 'label',
+                    description: '<p>label displayed after checkbox</p>\n',
+                    type: 'String',
+                    optional: true
+                  },
+                  {
+                    name: 'value',
+                    description:
+                      '<p>value of the checkbox; checked is true, unchecked is false</p>\n',
+                    type: 'Boolean',
+                    optional: true
+                  }
+                ],
+                class: 'p5',
+                module: 'DOM'
+              },
+              createSelect: {
+                name: 'createSelect',
+                class: 'p5',
+                module: 'DOM',
+                overloads: [
+                  {
+                    params: [
+                      {
+                        name: 'multiple',
+                        description:
+                          '<p>true if dropdown should support multiple selections</p>\n',
+                        type: 'Boolean',
+                        optional: true
+                      }
+                    ]
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'existing',
+                        description: '<p>DOM select element</p>\n',
+                        type: 'Object'
+                      }
+                    ]
+                  }
+                ]
+              },
+              createRadio: {
+                name: 'createRadio',
+                class: 'p5',
+                module: 'DOM',
+                overloads: [
+                  {
+                    params: [
+                      {
+                        name: 'containerElement',
+                        description:
+                          '<p>An container HTML Element either a div\nor span inside which all existing radio inputs will be considered as options.</p>\n',
+                        type: 'Object'
+                      },
+                      {
+                        name: 'name',
+                        description: '<p>A name parameter for each Input Element.</p>\n',
+                        type: 'String',
+                        optional: true
+                      }
+                    ]
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'name',
+                        description: '',
+                        type: 'String'
+                      }
+                    ]
+                  },
+                  {
+                    params: []
+                  }
+                ]
