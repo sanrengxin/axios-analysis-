@@ -4104,3 +4104,136 @@
               },
               touchMoved: {
                 name: 'touchMoved',
+                params: [
+                  {
+                    name: 'event',
+                    description: '<p>optional TouchEvent callback argument.</p>\n',
+                    type: 'Object',
+                    optional: true
+                  }
+                ],
+                class: 'p5',
+                module: 'Events'
+              },
+              touchEnded: {
+                name: 'touchEnded',
+                params: [
+                  {
+                    name: 'event',
+                    description: '<p>optional TouchEvent callback argument.</p>\n',
+                    type: 'Object',
+                    optional: true
+                  }
+                ],
+                class: 'p5',
+                module: 'Events'
+              },
+              createImage: {
+                name: 'createImage',
+                params: [
+                  {
+                    name: 'width',
+                    description: '<p>width in pixels</p>\n',
+                    type: 'Integer'
+                  },
+                  {
+                    name: 'height',
+                    description: '<p>height in pixels</p>\n',
+                    type: 'Integer'
+                  }
+                ],
+                class: 'p5',
+                module: 'Image'
+              },
+              saveCanvas: {
+                name: 'saveCanvas',
+                class: 'p5',
+                module: 'Image',
+                overloads: [
+                  {
+                    params: [
+                      {
+                        name: 'selectedCanvas',
+                        description:
+                          '<p>a variable\n                                representing a specific html5 canvas (optional)</p>\n',
+                        type: 'p5.Element|HTMLCanvasElement'
+                      },
+                      {
+                        name: 'filename',
+                        description: '',
+                        type: 'String',
+                        optional: true
+                      },
+                      {
+                        name: 'extension',
+                        description: "<p>'jpg' or 'png'</p>\n",
+                        type: 'String',
+                        optional: true
+                      }
+                    ]
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'filename',
+                        description: '',
+                        type: 'String',
+                        optional: true
+                      },
+                      {
+                        name: 'extension',
+                        description: '',
+                        type: 'String',
+                        optional: true
+                      }
+                    ]
+                  }
+                ]
+              },
+              saveFrames: {
+                name: 'saveFrames',
+                params: [
+                  {
+                    name: 'filename',
+                    description: '',
+                    type: 'String'
+                  },
+                  {
+                    name: 'extension',
+                    description: "<p>'jpg' or 'png'</p>\n",
+                    type: 'String'
+                  },
+                  {
+                    name: 'duration',
+                    description: '<p>Duration in seconds to save the frames for.</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'framerate',
+                    description: '<p>Framerate to save the frames in.</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'callback',
+                    description:
+                      '<p>A callback function that will be executed\n                                to handle the image data. This function\n                                should accept an array as argument. The\n                                array will contain the specified number of\n                                frames of objects. Each object has three\n                                properties: imageData - an\n                                image/octet-stream, filename and extension.</p>\n',
+                    type: 'Function(Array)',
+                    optional: true
+                  }
+                ],
+                class: 'p5',
+                module: 'Image'
+              },
+              loadImage: {
+                name: 'loadImage',
+                params: [
+                  {
+                    name: 'path',
+                    description: '<p>Path of the image to be loaded</p>\n',
+                    type: 'String'
+                  },
+                  {
+                    name: 'successCallback',
+                    description:
+                      '<p>Function to be called once\n                               the image is loaded. Will be passed the\n                               <a href="#/p5.Image">p5.Image</a>.</p>\n',
+                    type: 'function(p5.Image)',
