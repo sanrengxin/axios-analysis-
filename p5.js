@@ -3997,3 +3997,110 @@
                 module: 'Events'
               },
               mouseDragged: {
+                name: 'mouseDragged',
+                params: [
+                  {
+                    name: 'event',
+                    description: '<p>optional MouseEvent callback argument.</p>\n',
+                    type: 'Object',
+                    optional: true
+                  }
+                ],
+                class: 'p5',
+                module: 'Events'
+              },
+              mousePressed: {
+                name: 'mousePressed',
+                params: [
+                  {
+                    name: 'event',
+                    description: '<p>optional MouseEvent callback argument.</p>\n',
+                    type: 'Object',
+                    optional: true
+                  }
+                ],
+                class: 'p5',
+                module: 'Events'
+              },
+              mouseReleased: {
+                name: 'mouseReleased',
+                params: [
+                  {
+                    name: 'event',
+                    description: '<p>optional MouseEvent callback argument.</p>\n',
+                    type: 'Object',
+                    optional: true
+                  }
+                ],
+                class: 'p5',
+                module: 'Events'
+              },
+              mouseClicked: {
+                name: 'mouseClicked',
+                params: [
+                  {
+                    name: 'event',
+                    description: '<p>optional MouseEvent callback argument.</p>\n',
+                    type: 'Object',
+                    optional: true
+                  }
+                ],
+                class: 'p5',
+                module: 'Events'
+              },
+              doubleClicked: {
+                name: 'doubleClicked',
+                params: [
+                  {
+                    name: 'event',
+                    description: '<p>optional MouseEvent callback argument.</p>\n',
+                    type: 'Object',
+                    optional: true
+                  }
+                ],
+                class: 'p5',
+                module: 'Events'
+              },
+              mouseWheel: {
+                name: 'mouseWheel',
+                params: [
+                  {
+                    name: 'event',
+                    description: '<p>optional WheelEvent callback argument.</p>\n',
+                    type: 'Object',
+                    optional: true
+                  }
+                ],
+                class: 'p5',
+                module: 'Events'
+              },
+              requestPointerLock: {
+                name: 'requestPointerLock',
+                class: 'p5',
+                module: 'Events'
+              },
+              exitPointerLock: {
+                name: 'exitPointerLock',
+                class: 'p5',
+                module: 'Events'
+              },
+              touches: {
+                name: 'touches',
+                class: 'p5',
+                module: 'Events'
+              },
+              touchStarted: {
+                name: 'touchStarted',
+                params: [
+                  {
+                    name: 'event',
+                    description: '<p>optional TouchEvent callback argument.</p>\n',
+                    type: 'Object',
+                    optional: true
+                  }
+                ],
+                class: 'p5',
+                module: 'Events'
+              },
+              touchMoved: {
+                name: 'touchMoved',
