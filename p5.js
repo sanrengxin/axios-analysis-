@@ -3873,3 +3873,127 @@
               },
               deviceTurned: {
                 name: 'deviceTurned',
+                class: 'p5',
+                module: 'Events'
+              },
+              deviceShaken: {
+                name: 'deviceShaken',
+                class: 'p5',
+                module: 'Events'
+              },
+              keyIsPressed: {
+                name: 'keyIsPressed',
+                class: 'p5',
+                module: 'Events'
+              },
+              key: {
+                name: 'key',
+                class: 'p5',
+                module: 'Events'
+              },
+              keyCode: {
+                name: 'keyCode',
+                class: 'p5',
+                module: 'Events'
+              },
+              keyPressed: {
+                name: 'keyPressed',
+                class: 'p5',
+                module: 'Events'
+              },
+              keyReleased: {
+                name: 'keyReleased',
+                class: 'p5',
+                module: 'Events'
+              },
+              keyTyped: {
+                name: 'keyTyped',
+                class: 'p5',
+                module: 'Events'
+              },
+              keyIsDown: {
+                name: 'keyIsDown',
+                params: [
+                  {
+                    name: 'code',
+                    description: '<p>The key to check for.</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5',
+                module: 'Events'
+              },
+              movedX: {
+                name: 'movedX',
+                class: 'p5',
+                module: 'Events'
+              },
+              movedY: {
+                name: 'movedY',
+                class: 'p5',
+                module: 'Events'
+              },
+              mouseX: {
+                name: 'mouseX',
+                class: 'p5',
+                module: 'Events'
+              },
+              mouseY: {
+                name: 'mouseY',
+                class: 'p5',
+                module: 'Events'
+              },
+              pmouseX: {
+                name: 'pmouseX',
+                class: 'p5',
+                module: 'Events'
+              },
+              pmouseY: {
+                name: 'pmouseY',
+                class: 'p5',
+                module: 'Events'
+              },
+              winMouseX: {
+                name: 'winMouseX',
+                class: 'p5',
+                module: 'Events'
+              },
+              winMouseY: {
+                name: 'winMouseY',
+                class: 'p5',
+                module: 'Events'
+              },
+              pwinMouseX: {
+                name: 'pwinMouseX',
+                class: 'p5',
+                module: 'Events'
+              },
+              pwinMouseY: {
+                name: 'pwinMouseY',
+                class: 'p5',
+                module: 'Events'
+              },
+              mouseButton: {
+                name: 'mouseButton',
+                class: 'p5',
+                module: 'Events'
+              },
+              mouseIsPressed: {
+                name: 'mouseIsPressed',
+                class: 'p5',
+                module: 'Events'
+              },
+              mouseMoved: {
+                name: 'mouseMoved',
+                params: [
+                  {
+                    name: 'event',
+                    description: '<p>optional MouseEvent callback argument.</p>\n',
+                    type: 'Object',
+                    optional: true
+                  }
+                ],
+                class: 'p5',
+                module: 'Events'
+              },
+              mouseDragged: {
