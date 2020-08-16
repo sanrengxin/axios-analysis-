@@ -4502,3 +4502,150 @@
                         name: 'dh',
                         description: '<p>destination image height</p>\n',
                         type: 'Integer'
+                      },
+                      {
+                        name: 'blendMode',
+                        description:
+                          '<p>the blend mode. either\n    BLEND, DARKEST, LIGHTEST, DIFFERENCE,\n    MULTIPLY, EXCLUSION, SCREEN, REPLACE, OVERLAY, HARD_LIGHT,\n    SOFT_LIGHT, DODGE, BURN, ADD or NORMAL.</p>\n',
+                        type: 'Constant'
+                      }
+                    ]
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'sx',
+                        description: '',
+                        type: 'Integer'
+                      },
+                      {
+                        name: 'sy',
+                        description: '',
+                        type: 'Integer'
+                      },
+                      {
+                        name: 'sw',
+                        description: '',
+                        type: 'Integer'
+                      },
+                      {
+                        name: 'sh',
+                        description: '',
+                        type: 'Integer'
+                      },
+                      {
+                        name: 'dx',
+                        description: '',
+                        type: 'Integer'
+                      },
+                      {
+                        name: 'dy',
+                        description: '',
+                        type: 'Integer'
+                      },
+                      {
+                        name: 'dw',
+                        description: '',
+                        type: 'Integer'
+                      },
+                      {
+                        name: 'dh',
+                        description: '',
+                        type: 'Integer'
+                      },
+                      {
+                        name: 'blendMode',
+                        description: '',
+                        type: 'Constant'
+                      }
+                    ]
+                  }
+                ]
+              },
+              copy: {
+                name: 'copy',
+                class: 'p5',
+                module: 'Image',
+                overloads: [
+                  {
+                    params: [
+                      {
+                        name: 'srcImage',
+                        description: '<p>source image</p>\n',
+                        type: 'p5.Image|p5.Element'
+                      },
+                      {
+                        name: 'sx',
+                        description:
+                          "<p>X coordinate of the source's upper left corner</p>\n",
+                        type: 'Integer'
+                      },
+                      {
+                        name: 'sy',
+                        description:
+                          "<p>Y coordinate of the source's upper left corner</p>\n",
+                        type: 'Integer'
+                      },
+                      {
+                        name: 'sw',
+                        description: '<p>source image width</p>\n',
+                        type: 'Integer'
+                      },
+                      {
+                        name: 'sh',
+                        description: '<p>source image height</p>\n',
+                        type: 'Integer'
+                      },
+                      {
+                        name: 'dx',
+                        description:
+                          "<p>X coordinate of the destination's upper left corner</p>\n",
+                        type: 'Integer'
+                      },
+                      {
+                        name: 'dy',
+                        description:
+                          "<p>Y coordinate of the destination's upper left corner</p>\n",
+                        type: 'Integer'
+                      },
+                      {
+                        name: 'dw',
+                        description: '<p>destination image width</p>\n',
+                        type: 'Integer'
+                      },
+                      {
+                        name: 'dh',
+                        description: '<p>destination image height</p>\n',
+                        type: 'Integer'
+                      }
+                    ]
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'sx',
+                        description: '',
+                        type: 'Integer'
+                      },
+                      {
+                        name: 'sy',
+                        description: '',
+                        type: 'Integer'
+                      },
+                      {
+                        name: 'sw',
+                        description: '',
+                        type: 'Integer'
+                      },
+                      {
+                        name: 'sh',
+                        description: '',
+                        type: 'Integer'
+                      },
+                      {
+                        name: 'dx',
+                        description: '',
+                        type: 'Integer'
+                      },
+                      {
+                        name: 'dy',
