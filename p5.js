@@ -4373,3 +4373,132 @@
                         type: 'Number'
                       },
                       {
+                        name: 'alpha',
+                        description: '',
+                        type: 'Number',
+                        optional: true
+                      }
+                    ]
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'value',
+                        description: '<p>a color string</p>\n',
+                        type: 'String'
+                      }
+                    ]
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'gray',
+                        description: '<p>a gray value</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'alpha',
+                        description: '',
+                        type: 'Number',
+                        optional: true
+                      }
+                    ]
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'values',
+                        description:
+                          '<p>an array containing the red,green,blue &\n                                and alpha components of the color</p>\n',
+                        type: 'Number[]'
+                      }
+                    ]
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'color',
+                        description: '<p>the tint color</p>\n',
+                        type: 'p5.Color'
+                      }
+                    ]
+                  }
+                ]
+              },
+              noTint: {
+                name: 'noTint',
+                class: 'p5',
+                module: 'Image'
+              },
+              imageMode: {
+                name: 'imageMode',
+                params: [
+                  {
+                    name: 'mode',
+                    description: '<p>either CORNER, CORNERS, or CENTER</p>\n',
+                    type: 'Constant'
+                  }
+                ],
+                class: 'p5',
+                module: 'Image'
+              },
+              pixels: {
+                name: 'pixels',
+                class: 'p5',
+                module: 'Image'
+              },
+              blend: {
+                name: 'blend',
+                class: 'p5',
+                module: 'Image',
+                overloads: [
+                  {
+                    params: [
+                      {
+                        name: 'srcImage',
+                        description: '<p>source image</p>\n',
+                        type: 'p5.Image'
+                      },
+                      {
+                        name: 'sx',
+                        description:
+                          "<p>X coordinate of the source's upper left corner</p>\n",
+                        type: 'Integer'
+                      },
+                      {
+                        name: 'sy',
+                        description:
+                          "<p>Y coordinate of the source's upper left corner</p>\n",
+                        type: 'Integer'
+                      },
+                      {
+                        name: 'sw',
+                        description: '<p>source image width</p>\n',
+                        type: 'Integer'
+                      },
+                      {
+                        name: 'sh',
+                        description: '<p>source image height</p>\n',
+                        type: 'Integer'
+                      },
+                      {
+                        name: 'dx',
+                        description:
+                          "<p>X coordinate of the destination's upper left corner</p>\n",
+                        type: 'Integer'
+                      },
+                      {
+                        name: 'dy',
+                        description:
+                          "<p>Y coordinate of the destination's upper left corner</p>\n",
+                        type: 'Integer'
+                      },
+                      {
+                        name: 'dw',
+                        description: '<p>destination image width</p>\n',
+                        type: 'Integer'
+                      },
+                      {
+                        name: 'dh',
+                        description: '<p>destination image height</p>\n',
+                        type: 'Integer'
