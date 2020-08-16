@@ -4237,3 +4237,139 @@
                     description:
                       '<p>Function to be called once\n                               the image is loaded. Will be passed the\n                               <a href="#/p5.Image">p5.Image</a>.</p>\n',
                     type: 'function(p5.Image)',
+                    optional: true
+                  },
+                  {
+                    name: 'failureCallback',
+                    description:
+                      '<p>called with event error if\n                               the image fails to load.</p>\n',
+                    type: 'Function(Event)',
+                    optional: true
+                  }
+                ],
+                class: 'p5',
+                module: 'Image'
+              },
+              image: {
+                name: 'image',
+                class: 'p5',
+                module: 'Image',
+                overloads: [
+                  {
+                    params: [
+                      {
+                        name: 'img',
+                        description: '<p>the image to display</p>\n',
+                        type: 'p5.Image|p5.Element'
+                      },
+                      {
+                        name: 'x',
+                        description:
+                          '<p>the x-coordinate of the top-left corner of the image</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'y',
+                        description:
+                          '<p>the y-coordinate of the top-left corner of the image</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'width',
+                        description: '<p>the width to draw the image</p>\n',
+                        type: 'Number',
+                        optional: true
+                      },
+                      {
+                        name: 'height',
+                        description: '<p>the height to draw the image</p>\n',
+                        type: 'Number',
+                        optional: true
+                      }
+                    ]
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'img',
+                        description: '',
+                        type: 'p5.Image|p5.Element'
+                      },
+                      {
+                        name: 'dx',
+                        description:
+                          '<p>the x-coordinate of the destination\n                          rectangle in which to draw the source image</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'dy',
+                        description:
+                          '<p>the y-coordinate of the destination\n                          rectangle in which to draw the source image</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'dWidth',
+                        description: '<p>the width of the destination rectangle</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'dHeight',
+                        description: '<p>the height of the destination rectangle</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'sx',
+                        description:
+                          '<p>the x-coordinate of the subsection of the source\nimage to draw into the destination rectangle</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'sy',
+                        description:
+                          '<p>the y-coordinate of the subsection of the source\nimage to draw into the destination rectangle</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'sWidth',
+                        description:
+                          '<p>the width of the subsection of the\n                          source image to draw into the destination\n                          rectangle</p>\n',
+                        type: 'Number',
+                        optional: true
+                      },
+                      {
+                        name: 'sHeight',
+                        description:
+                          '<p>the height of the subsection of the\n                           source image to draw into the destination rectangle</p>\n',
+                        type: 'Number',
+                        optional: true
+                      }
+                    ]
+                  }
+                ]
+              },
+              tint: {
+                name: 'tint',
+                class: 'p5',
+                module: 'Image',
+                overloads: [
+                  {
+                    params: [
+                      {
+                        name: 'v1',
+                        description:
+                          '<p>red or hue value relative to\n                                the current color range</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'v2',
+                        description:
+                          '<p>green or saturation value\n                                relative to the current color range</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'v3',
+                        description:
+                          '<p>blue or brightness value\n                                relative to the current color range</p>\n',
+                        type: 'Number'
+                      },
+                      {
