@@ -4649,3 +4649,143 @@
                       },
                       {
                         name: 'dy',
+                        description: '',
+                        type: 'Integer'
+                      },
+                      {
+                        name: 'dw',
+                        description: '',
+                        type: 'Integer'
+                      },
+                      {
+                        name: 'dh',
+                        description: '',
+                        type: 'Integer'
+                      }
+                    ]
+                  }
+                ]
+              },
+              filter: {
+                name: 'filter',
+                params: [
+                  {
+                    name: 'filterType',
+                    description:
+                      '<p>either THRESHOLD, GRAY, OPAQUE, INVERT,\n                               POSTERIZE, BLUR, ERODE, DILATE or BLUR.\n                               See Filters.js for docs on\n                               each available filter</p>\n',
+                    type: 'Constant'
+                  },
+                  {
+                    name: 'filterParam',
+                    description:
+                      '<p>an optional parameter unique\n                               to each filter, see above</p>\n',
+                    type: 'Number',
+                    optional: true
+                  }
+                ],
+                class: 'p5',
+                module: 'Image'
+              },
+              get: {
+                name: 'get',
+                class: 'p5',
+                module: 'Image',
+                overloads: [
+                  {
+                    params: [
+                      {
+                        name: 'x',
+                        description: '<p>x-coordinate of the pixel</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'y',
+                        description: '<p>y-coordinate of the pixel</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'w',
+                        description: '<p>width</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'h',
+                        description: '<p>height</p>\n',
+                        type: 'Number'
+                      }
+                    ]
+                  },
+                  {
+                    params: []
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'x',
+                        description: '',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'y',
+                        description: '',
+                        type: 'Number'
+                      }
+                    ]
+                  }
+                ]
+              },
+              loadPixels: {
+                name: 'loadPixels',
+                class: 'p5',
+                module: 'Image'
+              },
+              set: {
+                name: 'set',
+                params: [
+                  {
+                    name: 'x',
+                    description: '<p>x-coordinate of the pixel</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'y',
+                    description: '<p>y-coordinate of the pixel</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'c',
+                    description:
+                      '<p>insert a grayscale value | a pixel array |\n                               a <a href="#/p5.Color">p5.Color</a> object | a <a href="#/p5.Image">p5.Image</a> to copy</p>\n',
+                    type: 'Number|Number[]|Object'
+                  }
+                ],
+                class: 'p5',
+                module: 'Image'
+              },
+              updatePixels: {
+                name: 'updatePixels',
+                params: [
+                  {
+                    name: 'x',
+                    description:
+                      '<p>x-coordinate of the upper-left corner of region\n                        to update</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'y',
+                    description:
+                      '<p>y-coordinate of the upper-left corner of region\n                        to update</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'w',
+                    description: '<p>width of region to update</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'h',
+                    description: '<p>height of region to update</p>\n',
+                    type: 'Number',
