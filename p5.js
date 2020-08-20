@@ -4789,3 +4789,145 @@
                     name: 'h',
                     description: '<p>height of region to update</p>\n',
                     type: 'Number',
+                    optional: true
+                  }
+                ],
+                class: 'p5',
+                module: 'Image'
+              },
+              loadJSON: {
+                name: 'loadJSON',
+                class: 'p5',
+                module: 'IO',
+                overloads: [
+                  {
+                    params: [
+                      {
+                        name: 'path',
+                        description: '<p>name of the file or url to load</p>\n',
+                        type: 'String'
+                      },
+                      {
+                        name: 'jsonpOptions',
+                        description: '<p>options object for jsonp related settings</p>\n',
+                        type: 'Object',
+                        optional: true
+                      },
+                      {
+                        name: 'datatype',
+                        description: '<p>"json" or "jsonp"</p>\n',
+                        type: 'String',
+                        optional: true
+                      },
+                      {
+                        name: 'callback',
+                        description:
+                          '<p>function to be executed after\n                                   <a href="#/p5/loadJSON">loadJSON()</a> completes, data is passed\n                                   in as first argument</p>\n',
+                        type: 'Function',
+                        optional: true
+                      },
+                      {
+                        name: 'errorCallback',
+                        description:
+                          '<p>function to be executed if\n                                   there is an error, response is passed\n                                   in as first argument</p>\n',
+                        type: 'Function',
+                        optional: true
+                      }
+                    ]
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'path',
+                        description: '',
+                        type: 'String'
+                      },
+                      {
+                        name: 'datatype',
+                        description: '',
+                        type: 'String'
+                      },
+                      {
+                        name: 'callback',
+                        description: '',
+                        type: 'Function',
+                        optional: true
+                      },
+                      {
+                        name: 'errorCallback',
+                        description: '',
+                        type: 'Function',
+                        optional: true
+                      }
+                    ]
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'path',
+                        description: '',
+                        type: 'String'
+                      },
+                      {
+                        name: 'callback',
+                        description: '',
+                        type: 'Function'
+                      },
+                      {
+                        name: 'errorCallback',
+                        description: '',
+                        type: 'Function',
+                        optional: true
+                      }
+                    ]
+                  }
+                ]
+              },
+              loadStrings: {
+                name: 'loadStrings',
+                params: [
+                  {
+                    name: 'filename',
+                    description: '<p>name of the file or url to load</p>\n',
+                    type: 'String'
+                  },
+                  {
+                    name: 'callback',
+                    description:
+                      '<p>function to be executed after <a href="#/p5/loadStrings">loadStrings()</a>\n                              completes, Array is passed in as first\n                              argument</p>\n',
+                    type: 'Function',
+                    optional: true
+                  },
+                  {
+                    name: 'errorCallback',
+                    description:
+                      '<p>function to be executed if\n                              there is an error, response is passed\n                              in as first argument</p>\n',
+                    type: 'Function',
+                    optional: true
+                  }
+                ],
+                class: 'p5',
+                module: 'IO'
+              },
+              loadTable: {
+                name: 'loadTable',
+                params: [
+                  {
+                    name: 'filename',
+                    description: '<p>name of the file or URL to load</p>\n',
+                    type: 'String'
+                  },
+                  {
+                    name: 'extension',
+                    description:
+                      '<p>parse the table by comma-separated values "csv", semicolon-separated\n                                     values "ssv", or tab-separated values "tsv"</p>\n',
+                    type: 'String',
+                    optional: true
+                  },
+                  {
+                    name: 'header',
+                    description: '<p>"header" to indicate table has header row</p>\n',
+                    type: 'String',
+                    optional: true
+                  },
+                  {
