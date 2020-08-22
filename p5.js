@@ -5188,3 +5188,160 @@
                       {
                         name: 'path',
                         description: '<p>name of the file or url to load</p>\n',
+                        type: 'String'
+                      },
+                      {
+                        name: 'method',
+                        description:
+                          '<p>either "GET", "POST", or "PUT",\n                                   defaults to "GET"</p>\n',
+                        type: 'String',
+                        optional: true
+                      },
+                      {
+                        name: 'datatype',
+                        description: '<p>"json", "jsonp", "xml", or "text"</p>\n',
+                        type: 'String',
+                        optional: true
+                      },
+                      {
+                        name: 'data',
+                        description: '<p>param data passed sent with request</p>\n',
+                        type: 'Object',
+                        optional: true
+                      },
+                      {
+                        name: 'callback',
+                        description:
+                          '<p>function to be executed after\n                                   <a href="#/p5/httpGet">httpGet()</a> completes, data is passed in\n                                   as first argument</p>\n',
+                        type: 'Function',
+                        optional: true
+                      },
+                      {
+                        name: 'errorCallback',
+                        description:
+                          '<p>function to be executed if\n                                   there is an error, response is passed\n                                   in as first argument</p>\n',
+                        type: 'Function',
+                        optional: true
+                      }
+                    ]
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'path',
+                        description: '',
+                        type: 'String'
+                      },
+                      {
+                        name: 'options',
+                        description:
+                          '<p>Request object options as documented in the\n                                   "fetch" API\n<a href="https://developer.mozilla.org/en/docs/Web/API/Fetch_API">reference</a></p>\n',
+                        type: 'Object'
+                      },
+                      {
+                        name: 'callback',
+                        description: '',
+                        type: 'Function',
+                        optional: true
+                      },
+                      {
+                        name: 'errorCallback',
+                        description: '',
+                        type: 'Function',
+                        optional: true
+                      }
+                    ]
+                  }
+                ]
+              },
+              createWriter: {
+                name: 'createWriter',
+                params: [
+                  {
+                    name: 'name',
+                    description: '<p>name of the file to be created</p>\n',
+                    type: 'String'
+                  },
+                  {
+                    name: 'extension',
+                    description: '',
+                    type: 'String',
+                    optional: true
+                  }
+                ],
+                class: 'p5',
+                module: 'IO'
+              },
+              save: {
+                name: 'save',
+                params: [
+                  {
+                    name: 'objectOrFilename',
+                    description:
+                      '<p>If filename is provided, will\n                                           save canvas as an image with\n                                           either png or jpg extension\n                                           depending on the filename.\n                                           If object is provided, will\n                                           save depending on the object\n                                           and filename (see examples\n                                           above).</p>\n',
+                    type: 'Object|String',
+                    optional: true
+                  },
+                  {
+                    name: 'filename',
+                    description:
+                      '<p>If an object is provided as the first\n                             parameter, then the second parameter\n                             indicates the filename,\n                             and should include an appropriate\n                             file extension (see examples above).</p>\n',
+                    type: 'String',
+                    optional: true
+                  },
+                  {
+                    name: 'options',
+                    description:
+                      '<p>Additional options depend on\n                          filetype. For example, when saving JSON,\n                          <code>true</code> indicates that the\n                          output will be optimized for filesize,\n                          rather than readability.</p>\n',
+                    type: 'Boolean|String',
+                    optional: true
+                  }
+                ],
+                class: 'p5',
+                module: 'IO'
+              },
+              saveJSON: {
+                name: 'saveJSON',
+                params: [
+                  {
+                    name: 'json',
+                    description: '',
+                    type: 'Array|Object'
+                  },
+                  {
+                    name: 'filename',
+                    description: '',
+                    type: 'String'
+                  },
+                  {
+                    name: 'optimize',
+                    description:
+                      '<p>If true, removes line breaks\n                               and spaces from the output\n                               file to optimize filesize\n                               (but not readability).</p>\n',
+                    type: 'Boolean',
+                    optional: true
+                  }
+                ],
+                class: 'p5',
+                module: 'IO'
+              },
+              saveStrings: {
+                name: 'saveStrings',
+                params: [
+                  {
+                    name: 'list',
+                    description: '<p>string array to be written</p>\n',
+                    type: 'String[]'
+                  },
+                  {
+                    name: 'filename',
+                    description: '<p>filename for output</p>\n',
+                    type: 'String'
+                  },
+                  {
+                    name: 'extension',
+                    description: "<p>the filename's extension</p>\n",
+                    type: 'String',
+                    optional: true
+                  },
+                  {
+                    name: 'isCRLF',
