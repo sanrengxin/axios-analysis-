@@ -5345,3 +5345,145 @@
                   },
                   {
                     name: 'isCRLF',
+                    description: '<p>if true, change line-break to CRLF</p>\n',
+                    type: 'Boolean',
+                    optional: true
+                  }
+                ],
+                class: 'p5',
+                module: 'IO'
+              },
+              saveTable: {
+                name: 'saveTable',
+                params: [
+                  {
+                    name: 'Table',
+                    description:
+                      '<p>the <a href="#/p5.Table">Table</a> object to save to a file</p>\n',
+                    type: 'p5.Table'
+                  },
+                  {
+                    name: 'filename',
+                    description: '<p>the filename to which the Table should be saved</p>\n',
+                    type: 'String'
+                  },
+                  {
+                    name: 'options',
+                    description: '<p>can be one of "tsv", "csv", or "html"</p>\n',
+                    type: 'String',
+                    optional: true
+                  }
+                ],
+                class: 'p5',
+                module: 'IO'
+              },
+              abs: {
+                name: 'abs',
+                params: [
+                  {
+                    name: 'n',
+                    description: '<p>number to compute</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5',
+                module: 'Math'
+              },
+              ceil: {
+                name: 'ceil',
+                params: [
+                  {
+                    name: 'n',
+                    description: '<p>number to round up</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5',
+                module: 'Math'
+              },
+              constrain: {
+                name: 'constrain',
+                params: [
+                  {
+                    name: 'n',
+                    description: '<p>number to constrain</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'low',
+                    description: '<p>minimum limit</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'high',
+                    description: '<p>maximum limit</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5',
+                module: 'Math'
+              },
+              dist: {
+                name: 'dist',
+                class: 'p5',
+                module: 'Math',
+                overloads: [
+                  {
+                    params: [
+                      {
+                        name: 'x1',
+                        description: '<p>x-coordinate of the first point</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'y1',
+                        description: '<p>y-coordinate of the first point</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'x2',
+                        description: '<p>x-coordinate of the second point</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'y2',
+                        description: '<p>y-coordinate of the second point</p>\n',
+                        type: 'Number'
+                      }
+                    ]
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'x1',
+                        description: '',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'y1',
+                        description: '',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'z1',
+                        description: '<p>z-coordinate of the first point</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'x2',
+                        description: '',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'y2',
+                        description: '',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'z2',
+                        description: '<p>z-coordinate of the second point</p>\n',
+                        type: 'Number'
+                      }
+                    ]
+                  }
+                ]
