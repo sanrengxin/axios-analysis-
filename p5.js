@@ -5061,3 +5061,130 @@
                       },
                       {
                         name: 'errorCallback',
+                        description: '',
+                        type: 'Function',
+                        optional: true
+                      }
+                    ]
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'path',
+                        description: '',
+                        type: 'String'
+                      },
+                      {
+                        name: 'callback',
+                        description: '',
+                        type: 'Function'
+                      },
+                      {
+                        name: 'errorCallback',
+                        description: '',
+                        type: 'Function',
+                        optional: true
+                      }
+                    ]
+                  }
+                ]
+              },
+              httpPost: {
+                name: 'httpPost',
+                class: 'p5',
+                module: 'IO',
+                overloads: [
+                  {
+                    params: [
+                      {
+                        name: 'path',
+                        description: '<p>name of the file or url to load</p>\n',
+                        type: 'String'
+                      },
+                      {
+                        name: 'datatype',
+                        description:
+                          '<p>"json", "jsonp", "xml", or "text".\n                                   If omitted, <a href="#/p5/httpPost">httpPost()</a> will guess.</p>\n',
+                        type: 'String',
+                        optional: true
+                      },
+                      {
+                        name: 'data',
+                        description: '<p>param data passed sent with request</p>\n',
+                        type: 'Object|Boolean',
+                        optional: true
+                      },
+                      {
+                        name: 'callback',
+                        description:
+                          '<p>function to be executed after\n                                   <a href="#/p5/httpPost">httpPost()</a> completes, data is passed in\n                                   as first argument</p>\n',
+                        type: 'Function',
+                        optional: true
+                      },
+                      {
+                        name: 'errorCallback',
+                        description:
+                          '<p>function to be executed if\n                                   there is an error, response is passed\n                                   in as first argument</p>\n',
+                        type: 'Function',
+                        optional: true
+                      }
+                    ]
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'path',
+                        description: '',
+                        type: 'String'
+                      },
+                      {
+                        name: 'data',
+                        description: '',
+                        type: 'Object|Boolean'
+                      },
+                      {
+                        name: 'callback',
+                        description: '',
+                        type: 'Function',
+                        optional: true
+                      },
+                      {
+                        name: 'errorCallback',
+                        description: '',
+                        type: 'Function',
+                        optional: true
+                      }
+                    ]
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'path',
+                        description: '',
+                        type: 'String'
+                      },
+                      {
+                        name: 'callback',
+                        description: '',
+                        type: 'Function'
+                      },
+                      {
+                        name: 'errorCallback',
+                        description: '',
+                        type: 'Function',
+                        optional: true
+                      }
+                    ]
+                  }
+                ]
+              },
+              httpDo: {
+                name: 'httpDo',
+                class: 'p5',
+                module: 'IO',
+                overloads: [
+                  {
+                    params: [
+                      {
+                        name: 'path',
+                        description: '<p>name of the file or url to load</p>\n',
