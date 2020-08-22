@@ -4931,3 +4931,133 @@
                     optional: true
                   },
                   {
+                    name: 'callback',
+                    description:
+                      '<p>function to be executed after\n                                     <a href="#/p5/loadTable">loadTable()</a> completes. On success, the\n                                     <a href="#/p5.Table">Table</a> object is passed in as the\n                                     first argument.</p>\n',
+                    type: 'Function',
+                    optional: true
+                  },
+                  {
+                    name: 'errorCallback',
+                    description:
+                      '<p>function to be executed if\n                                     there is an error, response is passed\n                                     in as first argument</p>\n',
+                    type: 'Function',
+                    optional: true
+                  }
+                ],
+                class: 'p5',
+                module: 'IO'
+              },
+              loadXML: {
+                name: 'loadXML',
+                params: [
+                  {
+                    name: 'filename',
+                    description: '<p>name of the file or URL to load</p>\n',
+                    type: 'String'
+                  },
+                  {
+                    name: 'callback',
+                    description:
+                      '<p>function to be executed after <a href="#/p5/loadXML">loadXML()</a>\n                              completes, XML object is passed in as\n                              first argument</p>\n',
+                    type: 'Function',
+                    optional: true
+                  },
+                  {
+                    name: 'errorCallback',
+                    description:
+                      '<p>function to be executed if\n                              there is an error, response is passed\n                              in as first argument</p>\n',
+                    type: 'Function',
+                    optional: true
+                  }
+                ],
+                class: 'p5',
+                module: 'IO'
+              },
+              loadBytes: {
+                name: 'loadBytes',
+                params: [
+                  {
+                    name: 'file',
+                    description: '<p>name of the file or URL to load</p>\n',
+                    type: 'String'
+                  },
+                  {
+                    name: 'callback',
+                    description:
+                      '<p>function to be executed after <a href="#/p5/loadBytes">loadBytes()</a>\n                                   completes</p>\n',
+                    type: 'Function',
+                    optional: true
+                  },
+                  {
+                    name: 'errorCallback',
+                    description:
+                      '<p>function to be executed if there\n                                   is an error</p>\n',
+                    type: 'Function',
+                    optional: true
+                  }
+                ],
+                class: 'p5',
+                module: 'IO'
+              },
+              httpGet: {
+                name: 'httpGet',
+                class: 'p5',
+                module: 'IO',
+                overloads: [
+                  {
+                    params: [
+                      {
+                        name: 'path',
+                        description: '<p>name of the file or url to load</p>\n',
+                        type: 'String'
+                      },
+                      {
+                        name: 'datatype',
+                        description:
+                          '<p>"json", "jsonp", "binary", "arrayBuffer",\n                                   "xml", or "text"</p>\n',
+                        type: 'String',
+                        optional: true
+                      },
+                      {
+                        name: 'data',
+                        description: '<p>param data passed sent with request</p>\n',
+                        type: 'Object|Boolean',
+                        optional: true
+                      },
+                      {
+                        name: 'callback',
+                        description:
+                          '<p>function to be executed after\n                                   <a href="#/p5/httpGet">httpGet()</a> completes, data is passed in\n                                   as first argument</p>\n',
+                        type: 'Function',
+                        optional: true
+                      },
+                      {
+                        name: 'errorCallback',
+                        description:
+                          '<p>function to be executed if\n                                   there is an error, response is passed\n                                   in as first argument</p>\n',
+                        type: 'Function',
+                        optional: true
+                      }
+                    ]
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'path',
+                        description: '',
+                        type: 'String'
+                      },
+                      {
+                        name: 'data',
+                        description: '',
+                        type: 'Object|Boolean'
+                      },
+                      {
+                        name: 'callback',
+                        description: '',
+                        type: 'Function',
+                        optional: true
+                      },
+                      {
+                        name: 'errorCallback',
