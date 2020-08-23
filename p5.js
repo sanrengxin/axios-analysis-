@@ -5487,3 +5487,133 @@
                     ]
                   }
                 ]
+              },
+              exp: {
+                name: 'exp',
+                params: [
+                  {
+                    name: 'n',
+                    description: '<p>exponent to raise</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5',
+                module: 'Math'
+              },
+              floor: {
+                name: 'floor',
+                params: [
+                  {
+                    name: 'n',
+                    description: '<p>number to round down</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5',
+                module: 'Math'
+              },
+              lerp: {
+                name: 'lerp',
+                params: [
+                  {
+                    name: 'start',
+                    description: '<p>first value</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'stop',
+                    description: '<p>second value</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'amt',
+                    description: '<p>number</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5',
+                module: 'Math'
+              },
+              log: {
+                name: 'log',
+                params: [
+                  {
+                    name: 'n',
+                    description: '<p>number greater than 0</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5',
+                module: 'Math'
+              },
+              mag: {
+                name: 'mag',
+                params: [
+                  {
+                    name: 'a',
+                    description: '<p>first value</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'b',
+                    description: '<p>second value</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5',
+                module: 'Math'
+              },
+              map: {
+                name: 'map',
+                params: [
+                  {
+                    name: 'value',
+                    description: '<p>the incoming value to be converted</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'start1',
+                    description: "<p>lower bound of the value's current range</p>\n",
+                    type: 'Number'
+                  },
+                  {
+                    name: 'stop1',
+                    description: "<p>upper bound of the value's current range</p>\n",
+                    type: 'Number'
+                  },
+                  {
+                    name: 'start2',
+                    description: "<p>lower bound of the value's target range</p>\n",
+                    type: 'Number'
+                  },
+                  {
+                    name: 'stop2',
+                    description: "<p>upper bound of the value's target range</p>\n",
+                    type: 'Number'
+                  },
+                  {
+                    name: 'withinBounds',
+                    description: '<p>constrain the value to the newly mapped range</p>\n',
+                    type: 'Boolean',
+                    optional: true
+                  }
+                ],
+                class: 'p5',
+                module: 'Math'
+              },
+              max: {
+                name: 'max',
+                class: 'p5',
+                module: 'Math',
+                overloads: [
+                  {
+                    params: [
+                      {
+                        name: 'n0',
+                        description: '<p>Number to compare</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'n1',
+                        description: '<p>Number to compare</p>\n',
+                        type: 'Number'
