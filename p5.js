@@ -5754,3 +5754,154 @@
                   }
                 ],
                 class: 'p5',
+                module: 'Math'
+              },
+              createVector: {
+                name: 'createVector',
+                params: [
+                  {
+                    name: 'x',
+                    description: '<p>x component of the vector</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'y',
+                    description: '<p>y component of the vector</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'z',
+                    description: '<p>z component of the vector</p>\n',
+                    type: 'Number',
+                    optional: true
+                  }
+                ],
+                class: 'p5',
+                module: 'Math'
+              },
+              noise: {
+                name: 'noise',
+                params: [
+                  {
+                    name: 'x',
+                    description: '<p>x-coordinate in noise space</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'y',
+                    description: '<p>y-coordinate in noise space</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'z',
+                    description: '<p>z-coordinate in noise space</p>\n',
+                    type: 'Number',
+                    optional: true
+                  }
+                ],
+                class: 'p5',
+                module: 'Math'
+              },
+              noiseDetail: {
+                name: 'noiseDetail',
+                params: [
+                  {
+                    name: 'lod',
+                    description: '<p>number of octaves to be used by the noise</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'falloff',
+                    description: '<p>falloff factor for each octave</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5',
+                module: 'Math'
+              },
+              noiseSeed: {
+                name: 'noiseSeed',
+                params: [
+                  {
+                    name: 'seed',
+                    description: '<p>the seed value</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5',
+                module: 'Math'
+              },
+              randomSeed: {
+                name: 'randomSeed',
+                params: [
+                  {
+                    name: 'seed',
+                    description: '<p>the seed value</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5',
+                module: 'Math'
+              },
+              random: {
+                name: 'random',
+                class: 'p5',
+                module: 'Math',
+                overloads: [
+                  {
+                    params: [
+                      {
+                        name: 'min',
+                        description: '<p>the lower bound (inclusive)</p>\n',
+                        type: 'Number',
+                        optional: true
+                      },
+                      {
+                        name: 'max',
+                        description: '<p>the upper bound (exclusive)</p>\n',
+                        type: 'Number',
+                        optional: true
+                      }
+                    ]
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'choices',
+                        description: '<p>the array to choose from</p>\n',
+                        type: 'Array'
+                      }
+                    ]
+                  }
+                ]
+              },
+              randomGaussian: {
+                name: 'randomGaussian',
+                params: [
+                  {
+                    name: 'mean',
+                    description: '<p>the mean</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'sd',
+                    description: '<p>the standard deviation</p>\n',
+                    type: 'Number',
+                    optional: true
+                  }
+                ],
+                class: 'p5',
+                module: 'Math'
+              },
+              acos: {
+                name: 'acos',
+                params: [
+                  {
+                    name: 'value',
+                    description: '<p>the value whose arc cosine is to be returned</p>\n',
+                    type: 'Number'
+                  }
