@@ -5617,3 +5617,140 @@
                         name: 'n1',
                         description: '<p>Number to compare</p>\n',
                         type: 'Number'
+                      }
+                    ]
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'nums',
+                        description: '<p>Numbers to compare</p>\n',
+                        type: 'Number[]'
+                      }
+                    ]
+                  }
+                ]
+              },
+              min: {
+                name: 'min',
+                class: 'p5',
+                module: 'Math',
+                overloads: [
+                  {
+                    params: [
+                      {
+                        name: 'n0',
+                        description: '<p>Number to compare</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'n1',
+                        description: '<p>Number to compare</p>\n',
+                        type: 'Number'
+                      }
+                    ]
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'nums',
+                        description: '<p>Numbers to compare</p>\n',
+                        type: 'Number[]'
+                      }
+                    ]
+                  }
+                ]
+              },
+              norm: {
+                name: 'norm',
+                params: [
+                  {
+                    name: 'value',
+                    description: '<p>incoming value to be normalized</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'start',
+                    description: "<p>lower bound of the value's current range</p>\n",
+                    type: 'Number'
+                  },
+                  {
+                    name: 'stop',
+                    description: "<p>upper bound of the value's current range</p>\n",
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5',
+                module: 'Math'
+              },
+              pow: {
+                name: 'pow',
+                params: [
+                  {
+                    name: 'n',
+                    description: '<p>base of the exponential expression</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'e',
+                    description: '<p>power by which to raise the base</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5',
+                module: 'Math'
+              },
+              round: {
+                name: 'round',
+                params: [
+                  {
+                    name: 'n',
+                    description: '<p>number to round</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'decimals',
+                    description:
+                      '<p>number of decimal places to round to, default is 0</p>\n',
+                    type: 'Number',
+                    optional: true
+                  }
+                ],
+                class: 'p5',
+                module: 'Math'
+              },
+              sq: {
+                name: 'sq',
+                params: [
+                  {
+                    name: 'n',
+                    description: '<p>number to square</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5',
+                module: 'Math'
+              },
+              sqrt: {
+                name: 'sqrt',
+                params: [
+                  {
+                    name: 'n',
+                    description: '<p>non-negative number to square root</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5',
+                module: 'Math'
+              },
+              fract: {
+                name: 'fract',
+                params: [
+                  {
+                    name: 'num',
+                    description:
+                      '<p>Number whose fractional part needs to be found out</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5',
