@@ -6041,3 +6041,159 @@
                           '<p>vertical alignment, either TOP,\n                           BOTTOM, CENTER, or BASELINE</p>\n',
                         type: 'Constant',
                         optional: true
+                      }
+                    ],
+                    chainable: 1
+                  },
+                  {
+                    params: []
+                  }
+                ]
+              },
+              textLeading: {
+                name: 'textLeading',
+                class: 'p5',
+                module: 'Typography',
+                overloads: [
+                  {
+                    params: [
+                      {
+                        name: 'leading',
+                        description:
+                          '<p>the size in pixels for spacing between lines</p>\n',
+                        type: 'Number'
+                      }
+                    ],
+                    chainable: 1
+                  },
+                  {
+                    params: []
+                  }
+                ]
+              },
+              textSize: {
+                name: 'textSize',
+                class: 'p5',
+                module: 'Typography',
+                overloads: [
+                  {
+                    params: [
+                      {
+                        name: 'theSize',
+                        description: '<p>the size of the letters in units of pixels</p>\n',
+                        type: 'Number'
+                      }
+                    ],
+                    chainable: 1
+                  },
+                  {
+                    params: []
+                  }
+                ]
+              },
+              textStyle: {
+                name: 'textStyle',
+                class: 'p5',
+                module: 'Typography',
+                overloads: [
+                  {
+                    params: [
+                      {
+                        name: 'theStyle',
+                        description:
+                          '<p>styling for text, either NORMAL,\n                           ITALIC, BOLD or BOLDITALIC</p>\n',
+                        type: 'Constant'
+                      }
+                    ],
+                    chainable: 1
+                  },
+                  {
+                    params: []
+                  }
+                ]
+              },
+              textWidth: {
+                name: 'textWidth',
+                params: [
+                  {
+                    name: 'theText',
+                    description: '<p>the String of characters to measure</p>\n',
+                    type: 'String'
+                  }
+                ],
+                class: 'p5',
+                module: 'Typography'
+              },
+              textAscent: {
+                name: 'textAscent',
+                class: 'p5',
+                module: 'Typography'
+              },
+              textDescent: {
+                name: 'textDescent',
+                class: 'p5',
+                module: 'Typography'
+              },
+              loadFont: {
+                name: 'loadFont',
+                params: [
+                  {
+                    name: 'path',
+                    description: '<p>name of the file or url to load</p>\n',
+                    type: 'String'
+                  },
+                  {
+                    name: 'callback',
+                    description:
+                      '<p>function to be executed after\n                                   <a href="#/p5/loadFont">loadFont()</a> completes</p>\n',
+                    type: 'Function',
+                    optional: true
+                  },
+                  {
+                    name: 'onError',
+                    description:
+                      '<p>function to be executed if\n                                   an error occurs</p>\n',
+                    type: 'Function',
+                    optional: true
+                  }
+                ],
+                class: 'p5',
+                module: 'Typography'
+              },
+              text: {
+                name: 'text',
+                params: [
+                  {
+                    name: 'str',
+                    description:
+                      '<p>the alphanumeric\n                                            symbols to be displayed</p>\n',
+                    type: 'String|Object|Array|Number|Boolean'
+                  },
+                  {
+                    name: 'x',
+                    description: '<p>x-coordinate of text</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'y',
+                    description: '<p>y-coordinate of text</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'x2',
+                    description:
+                      '<p>by default, the width of the text box,\n                    see <a href="#/p5/rectMode">rectMode()</a> for more info</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'y2',
+                    description:
+                      '<p>by default, the height of the text box,\n                    see <a href="#/p5/rectMode">rectMode()</a> for more info</p>\n',
+                    type: 'Number',
+                    optional: true
+                  }
+                ],
+                class: 'p5',
+                module: 'Typography'
+              },
