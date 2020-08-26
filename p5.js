@@ -6197,3 +6197,149 @@
                 class: 'p5',
                 module: 'Typography'
               },
+              textFont: {
+                name: 'textFont',
+                class: 'p5',
+                module: 'Typography',
+                overloads: [
+                  {
+                    params: []
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'font',
+                        description:
+                          '<p>a font loaded via <a href="#/p5/loadFont">loadFont()</a>,\nor a String representing a <a href="https://mzl.la/2dOw8WD">web safe font</a>\n(a font that is generally available across all systems)</p>\n',
+                        type: 'Object|String'
+                      },
+                      {
+                        name: 'size',
+                        description: '<p>the font size to use</p>\n',
+                        type: 'Number',
+                        optional: true
+                      }
+                    ],
+                    chainable: 1
+                  }
+                ]
+              },
+              append: {
+                name: 'append',
+                params: [
+                  {
+                    name: 'array',
+                    description: '<p>Array to append</p>\n',
+                    type: 'Array'
+                  },
+                  {
+                    name: 'value',
+                    description: '<p>to be added to the Array</p>\n',
+                    type: 'Any'
+                  }
+                ],
+                class: 'p5',
+                module: 'Data'
+              },
+              arrayCopy: {
+                name: 'arrayCopy',
+                class: 'p5',
+                module: 'Data',
+                overloads: [
+                  {
+                    params: [
+                      {
+                        name: 'src',
+                        description: '<p>the source Array</p>\n',
+                        type: 'Array'
+                      },
+                      {
+                        name: 'srcPosition',
+                        description: '<p>starting position in the source Array</p>\n',
+                        type: 'Integer'
+                      },
+                      {
+                        name: 'dst',
+                        description: '<p>the destination Array</p>\n',
+                        type: 'Array'
+                      },
+                      {
+                        name: 'dstPosition',
+                        description: '<p>starting position in the destination Array</p>\n',
+                        type: 'Integer'
+                      },
+                      {
+                        name: 'length',
+                        description: '<p>number of Array elements to be copied</p>\n',
+                        type: 'Integer'
+                      }
+                    ]
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'src',
+                        description: '',
+                        type: 'Array'
+                      },
+                      {
+                        name: 'dst',
+                        description: '',
+                        type: 'Array'
+                      },
+                      {
+                        name: 'length',
+                        description: '',
+                        type: 'Integer',
+                        optional: true
+                      }
+                    ]
+                  }
+                ]
+              },
+              concat: {
+                name: 'concat',
+                params: [
+                  {
+                    name: 'a',
+                    description: '<p>first Array to concatenate</p>\n',
+                    type: 'Array'
+                  },
+                  {
+                    name: 'b',
+                    description: '<p>second Array to concatenate</p>\n',
+                    type: 'Array'
+                  }
+                ],
+                class: 'p5',
+                module: 'Data'
+              },
+              reverse: {
+                name: 'reverse',
+                params: [
+                  {
+                    name: 'list',
+                    description: '<p>Array to reverse</p>\n',
+                    type: 'Array'
+                  }
+                ],
+                class: 'p5',
+                module: 'Data'
+              },
+              shorten: {
+                name: 'shorten',
+                params: [
+                  {
+                    name: 'list',
+                    description: '<p>Array to shorten</p>\n',
+                    type: 'Array'
+                  }
+                ],
+                class: 'p5',
+                module: 'Data'
+              },
+              shuffle: {
+                name: 'shuffle',
+                params: [
+                  {
+                    name: 'array',
