@@ -5905,3 +5905,139 @@
                     description: '<p>the value whose arc cosine is to be returned</p>\n',
                     type: 'Number'
                   }
+                ],
+                class: 'p5',
+                module: 'Math'
+              },
+              asin: {
+                name: 'asin',
+                params: [
+                  {
+                    name: 'value',
+                    description: '<p>the value whose arc sine is to be returned</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5',
+                module: 'Math'
+              },
+              atan: {
+                name: 'atan',
+                params: [
+                  {
+                    name: 'value',
+                    description: '<p>the value whose arc tangent is to be returned</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5',
+                module: 'Math'
+              },
+              atan2: {
+                name: 'atan2',
+                params: [
+                  {
+                    name: 'y',
+                    description: '<p>y-coordinate of the point</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'x',
+                    description: '<p>x-coordinate of the point</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5',
+                module: 'Math'
+              },
+              cos: {
+                name: 'cos',
+                params: [
+                  {
+                    name: 'angle',
+                    description: '<p>the angle</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5',
+                module: 'Math'
+              },
+              sin: {
+                name: 'sin',
+                params: [
+                  {
+                    name: 'angle',
+                    description: '<p>the angle</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5',
+                module: 'Math'
+              },
+              tan: {
+                name: 'tan',
+                params: [
+                  {
+                    name: 'angle',
+                    description: '<p>the angle</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5',
+                module: 'Math'
+              },
+              degrees: {
+                name: 'degrees',
+                params: [
+                  {
+                    name: 'radians',
+                    description: '<p>the radians value to convert to degrees</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5',
+                module: 'Math'
+              },
+              radians: {
+                name: 'radians',
+                params: [
+                  {
+                    name: 'degrees',
+                    description: '<p>the degree value to convert to radians</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5',
+                module: 'Math'
+              },
+              angleMode: {
+                name: 'angleMode',
+                params: [
+                  {
+                    name: 'mode',
+                    description: '<p>either RADIANS or DEGREES</p>\n',
+                    type: 'Constant'
+                  }
+                ],
+                class: 'p5',
+                module: 'Math'
+              },
+              textAlign: {
+                name: 'textAlign',
+                class: 'p5',
+                module: 'Typography',
+                overloads: [
+                  {
+                    params: [
+                      {
+                        name: 'horizAlign',
+                        description:
+                          '<p>horizontal alignment, either LEFT,\n                           CENTER, or RIGHT</p>\n',
+                        type: 'Constant'
+                      },
+                      {
+                        name: 'vertAlign',
+                        description:
+                          '<p>vertical alignment, either TOP,\n                           BOTTOM, CENTER, or BASELINE</p>\n',
+                        type: 'Constant',
+                        optional: true
