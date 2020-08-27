@@ -6466,3 +6466,126 @@
                 name: 'str',
                 params: [
                   {
+                    name: 'n',
+                    description: '<p>value to parse</p>\n',
+                    type: 'String|Boolean|Number|Array'
+                  }
+                ],
+                class: 'p5',
+                module: 'Data'
+              },
+              byte: {
+                name: 'byte',
+                class: 'p5',
+                module: 'Data',
+                overloads: [
+                  {
+                    params: [
+                      {
+                        name: 'n',
+                        description: '<p>value to parse</p>\n',
+                        type: 'String|Boolean|Number'
+                      }
+                    ]
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'ns',
+                        description: '<p>values to parse</p>\n',
+                        type: 'Array'
+                      }
+                    ]
+                  }
+                ]
+              },
+              char: {
+                name: 'char',
+                class: 'p5',
+                module: 'Data',
+                overloads: [
+                  {
+                    params: [
+                      {
+                        name: 'n',
+                        description: '<p>value to parse</p>\n',
+                        type: 'String|Number'
+                      }
+                    ]
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'ns',
+                        description: '<p>values to parse</p>\n',
+                        type: 'Array'
+                      }
+                    ]
+                  }
+                ]
+              },
+              unchar: {
+                name: 'unchar',
+                class: 'p5',
+                module: 'Data',
+                overloads: [
+                  {
+                    params: [
+                      {
+                        name: 'n',
+                        description: '<p>value to parse</p>\n',
+                        type: 'String'
+                      }
+                    ]
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'ns',
+                        description: '<p>values to parse</p>\n',
+                        type: 'Array'
+                      }
+                    ]
+                  }
+                ]
+              },
+              hex: {
+                name: 'hex',
+                class: 'p5',
+                module: 'Data',
+                overloads: [
+                  {
+                    params: [
+                      {
+                        name: 'n',
+                        description: '<p>value to parse</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'digits',
+                        description: '',
+                        type: 'Number',
+                        optional: true
+                      }
+                    ]
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'ns',
+                        description: '<p>array of values to parse</p>\n',
+                        type: 'Number[]'
+                      },
+                      {
+                        name: 'digits',
+                        description: '',
+                        type: 'Number',
+                        optional: true
+                      }
+                    ]
+                  }
+                ]
+              },
+              unhex: {
+                name: 'unhex',
+                class: 'p5',
