@@ -6343,3 +6343,126 @@
                 params: [
                   {
                     name: 'array',
+                    description: '<p>Array to shuffle</p>\n',
+                    type: 'Array'
+                  },
+                  {
+                    name: 'bool',
+                    description: '<p>modify passed array</p>\n',
+                    type: 'Boolean',
+                    optional: true
+                  }
+                ],
+                class: 'p5',
+                module: 'Data'
+              },
+              sort: {
+                name: 'sort',
+                params: [
+                  {
+                    name: 'list',
+                    description: '<p>Array to sort</p>\n',
+                    type: 'Array'
+                  },
+                  {
+                    name: 'count',
+                    description: '<p>number of elements to sort, starting from 0</p>\n',
+                    type: 'Integer',
+                    optional: true
+                  }
+                ],
+                class: 'p5',
+                module: 'Data'
+              },
+              splice: {
+                name: 'splice',
+                params: [
+                  {
+                    name: 'list',
+                    description: '<p>Array to splice into</p>\n',
+                    type: 'Array'
+                  },
+                  {
+                    name: 'value',
+                    description: '<p>value to be spliced in</p>\n',
+                    type: 'Any'
+                  },
+                  {
+                    name: 'position',
+                    description: '<p>in the array from which to insert data</p>\n',
+                    type: 'Integer'
+                  }
+                ],
+                class: 'p5',
+                module: 'Data'
+              },
+              subset: {
+                name: 'subset',
+                params: [
+                  {
+                    name: 'list',
+                    description: '<p>Array to extract from</p>\n',
+                    type: 'Array'
+                  },
+                  {
+                    name: 'start',
+                    description: '<p>position to begin</p>\n',
+                    type: 'Integer'
+                  },
+                  {
+                    name: 'count',
+                    description: '<p>number of values to extract</p>\n',
+                    type: 'Integer',
+                    optional: true
+                  }
+                ],
+                class: 'p5',
+                module: 'Data'
+              },
+              float: {
+                name: 'float',
+                params: [
+                  {
+                    name: 'str',
+                    description: '<p>float string to parse</p>\n',
+                    type: 'String'
+                  }
+                ],
+                class: 'p5',
+                module: 'Data'
+              },
+              int: {
+                name: 'int',
+                class: 'p5',
+                module: 'Data',
+                overloads: [
+                  {
+                    params: [
+                      {
+                        name: 'n',
+                        description: '<p>value to parse</p>\n',
+                        type: 'String|Boolean|Number'
+                      },
+                      {
+                        name: 'radix',
+                        description: '<p>the radix to convert to (default: 10)</p>\n',
+                        type: 'Integer',
+                        optional: true
+                      }
+                    ]
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'ns',
+                        description: '<p>values to parse</p>\n',
+                        type: 'Array'
+                      }
+                    ]
+                  }
+                ]
+              },
+              str: {
+                name: 'str',
+                params: [
+                  {
