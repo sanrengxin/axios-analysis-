@@ -6891,3 +6891,138 @@
               },
               trim: {
                 name: 'trim',
+                class: 'p5',
+                module: 'Data',
+                overloads: [
+                  {
+                    params: [
+                      {
+                        name: 'str',
+                        description: '<p>a String to be trimmed</p>\n',
+                        type: 'String'
+                      }
+                    ]
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'strs',
+                        description: '<p>an Array of Strings to be trimmed</p>\n',
+                        type: 'Array'
+                      }
+                    ]
+                  }
+                ]
+              },
+              day: {
+                name: 'day',
+                class: 'p5',
+                module: 'IO'
+              },
+              hour: {
+                name: 'hour',
+                class: 'p5',
+                module: 'IO'
+              },
+              minute: {
+                name: 'minute',
+                class: 'p5',
+                module: 'IO'
+              },
+              millis: {
+                name: 'millis',
+                class: 'p5',
+                module: 'IO'
+              },
+              month: {
+                name: 'month',
+                class: 'p5',
+                module: 'IO'
+              },
+              second: {
+                name: 'second',
+                class: 'p5',
+                module: 'IO'
+              },
+              year: {
+                name: 'year',
+                class: 'p5',
+                module: 'IO'
+              },
+              plane: {
+                name: 'plane',
+                params: [
+                  {
+                    name: 'width',
+                    description: '<p>width of the plane</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'height',
+                    description: '<p>height of the plane</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'detailX',
+                    description:
+                      '<p>Optional number of triangle\n                            subdivisions in x-dimension</p>\n',
+                    type: 'Integer',
+                    optional: true
+                  },
+                  {
+                    name: 'detailY',
+                    description:
+                      '<p>Optional number of triangle\n                            subdivisions in y-dimension</p>\n',
+                    type: 'Integer',
+                    optional: true
+                  }
+                ],
+                class: 'p5',
+                module: 'Shape'
+              },
+              box: {
+                name: 'box',
+                params: [
+                  {
+                    name: 'width',
+                    description: '<p>width of the box</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'Height',
+                    description: '<p>height of the box</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'depth',
+                    description: '<p>depth of the box</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'detailX',
+                    description:
+                      '<p>Optional number of triangle\n                           subdivisions in x-dimension</p>\n',
+                    type: 'Integer',
+                    optional: true
+                  },
+                  {
+                    name: 'detailY',
+                    description:
+                      '<p>Optional number of triangle\n                           subdivisions in y-dimension</p>\n',
+                    type: 'Integer',
+                    optional: true
+                  }
+                ],
+                class: 'p5',
+                module: 'Shape'
+              },
+              sphere: {
+                name: 'sphere',
+                params: [
+                  {
+                    name: 'radius',
