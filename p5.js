@@ -6589,3 +6589,146 @@
               unhex: {
                 name: 'unhex',
                 class: 'p5',
+                module: 'Data',
+                overloads: [
+                  {
+                    params: [
+                      {
+                        name: 'n',
+                        description: '<p>value to parse</p>\n',
+                        type: 'String'
+                      }
+                    ]
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'ns',
+                        description: '<p>values to parse</p>\n',
+                        type: 'Array'
+                      }
+                    ]
+                  }
+                ]
+              },
+              join: {
+                name: 'join',
+                params: [
+                  {
+                    name: 'list',
+                    description: '<p>array of Strings to be joined</p>\n',
+                    type: 'Array'
+                  },
+                  {
+                    name: 'separator',
+                    description: '<p>String to be placed between each item</p>\n',
+                    type: 'String'
+                  }
+                ],
+                class: 'p5',
+                module: 'Data'
+              },
+              match: {
+                name: 'match',
+                params: [
+                  {
+                    name: 'str',
+                    description: '<p>the String to be searched</p>\n',
+                    type: 'String'
+                  },
+                  {
+                    name: 'regexp',
+                    description: '<p>the regexp to be used for matching</p>\n',
+                    type: 'String'
+                  }
+                ],
+                class: 'p5',
+                module: 'Data'
+              },
+              matchAll: {
+                name: 'matchAll',
+                params: [
+                  {
+                    name: 'str',
+                    description: '<p>the String to be searched</p>\n',
+                    type: 'String'
+                  },
+                  {
+                    name: 'regexp',
+                    description: '<p>the regexp to be used for matching</p>\n',
+                    type: 'String'
+                  }
+                ],
+                class: 'p5',
+                module: 'Data'
+              },
+              nf: {
+                name: 'nf',
+                class: 'p5',
+                module: 'Data',
+                overloads: [
+                  {
+                    params: [
+                      {
+                        name: 'num',
+                        description: '<p>the Number to format</p>\n',
+                        type: 'Number|String'
+                      },
+                      {
+                        name: 'left',
+                        description:
+                          '<p>number of digits to the left of the\n                               decimal point</p>\n',
+                        type: 'Integer|String',
+                        optional: true
+                      },
+                      {
+                        name: 'right',
+                        description:
+                          '<p>number of digits to the right of the\n                               decimal point</p>\n',
+                        type: 'Integer|String',
+                        optional: true
+                      }
+                    ]
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'nums',
+                        description: '<p>the Numbers to format</p>\n',
+                        type: 'Array'
+                      },
+                      {
+                        name: 'left',
+                        description: '',
+                        type: 'Integer|String',
+                        optional: true
+                      },
+                      {
+                        name: 'right',
+                        description: '',
+                        type: 'Integer|String',
+                        optional: true
+                      }
+                    ]
+                  }
+                ]
+              },
+              nfc: {
+                name: 'nfc',
+                class: 'p5',
+                module: 'Data',
+                overloads: [
+                  {
+                    params: [
+                      {
+                        name: 'num',
+                        description: '<p>the Number to format</p>\n',
+                        type: 'Number|String'
+                      },
+                      {
+                        name: 'right',
+                        description:
+                          '<p>number of digits to the right of the\n                                 decimal point</p>\n',
+                        type: 'Integer|String',
+                        optional: true
+                      }
