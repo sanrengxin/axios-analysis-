@@ -6732,3 +6732,162 @@
                         type: 'Integer|String',
                         optional: true
                       }
+                    ]
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'nums',
+                        description: '<p>the Numbers to format</p>\n',
+                        type: 'Array'
+                      },
+                      {
+                        name: 'right',
+                        description: '',
+                        type: 'Integer|String',
+                        optional: true
+                      }
+                    ]
+                  }
+                ]
+              },
+              nfp: {
+                name: 'nfp',
+                class: 'p5',
+                module: 'Data',
+                overloads: [
+                  {
+                    params: [
+                      {
+                        name: 'num',
+                        description: '<p>the Number to format</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'left',
+                        description:
+                          '<p>number of digits to the left of the decimal\n                               point</p>\n',
+                        type: 'Integer',
+                        optional: true
+                      },
+                      {
+                        name: 'right',
+                        description:
+                          '<p>number of digits to the right of the\n                               decimal point</p>\n',
+                        type: 'Integer',
+                        optional: true
+                      }
+                    ]
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'nums',
+                        description: '<p>the Numbers to format</p>\n',
+                        type: 'Number[]'
+                      },
+                      {
+                        name: 'left',
+                        description: '',
+                        type: 'Integer',
+                        optional: true
+                      },
+                      {
+                        name: 'right',
+                        description: '',
+                        type: 'Integer',
+                        optional: true
+                      }
+                    ]
+                  }
+                ]
+              },
+              nfs: {
+                name: 'nfs',
+                class: 'p5',
+                module: 'Data',
+                overloads: [
+                  {
+                    params: [
+                      {
+                        name: 'num',
+                        description: '<p>the Number to format</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'left',
+                        description:
+                          '<p>number of digits to the left of the decimal\n                               point</p>\n',
+                        type: 'Integer',
+                        optional: true
+                      },
+                      {
+                        name: 'right',
+                        description:
+                          '<p>number of digits to the right of the\n                               decimal point</p>\n',
+                        type: 'Integer',
+                        optional: true
+                      }
+                    ]
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'nums',
+                        description: '<p>the Numbers to format</p>\n',
+                        type: 'Array'
+                      },
+                      {
+                        name: 'left',
+                        description: '',
+                        type: 'Integer',
+                        optional: true
+                      },
+                      {
+                        name: 'right',
+                        description: '',
+                        type: 'Integer',
+                        optional: true
+                      }
+                    ]
+                  }
+                ]
+              },
+              split: {
+                name: 'split',
+                params: [
+                  {
+                    name: 'value',
+                    description: '<p>the String to be split</p>\n',
+                    type: 'String'
+                  },
+                  {
+                    name: 'delim',
+                    description: '<p>the String used to separate the data</p>\n',
+                    type: 'String'
+                  }
+                ],
+                class: 'p5',
+                module: 'Data'
+              },
+              splitTokens: {
+                name: 'splitTokens',
+                params: [
+                  {
+                    name: 'value',
+                    description: '<p>the String to be split</p>\n',
+                    type: 'String'
+                  },
+                  {
+                    name: 'delim',
+                    description:
+                      '<p>list of individual Strings that will be used as\n                         separators</p>\n',
+                    type: 'String',
+                    optional: true
+                  }
+                ],
+                class: 'p5',
+                module: 'Data'
+              },
+              trim: {
+                name: 'trim',
