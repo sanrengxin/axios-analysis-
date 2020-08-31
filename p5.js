@@ -7026,3 +7026,126 @@
                 params: [
                   {
                     name: 'radius',
+                    description: '<p>radius of circle</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'detailX',
+                    description: '<p>optional number of subdivisions in x-dimension</p>\n',
+                    type: 'Integer',
+                    optional: true
+                  },
+                  {
+                    name: 'detailY',
+                    description: '<p>optional number of subdivisions in y-dimension</p>\n',
+                    type: 'Integer',
+                    optional: true
+                  }
+                ],
+                class: 'p5',
+                module: 'Shape'
+              },
+              cylinder: {
+                name: 'cylinder',
+                params: [
+                  {
+                    name: 'radius',
+                    description: '<p>radius of the surface</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'height',
+                    description: '<p>height of the cylinder</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'detailX',
+                    description:
+                      '<p>number of subdivisions in x-dimension;\n                              default is 24</p>\n',
+                    type: 'Integer',
+                    optional: true
+                  },
+                  {
+                    name: 'detailY',
+                    description:
+                      '<p>number of subdivisions in y-dimension;\n                              default is 1</p>\n',
+                    type: 'Integer',
+                    optional: true
+                  },
+                  {
+                    name: 'bottomCap',
+                    description: '<p>whether to draw the bottom of the cylinder</p>\n',
+                    type: 'Boolean',
+                    optional: true
+                  },
+                  {
+                    name: 'topCap',
+                    description: '<p>whether to draw the top of the cylinder</p>\n',
+                    type: 'Boolean',
+                    optional: true
+                  }
+                ],
+                class: 'p5',
+                module: 'Shape'
+              },
+              cone: {
+                name: 'cone',
+                params: [
+                  {
+                    name: 'radius',
+                    description: '<p>radius of the bottom surface</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'height',
+                    description: '<p>height of the cone</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'detailX',
+                    description:
+                      '<p>number of segments,\n                            the more segments the smoother geometry\n                            default is 24</p>\n',
+                    type: 'Integer',
+                    optional: true
+                  },
+                  {
+                    name: 'detailY',
+                    description:
+                      '<p>number of segments,\n                            the more segments the smoother geometry\n                            default is 1</p>\n',
+                    type: 'Integer',
+                    optional: true
+                  },
+                  {
+                    name: 'cap',
+                    description: '<p>whether to draw the base of the cone</p>\n',
+                    type: 'Boolean',
+                    optional: true
+                  }
+                ],
+                class: 'p5',
+                module: 'Shape'
+              },
+              ellipsoid: {
+                name: 'ellipsoid',
+                params: [
+                  {
+                    name: 'radiusx',
+                    description: '<p>x-radius of ellipsoid</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'radiusy',
+                    description: '<p>y-radius of ellipsoid</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'radiusz',
+                    description: '<p>z-radius of ellipsoid</p>\n',
+                    type: 'Number',
