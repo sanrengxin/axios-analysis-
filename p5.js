@@ -7149,3 +7149,144 @@
                     name: 'radiusz',
                     description: '<p>z-radius of ellipsoid</p>\n',
                     type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'detailX',
+                    description:
+                      '<p>number of segments,\n                                   the more segments the smoother geometry\n                                   default is 24. Avoid detail number above\n                                   150, it may crash the browser.</p>\n',
+                    type: 'Integer',
+                    optional: true
+                  },
+                  {
+                    name: 'detailY',
+                    description:
+                      '<p>number of segments,\n                                   the more segments the smoother geometry\n                                   default is 16. Avoid detail number above\n                                   150, it may crash the browser.</p>\n',
+                    type: 'Integer',
+                    optional: true
+                  }
+                ],
+                class: 'p5',
+                module: 'Shape'
+              },
+              torus: {
+                name: 'torus',
+                params: [
+                  {
+                    name: 'radius',
+                    description: '<p>radius of the whole ring</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'tubeRadius',
+                    description: '<p>radius of the tube</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'detailX',
+                    description:
+                      '<p>number of segments in x-dimension,\n                               the more segments the smoother geometry\n                               default is 24</p>\n',
+                    type: 'Integer',
+                    optional: true
+                  },
+                  {
+                    name: 'detailY',
+                    description:
+                      '<p>number of segments in y-dimension,\n                               the more segments the smoother geometry\n                               default is 16</p>\n',
+                    type: 'Integer',
+                    optional: true
+                  }
+                ],
+                class: 'p5',
+                module: 'Shape'
+              },
+              orbitControl: {
+                name: 'orbitControl',
+                params: [
+                  {
+                    name: 'sensitivityX',
+                    description: '<p>sensitivity to mouse movement along X axis</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'sensitivityY',
+                    description: '<p>sensitivity to mouse movement along Y axis</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'sensitivityZ',
+                    description: '<p>sensitivity to scroll movement along Z axis</p>\n',
+                    type: 'Number',
+                    optional: true
+                  }
+                ],
+                class: 'p5',
+                module: 'Lights, Camera'
+              },
+              debugMode: {
+                name: 'debugMode',
+                class: 'p5',
+                module: 'Lights, Camera',
+                overloads: [
+                  {
+                    params: []
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'mode',
+                        description: '<p>either GRID or AXES</p>\n',
+                        type: 'Constant'
+                      }
+                    ]
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'mode',
+                        description: '',
+                        type: 'Constant'
+                      },
+                      {
+                        name: 'gridSize',
+                        description: '<p>size of one side of the grid</p>\n',
+                        type: 'Number',
+                        optional: true
+                      },
+                      {
+                        name: 'gridDivisions',
+                        description: '<p>number of divisions in the grid</p>\n',
+                        type: 'Number',
+                        optional: true
+                      },
+                      {
+                        name: 'xOff',
+                        description: '<p>X axis offset from origin (0,0,0)</p>\n',
+                        type: 'Number',
+                        optional: true
+                      },
+                      {
+                        name: 'yOff',
+                        description: '<p>Y axis offset from origin (0,0,0)</p>\n',
+                        type: 'Number',
+                        optional: true
+                      },
+                      {
+                        name: 'zOff',
+                        description: '<p>Z axis offset from origin (0,0,0)</p>\n',
+                        type: 'Number',
+                        optional: true
+                      }
+                    ]
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'mode',
+                        description: '',
+                        type: 'Constant'
+                      },
