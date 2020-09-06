@@ -7407,3 +7407,148 @@
                         type: 'Number'
                       },
                       {
+                        name: 'alpha',
+                        description: '<p>the alpha value</p>\n',
+                        type: 'Number',
+                        optional: true
+                      }
+                    ],
+                    chainable: 1
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'value',
+                        description: '<p>a color string</p>\n',
+                        type: 'String'
+                      }
+                    ],
+                    chainable: 1
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'gray',
+                        description: '<p>a gray value</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'alpha',
+                        description: '',
+                        type: 'Number',
+                        optional: true
+                      }
+                    ],
+                    chainable: 1
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'values',
+                        description:
+                          '<p>an array containing the red,green,blue &\n                                and alpha components of the color</p>\n',
+                        type: 'Number[]'
+                      }
+                    ],
+                    chainable: 1
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'color',
+                        description: '<p>the ambient light color</p>\n',
+                        type: 'p5.Color'
+                      }
+                    ],
+                    chainable: 1
+                  }
+                ]
+              },
+              specularColor: {
+                name: 'specularColor',
+                class: 'p5',
+                module: 'Lights, Camera',
+                overloads: [
+                  {
+                    params: [
+                      {
+                        name: 'v1',
+                        description:
+                          '<p>red or hue value relative to\n                                the current color range</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'v2',
+                        description:
+                          '<p>green or saturation value\n                                relative to the current color range</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'v3',
+                        description:
+                          '<p>blue or brightness value\n                                relative to the current color range</p>\n',
+                        type: 'Number'
+                      }
+                    ],
+                    chainable: 1
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'value',
+                        description: '<p>a color string</p>\n',
+                        type: 'String'
+                      }
+                    ],
+                    chainable: 1
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'gray',
+                        description: '<p>a gray value</p>\n',
+                        type: 'Number'
+                      }
+                    ],
+                    chainable: 1
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'values',
+                        description:
+                          '<p>an array containing the red,green,blue &\n                                and alpha components of the color</p>\n',
+                        type: 'Number[]'
+                      }
+                    ],
+                    chainable: 1
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'color',
+                        description: '<p>the ambient light color</p>\n',
+                        type: 'p5.Color'
+                      }
+                    ],
+                    chainable: 1
+                  }
+                ]
+              },
+              directionalLight: {
+                name: 'directionalLight',
+                class: 'p5',
+                module: 'Lights, Camera',
+                overloads: [
+                  {
+                    params: [
+                      {
+                        name: 'v1',
+                        description:
+                          '<p>red or hue value (depending on the current\ncolor mode),</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'v2',
+                        description: '<p>green or saturation value</p>\n',
+                        type: 'Number'
