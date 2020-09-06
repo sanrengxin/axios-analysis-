@@ -7290,3 +7290,120 @@
                         description: '',
                         type: 'Constant'
                       },
+                      {
+                        name: 'axesSize',
+                        description: '<p>size of axes icon</p>\n',
+                        type: 'Number',
+                        optional: true
+                      },
+                      {
+                        name: 'xOff',
+                        description: '',
+                        type: 'Number',
+                        optional: true
+                      },
+                      {
+                        name: 'yOff',
+                        description: '',
+                        type: 'Number',
+                        optional: true
+                      },
+                      {
+                        name: 'zOff',
+                        description: '',
+                        type: 'Number',
+                        optional: true
+                      }
+                    ]
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'gridSize',
+                        description: '',
+                        type: 'Number',
+                        optional: true
+                      },
+                      {
+                        name: 'gridDivisions',
+                        description: '',
+                        type: 'Number',
+                        optional: true
+                      },
+                      {
+                        name: 'gridXOff',
+                        description: '',
+                        type: 'Number',
+                        optional: true
+                      },
+                      {
+                        name: 'gridYOff',
+                        description: '',
+                        type: 'Number',
+                        optional: true
+                      },
+                      {
+                        name: 'gridZOff',
+                        description: '',
+                        type: 'Number',
+                        optional: true
+                      },
+                      {
+                        name: 'axesSize',
+                        description: '',
+                        type: 'Number',
+                        optional: true
+                      },
+                      {
+                        name: 'axesXOff',
+                        description: '',
+                        type: 'Number',
+                        optional: true
+                      },
+                      {
+                        name: 'axesYOff',
+                        description: '',
+                        type: 'Number',
+                        optional: true
+                      },
+                      {
+                        name: 'axesZOff',
+                        description: '',
+                        type: 'Number',
+                        optional: true
+                      }
+                    ]
+                  }
+                ]
+              },
+              noDebugMode: {
+                name: 'noDebugMode',
+                class: 'p5',
+                module: 'Lights, Camera'
+              },
+              ambientLight: {
+                name: 'ambientLight',
+                class: 'p5',
+                module: 'Lights, Camera',
+                overloads: [
+                  {
+                    params: [
+                      {
+                        name: 'v1',
+                        description:
+                          '<p>red or hue value relative to\n                                the current color range</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'v2',
+                        description:
+                          '<p>green or saturation value\n                                relative to the current color range</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'v3',
+                        description:
+                          '<p>blue or brightness value\n                                relative to the current color range</p>\n',
+                        type: 'Number'
+                      },
+                      {
