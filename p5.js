@@ -7674,3 +7674,126 @@
                       },
                       {
                         name: 'y',
+                        description: '<p>y axis position</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'z',
+                        description: '<p>z axis position</p>\n',
+                        type: 'Number'
+                      }
+                    ],
+                    chainable: 1
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'v1',
+                        description: '',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'v2',
+                        description: '',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'v3',
+                        description: '',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'position',
+                        description: '<p>the position of the light</p>\n',
+                        type: 'p5.Vector'
+                      }
+                    ],
+                    chainable: 1
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'color',
+                        description:
+                          '<p>color Array, CSS color string,\nor <a href="#/p5.Color">p5.Color</a> value</p>\n',
+                        type: 'Number[]|String|p5.Color'
+                      },
+                      {
+                        name: 'x',
+                        description: '',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'y',
+                        description: '',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'z',
+                        description: '',
+                        type: 'Number'
+                      }
+                    ],
+                    chainable: 1
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'color',
+                        description: '',
+                        type: 'Number[]|String|p5.Color'
+                      },
+                      {
+                        name: 'position',
+                        description: '',
+                        type: 'p5.Vector'
+                      }
+                    ],
+                    chainable: 1
+                  }
+                ]
+              },
+              lights: {
+                name: 'lights',
+                class: 'p5',
+                module: 'Lights, Camera'
+              },
+              lightFalloff: {
+                name: 'lightFalloff',
+                params: [
+                  {
+                    name: 'constant',
+                    description: '<p>constant value for determining falloff</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'linear',
+                    description: '<p>linear value for determining falloff</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'quadratic',
+                    description: '<p>quadratic value for determining falloff</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5',
+                module: 'Lights, Camera'
+              },
+              spotLight: {
+                name: 'spotLight',
+                class: 'p5',
+                module: 'Lights, Camera',
+                overloads: [
+                  {
+                    params: [
+                      {
+                        name: 'v1',
+                        description:
+                          '<p>red or hue value (depending on the current\ncolor mode),</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'v2',
+                        description: '<p>green or saturation value</p>\n',
+                        type: 'Number'
