@@ -7797,3 +7797,139 @@
                         name: 'v2',
                         description: '<p>green or saturation value</p>\n',
                         type: 'Number'
+                      },
+                      {
+                        name: 'v3',
+                        description: '<p>blue or brightness value</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'x',
+                        description: '<p>x axis position</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'y',
+                        description: '<p>y axis position</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'z',
+                        description: '<p>z axis position</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'rx',
+                        description: '<p>x axis direction of light</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'ry',
+                        description: '<p>y axis direction of light</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'rz',
+                        description: '<p>z axis direction of light</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'angle',
+                        description:
+                          '<p>optional parameter for angle. Defaults to PI/3</p>\n',
+                        type: 'Number',
+                        optional: true
+                      },
+                      {
+                        name: 'conc',
+                        description:
+                          '<p>optional parameter for concentration. Defaults to 100</p>\n',
+                        type: 'Number',
+                        optional: true
+                      }
+                    ],
+                    chainable: 1
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'color',
+                        description:
+                          '<p>color Array, CSS color string,\nor <a href="#/p5.Color">p5.Color</a> value</p>\n',
+                        type: 'Number[]|String|p5.Color'
+                      },
+                      {
+                        name: 'position',
+                        description: '<p>the position of the light</p>\n',
+                        type: 'p5.Vector'
+                      },
+                      {
+                        name: 'direction',
+                        description: '<p>the direction of the light</p>\n',
+                        type: 'p5.Vector'
+                      },
+                      {
+                        name: 'angle',
+                        description: '',
+                        type: 'Number',
+                        optional: true
+                      },
+                      {
+                        name: 'conc',
+                        description: '',
+                        type: 'Number',
+                        optional: true
+                      }
+                    ]
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'v1',
+                        description: '',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'v2',
+                        description: '',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'v3',
+                        description: '',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'position',
+                        description: '',
+                        type: 'p5.Vector'
+                      },
+                      {
+                        name: 'direction',
+                        description: '',
+                        type: 'p5.Vector'
+                      },
+                      {
+                        name: 'angle',
+                        description: '',
+                        type: 'Number',
+                        optional: true
+                      },
+                      {
+                        name: 'conc',
+                        description: '',
+                        type: 'Number',
+                        optional: true
+                      }
+                    ]
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'color',
+                        description: '',
+                        type: 'Number[]|String|p5.Color'
+                      },
+                      {
+                        name: 'x',
+                        description: '',
