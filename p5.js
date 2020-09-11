@@ -8072,3 +8072,137 @@
                         name: 'v3',
                         description: '',
                         type: 'Number'
+                      },
+                      {
+                        name: 'position',
+                        description: '',
+                        type: 'p5.Vector'
+                      },
+                      {
+                        name: 'rx',
+                        description: '',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'ry',
+                        description: '',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'rz',
+                        description: '',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'angle',
+                        description: '',
+                        type: 'Number',
+                        optional: true
+                      },
+                      {
+                        name: 'conc',
+                        description: '',
+                        type: 'Number',
+                        optional: true
+                      }
+                    ]
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'color',
+                        description: '',
+                        type: 'Number[]|String|p5.Color'
+                      },
+                      {
+                        name: 'x',
+                        description: '',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'y',
+                        description: '',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'z',
+                        description: '',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'rx',
+                        description: '',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'ry',
+                        description: '',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'rz',
+                        description: '',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'angle',
+                        description: '',
+                        type: 'Number',
+                        optional: true
+                      },
+                      {
+                        name: 'conc',
+                        description: '',
+                        type: 'Number',
+                        optional: true
+                      }
+                    ]
+                  }
+                ]
+              },
+              noLights: {
+                name: 'noLights',
+                class: 'p5',
+                module: 'Lights, Camera'
+              },
+              loadModel: {
+                name: 'loadModel',
+                class: 'p5',
+                module: 'Shape',
+                overloads: [
+                  {
+                    params: [
+                      {
+                        name: 'path',
+                        description: '<p>Path of the model to be loaded</p>\n',
+                        type: 'String'
+                      },
+                      {
+                        name: 'normalize',
+                        description:
+                          '<p>If true, scale the model to a\n                                     standardized size when loading</p>\n',
+                        type: 'Boolean'
+                      },
+                      {
+                        name: 'successCallback',
+                        description:
+                          '<p>Function to be called\n                                    once the model is loaded. Will be passed\n                                    the 3D model object.</p>\n',
+                        type: 'function(p5.Geometry)',
+                        optional: true
+                      },
+                      {
+                        name: 'failureCallback',
+                        description:
+                          '<p>called with event error if\n                                        the model fails to load.</p>\n',
+                        type: 'Function(Event)',
+                        optional: true
+                      },
+                      {
+                        name: 'fileType',
+                        description:
+                          '<p>The file extension of the model\n                                     (<code>.stl</code>, <code>.obj</code>).</p>\n',
+                        type: 'String',
+                        optional: true
+                      }
+                    ]
+                  },
