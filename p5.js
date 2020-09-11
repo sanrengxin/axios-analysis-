@@ -7933,3 +7933,142 @@
                       {
                         name: 'x',
                         description: '',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'y',
+                        description: '',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'z',
+                        description: '',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'direction',
+                        description: '',
+                        type: 'p5.Vector'
+                      },
+                      {
+                        name: 'angle',
+                        description: '',
+                        type: 'Number',
+                        optional: true
+                      },
+                      {
+                        name: 'conc',
+                        description: '',
+                        type: 'Number',
+                        optional: true
+                      }
+                    ]
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'color',
+                        description: '',
+                        type: 'Number[]|String|p5.Color'
+                      },
+                      {
+                        name: 'position',
+                        description: '',
+                        type: 'p5.Vector'
+                      },
+                      {
+                        name: 'rx',
+                        description: '',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'ry',
+                        description: '',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'rz',
+                        description: '',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'angle',
+                        description: '',
+                        type: 'Number',
+                        optional: true
+                      },
+                      {
+                        name: 'conc',
+                        description: '',
+                        type: 'Number',
+                        optional: true
+                      }
+                    ]
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'v1',
+                        description: '',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'v2',
+                        description: '',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'v3',
+                        description: '',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'x',
+                        description: '',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'y',
+                        description: '',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'z',
+                        description: '',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'direction',
+                        description: '',
+                        type: 'p5.Vector'
+                      },
+                      {
+                        name: 'angle',
+                        description: '',
+                        type: 'Number',
+                        optional: true
+                      },
+                      {
+                        name: 'conc',
+                        description: '',
+                        type: 'Number',
+                        optional: true
+                      }
+                    ]
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'v1',
+                        description: '',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'v2',
+                        description: '',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'v3',
+                        description: '',
+                        type: 'Number'
