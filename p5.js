@@ -8348,3 +8348,144 @@
               },
               textureWrap: {
                 name: 'textureWrap',
+                params: [
+                  {
+                    name: 'wrapX',
+                    description: '<p>either CLAMP, REPEAT, or MIRROR</p>\n',
+                    type: 'Constant'
+                  },
+                  {
+                    name: 'wrapY',
+                    description: '<p>either CLAMP, REPEAT, or MIRROR</p>\n',
+                    type: 'Constant',
+                    optional: true
+                  }
+                ],
+                class: 'p5',
+                module: 'Lights, Camera'
+              },
+              ambientMaterial: {
+                name: 'ambientMaterial',
+                class: 'p5',
+                module: 'Lights, Camera',
+                overloads: [
+                  {
+                    params: [
+                      {
+                        name: 'v1',
+                        description:
+                          '<p>gray value, red or hue value\n                        (depending on the current color mode),</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'v2',
+                        description: '<p>green or saturation value</p>\n',
+                        type: 'Number',
+                        optional: true
+                      },
+                      {
+                        name: 'v3',
+                        description: '<p>blue or brightness value</p>\n',
+                        type: 'Number',
+                        optional: true
+                      }
+                    ],
+                    chainable: 1
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'color',
+                        description: '<p>color, color Array, or CSS color string</p>\n',
+                        type: 'Number[]|String|p5.Color'
+                      }
+                    ],
+                    chainable: 1
+                  }
+                ]
+              },
+              emissiveMaterial: {
+                name: 'emissiveMaterial',
+                class: 'p5',
+                module: 'Lights, Camera',
+                overloads: [
+                  {
+                    params: [
+                      {
+                        name: 'v1',
+                        description:
+                          '<p>gray value, red or hue value\n                        (depending on the current color mode),</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'v2',
+                        description: '<p>green or saturation value</p>\n',
+                        type: 'Number',
+                        optional: true
+                      },
+                      {
+                        name: 'v3',
+                        description: '<p>blue or brightness value</p>\n',
+                        type: 'Number',
+                        optional: true
+                      },
+                      {
+                        name: 'a',
+                        description: '<p>opacity</p>\n',
+                        type: 'Number',
+                        optional: true
+                      }
+                    ],
+                    chainable: 1
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'color',
+                        description: '<p>color, color Array, or CSS color string</p>\n',
+                        type: 'Number[]|String|p5.Color'
+                      }
+                    ],
+                    chainable: 1
+                  }
+                ]
+              },
+              specularMaterial: {
+                name: 'specularMaterial',
+                class: 'p5',
+                module: 'Lights, Camera',
+                overloads: [
+                  {
+                    params: [
+                      {
+                        name: 'gray',
+                        description:
+                          '<p>number specifying value between white and black.</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'alpha',
+                        description:
+                          '<p>alpha value relative to current color range\n                                (default is 0-255)</p>\n',
+                        type: 'Number',
+                        optional: true
+                      }
+                    ],
+                    chainable: 1
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'v1',
+                        description:
+                          '<p>red or hue value relative to\n                                the current color range</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'v2',
+                        description:
+                          '<p>green or saturation value\n                                relative to the current color range</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'v3',
