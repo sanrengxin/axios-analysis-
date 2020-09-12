@@ -8206,3 +8206,145 @@
                       }
                     ]
                   },
+                  {
+                    params: [
+                      {
+                        name: 'path',
+                        description: '',
+                        type: 'String'
+                      },
+                      {
+                        name: 'successCallback',
+                        description: '',
+                        type: 'function(p5.Geometry)',
+                        optional: true
+                      },
+                      {
+                        name: 'failureCallback',
+                        description: '',
+                        type: 'Function(Event)',
+                        optional: true
+                      },
+                      {
+                        name: 'fileType',
+                        description: '',
+                        type: 'String',
+                        optional: true
+                      }
+                    ]
+                  }
+                ]
+              },
+              model: {
+                name: 'model',
+                params: [
+                  {
+                    name: 'model',
+                    description: '<p>Loaded 3d model to be rendered</p>\n',
+                    type: 'p5.Geometry'
+                  }
+                ],
+                class: 'p5',
+                module: 'Shape'
+              },
+              loadShader: {
+                name: 'loadShader',
+                params: [
+                  {
+                    name: 'vertFilename',
+                    description:
+                      '<p>path to file containing vertex shader\nsource code</p>\n',
+                    type: 'String'
+                  },
+                  {
+                    name: 'fragFilename',
+                    description:
+                      '<p>path to file containing fragment shader\nsource code</p>\n',
+                    type: 'String'
+                  },
+                  {
+                    name: 'callback',
+                    description:
+                      '<p>callback to be executed after loadShader\ncompletes. On success, the Shader object is passed as the first argument.</p>\n',
+                    type: 'Function',
+                    optional: true
+                  },
+                  {
+                    name: 'errorCallback',
+                    description:
+                      '<p>callback to be executed when an error\noccurs inside loadShader. On error, the error is passed as the first\nargument.</p>\n',
+                    type: 'Function',
+                    optional: true
+                  }
+                ],
+                class: 'p5',
+                module: 'Lights, Camera'
+              },
+              createShader: {
+                name: 'createShader',
+                params: [
+                  {
+                    name: 'vertSrc',
+                    description: '<p>source code for the vertex shader</p>\n',
+                    type: 'String'
+                  },
+                  {
+                    name: 'fragSrc',
+                    description: '<p>source code for the fragment shader</p>\n',
+                    type: 'String'
+                  }
+                ],
+                class: 'p5',
+                module: 'Lights, Camera'
+              },
+              shader: {
+                name: 'shader',
+                params: [
+                  {
+                    name: 's',
+                    description:
+                      '<p>the desired <a href="#/p5.Shader">p5.Shader</a> to use for rendering\nshapes.</p>\n',
+                    type: 'p5.Shader',
+                    optional: true
+                  }
+                ],
+                class: 'p5',
+                module: 'Lights, Camera'
+              },
+              resetShader: {
+                name: 'resetShader',
+                class: 'p5',
+                module: 'Lights, Camera'
+              },
+              normalMaterial: {
+                name: 'normalMaterial',
+                class: 'p5',
+                module: 'Lights, Camera'
+              },
+              texture: {
+                name: 'texture',
+                params: [
+                  {
+                    name: 'tex',
+                    description:
+                      '<p>2-dimensional graphics\n                   to render as texture</p>\n',
+                    type: 'p5.Image|p5.MediaElement|p5.Graphics'
+                  }
+                ],
+                class: 'p5',
+                module: 'Lights, Camera'
+              },
+              textureMode: {
+                name: 'textureMode',
+                params: [
+                  {
+                    name: 'mode',
+                    description: '<p>either IMAGE or NORMAL</p>\n',
+                    type: 'Constant'
+                  }
+                ],
+                class: 'p5',
+                module: 'Lights, Camera'
+              },
+              textureWrap: {
+                name: 'textureWrap',
