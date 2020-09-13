@@ -8489,3 +8489,134 @@
                       },
                       {
                         name: 'v3',
+                        description:
+                          '<p>blue or brightness value\n                                relative to the current color range</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'alpha',
+                        description: '',
+                        type: 'Number',
+                        optional: true
+                      }
+                    ],
+                    chainable: 1
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'color',
+                        description: '<p>color Array, or CSS color string</p>\n',
+                        type: 'Number[]|String|p5.Color'
+                      }
+                    ],
+                    chainable: 1
+                  }
+                ]
+              },
+              shininess: {
+                name: 'shininess',
+                params: [
+                  {
+                    name: 'shine',
+                    description:
+                      '<p>Degree of Shininess.\n                      Defaults to 1.</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5',
+                module: 'Lights, Camera'
+              },
+              camera: {
+                name: 'camera',
+                params: [
+                  {
+                    name: 'x',
+                    description: '<p>camera position value on x axis</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'y',
+                    description: '<p>camera position value on y axis</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'z',
+                    description: '<p>camera position value on z axis</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'centerX',
+                    description: '<p>x coordinate representing center of the sketch</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'centerY',
+                    description: '<p>y coordinate representing center of the sketch</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'centerZ',
+                    description: '<p>z coordinate representing center of the sketch</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'upX',
+                    description: "<p>x component of direction 'up' from camera</p>\n",
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'upY',
+                    description: "<p>y component of direction 'up' from camera</p>\n",
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'upZ',
+                    description: "<p>z component of direction 'up' from camera</p>\n",
+                    type: 'Number',
+                    optional: true
+                  }
+                ],
+                class: 'p5',
+                module: 'Lights, Camera'
+              },
+              perspective: {
+                name: 'perspective',
+                params: [
+                  {
+                    name: 'fovy',
+                    description:
+                      '<p>camera frustum vertical field of view,\n                          from bottom to top of view, in <a href="#/p5/angleMode">angleMode</a> units</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'aspect',
+                    description: '<p>camera frustum aspect ratio</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'near',
+                    description: '<p>frustum near plane length</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'far',
+                    description: '<p>frustum far plane length</p>\n',
+                    type: 'Number',
+                    optional: true
+                  }
+                ],
+                class: 'p5',
+                module: 'Lights, Camera'
+              },
