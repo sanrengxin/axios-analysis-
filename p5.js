@@ -8620,3 +8620,142 @@
                 class: 'p5',
                 module: 'Lights, Camera'
               },
+              ortho: {
+                name: 'ortho',
+                params: [
+                  {
+                    name: 'left',
+                    description: '<p>camera frustum left plane</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'right',
+                    description: '<p>camera frustum right plane</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'bottom',
+                    description: '<p>camera frustum bottom plane</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'top',
+                    description: '<p>camera frustum top plane</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'near',
+                    description: '<p>camera frustum near plane</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'far',
+                    description: '<p>camera frustum far plane</p>\n',
+                    type: 'Number',
+                    optional: true
+                  }
+                ],
+                class: 'p5',
+                module: 'Lights, Camera'
+              },
+              frustum: {
+                name: 'frustum',
+                params: [
+                  {
+                    name: 'left',
+                    description: '<p>camera frustum left plane</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'right',
+                    description: '<p>camera frustum right plane</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'bottom',
+                    description: '<p>camera frustum bottom plane</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'top',
+                    description: '<p>camera frustum top plane</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'near',
+                    description: '<p>camera frustum near plane</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'far',
+                    description: '<p>camera frustum far plane</p>\n',
+                    type: 'Number',
+                    optional: true
+                  }
+                ],
+                class: 'p5',
+                module: 'Lights, Camera'
+              },
+              createCamera: {
+                name: 'createCamera',
+                class: 'p5',
+                module: 'Lights, Camera'
+              },
+              setCamera: {
+                name: 'setCamera',
+                params: [
+                  {
+                    name: 'cam',
+                    description: '<p>p5.Camera object</p>\n',
+                    type: 'p5.Camera'
+                  }
+                ],
+                class: 'p5',
+                module: 'Lights, Camera'
+              },
+              setAttributes: {
+                name: 'setAttributes',
+                class: 'p5',
+                module: 'Rendering',
+                overloads: [
+                  {
+                    params: [
+                      {
+                        name: 'key',
+                        description: '<p>Name of attribute</p>\n',
+                        type: 'String'
+                      },
+                      {
+                        name: 'value',
+                        description: '<p>New value of named attribute</p>\n',
+                        type: 'Boolean'
+                      }
+                    ]
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'obj',
+                        description: '<p>object with key-value pairs</p>\n',
+                        type: 'Object'
+                      }
+                    ]
+                  }
+                ]
+              },
+              sampleRate: {
+                name: 'sampleRate',
+                class: 'p5',
+                module: 'p5.sound'
+              },
+              freqToMidi: {
