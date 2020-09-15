@@ -8900,3 +8900,124 @@
                 module: 'p5.sound'
               },
               saveSound: {
+                name: 'saveSound',
+                params: [
+                  {
+                    name: 'soundFile',
+                    description: '<p>p5.SoundFile that you wish to save</p>\n',
+                    type: 'p5.SoundFile'
+                  },
+                  {
+                    name: 'fileName',
+                    description: '<p>name of the resulting .wav file.</p>\n',
+                    type: 'String'
+                  }
+                ],
+                class: 'p5',
+                module: 'p5.sound'
+              }
+            },
+            'p5.Color': {
+              toString: {
+                name: 'toString',
+                params: [
+                  {
+                    name: 'format',
+                    description:
+                      "<p>How the color string will be formatted.\nLeaving this empty formats the string as rgba(r, g, b, a).\n'#rgb' '#rgba' '#rrggbb' and '#rrggbbaa' format as hexadecimal color codes.\n'rgb' 'hsb' and 'hsl' return the color formatted in the specified color mode.\n'rgba' 'hsba' and 'hsla' are the same as above but with alpha channels.\n'rgb%' 'hsb%' 'hsl%' 'rgba%' 'hsba%' and 'hsla%' format as percentages.</p>\n",
+                    type: 'String',
+                    optional: true
+                  }
+                ],
+                class: 'p5.Color',
+                module: 'Color'
+              },
+              setRed: {
+                name: 'setRed',
+                params: [
+                  {
+                    name: 'red',
+                    description: '<p>the new red value</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5.Color',
+                module: 'Color'
+              },
+              setGreen: {
+                name: 'setGreen',
+                params: [
+                  {
+                    name: 'green',
+                    description: '<p>the new green value</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5.Color',
+                module: 'Color'
+              },
+              setBlue: {
+                name: 'setBlue',
+                params: [
+                  {
+                    name: 'blue',
+                    description: '<p>the new blue value</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5.Color',
+                module: 'Color'
+              },
+              setAlpha: {
+                name: 'setAlpha',
+                params: [
+                  {
+                    name: 'alpha',
+                    description: '<p>the new alpha value</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5.Color',
+                module: 'Color'
+              }
+            },
+            'p5.Element': {
+              elt: {
+                name: 'elt',
+                class: 'p5.Element',
+                module: 'DOM'
+              },
+              parent: {
+                name: 'parent',
+                class: 'p5.Element',
+                module: 'DOM',
+                overloads: [
+                  {
+                    params: [
+                      {
+                        name: 'parent',
+                        description:
+                          '<p>the ID, DOM node, or <a href="#/p5.Element">p5.Element</a>\n                         of desired parent element</p>\n',
+                        type: 'String|p5.Element|Object'
+                      }
+                    ],
+                    chainable: 1
+                  },
+                  {
+                    params: []
+                  }
+                ]
+              },
+              id: {
+                name: 'id',
+                class: 'p5.Element',
+                module: 'DOM',
+                overloads: [
+                  {
+                    params: [
+                      {
+                        name: 'id',
+                        description: '<p>ID of the element</p>\n',
+                        type: 'String'
+                      }
+                    ],
