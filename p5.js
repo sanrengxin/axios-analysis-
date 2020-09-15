@@ -8759,3 +8759,144 @@
                 module: 'p5.sound'
               },
               freqToMidi: {
+                name: 'freqToMidi',
+                params: [
+                  {
+                    name: 'frequency',
+                    description:
+                      '<p>A freqeuncy, for example, the "A"\n                           above Middle C is 440Hz</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5',
+                module: 'p5.sound'
+              },
+              midiToFreq: {
+                name: 'midiToFreq',
+                params: [
+                  {
+                    name: 'midiNote',
+                    description: '<p>The number of a MIDI note</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5',
+                module: 'p5.sound'
+              },
+              soundFormats: {
+                name: 'soundFormats',
+                params: [
+                  {
+                    name: 'formats',
+                    description: "<p>i.e. 'mp3', 'wav', 'ogg'</p>\n",
+                    type: 'String',
+                    optional: true,
+                    multiple: true
+                  }
+                ],
+                class: 'p5',
+                module: 'p5.sound'
+              },
+              getAudioContext: {
+                name: 'getAudioContext',
+                class: 'p5',
+                module: 'p5.sound'
+              },
+              userStartAudio: {
+                params: [
+                  {
+                    name: 'element(s)',
+                    description:
+                      '<p>This argument can be an Element,\n                              Selector String, NodeList, p5.Element,\n                              jQuery Element, or an Array of any of those.</p>\n',
+                    type: 'Element|Array',
+                    optional: true
+                  },
+                  {
+                    name: 'callback',
+                    description:
+                      '<p>Callback to invoke when the AudioContext\n                              has started</p>\n',
+                    type: 'Function',
+                    optional: true
+                  }
+                ],
+                name: 'userStartAudio',
+                class: 'p5',
+                module: 'p5.sound'
+              },
+              loadSound: {
+                name: 'loadSound',
+                params: [
+                  {
+                    name: 'path',
+                    description:
+                      "<p>Path to the sound file, or an array with\n                                  paths to soundfiles in multiple formats\n                                  i.e. ['sound.ogg', 'sound.mp3'].\n                                  Alternately, accepts an object: either\n                                  from the HTML5 File API, or a p5.File.</p>\n",
+                    type: 'String|Array'
+                  },
+                  {
+                    name: 'successCallback',
+                    description: '<p>Name of a function to call once file loads</p>\n',
+                    type: 'Function',
+                    optional: true
+                  },
+                  {
+                    name: 'errorCallback',
+                    description:
+                      '<p>Name of a function to call if there is\n                                    an error loading the file.</p>\n',
+                    type: 'Function',
+                    optional: true
+                  },
+                  {
+                    name: 'whileLoading',
+                    description:
+                      '<p>Name of a function to call while file is loading.\n                               This function will receive the percentage loaded\n                               so far, from 0.0 to 1.0.</p>\n',
+                    type: 'Function',
+                    optional: true
+                  }
+                ],
+                class: 'p5',
+                module: 'p5.sound'
+              },
+              createConvolver: {
+                name: 'createConvolver',
+                params: [
+                  {
+                    name: 'path',
+                    description: '<p>path to a sound file</p>\n',
+                    type: 'String'
+                  },
+                  {
+                    name: 'callback',
+                    description:
+                      '<p>function to call if loading is successful.\n                              The object will be passed in as the argument\n                              to the callback function.</p>\n',
+                    type: 'Function',
+                    optional: true
+                  },
+                  {
+                    name: 'errorCallback',
+                    description:
+                      '<p>function to call if loading is not successful.\n                              A custom error will be passed in as the argument\n                              to the callback function.</p>\n',
+                    type: 'Function',
+                    optional: true
+                  }
+                ],
+                class: 'p5',
+                module: 'p5.sound'
+              },
+              setBPM: {
+                name: 'setBPM',
+                params: [
+                  {
+                    name: 'BPM',
+                    description: '<p>Beats Per Minute</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'rampTime',
+                    description: '<p>Seconds from now</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5',
+                module: 'p5.sound'
+              },
+              saveSound: {
