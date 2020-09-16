@@ -9168,3 +9168,127 @@
               touchMoved: {
                 name: 'touchMoved',
                 params: [
+                  {
+                    name: 'fxn',
+                    description:
+                      '<p>function to be fired when a touch moves over\n                               the element.\n                               if <code>false</code> is passed instead, the previously\n                               firing function will no longer fire.</p>\n',
+                    type: 'Function|Boolean'
+                  }
+                ],
+                class: 'p5.Element',
+                module: 'DOM'
+              },
+              touchEnded: {
+                name: 'touchEnded',
+                params: [
+                  {
+                    name: 'fxn',
+                    description:
+                      '<p>function to be fired when a touch ends\n                               over the element.\n                               if <code>false</code> is passed instead, the previously\n                               firing function will no longer fire.</p>\n',
+                    type: 'Function|Boolean'
+                  }
+                ],
+                class: 'p5.Element',
+                module: 'DOM'
+              },
+              dragOver: {
+                name: 'dragOver',
+                params: [
+                  {
+                    name: 'fxn',
+                    description:
+                      '<p>function to be fired when a file is\n                               dragged over the element.\n                               if <code>false</code> is passed instead, the previously\n                               firing function will no longer fire.</p>\n',
+                    type: 'Function|Boolean'
+                  }
+                ],
+                class: 'p5.Element',
+                module: 'DOM'
+              },
+              dragLeave: {
+                name: 'dragLeave',
+                params: [
+                  {
+                    name: 'fxn',
+                    description:
+                      '<p>function to be fired when a file is\n                               dragged off the element.\n                               if <code>false</code> is passed instead, the previously\n                               firing function will no longer fire.</p>\n',
+                    type: 'Function|Boolean'
+                  }
+                ],
+                class: 'p5.Element',
+                module: 'DOM'
+              },
+              addClass: {
+                name: 'addClass',
+                params: [
+                  {
+                    name: 'class',
+                    description: '<p>name of class to add</p>\n',
+                    type: 'String'
+                  }
+                ],
+                class: 'p5.Element',
+                module: 'DOM'
+              },
+              removeClass: {
+                name: 'removeClass',
+                params: [
+                  {
+                    name: 'class',
+                    description: '<p>name of class to remove</p>\n',
+                    type: 'String'
+                  }
+                ],
+                class: 'p5.Element',
+                module: 'DOM'
+              },
+              hasClass: {
+                name: 'hasClass',
+                params: [
+                  {
+                    name: 'c',
+                    description: '<p>class name of class to check</p>\n',
+                    type: 'String'
+                  }
+                ],
+                class: 'p5.Element',
+                module: 'DOM'
+              },
+              toggleClass: {
+                name: 'toggleClass',
+                params: [
+                  {
+                    name: 'c',
+                    description: '<p>class name to toggle</p>\n',
+                    type: 'String'
+                  }
+                ],
+                class: 'p5.Element',
+                module: 'DOM'
+              },
+              child: {
+                name: 'child',
+                class: 'p5.Element',
+                module: 'DOM',
+                overloads: [
+                  {
+                    params: []
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'child',
+                        description:
+                          '<p>the ID, DOM node, or <a href="#/p5.Element">p5.Element</a>\n                        to add to the current element</p>\n',
+                        type: 'String|p5.Element',
+                        optional: true
+                      }
+                    ],
+                    chainable: 1
+                  }
+                ]
+              },
+              center: {
+                name: 'center',
+                params: [
+                  {
+                    name: 'align',
