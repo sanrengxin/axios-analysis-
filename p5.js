@@ -9021,3 +9021,150 @@
                         type: 'String'
                       }
                     ],
+                    chainable: 1
+                  },
+                  {
+                    params: []
+                  }
+                ]
+              },
+              class: {
+                name: 'class',
+                class: 'p5.Element',
+                module: 'DOM',
+                overloads: [
+                  {
+                    params: [
+                      {
+                        name: 'class',
+                        description: '<p>class to add</p>\n',
+                        type: 'String'
+                      }
+                    ],
+                    chainable: 1
+                  },
+                  {
+                    params: []
+                  }
+                ]
+              },
+              mousePressed: {
+                name: 'mousePressed',
+                params: [
+                  {
+                    name: 'fxn',
+                    description:
+                      '<p>function to be fired when mouse is\n                               pressed over the element.\n                               if <code>false</code> is passed instead, the previously\n                               firing function will no longer fire.</p>\n',
+                    type: 'Function|Boolean'
+                  }
+                ],
+                class: 'p5.Element',
+                module: 'DOM'
+              },
+              doubleClicked: {
+                name: 'doubleClicked',
+                params: [
+                  {
+                    name: 'fxn',
+                    description:
+                      '<p>function to be fired when mouse is\n                               double clicked over the element.\n                               if <code>false</code> is passed instead, the previously\n                               firing function will no longer fire.</p>\n',
+                    type: 'Function|Boolean'
+                  }
+                ],
+                class: 'p5.Element',
+                module: 'DOM'
+              },
+              mouseWheel: {
+                name: 'mouseWheel',
+                params: [
+                  {
+                    name: 'fxn',
+                    description:
+                      '<p>function to be fired when mouse is\n                               scrolled over the element.\n                               if <code>false</code> is passed instead, the previously\n                               firing function will no longer fire.</p>\n',
+                    type: 'Function|Boolean'
+                  }
+                ],
+                class: 'p5.Element',
+                module: 'DOM'
+              },
+              mouseReleased: {
+                name: 'mouseReleased',
+                params: [
+                  {
+                    name: 'fxn',
+                    description:
+                      '<p>function to be fired when mouse is\n                               released over the element.\n                               if <code>false</code> is passed instead, the previously\n                               firing function will no longer fire.</p>\n',
+                    type: 'Function|Boolean'
+                  }
+                ],
+                class: 'p5.Element',
+                module: 'DOM'
+              },
+              mouseClicked: {
+                name: 'mouseClicked',
+                params: [
+                  {
+                    name: 'fxn',
+                    description:
+                      '<p>function to be fired when mouse is\n                               clicked over the element.\n                               if <code>false</code> is passed instead, the previously\n                               firing function will no longer fire.</p>\n',
+                    type: 'Function|Boolean'
+                  }
+                ],
+                class: 'p5.Element',
+                module: 'DOM'
+              },
+              mouseMoved: {
+                name: 'mouseMoved',
+                params: [
+                  {
+                    name: 'fxn',
+                    description:
+                      '<p>function to be fired when a mouse moves\n                               over the element.\n                               if <code>false</code> is passed instead, the previously\n                               firing function will no longer fire.</p>\n',
+                    type: 'Function|Boolean'
+                  }
+                ],
+                class: 'p5.Element',
+                module: 'DOM'
+              },
+              mouseOver: {
+                name: 'mouseOver',
+                params: [
+                  {
+                    name: 'fxn',
+                    description:
+                      '<p>function to be fired when a mouse moves\n                               onto the element.\n                               if <code>false</code> is passed instead, the previously\n                               firing function will no longer fire.</p>\n',
+                    type: 'Function|Boolean'
+                  }
+                ],
+                class: 'p5.Element',
+                module: 'DOM'
+              },
+              mouseOut: {
+                name: 'mouseOut',
+                params: [
+                  {
+                    name: 'fxn',
+                    description:
+                      '<p>function to be fired when a mouse\n                               moves off of an element.\n                               if <code>false</code> is passed instead, the previously\n                               firing function will no longer fire.</p>\n',
+                    type: 'Function|Boolean'
+                  }
+                ],
+                class: 'p5.Element',
+                module: 'DOM'
+              },
+              touchStarted: {
+                name: 'touchStarted',
+                params: [
+                  {
+                    name: 'fxn',
+                    description:
+                      '<p>function to be fired when a touch\n                               starts over the element.\n                               if <code>false</code> is passed instead, the previously\n                               firing function will no longer fire.</p>\n',
+                    type: 'Function|Boolean'
+                  }
+                ],
+                class: 'p5.Element',
+                module: 'DOM'
+              },
+              touchMoved: {
+                name: 'touchMoved',
+                params: [
