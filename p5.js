@@ -9292,3 +9292,130 @@
                 params: [
                   {
                     name: 'align',
+                    description:
+                      "<p>passing 'vertical', 'horizontal' aligns element accordingly</p>\n",
+                    type: 'String',
+                    optional: true
+                  }
+                ],
+                class: 'p5.Element',
+                module: 'DOM'
+              },
+              html: {
+                name: 'html',
+                class: 'p5.Element',
+                module: 'DOM',
+                overloads: [
+                  {
+                    params: []
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'html',
+                        description: '<p>the HTML to be placed inside the element</p>\n',
+                        type: 'String',
+                        optional: true
+                      },
+                      {
+                        name: 'append',
+                        description: '<p>whether to append HTML to existing</p>\n',
+                        type: 'Boolean',
+                        optional: true
+                      }
+                    ],
+                    chainable: 1
+                  }
+                ]
+              },
+              position: {
+                name: 'position',
+                class: 'p5.Element',
+                module: 'DOM',
+                overloads: [
+                  {
+                    params: []
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'x',
+                        description:
+                          '<p>x-position relative to upper left of window (optional)</p>\n',
+                        type: 'Number',
+                        optional: true
+                      },
+                      {
+                        name: 'y',
+                        description:
+                          '<p>y-position relative to upper left of window (optional)</p>\n',
+                        type: 'Number',
+                        optional: true
+                      },
+                      {
+                        name: 'positionType',
+                        description:
+                          '<p>it can be static, fixed, relative, sticky, initial or inherit (optional)</p>\n',
+                        type: 'String'
+                      }
+                    ],
+                    chainable: 1
+                  }
+                ]
+              },
+              style: {
+                name: 'style',
+                class: 'p5.Element',
+                module: 'DOM',
+                overloads: [
+                  {
+                    params: [
+                      {
+                        name: 'property',
+                        description: '<p>property to be set</p>\n',
+                        type: 'String'
+                      }
+                    ]
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'property',
+                        description: '',
+                        type: 'String'
+                      },
+                      {
+                        name: 'value',
+                        description: '<p>value to assign to property</p>\n',
+                        type: 'String|p5.Color'
+                      }
+                    ],
+                    chainable: 1
+                  }
+                ]
+              },
+              attribute: {
+                name: 'attribute',
+                class: 'p5.Element',
+                module: 'DOM',
+                overloads: [
+                  {
+                    params: []
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'attr',
+                        description: '<p>attribute to set</p>\n',
+                        type: 'String'
+                      },
+                      {
+                        name: 'value',
+                        description: '<p>value to assign to attribute</p>\n',
+                        type: 'String'
+                      }
+                    ],
+                    chainable: 1
+                  }
+                ]
+              },
