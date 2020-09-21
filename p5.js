@@ -9419,3 +9419,124 @@
                   }
                 ]
               },
+              removeAttribute: {
+                name: 'removeAttribute',
+                params: [
+                  {
+                    name: 'attr',
+                    description: '<p>attribute to remove</p>\n',
+                    type: 'String'
+                  }
+                ],
+                class: 'p5.Element',
+                module: 'DOM'
+              },
+              value: {
+                name: 'value',
+                class: 'p5.Element',
+                module: 'DOM',
+                overloads: [
+                  {
+                    params: []
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'value',
+                        description: '',
+                        type: 'String|Number'
+                      }
+                    ],
+                    chainable: 1
+                  }
+                ]
+              },
+              show: {
+                name: 'show',
+                class: 'p5.Element',
+                module: 'DOM'
+              },
+              hide: {
+                name: 'hide',
+                class: 'p5.Element',
+                module: 'DOM'
+              },
+              size: {
+                name: 'size',
+                class: 'p5.Element',
+                module: 'DOM',
+                overloads: [
+                  {
+                    params: []
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'w',
+                        description:
+                          '<p>width of the element, either AUTO, or a number</p>\n',
+                        type: 'Number|Constant'
+                      },
+                      {
+                        name: 'h',
+                        description:
+                          '<p>height of the element, either AUTO, or a number</p>\n',
+                        type: 'Number|Constant',
+                        optional: true
+                      }
+                    ],
+                    chainable: 1
+                  }
+                ]
+              },
+              remove: {
+                name: 'remove',
+                class: 'p5.Element',
+                module: 'DOM'
+              },
+              drop: {
+                name: 'drop',
+                params: [
+                  {
+                    name: 'callback',
+                    description:
+                      '<p>callback to receive loaded file, called for each file dropped.</p>\n',
+                    type: 'Function'
+                  },
+                  {
+                    name: 'fxn',
+                    description:
+                      '<p>callback triggered once when files are dropped with the drop event.</p>\n',
+                    type: 'Function',
+                    optional: true
+                  }
+                ],
+                class: 'p5.Element',
+                module: 'DOM'
+              }
+            },
+            'p5.Graphics': {
+              reset: {
+                name: 'reset',
+                class: 'p5.Graphics',
+                module: 'Rendering'
+              },
+              remove: {
+                name: 'remove',
+                class: 'p5.Graphics',
+                module: 'Rendering'
+              }
+            },
+            JSON: {
+              stringify: {
+                name: 'stringify',
+                params: [
+                  {
+                    name: 'object',
+                    description:
+                      '<p>:Javascript object that you would like to convert to JSON</p>\n',
+                    type: 'Object'
+                  }
+                ],
+                class: 'JSON',
+                module: 'Foundation'
