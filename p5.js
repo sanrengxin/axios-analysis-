@@ -9540,3 +9540,152 @@
                 ],
                 class: 'JSON',
                 module: 'Foundation'
+              }
+            },
+            console: {
+              log: {
+                name: 'log',
+                params: [
+                  {
+                    name: 'message',
+                    description:
+                      '<p>:Message that you would like to print to the console</p>\n',
+                    type: 'String|Expression|Object'
+                  }
+                ],
+                class: 'console',
+                module: 'Foundation'
+              }
+            },
+            'p5.TypedDict': {
+              size: {
+                name: 'size',
+                class: 'p5.TypedDict',
+                module: 'Data'
+              },
+              hasKey: {
+                name: 'hasKey',
+                params: [
+                  {
+                    name: 'key',
+                    description: '<p>that you want to look up</p>\n',
+                    type: 'Number|String'
+                  }
+                ],
+                class: 'p5.TypedDict',
+                module: 'Data'
+              },
+              get: {
+                name: 'get',
+                params: [
+                  {
+                    name: 'the',
+                    description: '<p>key you want to access</p>\n',
+                    type: 'Number|String'
+                  }
+                ],
+                class: 'p5.TypedDict',
+                module: 'Data'
+              },
+              set: {
+                name: 'set',
+                params: [
+                  {
+                    name: 'key',
+                    description: '',
+                    type: 'Number|String'
+                  },
+                  {
+                    name: 'value',
+                    description: '',
+                    type: 'Number|String'
+                  }
+                ],
+                class: 'p5.TypedDict',
+                module: 'Data'
+              },
+              create: {
+                name: 'create',
+                class: 'p5.TypedDict',
+                module: 'Data',
+                overloads: [
+                  {
+                    params: [
+                      {
+                        name: 'key',
+                        description: '',
+                        type: 'Number|String'
+                      },
+                      {
+                        name: 'value',
+                        description: '',
+                        type: 'Number|String'
+                      }
+                    ]
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'obj',
+                        description: '<p>key/value pair</p>\n',
+                        type: 'Object'
+                      }
+                    ]
+                  }
+                ]
+              },
+              clear: {
+                name: 'clear',
+                class: 'p5.TypedDict',
+                module: 'Data'
+              },
+              remove: {
+                name: 'remove',
+                params: [
+                  {
+                    name: 'key',
+                    description: '<p>for the pair to remove</p>\n',
+                    type: 'Number|String'
+                  }
+                ],
+                class: 'p5.TypedDict',
+                module: 'Data'
+              },
+              print: {
+                name: 'print',
+                class: 'p5.TypedDict',
+                module: 'Data'
+              },
+              saveTable: {
+                name: 'saveTable',
+                class: 'p5.TypedDict',
+                module: 'Data'
+              },
+              saveJSON: {
+                name: 'saveJSON',
+                class: 'p5.TypedDict',
+                module: 'Data'
+              }
+            },
+            'p5.NumberDict': {
+              add: {
+                name: 'add',
+                params: [
+                  {
+                    name: 'Key',
+                    description: '<p>for the value you wish to add to</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'Number',
+                    description: '<p>to add to the value</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5.NumberDict',
+                module: 'Data'
+              },
+              sub: {
+                name: 'sub',
+                params: [
+                  {
