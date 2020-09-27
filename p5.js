@@ -9689,3 +9689,138 @@
                 name: 'sub',
                 params: [
                   {
+                    name: 'Key',
+                    description: '<p>for the value you wish to subtract from</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'Number',
+                    description: '<p>to subtract from the value</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5.NumberDict',
+                module: 'Data'
+              },
+              mult: {
+                name: 'mult',
+                params: [
+                  {
+                    name: 'Key',
+                    description: '<p>for value you wish to multiply</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'Amount',
+                    description: '<p>to multiply the value by</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5.NumberDict',
+                module: 'Data'
+              },
+              div: {
+                name: 'div',
+                params: [
+                  {
+                    name: 'Key',
+                    description: '<p>for value you wish to divide</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'Amount',
+                    description: '<p>to divide the value by</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5.NumberDict',
+                module: 'Data'
+              },
+              minValue: {
+                name: 'minValue',
+                class: 'p5.NumberDict',
+                module: 'Data'
+              },
+              maxValue: {
+                name: 'maxValue',
+                class: 'p5.NumberDict',
+                module: 'Data'
+              },
+              minKey: {
+                name: 'minKey',
+                class: 'p5.NumberDict',
+                module: 'Data'
+              },
+              maxKey: {
+                name: 'maxKey',
+                class: 'p5.NumberDict',
+                module: 'Data'
+              }
+            },
+            'p5.MediaElement': {
+              src: {
+                name: 'src',
+                class: 'p5.MediaElement',
+                module: 'DOM'
+              },
+              play: {
+                name: 'play',
+                class: 'p5.MediaElement',
+                module: 'DOM'
+              },
+              stop: {
+                name: 'stop',
+                class: 'p5.MediaElement',
+                module: 'DOM'
+              },
+              pause: {
+                name: 'pause',
+                class: 'p5.MediaElement',
+                module: 'DOM'
+              },
+              loop: {
+                name: 'loop',
+                class: 'p5.MediaElement',
+                module: 'DOM'
+              },
+              noLoop: {
+                name: 'noLoop',
+                class: 'p5.MediaElement',
+                module: 'DOM'
+              },
+              autoplay: {
+                name: 'autoplay',
+                params: [
+                  {
+                    name: 'shouldAutoplay',
+                    description: '<p>whether the element should autoplay</p>\n',
+                    type: 'Boolean'
+                  }
+                ],
+                class: 'p5.MediaElement',
+                module: 'DOM'
+              },
+              volume: {
+                name: 'volume',
+                class: 'p5.MediaElement',
+                module: 'DOM',
+                overloads: [
+                  {
+                    params: []
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'val',
+                        description: '<p>volume between 0.0 and 1.0</p>\n',
+                        type: 'Number'
+                      }
+                    ],
+                    chainable: 1
+                  }
+                ]
+              },
+              speed: {
+                name: 'speed',
+                class: 'p5.MediaElement',
+                module: 'DOM',
