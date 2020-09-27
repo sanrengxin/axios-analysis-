@@ -9824,3 +9824,134 @@
                 name: 'speed',
                 class: 'p5.MediaElement',
                 module: 'DOM',
+                overloads: [
+                  {
+                    params: []
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'speed',
+                        description: '<p>speed multiplier for element playback</p>\n',
+                        type: 'Number'
+                      }
+                    ],
+                    chainable: 1
+                  }
+                ]
+              },
+              time: {
+                name: 'time',
+                class: 'p5.MediaElement',
+                module: 'DOM',
+                overloads: [
+                  {
+                    params: []
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'time',
+                        description: '<p>time to jump to (in seconds)</p>\n',
+                        type: 'Number'
+                      }
+                    ],
+                    chainable: 1
+                  }
+                ]
+              },
+              duration: {
+                name: 'duration',
+                class: 'p5.MediaElement',
+                module: 'DOM'
+              },
+              onended: {
+                name: 'onended',
+                params: [
+                  {
+                    name: 'callback',
+                    description:
+                      '<p>function to call when the\n                            soundfile has ended. The\n                            media element will be passed\n                            in as the argument to the\n                            callback.</p>\n',
+                    type: 'Function'
+                  }
+                ],
+                class: 'p5.MediaElement',
+                module: 'DOM'
+              },
+              connect: {
+                name: 'connect',
+                params: [
+                  {
+                    name: 'audioNode',
+                    description:
+                      '<p>AudioNode from the Web Audio API,\nor an object from the p5.sound library</p>\n',
+                    type: 'AudioNode|Object'
+                  }
+                ],
+                class: 'p5.MediaElement',
+                module: 'DOM'
+              },
+              disconnect: {
+                name: 'disconnect',
+                class: 'p5.MediaElement',
+                module: 'DOM'
+              },
+              showControls: {
+                name: 'showControls',
+                class: 'p5.MediaElement',
+                module: 'DOM'
+              },
+              hideControls: {
+                name: 'hideControls',
+                class: 'p5.MediaElement',
+                module: 'DOM'
+              },
+              addCue: {
+                name: 'addCue',
+                params: [
+                  {
+                    name: 'time',
+                    description:
+                      "<p>Time in seconds, relative to this media\n                            element's playback. For example, to trigger\n                            an event every time playback reaches two\n                            seconds, pass in the number 2. This will be\n                            passed as the first parameter to\n                            the callback function.</p>\n",
+                    type: 'Number'
+                  },
+                  {
+                    name: 'callback',
+                    description:
+                      '<p>Name of a function that will be\n                            called at the given time. The callback will\n                            receive time and (optionally) param as its\n                            two parameters.</p>\n',
+                    type: 'Function'
+                  },
+                  {
+                    name: 'value',
+                    description:
+                      '<p>An object to be passed as the\n                            second parameter to the\n                            callback function.</p>\n',
+                    type: 'Object',
+                    optional: true
+                  }
+                ],
+                class: 'p5.MediaElement',
+                module: 'DOM'
+              },
+              removeCue: {
+                name: 'removeCue',
+                params: [
+                  {
+                    name: 'id',
+                    description: '<p>ID of the cue, as returned by addCue</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5.MediaElement',
+                module: 'DOM'
+              },
+              clearCues: {
+                name: 'clearCues',
+                params: [
+                  {
+                    name: 'id',
+                    description: '<p>ID of the cue, as returned by addCue</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5.MediaElement',
+                module: 'DOM'
