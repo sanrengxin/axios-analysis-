@@ -10231,3 +10231,147 @@
                         description: '',
                         type: 'Integer'
                       },
+                      {
+                        name: 'dh',
+                        description: '',
+                        type: 'Integer'
+                      }
+                    ]
+                  }
+                ]
+              },
+              mask: {
+                name: 'mask',
+                params: [
+                  {
+                    name: 'srcImage',
+                    description: '<p>source image</p>\n',
+                    type: 'p5.Image'
+                  }
+                ],
+                class: 'p5.Image',
+                module: 'Image'
+              },
+              filter: {
+                name: 'filter',
+                params: [
+                  {
+                    name: 'filterType',
+                    description:
+                      '<p>either THRESHOLD, GRAY, OPAQUE, INVERT,\n                               POSTERIZE, ERODE, DILATE or BLUR.\n                               See Filters.js for docs on\n                               each available filter</p>\n',
+                    type: 'Constant'
+                  },
+                  {
+                    name: 'filterParam',
+                    description:
+                      '<p>an optional parameter unique\n                               to each filter, see above</p>\n',
+                    type: 'Number',
+                    optional: true
+                  }
+                ],
+                class: 'p5.Image',
+                module: 'Image'
+              },
+              blend: {
+                name: 'blend',
+                class: 'p5.Image',
+                module: 'Image',
+                overloads: [
+                  {
+                    params: [
+                      {
+                        name: 'srcImage',
+                        description: '<p>source image</p>\n',
+                        type: 'p5.Image'
+                      },
+                      {
+                        name: 'sx',
+                        description:
+                          "<p>X coordinate of the source's upper left corner</p>\n",
+                        type: 'Integer'
+                      },
+                      {
+                        name: 'sy',
+                        description:
+                          "<p>Y coordinate of the source's upper left corner</p>\n",
+                        type: 'Integer'
+                      },
+                      {
+                        name: 'sw',
+                        description: '<p>source image width</p>\n',
+                        type: 'Integer'
+                      },
+                      {
+                        name: 'sh',
+                        description: '<p>source image height</p>\n',
+                        type: 'Integer'
+                      },
+                      {
+                        name: 'dx',
+                        description:
+                          "<p>X coordinate of the destination's upper left corner</p>\n",
+                        type: 'Integer'
+                      },
+                      {
+                        name: 'dy',
+                        description:
+                          "<p>Y coordinate of the destination's upper left corner</p>\n",
+                        type: 'Integer'
+                      },
+                      {
+                        name: 'dw',
+                        description: '<p>destination image width</p>\n',
+                        type: 'Integer'
+                      },
+                      {
+                        name: 'dh',
+                        description: '<p>destination image height</p>\n',
+                        type: 'Integer'
+                      },
+                      {
+                        name: 'blendMode',
+                        description:
+                          '<p>the blend mode. either\n    BLEND, DARKEST, LIGHTEST, DIFFERENCE,\n    MULTIPLY, EXCLUSION, SCREEN, REPLACE, OVERLAY, HARD_LIGHT,\n    SOFT_LIGHT, DODGE, BURN, ADD or NORMAL.</p>\n<p>Available blend modes are: normal | multiply | screen | overlay |\n           darken | lighten | color-dodge | color-burn | hard-light |\n           soft-light | difference | exclusion | hue | saturation |\n           color | luminosity</p>\n<p><a href="http://blogs.adobe.com/webplatform/2013/01/28/blending-features-in-canvas/">http://blogs.adobe.com/webplatform/2013/01/28/blending-features-in-canvas/</a></p>\n',
+                        type: 'Constant'
+                      }
+                    ]
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'sx',
+                        description: '',
+                        type: 'Integer'
+                      },
+                      {
+                        name: 'sy',
+                        description: '',
+                        type: 'Integer'
+                      },
+                      {
+                        name: 'sw',
+                        description: '',
+                        type: 'Integer'
+                      },
+                      {
+                        name: 'sh',
+                        description: '',
+                        type: 'Integer'
+                      },
+                      {
+                        name: 'dx',
+                        description: '',
+                        type: 'Integer'
+                      },
+                      {
+                        name: 'dy',
+                        description: '',
+                        type: 'Integer'
+                      },
+                      {
+                        name: 'dw',
+                        description: '',
+                        type: 'Integer'
+                      },
+                      {
+                        name: 'dh',
