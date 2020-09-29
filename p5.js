@@ -9955,3 +9955,141 @@
                 ],
                 class: 'p5.MediaElement',
                 module: 'DOM'
+              }
+            },
+            'p5.File': {
+              file: {
+                name: 'file',
+                class: 'p5.File',
+                module: 'DOM'
+              },
+              type: {
+                name: 'type',
+                class: 'p5.File',
+                module: 'DOM'
+              },
+              subtype: {
+                name: 'subtype',
+                class: 'p5.File',
+                module: 'DOM'
+              },
+              name: {
+                name: 'name',
+                class: 'p5.File',
+                module: 'DOM'
+              },
+              size: {
+                name: 'size',
+                class: 'p5.File',
+                module: 'DOM'
+              },
+              data: {
+                name: 'data',
+                class: 'p5.File',
+                module: 'DOM'
+              }
+            },
+            'p5.Image': {
+              width: {
+                name: 'width',
+                class: 'p5.Image',
+                module: 'Image'
+              },
+              height: {
+                name: 'height',
+                class: 'p5.Image',
+                module: 'Image'
+              },
+              pixels: {
+                name: 'pixels',
+                class: 'p5.Image',
+                module: 'Image'
+              },
+              loadPixels: {
+                name: 'loadPixels',
+                class: 'p5.Image',
+                module: 'Image'
+              },
+              updatePixels: {
+                name: 'updatePixels',
+                class: 'p5.Image',
+                module: 'Image',
+                overloads: [
+                  {
+                    params: [
+                      {
+                        name: 'x',
+                        description:
+                          '<p>x-offset of the target update area for the\n                             underlying canvas</p>\n',
+                        type: 'Integer'
+                      },
+                      {
+                        name: 'y',
+                        description:
+                          '<p>y-offset of the target update area for the\n                             underlying canvas</p>\n',
+                        type: 'Integer'
+                      },
+                      {
+                        name: 'w',
+                        description:
+                          '<p>height of the target update area for the\n                             underlying canvas</p>\n',
+                        type: 'Integer'
+                      },
+                      {
+                        name: 'h',
+                        description:
+                          '<p>height of the target update area for the\n                             underlying canvas</p>\n',
+                        type: 'Integer'
+                      }
+                    ]
+                  },
+                  {
+                    params: []
+                  }
+                ]
+              },
+              get: {
+                name: 'get',
+                class: 'p5.Image',
+                module: 'Image',
+                overloads: [
+                  {
+                    params: [
+                      {
+                        name: 'x',
+                        description: '<p>x-coordinate of the pixel</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'y',
+                        description: '<p>y-coordinate of the pixel</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'w',
+                        description: '<p>width</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'h',
+                        description: '<p>height</p>\n',
+                        type: 'Number'
+                      }
+                    ]
+                  },
+                  {
+                    params: []
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'x',
+                        description: '',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'y',
+                        description: '',
+                        type: 'Number'
+                      }
+                    ]
