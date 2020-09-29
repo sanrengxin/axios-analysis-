@@ -10093,3 +10093,141 @@
                         type: 'Number'
                       }
                     ]
+                  }
+                ]
+              },
+              set: {
+                name: 'set',
+                params: [
+                  {
+                    name: 'x',
+                    description: '<p>x-coordinate of the pixel</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'y',
+                    description: '<p>y-coordinate of the pixel</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'a',
+                    description:
+                      '<p>grayscale value | pixel array |\n                               a <a href="#/p5.Color">p5.Color</a> | image to copy</p>\n',
+                    type: 'Number|Number[]|Object'
+                  }
+                ],
+                class: 'p5.Image',
+                module: 'Image'
+              },
+              resize: {
+                name: 'resize',
+                params: [
+                  {
+                    name: 'width',
+                    description: '<p>the resized image width</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'height',
+                    description: '<p>the resized image height</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5.Image',
+                module: 'Image'
+              },
+              copy: {
+                name: 'copy',
+                class: 'p5.Image',
+                module: 'Image',
+                overloads: [
+                  {
+                    params: [
+                      {
+                        name: 'srcImage',
+                        description: '<p>source image</p>\n',
+                        type: 'p5.Image|p5.Element'
+                      },
+                      {
+                        name: 'sx',
+                        description:
+                          "<p>X coordinate of the source's upper left corner</p>\n",
+                        type: 'Integer'
+                      },
+                      {
+                        name: 'sy',
+                        description:
+                          "<p>Y coordinate of the source's upper left corner</p>\n",
+                        type: 'Integer'
+                      },
+                      {
+                        name: 'sw',
+                        description: '<p>source image width</p>\n',
+                        type: 'Integer'
+                      },
+                      {
+                        name: 'sh',
+                        description: '<p>source image height</p>\n',
+                        type: 'Integer'
+                      },
+                      {
+                        name: 'dx',
+                        description:
+                          "<p>X coordinate of the destination's upper left corner</p>\n",
+                        type: 'Integer'
+                      },
+                      {
+                        name: 'dy',
+                        description:
+                          "<p>Y coordinate of the destination's upper left corner</p>\n",
+                        type: 'Integer'
+                      },
+                      {
+                        name: 'dw',
+                        description: '<p>destination image width</p>\n',
+                        type: 'Integer'
+                      },
+                      {
+                        name: 'dh',
+                        description: '<p>destination image height</p>\n',
+                        type: 'Integer'
+                      }
+                    ]
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'sx',
+                        description: '',
+                        type: 'Integer'
+                      },
+                      {
+                        name: 'sy',
+                        description: '',
+                        type: 'Integer'
+                      },
+                      {
+                        name: 'sw',
+                        description: '',
+                        type: 'Integer'
+                      },
+                      {
+                        name: 'sh',
+                        description: '',
+                        type: 'Integer'
+                      },
+                      {
+                        name: 'dx',
+                        description: '',
+                        type: 'Integer'
+                      },
+                      {
+                        name: 'dy',
+                        description: '',
+                        type: 'Integer'
+                      },
+                      {
+                        name: 'dw',
+                        description: '',
+                        type: 'Integer'
+                      },
