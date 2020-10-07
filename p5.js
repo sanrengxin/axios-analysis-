@@ -10502,3 +10502,115 @@
             'p5.Table': {
               columns: {
                 name: 'columns',
+                class: 'p5.Table',
+                module: 'IO'
+              },
+              rows: {
+                name: 'rows',
+                class: 'p5.Table',
+                module: 'IO'
+              },
+              addRow: {
+                name: 'addRow',
+                params: [
+                  {
+                    name: 'row',
+                    description: '<p>row to be added to the table</p>\n',
+                    type: 'p5.TableRow',
+                    optional: true
+                  }
+                ],
+                class: 'p5.Table',
+                module: 'IO'
+              },
+              removeRow: {
+                name: 'removeRow',
+                params: [
+                  {
+                    name: 'id',
+                    description: '<p>ID number of the row to remove</p>\n',
+                    type: 'Integer'
+                  }
+                ],
+                class: 'p5.Table',
+                module: 'IO'
+              },
+              getRow: {
+                name: 'getRow',
+                params: [
+                  {
+                    name: 'rowID',
+                    description: '<p>ID number of the row to get</p>\n',
+                    type: 'Integer'
+                  }
+                ],
+                class: 'p5.Table',
+                module: 'IO'
+              },
+              getRows: {
+                name: 'getRows',
+                class: 'p5.Table',
+                module: 'IO'
+              },
+              findRow: {
+                name: 'findRow',
+                params: [
+                  {
+                    name: 'value',
+                    description: '<p>The value to match</p>\n',
+                    type: 'String'
+                  },
+                  {
+                    name: 'column',
+                    description:
+                      '<p>ID number or title of the\n                               column to search</p>\n',
+                    type: 'Integer|String'
+                  }
+                ],
+                class: 'p5.Table',
+                module: 'IO'
+              },
+              findRows: {
+                name: 'findRows',
+                params: [
+                  {
+                    name: 'value',
+                    description: '<p>The value to match</p>\n',
+                    type: 'String'
+                  },
+                  {
+                    name: 'column',
+                    description:
+                      '<p>ID number or title of the\n                               column to search</p>\n',
+                    type: 'Integer|String'
+                  }
+                ],
+                class: 'p5.Table',
+                module: 'IO'
+              },
+              matchRow: {
+                name: 'matchRow',
+                params: [
+                  {
+                    name: 'regexp',
+                    description: '<p>The regular expression to match</p>\n',
+                    type: 'String|RegExp'
+                  },
+                  {
+                    name: 'column',
+                    description:
+                      '<p>The column ID (number) or\n                                 title (string)</p>\n',
+                    type: 'String|Integer'
+                  }
+                ],
+                class: 'p5.Table',
+                module: 'IO'
+              },
+              matchRows: {
+                name: 'matchRows',
+                params: [
+                  {
+                    name: 'regexp',
+                    description: '<p>The regular expression to match</p>\n',
+                    type: 'String'
+                  },
