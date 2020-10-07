@@ -10375,3 +10375,130 @@
                       },
                       {
                         name: 'dh',
+                        description: '',
+                        type: 'Integer'
+                      },
+                      {
+                        name: 'blendMode',
+                        description: '',
+                        type: 'Constant'
+                      }
+                    ]
+                  }
+                ]
+              },
+              save: {
+                name: 'save',
+                params: [
+                  {
+                    name: 'filename',
+                    description: '<p>give your file a name</p>\n',
+                    type: 'String'
+                  },
+                  {
+                    name: 'extension',
+                    description: "<p>'png' or 'jpg'</p>\n",
+                    type: 'String'
+                  }
+                ],
+                class: 'p5.Image',
+                module: 'Image'
+              },
+              reset: {
+                name: 'reset',
+                class: 'p5.Image',
+                module: 'Image'
+              },
+              getCurrentFrame: {
+                name: 'getCurrentFrame',
+                class: 'p5.Image',
+                module: 'Image'
+              },
+              setFrame: {
+                name: 'setFrame',
+                params: [
+                  {
+                    name: 'index',
+                    description:
+                      '<p>the index for the frame that should be displayed</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5.Image',
+                module: 'Image'
+              },
+              numFrames: {
+                name: 'numFrames',
+                class: 'p5.Image',
+                module: 'Image'
+              },
+              play: {
+                name: 'play',
+                class: 'p5.Image',
+                module: 'Image'
+              },
+              pause: {
+                name: 'pause',
+                class: 'p5.Image',
+                module: 'Image'
+              },
+              delay: {
+                name: 'delay',
+                params: [
+                  {
+                    name: 'd',
+                    description:
+                      '<p>the amount in milliseconds to delay between switching frames</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'index',
+                    description:
+                      '<p>the index of the frame that should have the new delay value {optional}</p>\n',
+                    type: 'Number',
+                    optional: true
+                  }
+                ],
+                class: 'p5.Image',
+                module: 'Image'
+              }
+            },
+            'p5.PrintWriter': {
+              write: {
+                name: 'write',
+                params: [
+                  {
+                    name: 'data',
+                    description: '<p>all data to be written by the PrintWriter</p>\n',
+                    type: 'Array'
+                  }
+                ],
+                class: 'p5.PrintWriter',
+                module: 'IO'
+              },
+              print: {
+                name: 'print',
+                params: [
+                  {
+                    name: 'data',
+                    description: '<p>all data to be printed by the PrintWriter</p>\n',
+                    type: 'Array'
+                  }
+                ],
+                class: 'p5.PrintWriter',
+                module: 'IO'
+              },
+              clear: {
+                name: 'clear',
+                class: 'p5.PrintWriter',
+                module: 'IO'
+              },
+              close: {
+                name: 'close',
+                class: 'p5.PrintWriter',
+                module: 'IO'
+              }
+            },
+            'p5.Table': {
+              columns: {
+                name: 'columns',
