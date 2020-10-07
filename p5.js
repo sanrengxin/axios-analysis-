@@ -10614,3 +10614,127 @@
                     description: '<p>The regular expression to match</p>\n',
                     type: 'String'
                   },
+                  {
+                    name: 'column',
+                    description:
+                      '<p>The column ID (number) or\n                                 title (string)</p>\n',
+                    type: 'String|Integer',
+                    optional: true
+                  }
+                ],
+                class: 'p5.Table',
+                module: 'IO'
+              },
+              getColumn: {
+                name: 'getColumn',
+                params: [
+                  {
+                    name: 'column',
+                    description: '<p>String or Number of the column to return</p>\n',
+                    type: 'String|Number'
+                  }
+                ],
+                class: 'p5.Table',
+                module: 'IO'
+              },
+              clearRows: {
+                name: 'clearRows',
+                class: 'p5.Table',
+                module: 'IO'
+              },
+              addColumn: {
+                name: 'addColumn',
+                params: [
+                  {
+                    name: 'title',
+                    description: '<p>title of the given column</p>\n',
+                    type: 'String',
+                    optional: true
+                  }
+                ],
+                class: 'p5.Table',
+                module: 'IO'
+              },
+              getColumnCount: {
+                name: 'getColumnCount',
+                class: 'p5.Table',
+                module: 'IO'
+              },
+              getRowCount: {
+                name: 'getRowCount',
+                class: 'p5.Table',
+                module: 'IO'
+              },
+              removeTokens: {
+                name: 'removeTokens',
+                params: [
+                  {
+                    name: 'chars',
+                    description: '<p>String listing characters to be removed</p>\n',
+                    type: 'String'
+                  },
+                  {
+                    name: 'column',
+                    description:
+                      '<p>Column ID (number)\n                                 or name (string)</p>\n',
+                    type: 'String|Integer',
+                    optional: true
+                  }
+                ],
+                class: 'p5.Table',
+                module: 'IO'
+              },
+              trim: {
+                name: 'trim',
+                params: [
+                  {
+                    name: 'column',
+                    description:
+                      '<p>Column ID (number)\n                                 or name (string)</p>\n',
+                    type: 'String|Integer',
+                    optional: true
+                  }
+                ],
+                class: 'p5.Table',
+                module: 'IO'
+              },
+              removeColumn: {
+                name: 'removeColumn',
+                params: [
+                  {
+                    name: 'column',
+                    description: '<p>columnName (string) or ID (number)</p>\n',
+                    type: 'String|Integer'
+                  }
+                ],
+                class: 'p5.Table',
+                module: 'IO'
+              },
+              set: {
+                name: 'set',
+                params: [
+                  {
+                    name: 'row',
+                    description: '<p>row ID</p>\n',
+                    type: 'Integer'
+                  },
+                  {
+                    name: 'column',
+                    description:
+                      '<p>column ID (Number)\n                              or title (String)</p>\n',
+                    type: 'String|Integer'
+                  },
+                  {
+                    name: 'value',
+                    description: '<p>value to assign</p>\n',
+                    type: 'String|Number'
+                  }
+                ],
+                class: 'p5.Table',
+                module: 'IO'
+              },
+              setNum: {
+                name: 'setNum',
+                params: [
+                  {
+                    name: 'row',
