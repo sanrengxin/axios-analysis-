@@ -10864,3 +10864,139 @@
                     type: 'String|Integer'
                   },
                   {
+                    name: 'value',
+                    description: '<p>The value to be stored</p>\n',
+                    type: 'String|Number'
+                  }
+                ],
+                class: 'p5.TableRow',
+                module: 'IO'
+              },
+              setNum: {
+                name: 'setNum',
+                params: [
+                  {
+                    name: 'column',
+                    description:
+                      '<p>Column ID (Number)\n                              or Title (String)</p>\n',
+                    type: 'String|Integer'
+                  },
+                  {
+                    name: 'value',
+                    description:
+                      '<p>The value to be stored\n                              as a Float</p>\n',
+                    type: 'Number|String'
+                  }
+                ],
+                class: 'p5.TableRow',
+                module: 'IO'
+              },
+              setString: {
+                name: 'setString',
+                params: [
+                  {
+                    name: 'column',
+                    description:
+                      '<p>Column ID (Number)\n                              or Title (String)</p>\n',
+                    type: 'String|Integer'
+                  },
+                  {
+                    name: 'value',
+                    description:
+                      '<p>The value to be stored\n                              as a String</p>\n',
+                    type: 'String|Number|Boolean|Object'
+                  }
+                ],
+                class: 'p5.TableRow',
+                module: 'IO'
+              },
+              get: {
+                name: 'get',
+                params: [
+                  {
+                    name: 'column',
+                    description:
+                      '<p>columnName (string) or\n                                 ID (number)</p>\n',
+                    type: 'String|Integer'
+                  }
+                ],
+                class: 'p5.TableRow',
+                module: 'IO'
+              },
+              getNum: {
+                name: 'getNum',
+                params: [
+                  {
+                    name: 'column',
+                    description:
+                      '<p>columnName (string) or\n                                 ID (number)</p>\n',
+                    type: 'String|Integer'
+                  }
+                ],
+                class: 'p5.TableRow',
+                module: 'IO'
+              },
+              getString: {
+                name: 'getString',
+                params: [
+                  {
+                    name: 'column',
+                    description:
+                      '<p>columnName (string) or\n                                 ID (number)</p>\n',
+                    type: 'String|Integer'
+                  }
+                ],
+                class: 'p5.TableRow',
+                module: 'IO'
+              }
+            },
+            'p5.XML': {
+              getParent: {
+                name: 'getParent',
+                class: 'p5.XML',
+                module: 'IO'
+              },
+              getName: {
+                name: 'getName',
+                class: 'p5.XML',
+                module: 'IO'
+              },
+              setName: {
+                name: 'setName',
+                params: [
+                  {
+                    name: 'the',
+                    description: '<p>new name of the node</p>\n',
+                    type: 'String'
+                  }
+                ],
+                class: 'p5.XML',
+                module: 'IO'
+              },
+              hasChildren: {
+                name: 'hasChildren',
+                class: 'p5.XML',
+                module: 'IO'
+              },
+              listChildren: {
+                name: 'listChildren',
+                class: 'p5.XML',
+                module: 'IO'
+              },
+              getChildren: {
+                name: 'getChildren',
+                params: [
+                  {
+                    name: 'name',
+                    description: '<p>element name</p>\n',
+                    type: 'String',
+                    optional: true
+                  }
+                ],
+                class: 'p5.XML',
+                module: 'IO'
+              },
+              getChild: {
+                name: 'getChild',
+                params: [
+                  {
