@@ -10738,3 +10738,129 @@
                 params: [
                   {
                     name: 'row',
+                    description: '<p>row ID</p>\n',
+                    type: 'Integer'
+                  },
+                  {
+                    name: 'column',
+                    description:
+                      '<p>column ID (Number)\n                              or title (String)</p>\n',
+                    type: 'String|Integer'
+                  },
+                  {
+                    name: 'value',
+                    description: '<p>value to assign</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5.Table',
+                module: 'IO'
+              },
+              setString: {
+                name: 'setString',
+                params: [
+                  {
+                    name: 'row',
+                    description: '<p>row ID</p>\n',
+                    type: 'Integer'
+                  },
+                  {
+                    name: 'column',
+                    description:
+                      '<p>column ID (Number)\n                              or title (String)</p>\n',
+                    type: 'String|Integer'
+                  },
+                  {
+                    name: 'value',
+                    description: '<p>value to assign</p>\n',
+                    type: 'String'
+                  }
+                ],
+                class: 'p5.Table',
+                module: 'IO'
+              },
+              get: {
+                name: 'get',
+                params: [
+                  {
+                    name: 'row',
+                    description: '<p>row ID</p>\n',
+                    type: 'Integer'
+                  },
+                  {
+                    name: 'column',
+                    description:
+                      '<p>columnName (string) or\n                                  ID (number)</p>\n',
+                    type: 'String|Integer'
+                  }
+                ],
+                class: 'p5.Table',
+                module: 'IO'
+              },
+              getNum: {
+                name: 'getNum',
+                params: [
+                  {
+                    name: 'row',
+                    description: '<p>row ID</p>\n',
+                    type: 'Integer'
+                  },
+                  {
+                    name: 'column',
+                    description:
+                      '<p>columnName (string) or\n                                  ID (number)</p>\n',
+                    type: 'String|Integer'
+                  }
+                ],
+                class: 'p5.Table',
+                module: 'IO'
+              },
+              getString: {
+                name: 'getString',
+                params: [
+                  {
+                    name: 'row',
+                    description: '<p>row ID</p>\n',
+                    type: 'Integer'
+                  },
+                  {
+                    name: 'column',
+                    description:
+                      '<p>columnName (string) or\n                                  ID (number)</p>\n',
+                    type: 'String|Integer'
+                  }
+                ],
+                class: 'p5.Table',
+                module: 'IO'
+              },
+              getObject: {
+                name: 'getObject',
+                params: [
+                  {
+                    name: 'headerColumn',
+                    description:
+                      '<p>Name of the column which should be used to\n                             title each row object (optional)</p>\n',
+                    type: 'String',
+                    optional: true
+                  }
+                ],
+                class: 'p5.Table',
+                module: 'IO'
+              },
+              getArray: {
+                name: 'getArray',
+                class: 'p5.Table',
+                module: 'IO'
+              }
+            },
+            'p5.TableRow': {
+              set: {
+                name: 'set',
+                params: [
+                  {
+                    name: 'column',
+                    description:
+                      '<p>Column ID (Number)\n                              or Title (String)</p>\n',
+                    type: 'String|Integer'
+                  },
+                  {
