@@ -11000,3 +11000,141 @@
                 name: 'getChild',
                 params: [
                   {
+                    name: 'name',
+                    description: '<p>element name or index</p>\n',
+                    type: 'String|Integer'
+                  }
+                ],
+                class: 'p5.XML',
+                module: 'IO'
+              },
+              addChild: {
+                name: 'addChild',
+                params: [
+                  {
+                    name: 'node',
+                    description:
+                      '<p>a <a href="#/p5.XML">p5.XML</a> Object which will be the child to be added</p>\n',
+                    type: 'p5.XML'
+                  }
+                ],
+                class: 'p5.XML',
+                module: 'IO'
+              },
+              removeChild: {
+                name: 'removeChild',
+                params: [
+                  {
+                    name: 'name',
+                    description: '<p>element name or index</p>\n',
+                    type: 'String|Integer'
+                  }
+                ],
+                class: 'p5.XML',
+                module: 'IO'
+              },
+              getAttributeCount: {
+                name: 'getAttributeCount',
+                class: 'p5.XML',
+                module: 'IO'
+              },
+              listAttributes: {
+                name: 'listAttributes',
+                class: 'p5.XML',
+                module: 'IO'
+              },
+              hasAttribute: {
+                name: 'hasAttribute',
+                params: [
+                  {
+                    name: 'the',
+                    description: '<p>attribute to be checked</p>\n',
+                    type: 'String'
+                  }
+                ],
+                class: 'p5.XML',
+                module: 'IO'
+              },
+              getNum: {
+                name: 'getNum',
+                params: [
+                  {
+                    name: 'name',
+                    description: '<p>the non-null full name of the attribute</p>\n',
+                    type: 'String'
+                  },
+                  {
+                    name: 'defaultValue',
+                    description: '<p>the default value of the attribute</p>\n',
+                    type: 'Number',
+                    optional: true
+                  }
+                ],
+                class: 'p5.XML',
+                module: 'IO'
+              },
+              getString: {
+                name: 'getString',
+                params: [
+                  {
+                    name: 'name',
+                    description: '<p>the non-null full name of the attribute</p>\n',
+                    type: 'String'
+                  },
+                  {
+                    name: 'defaultValue',
+                    description: '<p>the default value of the attribute</p>\n',
+                    type: 'Number',
+                    optional: true
+                  }
+                ],
+                class: 'p5.XML',
+                module: 'IO'
+              },
+              setAttribute: {
+                name: 'setAttribute',
+                params: [
+                  {
+                    name: 'name',
+                    description: '<p>the full name of the attribute</p>\n',
+                    type: 'String'
+                  },
+                  {
+                    name: 'value',
+                    description: '<p>the value of the attribute</p>\n',
+                    type: 'Number|String|Boolean'
+                  }
+                ],
+                class: 'p5.XML',
+                module: 'IO'
+              },
+              getContent: {
+                name: 'getContent',
+                params: [
+                  {
+                    name: 'defaultValue',
+                    description: '<p>value returned if no content is found</p>\n',
+                    type: 'String',
+                    optional: true
+                  }
+                ],
+                class: 'p5.XML',
+                module: 'IO'
+              },
+              setContent: {
+                name: 'setContent',
+                params: [
+                  {
+                    name: 'text',
+                    description: '<p>the new content</p>\n',
+                    type: 'String'
+                  }
+                ],
+                class: 'p5.XML',
+                module: 'IO'
+              },
+              serialize: {
+                name: 'serialize',
+                class: 'p5.XML',
+                module: 'IO'
+              }
