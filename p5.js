@@ -11275,3 +11275,132 @@
                   {
                     params: [
                       {
+                        name: 'x',
+                        description: '<p>the x component of divisor vector</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'y',
+                        description: '<p>the y component of divisor vector</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'z',
+                        description: '<p>the z component of divisor vector</p>\n',
+                        type: 'Number'
+                      }
+                    ],
+                    chainable: 1
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'value',
+                        description: '<p>divisor vector</p>\n',
+                        type: 'p5.Vector | Number[]'
+                      }
+                    ],
+                    chainable: 1
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'v1',
+                        description:
+                          '<p>dividend <a href="#/p5.Vector">p5.Vector</a></p>\n',
+                        type: 'p5.Vector'
+                      },
+                      {
+                        name: 'v2',
+                        description: '<p>divisor <a href="#/p5.Vector">p5.Vector</a></p>\n',
+                        type: 'p5.Vector'
+                      }
+                    ],
+                    static: 1
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'v1',
+                        description: '',
+                        type: 'p5.Vector'
+                      },
+                      {
+                        name: 'v2',
+                        description: '',
+                        type: 'p5.Vector'
+                      }
+                    ],
+                    static: 1
+                  }
+                ]
+              },
+              sub: {
+                name: 'sub',
+                class: 'p5.Vector',
+                module: 'Math',
+                overloads: [
+                  {
+                    params: [
+                      {
+                        name: 'x',
+                        description: '<p>the x component of the vector to subtract</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'y',
+                        description: '<p>the y component of the vector to subtract</p>\n',
+                        type: 'Number',
+                        optional: true
+                      },
+                      {
+                        name: 'z',
+                        description: '<p>the z component of the vector to subtract</p>\n',
+                        type: 'Number',
+                        optional: true
+                      }
+                    ],
+                    chainable: 1
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'value',
+                        description: '<p>the vector to subtract</p>\n',
+                        type: 'p5.Vector|Number[]'
+                      }
+                    ],
+                    chainable: 1
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'v1',
+                        description:
+                          '<p>a <a href="#/p5.Vector">p5.Vector</a> to subtract from</p>\n',
+                        type: 'p5.Vector'
+                      },
+                      {
+                        name: 'v2',
+                        description:
+                          '<p>a <a href="#/p5.Vector">p5.Vector</a> to subtract</p>\n',
+                        type: 'p5.Vector'
+                      },
+                      {
+                        name: 'target',
+                        description: '<p>the vector to receive the result (Optional)</p>\n',
+                        type: 'p5.Vector',
+                        optional: true
+                      }
+                    ],
+                    static: 1
+                  }
+                ]
+              },
+              mult: {
+                name: 'mult',
+                class: 'p5.Vector',
+                module: 'Math',
+                overloads: [
+                  {
+                    params: [
