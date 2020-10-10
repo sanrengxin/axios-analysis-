@@ -11138,3 +11138,140 @@
                 class: 'p5.XML',
                 module: 'IO'
               }
+            },
+            'p5.Vector': {
+              x: {
+                name: 'x',
+                class: 'p5.Vector',
+                module: 'Math'
+              },
+              y: {
+                name: 'y',
+                class: 'p5.Vector',
+                module: 'Math'
+              },
+              z: {
+                name: 'z',
+                class: 'p5.Vector',
+                module: 'Math'
+              },
+              toString: {
+                name: 'toString',
+                class: 'p5.Vector',
+                module: 'Math'
+              },
+              set: {
+                name: 'set',
+                class: 'p5.Vector',
+                module: 'Math',
+                overloads: [
+                  {
+                    params: [
+                      {
+                        name: 'x',
+                        description: '<p>the x component of the vector</p>\n',
+                        type: 'Number',
+                        optional: true
+                      },
+                      {
+                        name: 'y',
+                        description: '<p>the y component of the vector</p>\n',
+                        type: 'Number',
+                        optional: true
+                      },
+                      {
+                        name: 'z',
+                        description: '<p>the z component of the vector</p>\n',
+                        type: 'Number',
+                        optional: true
+                      }
+                    ],
+                    chainable: 1
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'value',
+                        description: '<p>the vector to set</p>\n',
+                        type: 'p5.Vector|Number[]'
+                      }
+                    ],
+                    chainable: 1
+                  }
+                ]
+              },
+              copy: {
+                name: 'copy',
+                class: 'p5.Vector',
+                module: 'Math'
+              },
+              add: {
+                name: 'add',
+                class: 'p5.Vector',
+                module: 'Math',
+                overloads: [
+                  {
+                    params: [
+                      {
+                        name: 'x',
+                        description: '<p>the x component of the vector to be added</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'y',
+                        description: '<p>the y component of the vector to be added</p>\n',
+                        type: 'Number',
+                        optional: true
+                      },
+                      {
+                        name: 'z',
+                        description: '<p>the z component of the vector to be added</p>\n',
+                        type: 'Number',
+                        optional: true
+                      }
+                    ],
+                    chainable: 1
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'value',
+                        description: '<p>the vector to add</p>\n',
+                        type: 'p5.Vector|Number[]'
+                      }
+                    ],
+                    chainable: 1
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'v1',
+                        description:
+                          '<p>a <a href="#/p5.Vector">p5.Vector</a> to add</p>\n',
+                        type: 'p5.Vector'
+                      },
+                      {
+                        name: 'v2',
+                        description:
+                          '<p>a <a href="#/p5.Vector">p5.Vector</a> to add</p>\n',
+                        type: 'p5.Vector'
+                      },
+                      {
+                        name: 'target',
+                        description: '<p>the vector to receive the result (Optional)</p>\n',
+                        type: 'p5.Vector',
+                        optional: true
+                      }
+                    ],
+                    static: 1
+                  }
+                ]
+              },
+              rem: {
+                name: 'rem',
+                class: 'p5.Vector',
+                module: 'Math',
+                overloads: [
+                  {
+                    params: [
+                      {
