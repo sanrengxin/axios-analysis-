@@ -11825,3 +11825,139 @@
                       {
                         name: 'v1',
                         description:
+                          '<p>the first <a href="#/p5.Vector">p5.Vector</a></p>\n',
+                        type: 'p5.Vector'
+                      },
+                      {
+                        name: 'v2',
+                        description:
+                          '<p>the second <a href="#/p5.Vector">p5.Vector</a></p>\n',
+                        type: 'p5.Vector'
+                      }
+                    ],
+                    static: 1
+                  }
+                ]
+              },
+              normalize: {
+                name: 'normalize',
+                class: 'p5.Vector',
+                module: 'Math'
+              },
+              limit: {
+                name: 'limit',
+                params: [
+                  {
+                    name: 'max',
+                    description: '<p>the maximum magnitude for the vector</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5.Vector',
+                module: 'Math'
+              },
+              setMag: {
+                name: 'setMag',
+                params: [
+                  {
+                    name: 'len',
+                    description: '<p>the new length for this vector</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5.Vector',
+                module: 'Math'
+              },
+              heading: {
+                name: 'heading',
+                class: 'p5.Vector',
+                module: 'Math'
+              },
+              setHeading: {
+                name: 'setHeading',
+                params: [
+                  {
+                    name: 'angle',
+                    description: '<p>the angle of rotation</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5.Vector',
+                module: 'Math'
+              },
+              rotate: {
+                name: 'rotate',
+                params: [
+                  {
+                    name: 'angle',
+                    description: '<p>the angle of rotation</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5.Vector',
+                module: 'Math'
+              },
+              angleBetween: {
+                name: 'angleBetween',
+                params: [
+                  {
+                    name: 'value',
+                    description:
+                      '<p>the x, y, and z components of a <a href="#/p5.Vector">p5.Vector</a></p>\n',
+                    type: 'p5.Vector'
+                  }
+                ],
+                class: 'p5.Vector',
+                module: 'Math'
+              },
+              lerp: {
+                name: 'lerp',
+                class: 'p5.Vector',
+                module: 'Math',
+                overloads: [
+                  {
+                    params: [
+                      {
+                        name: 'x',
+                        description: '<p>the x component</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'y',
+                        description: '<p>the y component</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'z',
+                        description: '<p>the z component</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'amt',
+                        description:
+                          '<p>the amount of interpolation; some value between 0.0\n                        (old vector) and 1.0 (new vector). 0.9 is very near\n                        the new vector. 0.5 is halfway in between.</p>\n',
+                        type: 'Number'
+                      }
+                    ],
+                    chainable: 1
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'v',
+                        description:
+                          '<p>the <a href="#/p5.Vector">p5.Vector</a> to lerp to</p>\n',
+                        type: 'p5.Vector'
+                      },
+                      {
+                        name: 'amt',
+                        description: '',
+                        type: 'Number'
+                      }
+                    ],
+                    chainable: 1
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'v1',
