@@ -11678,3 +11678,150 @@
                       {
                         name: 'arr',
                         description: '',
+                        type: 'Number[]'
+                      },
+                      {
+                        name: 'target',
+                        description: '',
+                        type: 'p5.Vector',
+                        optional: true
+                      }
+                    ],
+                    static: 1
+                  }
+                ]
+              },
+              mag: {
+                name: 'mag',
+                class: 'p5.Vector',
+                module: 'Math',
+                overloads: [
+                  {
+                    params: []
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'vecT',
+                        description: '<p>the vector to return the magnitude of</p>\n',
+                        type: 'p5.Vector'
+                      }
+                    ],
+                    static: 1
+                  }
+                ]
+              },
+              magSq: {
+                name: 'magSq',
+                class: 'p5.Vector',
+                module: 'Math'
+              },
+              dot: {
+                name: 'dot',
+                class: 'p5.Vector',
+                module: 'Math',
+                overloads: [
+                  {
+                    params: [
+                      {
+                        name: 'x',
+                        description: '<p>x component of the vector</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'y',
+                        description: '<p>y component of the vector</p>\n',
+                        type: 'Number',
+                        optional: true
+                      },
+                      {
+                        name: 'z',
+                        description: '<p>z component of the vector</p>\n',
+                        type: 'Number',
+                        optional: true
+                      }
+                    ]
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'value',
+                        description:
+                          '<p>value component of the vector or a <a href="#/p5.Vector">p5.Vector</a></p>\n',
+                        type: 'p5.Vector'
+                      }
+                    ]
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'v1',
+                        description:
+                          '<p>the first <a href="#/p5.Vector">p5.Vector</a></p>\n',
+                        type: 'p5.Vector'
+                      },
+                      {
+                        name: 'v2',
+                        description:
+                          '<p>the second <a href="#/p5.Vector">p5.Vector</a></p>\n',
+                        type: 'p5.Vector'
+                      }
+                    ],
+                    static: 1
+                  }
+                ]
+              },
+              cross: {
+                name: 'cross',
+                class: 'p5.Vector',
+                module: 'Math',
+                overloads: [
+                  {
+                    params: [
+                      {
+                        name: 'v',
+                        description:
+                          '<p><a href="#/p5.Vector">p5.Vector</a> to be crossed</p>\n',
+                        type: 'p5.Vector'
+                      }
+                    ]
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'v1',
+                        description:
+                          '<p>the first <a href="#/p5.Vector">p5.Vector</a></p>\n',
+                        type: 'p5.Vector'
+                      },
+                      {
+                        name: 'v2',
+                        description:
+                          '<p>the second <a href="#/p5.Vector">p5.Vector</a></p>\n',
+                        type: 'p5.Vector'
+                      }
+                    ],
+                    static: 1
+                  }
+                ]
+              },
+              dist: {
+                name: 'dist',
+                class: 'p5.Vector',
+                module: 'Math',
+                overloads: [
+                  {
+                    params: [
+                      {
+                        name: 'v',
+                        description:
+                          '<p>the x, y, and z coordinates of a <a href="#/p5.Vector">p5.Vector</a></p>\n',
+                        type: 'p5.Vector'
+                      }
+                    ]
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'v1',
+                        description:
