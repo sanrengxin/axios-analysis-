@@ -11404,3 +11404,142 @@
                 overloads: [
                   {
                     params: [
+                      {
+                        name: 'n',
+                        description: '<p>The number to multiply with the vector</p>\n',
+                        type: 'Number'
+                      }
+                    ],
+                    chainable: 1
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'x',
+                        description:
+                          '<p>The number to multiply with the x component of the vector</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'y',
+                        description:
+                          '<p>The number to multiply with the y component of the vector</p>\n',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'z',
+                        description:
+                          '<p>The number to multiply with the z component of the vector</p>\n',
+                        type: 'Number',
+                        optional: true
+                      }
+                    ],
+                    chainable: 1
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'arr',
+                        description:
+                          '<p>The array to multiply with the components of the vector</p>\n',
+                        type: 'Number[]'
+                      }
+                    ],
+                    chainable: 1
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'v',
+                        description:
+                          '<p>The vector to multiply with the components of the original vector</p>\n',
+                        type: 'p5.Vector'
+                      }
+                    ],
+                    chainable: 1
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'x',
+                        description: '',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'y',
+                        description: '',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'z',
+                        description: '',
+                        type: 'Number',
+                        optional: true
+                      }
+                    ],
+                    static: 1
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'v',
+                        description: '',
+                        type: 'p5.Vector'
+                      },
+                      {
+                        name: 'n',
+                        description: '',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'target',
+                        description: '<p>the vector to receive the result (Optional)</p>\n',
+                        type: 'p5.Vector',
+                        optional: true
+                      }
+                    ],
+                    static: 1
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'v0',
+                        description: '',
+                        type: 'p5.Vector'
+                      },
+                      {
+                        name: 'v1',
+                        description: '',
+                        type: 'p5.Vector'
+                      },
+                      {
+                        name: 'target',
+                        description: '',
+                        type: 'p5.Vector',
+                        optional: true
+                      }
+                    ],
+                    static: 1
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'v0',
+                        description: '',
+                        type: 'p5.Vector'
+                      },
+                      {
+                        name: 'arr',
+                        description: '',
+                        type: 'Number[]'
+                      },
+                      {
+                        name: 'target',
+                        description: '',
+                        type: 'p5.Vector',
+                        optional: true
+                      }
+                    ],
+                    static: 1
+                  }
+                ]
