@@ -11961,3 +11961,139 @@
                     params: [
                       {
                         name: 'v1',
+                        description: '',
+                        type: 'p5.Vector'
+                      },
+                      {
+                        name: 'v2',
+                        description: '',
+                        type: 'p5.Vector'
+                      },
+                      {
+                        name: 'amt',
+                        description: '',
+                        type: 'Number'
+                      },
+                      {
+                        name: 'target',
+                        description: '<p>the vector to receive the result (Optional)</p>\n',
+                        type: 'p5.Vector',
+                        optional: true
+                      }
+                    ],
+                    static: 1
+                  }
+                ]
+              },
+              reflect: {
+                name: 'reflect',
+                params: [
+                  {
+                    name: 'surfaceNormal',
+                    description:
+                      '<p>the <a href="#/p5.Vector">p5.Vector</a> to reflect about, will be normalized by this method</p>\n',
+                    type: 'p5.Vector'
+                  }
+                ],
+                class: 'p5.Vector',
+                module: 'Math'
+              },
+              array: {
+                name: 'array',
+                class: 'p5.Vector',
+                module: 'Math'
+              },
+              equals: {
+                name: 'equals',
+                class: 'p5.Vector',
+                module: 'Math',
+                overloads: [
+                  {
+                    params: [
+                      {
+                        name: 'x',
+                        description: '<p>the x component of the vector</p>\n',
+                        type: 'Number',
+                        optional: true
+                      },
+                      {
+                        name: 'y',
+                        description: '<p>the y component of the vector</p>\n',
+                        type: 'Number',
+                        optional: true
+                      },
+                      {
+                        name: 'z',
+                        description: '<p>the z component of the vector</p>\n',
+                        type: 'Number',
+                        optional: true
+                      }
+                    ]
+                  },
+                  {
+                    params: [
+                      {
+                        name: 'value',
+                        description: '<p>the vector to compare</p>\n',
+                        type: 'p5.Vector|Array'
+                      }
+                    ]
+                  }
+                ]
+              },
+              fromAngle: {
+                name: 'fromAngle',
+                params: [
+                  {
+                    name: 'angle',
+                    description:
+                      '<p>the desired angle, in radians (unaffected by <a href="#/p5/angleMode">angleMode</a>)</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'length',
+                    description: '<p>the length of the new vector (defaults to 1)</p>\n',
+                    type: 'Number',
+                    optional: true
+                  }
+                ],
+                class: 'p5.Vector',
+                module: 'Math'
+              },
+              fromAngles: {
+                name: 'fromAngles',
+                params: [
+                  {
+                    name: 'theta',
+                    description: '<p>the polar angle, in radians (zero is up)</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'phi',
+                    description:
+                      '<p>the azimuthal angle, in radians\n                              (zero is out of the screen)</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'length',
+                    description: '<p>the length of the new vector (defaults to 1)</p>\n',
+                    type: 'Number',
+                    optional: true
+                  }
+                ],
+                class: 'p5.Vector',
+                module: 'Math'
+              },
+              random2D: {
+                name: 'random2D',
+                class: 'p5.Vector',
+                module: 'Math'
+              },
+              random3D: {
+                name: 'random3D',
+                class: 'p5.Vector',
+                module: 'Math'
+              }
+            },
+            'p5.Font': {
+              font: {
