@@ -12097,3 +12097,144 @@
             },
             'p5.Font': {
               font: {
+                name: 'font',
+                class: 'p5.Font',
+                module: 'Typography'
+              },
+              textBounds: {
+                name: 'textBounds',
+                params: [
+                  {
+                    name: 'line',
+                    description: '<p>a line of text</p>\n',
+                    type: 'String'
+                  },
+                  {
+                    name: 'x',
+                    description: '<p>x-position</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'y',
+                    description: '<p>y-position</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'fontSize',
+                    description: '<p>font size to use (optional) Default is 12.</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'options',
+                    description:
+                      "<p>opentype options (optional)\n                           opentype fonts contains alignment and baseline options.\n                           Default is 'LEFT' and 'alphabetic'</p>\n",
+                    type: 'Object',
+                    optional: true
+                  }
+                ],
+                class: 'p5.Font',
+                module: 'Typography'
+              },
+              textToPoints: {
+                name: 'textToPoints',
+                params: [
+                  {
+                    name: 'txt',
+                    description: '<p>a line of text</p>\n',
+                    type: 'String'
+                  },
+                  {
+                    name: 'x',
+                    description: '<p>x-position</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'y',
+                    description: '<p>y-position</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'fontSize',
+                    description: '<p>font size to use (optional)</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'options',
+                    description:
+                      '<p>an (optional) object that can contain:</p>\n<p><br>sampleFactor - the ratio of path-length to number of samples\n(default=.1); higher values yield more points and are therefore\nmore precise</p>\n<p><br>simplifyThreshold - if set to a non-zero value, collinear points will be\nbe removed from the polygon; the value represents the threshold angle to use\nwhen determining whether two edges are collinear</p>\n',
+                    type: 'Object',
+                    optional: true
+                  }
+                ],
+                class: 'p5.Font',
+                module: 'Typography'
+              }
+            },
+            'p5.Camera': {
+              perspective: {
+                name: 'perspective',
+                class: 'p5.Camera',
+                module: 'Lights, Camera'
+              },
+              ortho: {
+                name: 'ortho',
+                class: 'p5.Camera',
+                module: 'Lights, Camera'
+              },
+              frustum: {
+                name: 'frustum',
+                class: 'p5.Camera',
+                module: 'Lights, Camera'
+              },
+              pan: {
+                name: 'pan',
+                params: [
+                  {
+                    name: 'angle',
+                    description:
+                      '<p>amount to rotate camera in current\n<a href="#/p5/angleMode">angleMode</a> units.\nGreater than 0 values rotate counterclockwise (to the left).</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5.Camera',
+                module: 'Lights, Camera'
+              },
+              tilt: {
+                name: 'tilt',
+                params: [
+                  {
+                    name: 'angle',
+                    description:
+                      '<p>amount to rotate camera in current\n<a href="#/p5/angleMode">angleMode</a> units.\nGreater than 0 values rotate counterclockwise (to the left).</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5.Camera',
+                module: 'Lights, Camera'
+              },
+              lookAt: {
+                name: 'lookAt',
+                params: [
+                  {
+                    name: 'x',
+                    description: '<p>x position of a point in world space</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'y',
+                    description: '<p>y position of a point in world space</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'z',
+                    description: '<p>z position of a point in world space</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5.Camera',
+                module: 'Lights, Camera'
+              },
+              camera: {
+                name: 'camera',
+                class: 'p5.Camera',
