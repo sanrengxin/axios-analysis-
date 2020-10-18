@@ -12238,3 +12238,122 @@
               camera: {
                 name: 'camera',
                 class: 'p5.Camera',
+                module: 'Lights, Camera'
+              },
+              move: {
+                name: 'move',
+                params: [
+                  {
+                    name: 'x',
+                    description: "<p>amount to move along camera's left-right axis</p>\n",
+                    type: 'Number'
+                  },
+                  {
+                    name: 'y',
+                    description: "<p>amount to move along camera's up-down axis</p>\n",
+                    type: 'Number'
+                  },
+                  {
+                    name: 'z',
+                    description:
+                      "<p>amount to move along camera's forward-backward axis</p>\n",
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5.Camera',
+                module: 'Lights, Camera'
+              },
+              setPosition: {
+                name: 'setPosition',
+                params: [
+                  {
+                    name: 'x',
+                    description: '<p>x position of a point in world space</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'y',
+                    description: '<p>y position of a point in world space</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'z',
+                    description: '<p>z position of a point in world space</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5.Camera',
+                module: 'Lights, Camera'
+              }
+            },
+            'p5.Geometry': {
+              computeFaces: {
+                name: 'computeFaces',
+                class: 'p5.Geometry',
+                module: 'Lights, Camera'
+              },
+              computeNormals: {
+                name: 'computeNormals',
+                class: 'p5.Geometry',
+                module: 'Lights, Camera'
+              },
+              averageNormals: {
+                name: 'averageNormals',
+                class: 'p5.Geometry',
+                module: 'Lights, Camera'
+              },
+              averagePoleNormals: {
+                name: 'averagePoleNormals',
+                class: 'p5.Geometry',
+                module: 'Lights, Camera'
+              },
+              normalize: {
+                name: 'normalize',
+                class: 'p5.Geometry',
+                module: 'Lights, Camera'
+              }
+            },
+            'p5.Shader': {
+              setUniform: {
+                name: 'setUniform',
+                params: [
+                  {
+                    name: 'uniformName',
+                    description: '<p>the name of the uniform in the\nshader program</p>\n',
+                    type: 'String'
+                  },
+                  {
+                    name: 'data',
+                    description:
+                      '<p>the data to be associated\nwith that uniform; type varies (could be a single numerical value, array,\nmatrix, or texture / sampler reference)</p>\n',
+                    type: 'Object|Number|Boolean|Number[]'
+                  }
+                ],
+                class: 'p5.Shader',
+                module: 'Lights, Camera'
+              }
+            },
+            'p5.sound': {
+              getMasterVolume: {
+                name: 'getMasterVolume',
+                class: 'p5.sound',
+                module: 'p5.sound'
+              },
+              masterVolume: {
+                name: 'masterVolume',
+                params: [
+                  {
+                    name: 'volume',
+                    description:
+                      '<p>Volume (amplitude) between 0.0\n                                   and 1.0 or modulating signal/oscillator</p>\n',
+                    type: 'Number|Object'
+                  },
+                  {
+                    name: 'rampTime',
+                    description: '<p>Fade for t seconds</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'timeFromNow',
+                    description:
