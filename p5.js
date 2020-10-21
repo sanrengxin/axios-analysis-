@@ -12357,3 +12357,137 @@
                   {
                     name: 'timeFromNow',
                     description:
+                      '<p>Schedule this event to happen at\n                               t seconds in the future</p>\n',
+                    type: 'Number',
+                    optional: true
+                  }
+                ],
+                class: 'p5.sound',
+                module: 'p5.sound'
+              },
+              soundOut: {
+                name: 'soundOut',
+                class: 'p5.sound',
+                module: 'p5.sound'
+              }
+            },
+            'p5.Effect': {
+              amp: {
+                name: 'amp',
+                params: [
+                  {
+                    name: 'vol',
+                    description: '<p>amplitude between 0 and 1.0</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'rampTime',
+                    description: '<p>create a fade that lasts until rampTime</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'tFromNow',
+                    description:
+                      '<p>schedule this event to happen in tFromNow seconds</p>\n',
+                    type: 'Number',
+                    optional: true
+                  }
+                ],
+                class: 'p5.Effect',
+                module: 'p5.sound'
+              },
+              chain: {
+                name: 'chain',
+                params: [
+                  {
+                    name: 'arguments',
+                    description: '<p>Chain together multiple sound objects</p>\n',
+                    type: 'Object',
+                    optional: true
+                  }
+                ],
+                class: 'p5.Effect',
+                module: 'p5.sound'
+              },
+              drywet: {
+                name: 'drywet',
+                params: [
+                  {
+                    name: 'fade',
+                    description: '<p>The desired drywet value (0 - 1.0)</p>\n',
+                    type: 'Number',
+                    optional: true
+                  }
+                ],
+                class: 'p5.Effect',
+                module: 'p5.sound'
+              },
+              connect: {
+                name: 'connect',
+                params: [
+                  {
+                    name: 'unit',
+                    description: '',
+                    type: 'Object'
+                  }
+                ],
+                class: 'p5.Effect',
+                module: 'p5.sound'
+              },
+              disconnect: {
+                name: 'disconnect',
+                class: 'p5.Effect',
+                module: 'p5.sound'
+              }
+            },
+            'p5.Filter': {
+              biquadFilter: {
+                name: 'biquadFilter',
+                class: 'p5.Filter',
+                module: 'p5.sound'
+              },
+              process: {
+                name: 'process',
+                params: [
+                  {
+                    name: 'Signal',
+                    description: '<p>An object that outputs audio</p>\n',
+                    type: 'Object'
+                  },
+                  {
+                    name: 'freq',
+                    description: '<p>Frequency in Hz, from 10 to 22050</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'res',
+                    description:
+                      '<p>Resonance/Width of the filter frequency\n                      from 0.001 to 1000</p>\n',
+                    type: 'Number',
+                    optional: true
+                  }
+                ],
+                class: 'p5.Filter',
+                module: 'p5.sound'
+              },
+              set: {
+                name: 'set',
+                params: [
+                  {
+                    name: 'freq',
+                    description: '<p>Frequency in Hz, from 10 to 22050</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'res',
+                    description: '<p>Resonance (Q) from 0.001 to 1000</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'timeFromNow',
+                    description:
