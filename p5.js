@@ -12625,3 +12625,152 @@
                 ],
                 class: 'p5.Oscillator',
                 module: 'p5.sound'
+              },
+              freq: {
+                name: 'freq',
+                params: [
+                  {
+                    name: 'Frequency',
+                    description:
+                      '<p>Frequency in Hz\n                                      or modulating signal/oscillator</p>\n',
+                    type: 'Number|Object'
+                  },
+                  {
+                    name: 'rampTime',
+                    description: '<p>Ramp time (in seconds)</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'timeFromNow',
+                    description:
+                      '<p>Schedule this event to happen\n                                 at x seconds from now</p>\n',
+                    type: 'Number',
+                    optional: true
+                  }
+                ],
+                class: 'p5.Oscillator',
+                module: 'p5.sound'
+              },
+              setType: {
+                name: 'setType',
+                params: [
+                  {
+                    name: 'type',
+                    description: "<p>'sine', 'triangle', 'sawtooth' or 'square'.</p>\n",
+                    type: 'String'
+                  }
+                ],
+                class: 'p5.Oscillator',
+                module: 'p5.sound'
+              },
+              connect: {
+                name: 'connect',
+                params: [
+                  {
+                    name: 'unit',
+                    description: '<p>A p5.sound or Web Audio object</p>\n',
+                    type: 'Object'
+                  }
+                ],
+                class: 'p5.Oscillator',
+                module: 'p5.sound'
+              },
+              disconnect: {
+                name: 'disconnect',
+                class: 'p5.Oscillator',
+                module: 'p5.sound'
+              },
+              pan: {
+                name: 'pan',
+                params: [
+                  {
+                    name: 'panning',
+                    description: '<p>Number between -1 and 1</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'timeFromNow',
+                    description:
+                      '<p>schedule this event to happen\n                              seconds from now</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5.Oscillator',
+                module: 'p5.sound'
+              },
+              phase: {
+                name: 'phase',
+                params: [
+                  {
+                    name: 'phase',
+                    description: '<p>float between 0.0 and 1.0</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5.Oscillator',
+                module: 'p5.sound'
+              },
+              add: {
+                name: 'add',
+                params: [
+                  {
+                    name: 'number',
+                    description: '<p>Constant number to add</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5.Oscillator',
+                module: 'p5.sound'
+              },
+              mult: {
+                name: 'mult',
+                params: [
+                  {
+                    name: 'number',
+                    description: '<p>Constant number to multiply</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5.Oscillator',
+                module: 'p5.sound'
+              },
+              scale: {
+                name: 'scale',
+                params: [
+                  {
+                    name: 'inMin',
+                    description: '<p>input range minumum</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'inMax',
+                    description: '<p>input range maximum</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'outMin',
+                    description: '<p>input range minumum</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'outMax',
+                    description: '<p>input range maximum</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5.Oscillator',
+                module: 'p5.sound'
+              }
+            },
+            'p5.MonoSynth': {
+              play: {
+                name: 'play',
+                params: [
+                  {
+                    name: 'note',
+                    description:
+                      '<p>the note you want to play, specified as a\n                               frequency in Hertz (Number) or as a midi\n                               value in Note/Octave format ("C4", "Eb3"...etc")\n                               See <a href = "https://github.com/Tonejs/Tone.js/wiki/Instruments">\n                               Tone</a>. Defaults to 440 hz.</p>\n',
+                    type: 'String | Number'
+                  },
+                  {
