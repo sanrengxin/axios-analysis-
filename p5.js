@@ -12491,3 +12491,137 @@
                   {
                     name: 'timeFromNow',
                     description:
+                      '<p>schedule this event to happen\n                              seconds from now</p>\n',
+                    type: 'Number',
+                    optional: true
+                  }
+                ],
+                class: 'p5.Filter',
+                module: 'p5.sound'
+              },
+              freq: {
+                name: 'freq',
+                params: [
+                  {
+                    name: 'freq',
+                    description: '<p>Filter Frequency</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'timeFromNow',
+                    description:
+                      '<p>schedule this event to happen\n                              seconds from now</p>\n',
+                    type: 'Number',
+                    optional: true
+                  }
+                ],
+                class: 'p5.Filter',
+                module: 'p5.sound'
+              },
+              res: {
+                name: 'res',
+                params: [
+                  {
+                    name: 'res',
+                    description:
+                      '<p>Resonance/Width of filter freq\n                     from 0.001 to 1000</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'timeFromNow',
+                    description:
+                      '<p>schedule this event to happen\n                              seconds from now</p>\n',
+                    type: 'Number',
+                    optional: true
+                  }
+                ],
+                class: 'p5.Filter',
+                module: 'p5.sound'
+              },
+              gain: {
+                name: 'gain',
+                params: [
+                  {
+                    name: 'gain',
+                    description: '',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5.Filter',
+                module: 'p5.sound'
+              },
+              toggle: {
+                name: 'toggle',
+                class: 'p5.Filter',
+                module: 'p5.sound'
+              },
+              setType: {
+                name: 'setType',
+                params: [
+                  {
+                    name: 't',
+                    description: '',
+                    type: 'String'
+                  }
+                ],
+                class: 'p5.Filter',
+                module: 'p5.sound'
+              }
+            },
+            'p5.Oscillator': {
+              start: {
+                name: 'start',
+                params: [
+                  {
+                    name: 'time',
+                    description: '<p>startTime in seconds from now.</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'frequency',
+                    description: '<p>frequency in Hz.</p>\n',
+                    type: 'Number',
+                    optional: true
+                  }
+                ],
+                class: 'p5.Oscillator',
+                module: 'p5.sound'
+              },
+              stop: {
+                name: 'stop',
+                params: [
+                  {
+                    name: 'secondsFromNow',
+                    description: '<p>Time, in seconds from now.</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5.Oscillator',
+                module: 'p5.sound'
+              },
+              amp: {
+                name: 'amp',
+                params: [
+                  {
+                    name: 'vol',
+                    description:
+                      '<p>between 0 and 1.0\n                            or a modulating signal/oscillator</p>\n',
+                    type: 'Number|Object'
+                  },
+                  {
+                    name: 'rampTime',
+                    description: '<p>create a fade that lasts rampTime</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'timeFromNow',
+                    description:
+                      '<p>schedule this event to happen\n                              seconds from now</p>\n',
+                    type: 'Number',
+                    optional: true
+                  }
+                ],
+                class: 'p5.Oscillator',
+                module: 'p5.sound'
