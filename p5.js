@@ -12774,3 +12774,155 @@
                     type: 'String | Number'
                   },
                   {
+                    name: 'velocity',
+                    description:
+                      '<p>velocity of the note to play (ranging from 0 to 1)</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'secondsFromNow',
+                    description: '<p>time from now (in seconds) at which to play</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'sustainTime',
+                    description:
+                      '<p>time to sustain before releasing the envelope. Defaults to 0.15 seconds.</p>\n',
+                    type: 'Number',
+                    optional: true
+                  }
+                ],
+                class: 'p5.MonoSynth',
+                module: 'p5.sound'
+              },
+              triggerAttack: {
+                params: [
+                  {
+                    name: 'note',
+                    description:
+                      '<p>the note you want to play, specified as a\n                               frequency in Hertz (Number) or as a midi\n                               value in Note/Octave format ("C4", "Eb3"...etc")\n                               See <a href = "https://github.com/Tonejs/Tone.js/wiki/Instruments">\n                               Tone</a>. Defaults to 440 hz</p>\n',
+                    type: 'String | Number'
+                  },
+                  {
+                    name: 'velocity',
+                    description:
+                      '<p>velocity of the note to play (ranging from 0 to 1)</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'secondsFromNow',
+                    description: '<p>time from now (in seconds) at which to play</p>\n',
+                    type: 'Number',
+                    optional: true
+                  }
+                ],
+                name: 'triggerAttack',
+                class: 'p5.MonoSynth',
+                module: 'p5.sound'
+              },
+              triggerRelease: {
+                params: [
+                  {
+                    name: 'secondsFromNow',
+                    description: '<p>time to trigger the release</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                name: 'triggerRelease',
+                class: 'p5.MonoSynth',
+                module: 'p5.sound'
+              },
+              setADSR: {
+                name: 'setADSR',
+                params: [
+                  {
+                    name: 'attackTime',
+                    description:
+                      '<p>Time (in seconds before envelope\n                              reaches Attack Level</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'decayTime',
+                    description:
+                      '<p>Time (in seconds) before envelope\n                              reaches Decay/Sustain Level</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'susRatio',
+                    description:
+                      '<p>Ratio between attackLevel and releaseLevel, on a scale from 0 to 1,\n                              where 1.0 = attackLevel, 0.0 = releaseLevel.\n                              The susRatio determines the decayLevel and the level at which the\n                              sustain portion of the envelope will sustain.\n                              For example, if attackLevel is 0.4, releaseLevel is 0,\n                              and susAmt is 0.5, the decayLevel would be 0.2. If attackLevel is\n                              increased to 1.0 (using <code>setRange</code>),\n                              then decayLevel would increase proportionally, to become 0.5.</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'releaseTime',
+                    description: '<p>Time in seconds from now (defaults to 0)</p>\n',
+                    type: 'Number',
+                    optional: true
+                  }
+                ],
+                class: 'p5.MonoSynth',
+                module: 'p5.sound'
+              },
+              attack: {
+                name: 'attack',
+                class: 'p5.MonoSynth',
+                module: 'p5.sound'
+              },
+              decay: {
+                name: 'decay',
+                class: 'p5.MonoSynth',
+                module: 'p5.sound'
+              },
+              sustain: {
+                name: 'sustain',
+                class: 'p5.MonoSynth',
+                module: 'p5.sound'
+              },
+              release: {
+                name: 'release',
+                class: 'p5.MonoSynth',
+                module: 'p5.sound'
+              },
+              amp: {
+                name: 'amp',
+                params: [
+                  {
+                    name: 'vol',
+                    description: '<p>desired volume</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'rampTime',
+                    description: '<p>Time to reach new volume</p>\n',
+                    type: 'Number',
+                    optional: true
+                  }
+                ],
+                class: 'p5.MonoSynth',
+                module: 'p5.sound'
+              },
+              connect: {
+                name: 'connect',
+                params: [
+                  {
+                    name: 'unit',
+                    description: '<p>A p5.sound or Web Audio object</p>\n',
+                    type: 'Object'
+                  }
+                ],
+                class: 'p5.MonoSynth',
+                module: 'p5.sound'
+              },
+              disconnect: {
+                name: 'disconnect',
+                class: 'p5.MonoSynth',
+                module: 'p5.sound'
+              },
+              dispose: {
+                name: 'dispose',
+                class: 'p5.MonoSynth',
