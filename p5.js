@@ -12926,3 +12926,141 @@
               dispose: {
                 name: 'dispose',
                 class: 'p5.MonoSynth',
+                module: 'p5.sound'
+              }
+            },
+            'p5.AudioVoice': {
+              connect: {
+                name: 'connect',
+                params: [
+                  {
+                    name: 'unit',
+                    description: '',
+                    type: 'Object'
+                  }
+                ],
+                class: 'p5.AudioVoice',
+                module: 'p5.sound'
+              },
+              disconnect: {
+                name: 'disconnect',
+                class: 'p5.AudioVoice',
+                module: 'p5.sound'
+              }
+            },
+            'p5.PolySynth': {
+              notes: {
+                name: 'notes',
+                class: 'p5.PolySynth',
+                module: 'p5.sound'
+              },
+              polyvalue: {
+                name: 'polyvalue',
+                class: 'p5.PolySynth',
+                module: 'p5.sound'
+              },
+              AudioVoice: {
+                name: 'AudioVoice',
+                class: 'p5.PolySynth',
+                module: 'p5.sound'
+              },
+              play: {
+                name: 'play',
+                params: [
+                  {
+                    name: 'note',
+                    description:
+                      '<p>midi note to play (ranging from 0 to 127 - 60 being a middle C)</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'velocity',
+                    description:
+                      '<p>velocity of the note to play (ranging from 0 to 1)</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'secondsFromNow',
+                    description: '<p>time from now (in seconds) at which to play</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'sustainTime',
+                    description: '<p>time to sustain before releasing the envelope</p>\n',
+                    type: 'Number',
+                    optional: true
+                  }
+                ],
+                class: 'p5.PolySynth',
+                module: 'p5.sound'
+              },
+              noteADSR: {
+                name: 'noteADSR',
+                params: [
+                  {
+                    name: 'note',
+                    description: '<p>Midi note on which ADSR should be set.</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'attackTime',
+                    description:
+                      '<p>Time (in seconds before envelope\n                              reaches Attack Level</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'decayTime',
+                    description:
+                      '<p>Time (in seconds) before envelope\n                              reaches Decay/Sustain Level</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'susRatio',
+                    description:
+                      '<p>Ratio between attackLevel and releaseLevel, on a scale from 0 to 1,\n                              where 1.0 = attackLevel, 0.0 = releaseLevel.\n                              The susRatio determines the decayLevel and the level at which the\n                              sustain portion of the envelope will sustain.\n                              For example, if attackLevel is 0.4, releaseLevel is 0,\n                              and susAmt is 0.5, the decayLevel would be 0.2. If attackLevel is\n                              increased to 1.0 (using <code>setRange</code>),\n                              then decayLevel would increase proportionally, to become 0.5.</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'releaseTime',
+                    description: '<p>Time in seconds from now (defaults to 0)</p>\n',
+                    type: 'Number',
+                    optional: true
+                  }
+                ],
+                class: 'p5.PolySynth',
+                module: 'p5.sound'
+              },
+              setADSR: {
+                name: 'setADSR',
+                params: [
+                  {
+                    name: 'attackTime',
+                    description:
+                      '<p>Time (in seconds before envelope\n                               reaches Attack Level</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'decayTime',
+                    description:
+                      '<p>Time (in seconds) before envelope\n                               reaches Decay/Sustain Level</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'susRatio',
+                    description:
+                      '<p>Ratio between attackLevel and releaseLevel, on a scale from 0 to 1,\n                               where 1.0 = attackLevel, 0.0 = releaseLevel.\n                               The susRatio determines the decayLevel and the level at which the\n                               sustain portion of the envelope will sustain.\n                               For example, if attackLevel is 0.4, releaseLevel is 0,\n                               and susAmt is 0.5, the decayLevel would be 0.2. If attackLevel is\n                               increased to 1.0 (using <code>setRange</code>),\n                               then decayLevel would increase proportionally, to become 0.5.</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'releaseTime',
+                    description: '<p>Time in seconds from now (defaults to 0)</p>\n',
