@@ -13203,3 +13203,147 @@
                   {
                     name: 'startTime',
                     description:
+                      '<p>(optional) schedule event to occur\n                             seconds from now</p>\n',
+                    type: 'Number',
+                    optional: true
+                  }
+                ],
+                class: 'p5.SoundFile',
+                module: 'p5.sound'
+              },
+              loop: {
+                name: 'loop',
+                params: [
+                  {
+                    name: 'startTime',
+                    description:
+                      '<p>(optional) schedule event to occur\n                            seconds from now</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'rate',
+                    description: '<p>(optional) playback rate</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'amp',
+                    description: '<p>(optional) playback volume</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'cueLoopStart',
+                    description: '<p>(optional) startTime in seconds</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'duration',
+                    description: '<p>(optional) loop duration in seconds</p>\n',
+                    type: 'Number',
+                    optional: true
+                  }
+                ],
+                class: 'p5.SoundFile',
+                module: 'p5.sound'
+              },
+              setLoop: {
+                name: 'setLoop',
+                params: [
+                  {
+                    name: 'Boolean',
+                    description: '<p>set looping to true or false</p>\n',
+                    type: 'Boolean'
+                  }
+                ],
+                class: 'p5.SoundFile',
+                module: 'p5.sound'
+              },
+              isLooping: {
+                name: 'isLooping',
+                class: 'p5.SoundFile',
+                module: 'p5.sound'
+              },
+              isPlaying: {
+                name: 'isPlaying',
+                class: 'p5.SoundFile',
+                module: 'p5.sound'
+              },
+              isPaused: {
+                name: 'isPaused',
+                class: 'p5.SoundFile',
+                module: 'p5.sound'
+              },
+              stop: {
+                name: 'stop',
+                params: [
+                  {
+                    name: 'startTime',
+                    description:
+                      '<p>(optional) schedule event to occur\n                            in seconds from now</p>\n',
+                    type: 'Number',
+                    optional: true
+                  }
+                ],
+                class: 'p5.SoundFile',
+                module: 'p5.sound'
+              },
+              setVolume: {
+                name: 'setVolume',
+                params: [
+                  {
+                    name: 'volume',
+                    description:
+                      '<p>Volume (amplitude) between 0.0\n                                   and 1.0 or modulating signal/oscillator</p>\n',
+                    type: 'Number|Object'
+                  },
+                  {
+                    name: 'rampTime',
+                    description: '<p>Fade for t seconds</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'timeFromNow',
+                    description:
+                      '<p>Schedule this event to happen at\n                               t seconds in the future</p>\n',
+                    type: 'Number',
+                    optional: true
+                  }
+                ],
+                class: 'p5.SoundFile',
+                module: 'p5.sound'
+              },
+              pan: {
+                name: 'pan',
+                params: [
+                  {
+                    name: 'panValue',
+                    description: '<p>Set the stereo panner</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'timeFromNow',
+                    description:
+                      '<p>schedule this event to happen\n                                seconds from now</p>\n',
+                    type: 'Number',
+                    optional: true
+                  }
+                ],
+                class: 'p5.SoundFile',
+                module: 'p5.sound'
+              },
+              getPan: {
+                name: 'getPan',
+                class: 'p5.SoundFile',
+                module: 'p5.sound'
+              },
+              rate: {
+                name: 'rate',
+                params: [
+                  {
+                    name: 'playbackRate',
+                    description:
