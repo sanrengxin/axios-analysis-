@@ -13064,3 +13064,142 @@
                   {
                     name: 'releaseTime',
                     description: '<p>Time in seconds from now (defaults to 0)</p>\n',
+                    type: 'Number',
+                    optional: true
+                  }
+                ],
+                class: 'p5.PolySynth',
+                module: 'p5.sound'
+              },
+              noteAttack: {
+                name: 'noteAttack',
+                params: [
+                  {
+                    name: 'note',
+                    description: '<p>midi note on which attack should be triggered.</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'velocity',
+                    description:
+                      '<p>velocity of the note to play (ranging from 0 to 1)/</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'secondsFromNow',
+                    description: '<p>time from now (in seconds)</p>\n',
+                    type: 'Number',
+                    optional: true
+                  }
+                ],
+                class: 'p5.PolySynth',
+                module: 'p5.sound'
+              },
+              noteRelease: {
+                name: 'noteRelease',
+                params: [
+                  {
+                    name: 'note',
+                    description:
+                      '<p>midi note on which attack should be triggered.\n                                  If no value is provided, all notes will be released.</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'secondsFromNow',
+                    description: '<p>time to trigger the release</p>\n',
+                    type: 'Number',
+                    optional: true
+                  }
+                ],
+                class: 'p5.PolySynth',
+                module: 'p5.sound'
+              },
+              connect: {
+                name: 'connect',
+                params: [
+                  {
+                    name: 'unit',
+                    description: '<p>A p5.sound or Web Audio object</p>\n',
+                    type: 'Object'
+                  }
+                ],
+                class: 'p5.PolySynth',
+                module: 'p5.sound'
+              },
+              disconnect: {
+                name: 'disconnect',
+                class: 'p5.PolySynth',
+                module: 'p5.sound'
+              },
+              dispose: {
+                name: 'dispose',
+                class: 'p5.PolySynth',
+                module: 'p5.sound'
+              }
+            },
+            'p5.SoundFile': {
+              isLoaded: {
+                name: 'isLoaded',
+                class: 'p5.SoundFile',
+                module: 'p5.sound'
+              },
+              play: {
+                name: 'play',
+                params: [
+                  {
+                    name: 'startTime',
+                    description:
+                      '<p>(optional) schedule playback to start (in seconds from now).</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'rate',
+                    description: '<p>(optional) playback rate</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'amp',
+                    description:
+                      '<p>(optional) amplitude (volume)\n                                    of playback</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'cueStart',
+                    description: '<p>(optional) cue start time in seconds</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'duration',
+                    description: '<p>(optional) duration of playback in seconds</p>\n',
+                    type: 'Number',
+                    optional: true
+                  }
+                ],
+                class: 'p5.SoundFile',
+                module: 'p5.sound'
+              },
+              playMode: {
+                name: 'playMode',
+                params: [
+                  {
+                    name: 'str',
+                    description: "<p>'restart' or 'sustain' or 'untilDone'</p>\n",
+                    type: 'String'
+                  }
+                ],
+                class: 'p5.SoundFile',
+                module: 'p5.sound'
+              },
+              pause: {
+                name: 'pause',
+                params: [
+                  {
+                    name: 'startTime',
+                    description:
