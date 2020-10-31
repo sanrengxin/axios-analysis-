@@ -13347,3 +13347,133 @@
                   {
                     name: 'playbackRate',
                     description:
+                      '<p>Set the playback rate. 1.0 is normal,\n                                   .5 is half-speed, 2.0 is twice as fast.\n                                   Values less than zero play backwards.</p>\n',
+                    type: 'Number',
+                    optional: true
+                  }
+                ],
+                class: 'p5.SoundFile',
+                module: 'p5.sound'
+              },
+              duration: {
+                name: 'duration',
+                class: 'p5.SoundFile',
+                module: 'p5.sound'
+              },
+              currentTime: {
+                name: 'currentTime',
+                class: 'p5.SoundFile',
+                module: 'p5.sound'
+              },
+              jump: {
+                name: 'jump',
+                params: [
+                  {
+                    name: 'cueTime',
+                    description: '<p>cueTime of the soundFile in seconds.</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'duration',
+                    description: '<p>duration in seconds.</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5.SoundFile',
+                module: 'p5.sound'
+              },
+              channels: {
+                name: 'channels',
+                class: 'p5.SoundFile',
+                module: 'p5.sound'
+              },
+              sampleRate: {
+                name: 'sampleRate',
+                class: 'p5.SoundFile',
+                module: 'p5.sound'
+              },
+              frames: {
+                name: 'frames',
+                class: 'p5.SoundFile',
+                module: 'p5.sound'
+              },
+              getPeaks: {
+                name: 'getPeaks',
+                params: [
+                  {
+                    name: 'length',
+                    description:
+                      '<p>length is the size of the returned array.\n                         Larger length results in more precision.\n                         Defaults to 5*width of the browser window.</p>\n',
+                    type: 'Number',
+                    optional: true
+                  }
+                ],
+                class: 'p5.SoundFile',
+                module: 'p5.sound'
+              },
+              reverseBuffer: {
+                name: 'reverseBuffer',
+                class: 'p5.SoundFile',
+                module: 'p5.sound'
+              },
+              onended: {
+                name: 'onended',
+                params: [
+                  {
+                    name: 'callback',
+                    description:
+                      '<p>function to call when the\n                            soundfile has ended.</p>\n',
+                    type: 'Function'
+                  }
+                ],
+                class: 'p5.SoundFile',
+                module: 'p5.sound'
+              },
+              connect: {
+                name: 'connect',
+                params: [
+                  {
+                    name: 'object',
+                    description: '<p>Audio object that accepts an input</p>\n',
+                    type: 'Object',
+                    optional: true
+                  }
+                ],
+                class: 'p5.SoundFile',
+                module: 'p5.sound'
+              },
+              disconnect: {
+                name: 'disconnect',
+                class: 'p5.SoundFile',
+                module: 'p5.sound'
+              },
+              setPath: {
+                name: 'setPath',
+                params: [
+                  {
+                    name: 'path',
+                    description: '<p>path to audio file</p>\n',
+                    type: 'String'
+                  },
+                  {
+                    name: 'callback',
+                    description: '<p>Callback</p>\n',
+                    type: 'Function'
+                  }
+                ],
+                class: 'p5.SoundFile',
+                module: 'p5.sound'
+              },
+              setBuffer: {
+                name: 'setBuffer',
+                params: [
+                  {
+                    name: 'buf',
+                    description:
+                      '<p>Array of Float32 Array(s). 2 Float32 Arrays\n                   will create a stereo source. 1 will create\n                   a mono source.</p>\n',
+                    type: 'Array'
+                  }
+                ],
+                class: 'p5.SoundFile',
+                module: 'p5.sound'
+              },
