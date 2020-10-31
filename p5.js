@@ -13739,3 +13739,151 @@
               },
               logAverages: {
                 name: 'logAverages',
+                params: [
+                  {
+                    name: 'octaveBands',
+                    description: '<p>Array of Octave Bands objects for grouping</p>\n',
+                    type: 'Array'
+                  }
+                ],
+                class: 'p5.FFT',
+                module: 'p5.sound'
+              },
+              getOctaveBands: {
+                name: 'getOctaveBands',
+                params: [
+                  {
+                    name: 'N',
+                    description:
+                      '<p>Specifies the 1/N type of generated octave bands</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'fCtr0',
+                    description: '<p>Minimum central frequency for the lowest band</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5.FFT',
+                module: 'p5.sound'
+              }
+            },
+            'p5.Signal': {
+              fade: {
+                name: 'fade',
+                params: [
+                  {
+                    name: 'value',
+                    description: '<p>Value to set this signal</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'secondsFromNow',
+                    description: '<p>Length of fade, in seconds from now</p>\n',
+                    type: 'Number',
+                    optional: true
+                  }
+                ],
+                class: 'p5.Signal',
+                module: 'p5.sound'
+              },
+              setInput: {
+                name: 'setInput',
+                params: [
+                  {
+                    name: 'input',
+                    description: '',
+                    type: 'Object'
+                  }
+                ],
+                class: 'p5.Signal',
+                module: 'p5.sound'
+              },
+              add: {
+                name: 'add',
+                params: [
+                  {
+                    name: 'number',
+                    description: '',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5.Signal',
+                module: 'p5.sound'
+              },
+              mult: {
+                name: 'mult',
+                params: [
+                  {
+                    name: 'number',
+                    description: '<p>to multiply</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5.Signal',
+                module: 'p5.sound'
+              },
+              scale: {
+                name: 'scale',
+                params: [
+                  {
+                    name: 'number',
+                    description: '<p>to multiply</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'inMin',
+                    description: '<p>input range minumum</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'inMax',
+                    description: '<p>input range maximum</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'outMin',
+                    description: '<p>input range minumum</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'outMax',
+                    description: '<p>input range maximum</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5.Signal',
+                module: 'p5.sound'
+              }
+            },
+            'p5.Envelope': {
+              attackTime: {
+                name: 'attackTime',
+                class: 'p5.Envelope',
+                module: 'p5.sound'
+              },
+              attackLevel: {
+                name: 'attackLevel',
+                class: 'p5.Envelope',
+                module: 'p5.sound'
+              },
+              decayTime: {
+                name: 'decayTime',
+                class: 'p5.Envelope',
+                module: 'p5.sound'
+              },
+              decayLevel: {
+                name: 'decayLevel',
+                class: 'p5.Envelope',
+                module: 'p5.sound'
+              },
+              releaseTime: {
+                name: 'releaseTime',
+                class: 'p5.Envelope',
+                module: 'p5.sound'
+              },
+              releaseLevel: {
+                name: 'releaseLevel',
+                class: 'p5.Envelope',
+                module: 'p5.sound'
+              },
