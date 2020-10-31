@@ -13605,3 +13605,137 @@
                 class: 'p5.Amplitude',
                 module: 'p5.sound'
               },
+              toggleNormalize: {
+                name: 'toggleNormalize',
+                params: [
+                  {
+                    name: 'boolean',
+                    description: '<p>set normalize to true (1) or false (0)</p>\n',
+                    type: 'Boolean',
+                    optional: true
+                  }
+                ],
+                class: 'p5.Amplitude',
+                module: 'p5.sound'
+              },
+              smooth: {
+                name: 'smooth',
+                params: [
+                  {
+                    name: 'set',
+                    description: '<p>smoothing from 0.0 <= 1</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5.Amplitude',
+                module: 'p5.sound'
+              }
+            },
+            'p5.FFT': {
+              setInput: {
+                name: 'setInput',
+                params: [
+                  {
+                    name: 'source',
+                    description: '<p>p5.sound object (or web audio API source node)</p>\n',
+                    type: 'Object',
+                    optional: true
+                  }
+                ],
+                class: 'p5.FFT',
+                module: 'p5.sound'
+              },
+              waveform: {
+                name: 'waveform',
+                params: [
+                  {
+                    name: 'bins',
+                    description:
+                      '<p>Must be a power of two between\n                          16 and 1024. Defaults to 1024.</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'precision',
+                    description:
+                      '<p>If any value is provided, will return results\n                            in a Float32 Array which is more precise\n                            than a regular array.</p>\n',
+                    type: 'String',
+                    optional: true
+                  }
+                ],
+                class: 'p5.FFT',
+                module: 'p5.sound'
+              },
+              analyze: {
+                name: 'analyze',
+                params: [
+                  {
+                    name: 'bins',
+                    description:
+                      '<p>Must be a power of two between\n                           16 and 1024. Defaults to 1024.</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'scale',
+                    description:
+                      '<p>If "dB," returns decibel\n                           float measurements between\n                           -140 and 0 (max).\n                           Otherwise returns integers from 0-255.</p>\n',
+                    type: 'Number',
+                    optional: true
+                  }
+                ],
+                class: 'p5.FFT',
+                module: 'p5.sound'
+              },
+              getEnergy: {
+                name: 'getEnergy',
+                params: [
+                  {
+                    name: 'frequency1',
+                    description:
+                      '<p>Will return a value representing\n                              energy at this frequency. Alternately,\n                              the strings "bass", "lowMid" "mid",\n                              "highMid", and "treble" will return\n                              predefined frequency ranges.</p>\n',
+                    type: 'Number|String'
+                  },
+                  {
+                    name: 'frequency2',
+                    description:
+                      '<p>If a second frequency is given,\n                              will return average amount of\n                              energy that exists between the\n                              two frequencies.</p>\n',
+                    type: 'Number',
+                    optional: true
+                  }
+                ],
+                class: 'p5.FFT',
+                module: 'p5.sound'
+              },
+              getCentroid: {
+                name: 'getCentroid',
+                class: 'p5.FFT',
+                module: 'p5.sound'
+              },
+              smooth: {
+                name: 'smooth',
+                params: [
+                  {
+                    name: 'smoothing',
+                    description:
+                      '<p>0.0 < smoothing < 1.0.\n                             Defaults to 0.8.</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5.FFT',
+                module: 'p5.sound'
+              },
+              linAverages: {
+                name: 'linAverages',
+                params: [
+                  {
+                    name: 'N',
+                    description: '<p>Number of returned frequency groups</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5.FFT',
+                module: 'p5.sound'
+              },
+              logAverages: {
+                name: 'logAverages',
