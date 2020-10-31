@@ -13477,3 +13477,131 @@
                 class: 'p5.SoundFile',
                 module: 'p5.sound'
               },
+              processPeaks: {
+                name: 'processPeaks',
+                params: [
+                  {
+                    name: 'callback',
+                    description: '<p>a function to call once this data is returned</p>\n',
+                    type: 'Function'
+                  },
+                  {
+                    name: 'initThreshold',
+                    description: '<p>initial threshold defaults to 0.9</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'minThreshold',
+                    description: '<p>minimum threshold defaults to 0.22</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'minPeaks',
+                    description: '<p>minimum number of peaks defaults to 200</p>\n',
+                    type: 'Number',
+                    optional: true
+                  }
+                ],
+                class: 'p5.SoundFile',
+                module: 'p5.sound'
+              },
+              addCue: {
+                name: 'addCue',
+                params: [
+                  {
+                    name: 'time',
+                    description:
+                      "<p>Time in seconds, relative to this media\n                           element's playback. For example, to trigger\n                           an event every time playback reaches two\n                           seconds, pass in the number 2. This will be\n                           passed as the first parameter to\n                           the callback function.</p>\n",
+                    type: 'Number'
+                  },
+                  {
+                    name: 'callback',
+                    description:
+                      '<p>Name of a function that will be\n                           called at the given time. The callback will\n                           receive time and (optionally) param as its\n                           two parameters.</p>\n',
+                    type: 'Function'
+                  },
+                  {
+                    name: 'value',
+                    description:
+                      '<p>An object to be passed as the\n                           second parameter to the\n                           callback function.</p>\n',
+                    type: 'Object',
+                    optional: true
+                  }
+                ],
+                class: 'p5.SoundFile',
+                module: 'p5.sound'
+              },
+              removeCue: {
+                name: 'removeCue',
+                params: [
+                  {
+                    name: 'id',
+                    description: '<p>ID of the cue, as returned by addCue</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5.SoundFile',
+                module: 'p5.sound'
+              },
+              clearCues: {
+                name: 'clearCues',
+                class: 'p5.SoundFile',
+                module: 'p5.sound'
+              },
+              save: {
+                name: 'save',
+                params: [
+                  {
+                    name: 'fileName',
+                    description: '<p>name of the resulting .wav file.</p>\n',
+                    type: 'String',
+                    optional: true
+                  }
+                ],
+                class: 'p5.SoundFile',
+                module: 'p5.sound'
+              },
+              getBlob: {
+                name: 'getBlob',
+                class: 'p5.SoundFile',
+                module: 'p5.sound'
+              }
+            },
+            'p5.Amplitude': {
+              setInput: {
+                name: 'setInput',
+                params: [
+                  {
+                    name: 'snd',
+                    description:
+                      '<p>set the sound source\n                                     (optional, defaults to\n                                     master output)</p>\n',
+                    type: 'SoundObject|undefined',
+                    optional: true
+                  },
+                  {
+                    name: 'smoothing',
+                    description:
+                      '<p>a range between 0.0 and 1.0\n                                      to smooth amplitude readings</p>\n',
+                    type: 'Number|undefined',
+                    optional: true
+                  }
+                ],
+                class: 'p5.Amplitude',
+                module: 'p5.sound'
+              },
+              getLevel: {
+                name: 'getLevel',
+                params: [
+                  {
+                    name: 'channel',
+                    description:
+                      '<p>Optionally return only channel 0 (left) or 1 (right)</p>\n',
+                    type: 'Number',
+                    optional: true
+                  }
+                ],
+                class: 'p5.Amplitude',
+                module: 'p5.sound'
+              },
