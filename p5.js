@@ -13887,3 +13887,149 @@
                 class: 'p5.Envelope',
                 module: 'p5.sound'
               },
+              set: {
+                name: 'set',
+                params: [
+                  {
+                    name: 'attackTime',
+                    description:
+                      '<p>Time (in seconds) before level\n                               reaches attackLevel</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'attackLevel',
+                    description:
+                      '<p>Typically an amplitude between\n                               0.0 and 1.0</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'decayTime',
+                    description: '<p>Time</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'decayLevel',
+                    description:
+                      '<p>Amplitude (In a standard ADSR envelope,\n                               decayLevel = sustainLevel)</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'releaseTime',
+                    description: '<p>Release Time (in seconds)</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'releaseLevel',
+                    description: '<p>Amplitude</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5.Envelope',
+                module: 'p5.sound'
+              },
+              setADSR: {
+                name: 'setADSR',
+                params: [
+                  {
+                    name: 'attackTime',
+                    description:
+                      '<p>Time (in seconds before envelope\n                              reaches Attack Level</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'decayTime',
+                    description:
+                      '<p>Time (in seconds) before envelope\n                              reaches Decay/Sustain Level</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'susRatio',
+                    description:
+                      '<p>Ratio between attackLevel and releaseLevel, on a scale from 0 to 1,\n                              where 1.0 = attackLevel, 0.0 = releaseLevel.\n                              The susRatio determines the decayLevel and the level at which the\n                              sustain portion of the envelope will sustain.\n                              For example, if attackLevel is 0.4, releaseLevel is 0,\n                              and susAmt is 0.5, the decayLevel would be 0.2. If attackLevel is\n                              increased to 1.0 (using <code>setRange</code>),\n                              then decayLevel would increase proportionally, to become 0.5.</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'releaseTime',
+                    description: '<p>Time in seconds from now (defaults to 0)</p>\n',
+                    type: 'Number',
+                    optional: true
+                  }
+                ],
+                class: 'p5.Envelope',
+                module: 'p5.sound'
+              },
+              setRange: {
+                name: 'setRange',
+                params: [
+                  {
+                    name: 'aLevel',
+                    description: '<p>attack level (defaults to 1)</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'rLevel',
+                    description: '<p>release level (defaults to 0)</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5.Envelope',
+                module: 'p5.sound'
+              },
+              setInput: {
+                name: 'setInput',
+                params: [
+                  {
+                    name: 'inputs',
+                    description:
+                      '<p>A p5.sound object or\n                              Web Audio Param.</p>\n',
+                    type: 'Object',
+                    optional: true,
+                    multiple: true
+                  }
+                ],
+                class: 'p5.Envelope',
+                module: 'p5.sound'
+              },
+              setExp: {
+                name: 'setExp',
+                params: [
+                  {
+                    name: 'isExp',
+                    description: '<p>true is exponential, false is linear</p>\n',
+                    type: 'Boolean'
+                  }
+                ],
+                class: 'p5.Envelope',
+                module: 'p5.sound'
+              },
+              play: {
+                name: 'play',
+                params: [
+                  {
+                    name: 'unit',
+                    description:
+                      '<p>A p5.sound object or\n                              Web Audio Param.</p>\n',
+                    type: 'Object'
+                  },
+                  {
+                    name: 'startTime',
+                    description: '<p>time from now (in seconds) at which to play</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'sustainTime',
+                    description: '<p>time to sustain before releasing the envelope</p>\n',
+                    type: 'Number',
+                    optional: true
+                  }
+                ],
+                class: 'p5.Envelope',
+                module: 'p5.sound'
+              },
+              triggerAttack: {
+                name: 'triggerAttack',
+                params: [
+                  {
