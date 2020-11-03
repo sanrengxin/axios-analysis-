@@ -14161,3 +14161,152 @@
             },
             'p5.Noise': {
               setType: {
+                name: 'setType',
+                params: [
+                  {
+                    name: 'type',
+                    description: "<p>'white', 'pink' or 'brown'</p>\n",
+                    type: 'String',
+                    optional: true
+                  }
+                ],
+                class: 'p5.Noise',
+                module: 'p5.sound'
+              }
+            },
+            'p5.AudioIn': {
+              input: {
+                name: 'input',
+                class: 'p5.AudioIn',
+                module: 'p5.sound'
+              },
+              output: {
+                name: 'output',
+                class: 'p5.AudioIn',
+                module: 'p5.sound'
+              },
+              stream: {
+                name: 'stream',
+                class: 'p5.AudioIn',
+                module: 'p5.sound'
+              },
+              mediaStream: {
+                name: 'mediaStream',
+                class: 'p5.AudioIn',
+                module: 'p5.sound'
+              },
+              currentSource: {
+                name: 'currentSource',
+                class: 'p5.AudioIn',
+                module: 'p5.sound'
+              },
+              enabled: {
+                name: 'enabled',
+                class: 'p5.AudioIn',
+                module: 'p5.sound'
+              },
+              amplitude: {
+                name: 'amplitude',
+                class: 'p5.AudioIn',
+                module: 'p5.sound'
+              },
+              start: {
+                name: 'start',
+                params: [
+                  {
+                    name: 'successCallback',
+                    description:
+                      '<p>Name of a function to call on\n                                  success.</p>\n',
+                    type: 'Function',
+                    optional: true
+                  },
+                  {
+                    name: 'errorCallback',
+                    description:
+                      '<p>Name of a function to call if\n                                  there was an error. For example,\n                                  some browsers do not support\n                                  getUserMedia.</p>\n',
+                    type: 'Function',
+                    optional: true
+                  }
+                ],
+                class: 'p5.AudioIn',
+                module: 'p5.sound'
+              },
+              stop: {
+                name: 'stop',
+                class: 'p5.AudioIn',
+                module: 'p5.sound'
+              },
+              connect: {
+                name: 'connect',
+                params: [
+                  {
+                    name: 'unit',
+                    description:
+                      '<p>An object that accepts audio input,\n                        such as an FFT</p>\n',
+                    type: 'Object',
+                    optional: true
+                  }
+                ],
+                class: 'p5.AudioIn',
+                module: 'p5.sound'
+              },
+              disconnect: {
+                name: 'disconnect',
+                class: 'p5.AudioIn',
+                module: 'p5.sound'
+              },
+              getLevel: {
+                name: 'getLevel',
+                params: [
+                  {
+                    name: 'smoothing',
+                    description:
+                      '<p>Smoothing is 0.0 by default.\n                             Smooths values based on previous values.</p>\n',
+                    type: 'Number',
+                    optional: true
+                  }
+                ],
+                class: 'p5.AudioIn',
+                module: 'p5.sound'
+              },
+              amp: {
+                name: 'amp',
+                params: [
+                  {
+                    name: 'vol',
+                    description: '<p>between 0 and 1.0</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'time',
+                    description: '<p>ramp time (optional)</p>\n',
+                    type: 'Number',
+                    optional: true
+                  }
+                ],
+                class: 'p5.AudioIn',
+                module: 'p5.sound'
+              },
+              getSources: {
+                name: 'getSources',
+                params: [
+                  {
+                    name: 'successCallback',
+                    description:
+                      '<p>This callback function handles the sources when they\n                                     have been enumerated. The callback function\n                                     receives the deviceList array as its only argument</p>\n',
+                    type: 'Function',
+                    optional: true
+                  },
+                  {
+                    name: 'errorCallback',
+                    description:
+                      '<p>This optional callback receives the error\n                                   message as its argument.</p>\n',
+                    type: 'Function',
+                    optional: true
+                  }
+                ],
+                class: 'p5.AudioIn',
+                module: 'p5.sound'
+              },
+              setSource: {
+                name: 'setSource',
