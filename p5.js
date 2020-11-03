@@ -14033,3 +14033,131 @@
                 name: 'triggerAttack',
                 params: [
                   {
+                    name: 'unit',
+                    description: '<p>p5.sound Object or Web Audio Param</p>\n',
+                    type: 'Object'
+                  },
+                  {
+                    name: 'secondsFromNow',
+                    description: '<p>time from now (in seconds)</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5.Envelope',
+                module: 'p5.sound'
+              },
+              triggerRelease: {
+                name: 'triggerRelease',
+                params: [
+                  {
+                    name: 'unit',
+                    description: '<p>p5.sound Object or Web Audio Param</p>\n',
+                    type: 'Object'
+                  },
+                  {
+                    name: 'secondsFromNow',
+                    description: '<p>time to trigger the release</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5.Envelope',
+                module: 'p5.sound'
+              },
+              ramp: {
+                name: 'ramp',
+                params: [
+                  {
+                    name: 'unit',
+                    description: '<p>p5.sound Object or Web Audio Param</p>\n',
+                    type: 'Object'
+                  },
+                  {
+                    name: 'secondsFromNow',
+                    description: '<p>When to trigger the ramp</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'v',
+                    description: '<p>Target value</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'v2',
+                    description: '<p>Second target value (optional)</p>\n',
+                    type: 'Number',
+                    optional: true
+                  }
+                ],
+                class: 'p5.Envelope',
+                module: 'p5.sound'
+              },
+              add: {
+                name: 'add',
+                params: [
+                  {
+                    name: 'number',
+                    description: '<p>Constant number to add</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5.Envelope',
+                module: 'p5.sound'
+              },
+              mult: {
+                name: 'mult',
+                params: [
+                  {
+                    name: 'number',
+                    description: '<p>Constant number to multiply</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5.Envelope',
+                module: 'p5.sound'
+              },
+              scale: {
+                name: 'scale',
+                params: [
+                  {
+                    name: 'inMin',
+                    description: '<p>input range minumum</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'inMax',
+                    description: '<p>input range maximum</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'outMin',
+                    description: '<p>input range minumum</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'outMax',
+                    description: '<p>input range maximum</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5.Envelope',
+                module: 'p5.sound'
+              }
+            },
+            'p5.Pulse': {
+              width: {
+                name: 'width',
+                params: [
+                  {
+                    name: 'width',
+                    description:
+                      '<p>Width between the pulses (0 to 1.0,\n                       defaults to 0)</p>\n',
+                    type: 'Number',
+                    optional: true
+                  }
+                ],
+                class: 'p5.Pulse',
+                module: 'p5.sound'
+              }
+            },
+            'p5.Noise': {
+              setType: {
