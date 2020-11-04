@@ -14429,3 +14429,113 @@
               },
               orientX: {
                 name: 'orientX',
+                class: 'p5.Panner3D',
+                module: 'p5.sound'
+              },
+              orientY: {
+                name: 'orientY',
+                class: 'p5.Panner3D',
+                module: 'p5.sound'
+              },
+              orientZ: {
+                name: 'orientZ',
+                class: 'p5.Panner3D',
+                module: 'p5.sound'
+              },
+              setFalloff: {
+                name: 'setFalloff',
+                params: [
+                  {
+                    name: 'maxDistance',
+                    description: '',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'rolloffFactor',
+                    description: '',
+                    type: 'Number',
+                    optional: true
+                  }
+                ],
+                class: 'p5.Panner3D',
+                module: 'p5.sound'
+              },
+              maxDist: {
+                name: 'maxDist',
+                params: [
+                  {
+                    name: 'maxDistance',
+                    description: '',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5.Panner3D',
+                module: 'p5.sound'
+              },
+              rollof: {
+                name: 'rollof',
+                params: [
+                  {
+                    name: 'rolloffFactor',
+                    description: '',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5.Panner3D',
+                module: 'p5.sound'
+              }
+            },
+            'p5.Delay': {
+              leftDelay: {
+                name: 'leftDelay',
+                class: 'p5.Delay',
+                module: 'p5.sound'
+              },
+              rightDelay: {
+                name: 'rightDelay',
+                class: 'p5.Delay',
+                module: 'p5.sound'
+              },
+              process: {
+                name: 'process',
+                params: [
+                  {
+                    name: 'Signal',
+                    description: '<p>An object that outputs audio</p>\n',
+                    type: 'Object'
+                  },
+                  {
+                    name: 'delayTime',
+                    description:
+                      '<p>Time (in seconds) of the delay/echo.\n                             Some browsers limit delayTime to\n                             1 second.</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'feedback',
+                    description:
+                      '<p>sends the delay back through itself\n                             in a loop that decreases in volume\n                             each time.</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'lowPass',
+                    description:
+                      '<p>Cutoff frequency. Only frequencies\n                             below the lowPass will be part of the\n                             delay.</p>\n',
+                    type: 'Number',
+                    optional: true
+                  }
+                ],
+                class: 'p5.Delay',
+                module: 'p5.sound'
+              },
+              delayTime: {
+                name: 'delayTime',
+                params: [
+                  {
+                    name: 'delayTime',
+                    description: '<p>Time (in seconds) of the delay</p>\n',
+                    type: 'Number'
+                  }
+                ],
