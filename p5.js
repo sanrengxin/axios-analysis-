@@ -14310,3 +14310,122 @@
               },
               setSource: {
                 name: 'setSource',
+                params: [
+                  {
+                    name: 'num',
+                    description: '<p>position of input source in the array</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5.AudioIn',
+                module: 'p5.sound'
+              }
+            },
+            'p5.EQ': {
+              bands: {
+                name: 'bands',
+                class: 'p5.EQ',
+                module: 'p5.sound'
+              },
+              process: {
+                name: 'process',
+                params: [
+                  {
+                    name: 'src',
+                    description: '<p>Audio source</p>\n',
+                    type: 'Object'
+                  }
+                ],
+                class: 'p5.EQ',
+                module: 'p5.sound'
+              }
+            },
+            'p5.Panner3D': {
+              panner: {
+                name: 'panner',
+                class: 'p5.Panner3D',
+                module: 'p5.sound'
+              },
+              process: {
+                name: 'process',
+                params: [
+                  {
+                    name: 'src',
+                    description: '<p>Input source</p>\n',
+                    type: 'Object'
+                  }
+                ],
+                class: 'p5.Panner3D',
+                module: 'p5.sound'
+              },
+              set: {
+                name: 'set',
+                params: [
+                  {
+                    name: 'xVal',
+                    description: '',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'yVal',
+                    description: '',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'zVal',
+                    description: '',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'time',
+                    description: '',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5.Panner3D',
+                module: 'p5.sound'
+              },
+              positionX: {
+                name: 'positionX',
+                class: 'p5.Panner3D',
+                module: 'p5.sound'
+              },
+              positionY: {
+                name: 'positionY',
+                class: 'p5.Panner3D',
+                module: 'p5.sound'
+              },
+              positionZ: {
+                name: 'positionZ',
+                class: 'p5.Panner3D',
+                module: 'p5.sound'
+              },
+              orient: {
+                name: 'orient',
+                params: [
+                  {
+                    name: 'xVal',
+                    description: '',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'yVal',
+                    description: '',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'zVal',
+                    description: '',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'time',
+                    description: '',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5.Panner3D',
+                module: 'p5.sound'
+              },
+              orientX: {
+                name: 'orientX',
