@@ -14819,3 +14819,104 @@
               sequence: {
                 name: 'sequence',
                 class: 'p5.Phrase',
+                module: 'p5.sound'
+              }
+            },
+            'p5.Part': {
+              setBPM: {
+                name: 'setBPM',
+                params: [
+                  {
+                    name: 'BPM',
+                    description: '<p>Beats Per Minute</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'rampTime',
+                    description: '<p>Seconds from now</p>\n',
+                    type: 'Number',
+                    optional: true
+                  }
+                ],
+                class: 'p5.Part',
+                module: 'p5.sound'
+              },
+              getBPM: {
+                name: 'getBPM',
+                class: 'p5.Part',
+                module: 'p5.sound'
+              },
+              start: {
+                name: 'start',
+                params: [
+                  {
+                    name: 'time',
+                    description: '<p>seconds from now</p>\n',
+                    type: 'Number',
+                    optional: true
+                  }
+                ],
+                class: 'p5.Part',
+                module: 'p5.sound'
+              },
+              loop: {
+                name: 'loop',
+                params: [
+                  {
+                    name: 'time',
+                    description: '<p>seconds from now</p>\n',
+                    type: 'Number',
+                    optional: true
+                  }
+                ],
+                class: 'p5.Part',
+                module: 'p5.sound'
+              },
+              noLoop: {
+                name: 'noLoop',
+                class: 'p5.Part',
+                module: 'p5.sound'
+              },
+              stop: {
+                name: 'stop',
+                params: [
+                  {
+                    name: 'time',
+                    description: '<p>seconds from now</p>\n',
+                    type: 'Number',
+                    optional: true
+                  }
+                ],
+                class: 'p5.Part',
+                module: 'p5.sound'
+              },
+              pause: {
+                name: 'pause',
+                params: [
+                  {
+                    name: 'time',
+                    description: '<p>seconds from now</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5.Part',
+                module: 'p5.sound'
+              },
+              addPhrase: {
+                name: 'addPhrase',
+                params: [
+                  {
+                    name: 'phrase',
+                    description: '<p>reference to a p5.Phrase</p>\n',
+                    type: 'p5.Phrase'
+                  }
+                ],
+                class: 'p5.Part',
+                module: 'p5.sound'
+              },
+              removePhrase: {
+                name: 'removePhrase',
+                params: [
+                  {
+                    name: 'phraseName',
+                    description: '',
