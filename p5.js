@@ -14539,3 +14539,151 @@
                     type: 'Number'
                   }
                 ],
+                class: 'p5.Delay',
+                module: 'p5.sound'
+              },
+              feedback: {
+                name: 'feedback',
+                params: [
+                  {
+                    name: 'feedback',
+                    description:
+                      '<p>0.0 to 1.0, or an object such as an\n                                Oscillator that can be used to\n                                modulate this param</p>\n',
+                    type: 'Number|Object'
+                  }
+                ],
+                class: 'p5.Delay',
+                module: 'p5.sound'
+              },
+              filter: {
+                name: 'filter',
+                params: [
+                  {
+                    name: 'cutoffFreq',
+                    description:
+                      '<p>A lowpass filter will cut off any\n                            frequencies higher than the filter frequency.</p>\n',
+                    type: 'Number|Object'
+                  },
+                  {
+                    name: 'res',
+                    description:
+                      '<p>Resonance of the filter frequency\n                            cutoff, or an object (i.e. a p5.Oscillator)\n                            that can be used to modulate this parameter.\n                            High numbers (i.e. 15) will produce a resonance,\n                            low numbers (i.e. .2) will produce a slope.</p>\n',
+                    type: 'Number|Object'
+                  }
+                ],
+                class: 'p5.Delay',
+                module: 'p5.sound'
+              },
+              setType: {
+                name: 'setType',
+                params: [
+                  {
+                    name: 'type',
+                    description: "<p>'pingPong' (1) or 'default' (0)</p>\n",
+                    type: 'String|Number'
+                  }
+                ],
+                class: 'p5.Delay',
+                module: 'p5.sound'
+              },
+              amp: {
+                name: 'amp',
+                params: [
+                  {
+                    name: 'volume',
+                    description: '<p>amplitude between 0 and 1.0</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'rampTime',
+                    description: '<p>create a fade that lasts rampTime</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'timeFromNow',
+                    description:
+                      '<p>schedule this event to happen\n                              seconds from now</p>\n',
+                    type: 'Number',
+                    optional: true
+                  }
+                ],
+                class: 'p5.Delay',
+                module: 'p5.sound'
+              },
+              connect: {
+                name: 'connect',
+                params: [
+                  {
+                    name: 'unit',
+                    description: '',
+                    type: 'Object'
+                  }
+                ],
+                class: 'p5.Delay',
+                module: 'p5.sound'
+              },
+              disconnect: {
+                name: 'disconnect',
+                class: 'p5.Delay',
+                module: 'p5.sound'
+              }
+            },
+            'p5.Reverb': {
+              process: {
+                name: 'process',
+                params: [
+                  {
+                    name: 'src',
+                    description:
+                      '<p>p5.sound / Web Audio object with a sound\n                         output.</p>\n',
+                    type: 'Object'
+                  },
+                  {
+                    name: 'seconds',
+                    description:
+                      '<p>Duration of the reverb, in seconds.\n                         Min: 0, Max: 10. Defaults to 3.</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'decayRate',
+                    description:
+                      '<p>Percentage of decay with each echo.\n                          Min: 0, Max: 100. Defaults to 2.</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'reverse',
+                    description: '<p>Play the reverb backwards or forwards.</p>\n',
+                    type: 'Boolean',
+                    optional: true
+                  }
+                ],
+                class: 'p5.Reverb',
+                module: 'p5.sound'
+              },
+              set: {
+                name: 'set',
+                params: [
+                  {
+                    name: 'seconds',
+                    description:
+                      '<p>Duration of the reverb, in seconds.\n                         Min: 0, Max: 10. Defaults to 3.</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'decayRate',
+                    description:
+                      '<p>Percentage of decay with each echo.\n                          Min: 0, Max: 100. Defaults to 2.</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'reverse',
+                    description: '<p>Play the reverb backwards or forwards.</p>\n',
+                    type: 'Boolean',
+                    optional: true
+                  }
+                ],
