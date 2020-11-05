@@ -14687,3 +14687,135 @@
                     optional: true
                   }
                 ],
+                class: 'p5.Reverb',
+                module: 'p5.sound'
+              },
+              amp: {
+                name: 'amp',
+                params: [
+                  {
+                    name: 'volume',
+                    description: '<p>amplitude between 0 and 1.0</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'rampTime',
+                    description: '<p>create a fade that lasts rampTime</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'timeFromNow',
+                    description:
+                      '<p>schedule this event to happen\n                              seconds from now</p>\n',
+                    type: 'Number',
+                    optional: true
+                  }
+                ],
+                class: 'p5.Reverb',
+                module: 'p5.sound'
+              },
+              connect: {
+                name: 'connect',
+                params: [
+                  {
+                    name: 'unit',
+                    description: '',
+                    type: 'Object'
+                  }
+                ],
+                class: 'p5.Reverb',
+                module: 'p5.sound'
+              },
+              disconnect: {
+                name: 'disconnect',
+                class: 'p5.Reverb',
+                module: 'p5.sound'
+              }
+            },
+            'p5.Convolver': {
+              convolverNode: {
+                name: 'convolverNode',
+                class: 'p5.Convolver',
+                module: 'p5.sound'
+              },
+              process: {
+                name: 'process',
+                params: [
+                  {
+                    name: 'src',
+                    description:
+                      '<p>p5.sound / Web Audio object with a sound\n                         output.</p>\n',
+                    type: 'Object'
+                  }
+                ],
+                class: 'p5.Convolver',
+                module: 'p5.sound'
+              },
+              impulses: {
+                name: 'impulses',
+                class: 'p5.Convolver',
+                module: 'p5.sound'
+              },
+              addImpulse: {
+                name: 'addImpulse',
+                params: [
+                  {
+                    name: 'path',
+                    description: '<p>path to a sound file</p>\n',
+                    type: 'String'
+                  },
+                  {
+                    name: 'callback',
+                    description: '<p>function (optional)</p>\n',
+                    type: 'Function'
+                  },
+                  {
+                    name: 'errorCallback',
+                    description: '<p>function (optional)</p>\n',
+                    type: 'Function'
+                  }
+                ],
+                class: 'p5.Convolver',
+                module: 'p5.sound'
+              },
+              resetImpulse: {
+                name: 'resetImpulse',
+                params: [
+                  {
+                    name: 'path',
+                    description: '<p>path to a sound file</p>\n',
+                    type: 'String'
+                  },
+                  {
+                    name: 'callback',
+                    description: '<p>function (optional)</p>\n',
+                    type: 'Function'
+                  },
+                  {
+                    name: 'errorCallback',
+                    description: '<p>function (optional)</p>\n',
+                    type: 'Function'
+                  }
+                ],
+                class: 'p5.Convolver',
+                module: 'p5.sound'
+              },
+              toggleImpulse: {
+                name: 'toggleImpulse',
+                params: [
+                  {
+                    name: 'id',
+                    description:
+                      '<p>Identify the impulse by its original filename\n                          (String), or by its position in the\n                          <code>.impulses</code> Array (Number).</p>\n',
+                    type: 'String|Number'
+                  }
+                ],
+                class: 'p5.Convolver',
+                module: 'p5.sound'
+              }
+            },
+            'p5.Phrase': {
+              sequence: {
+                name: 'sequence',
+                class: 'p5.Phrase',
