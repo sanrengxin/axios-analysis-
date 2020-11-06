@@ -14920,3 +14920,124 @@
                   {
                     name: 'phraseName',
                     description: '',
+                    type: 'String'
+                  }
+                ],
+                class: 'p5.Part',
+                module: 'p5.sound'
+              },
+              getPhrase: {
+                name: 'getPhrase',
+                params: [
+                  {
+                    name: 'phraseName',
+                    description: '',
+                    type: 'String'
+                  }
+                ],
+                class: 'p5.Part',
+                module: 'p5.sound'
+              },
+              replaceSequence: {
+                name: 'replaceSequence',
+                params: [
+                  {
+                    name: 'phraseName',
+                    description: '',
+                    type: 'String'
+                  },
+                  {
+                    name: 'sequence',
+                    description:
+                      '<p>Array of values to pass into the callback\n                          at each step of the phrase.</p>\n',
+                    type: 'Array'
+                  }
+                ],
+                class: 'p5.Part',
+                module: 'p5.sound'
+              },
+              onStep: {
+                name: 'onStep',
+                params: [
+                  {
+                    name: 'callback',
+                    description:
+                      '<p>The name of the callback\n                            you want to fire\n                            on every beat/tatum.</p>\n',
+                    type: 'Function'
+                  }
+                ],
+                class: 'p5.Part',
+                module: 'p5.sound'
+              }
+            },
+            'p5.Score': {
+              start: {
+                name: 'start',
+                class: 'p5.Score',
+                module: 'p5.sound'
+              },
+              stop: {
+                name: 'stop',
+                class: 'p5.Score',
+                module: 'p5.sound'
+              },
+              pause: {
+                name: 'pause',
+                class: 'p5.Score',
+                module: 'p5.sound'
+              },
+              loop: {
+                name: 'loop',
+                class: 'p5.Score',
+                module: 'p5.sound'
+              },
+              noLoop: {
+                name: 'noLoop',
+                class: 'p5.Score',
+                module: 'p5.sound'
+              },
+              setBPM: {
+                name: 'setBPM',
+                params: [
+                  {
+                    name: 'BPM',
+                    description: '<p>Beats Per Minute</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'rampTime',
+                    description: '<p>Seconds from now</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5.Score',
+                module: 'p5.sound'
+              }
+            },
+            'p5.SoundLoop': {
+              musicalTimeMode: {
+                name: 'musicalTimeMode',
+                class: 'p5.SoundLoop',
+                module: 'p5.sound'
+              },
+              maxIterations: {
+                name: 'maxIterations',
+                class: 'p5.SoundLoop',
+                module: 'p5.sound'
+              },
+              start: {
+                name: 'start',
+                params: [
+                  {
+                    name: 'timeFromNow',
+                    description: '<p>schedule a starting time</p>\n',
+                    type: 'Number',
+                    optional: true
+                  }
+                ],
+                class: 'p5.SoundLoop',
+                module: 'p5.sound'
+              },
+              stop: {
+                name: 'stop',
+                params: [
