@@ -15186,3 +15186,131 @@
                   },
                   {
                     name: 'release',
+                    description:
+                      '<p>The amount of time (in seconds) to increase the gain by 10dB\n                           default = .25, range 0 - 1</p>\n',
+                    type: 'Number'
+                  }
+                ],
+                class: 'p5.Compressor',
+                module: 'p5.sound'
+              },
+              attack: {
+                name: 'attack',
+                params: [
+                  {
+                    name: 'attack',
+                    description:
+                      '<p>Attack is the amount of time (in seconds) to reduce the gain by 10dB,\n                         default = .003, range 0 - 1</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'time',
+                    description:
+                      '<p>Assign time value to schedule the change in value</p>\n',
+                    type: 'Number',
+                    optional: true
+                  }
+                ],
+                class: 'p5.Compressor',
+                module: 'p5.sound'
+              },
+              knee: {
+                name: 'knee',
+                params: [
+                  {
+                    name: 'knee',
+                    description:
+                      '<p>A decibel value representing the range above the\n                       threshold where the curve smoothly transitions to the "ratio" portion.\n                       default = 30, range 0 - 40</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'time',
+                    description:
+                      '<p>Assign time value to schedule the change in value</p>\n',
+                    type: 'Number',
+                    optional: true
+                  }
+                ],
+                class: 'p5.Compressor',
+                module: 'p5.sound'
+              },
+              ratio: {
+                name: 'ratio',
+                params: [
+                  {
+                    name: 'ratio',
+                    description:
+                      '<p>The amount of dB change in input for a 1 dB change in output\n                           default = 12, range 1 - 20</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'time',
+                    description:
+                      '<p>Assign time value to schedule the change in value</p>\n',
+                    type: 'Number',
+                    optional: true
+                  }
+                ],
+                class: 'p5.Compressor',
+                module: 'p5.sound'
+              },
+              threshold: {
+                name: 'threshold',
+                params: [
+                  {
+                    name: 'threshold',
+                    description:
+                      '<p>The decibel value above which the compression will start taking effect\n                           default = -24, range -100 - 0</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'time',
+                    description:
+                      '<p>Assign time value to schedule the change in value</p>\n',
+                    type: 'Number',
+                    optional: true
+                  }
+                ],
+                class: 'p5.Compressor',
+                module: 'p5.sound'
+              },
+              release: {
+                name: 'release',
+                params: [
+                  {
+                    name: 'release',
+                    description:
+                      '<p>The amount of time (in seconds) to increase the gain by 10dB\n                           default = .25, range 0 - 1</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'time',
+                    description:
+                      '<p>Assign time value to schedule the change in value</p>\n',
+                    type: 'Number',
+                    optional: true
+                  }
+                ],
+                class: 'p5.Compressor',
+                module: 'p5.sound'
+              },
+              reduction: {
+                name: 'reduction',
+                class: 'p5.Compressor',
+                module: 'p5.sound'
+              }
+            },
+            'p5.SoundRecorder': {
+              setInput: {
+                name: 'setInput',
+                params: [
+                  {
+                    name: 'unit',
+                    description:
+                      '<p>p5.sound object or a web audio unit\n                       that outputs sound</p>\n',
+                    type: 'Object',
+                    optional: true
+                  }
