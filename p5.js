@@ -15314,3 +15314,122 @@
                     type: 'Object',
                     optional: true
                   }
+                ],
+                class: 'p5.SoundRecorder',
+                module: 'p5.sound'
+              },
+              record: {
+                name: 'record',
+                params: [
+                  {
+                    name: 'soundFile',
+                    description: '<p>p5.SoundFile</p>\n',
+                    type: 'p5.SoundFile'
+                  },
+                  {
+                    name: 'duration',
+                    description: '<p>Time (in seconds)</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'callback',
+                    description:
+                      '<p>The name of a function that will be\n                              called once the recording completes</p>\n',
+                    type: 'Function',
+                    optional: true
+                  }
+                ],
+                class: 'p5.SoundRecorder',
+                module: 'p5.sound'
+              },
+              stop: {
+                name: 'stop',
+                class: 'p5.SoundRecorder',
+                module: 'p5.sound'
+              }
+            },
+            'p5.PeakDetect': {
+              isDetected: {
+                name: 'isDetected',
+                class: 'p5.PeakDetect',
+                module: 'p5.sound'
+              },
+              update: {
+                name: 'update',
+                params: [
+                  {
+                    name: 'fftObject',
+                    description: '<p>A p5.FFT object</p>\n',
+                    type: 'p5.FFT'
+                  }
+                ],
+                class: 'p5.PeakDetect',
+                module: 'p5.sound'
+              },
+              onPeak: {
+                name: 'onPeak',
+                params: [
+                  {
+                    name: 'callback',
+                    description:
+                      '<p>Name of a function that will\n                            be called when a peak is\n                            detected.</p>\n',
+                    type: 'Function'
+                  },
+                  {
+                    name: 'val',
+                    description:
+                      '<p>Optional value to pass\n                            into the function when\n                            a peak is detected.</p>\n',
+                    type: 'Object',
+                    optional: true
+                  }
+                ],
+                class: 'p5.PeakDetect',
+                module: 'p5.sound'
+              }
+            },
+            'p5.Gain': {
+              setInput: {
+                name: 'setInput',
+                params: [
+                  {
+                    name: 'src',
+                    description:
+                      '<p>p5.sound / Web Audio object with a sound\n                         output.</p>\n',
+                    type: 'Object'
+                  }
+                ],
+                class: 'p5.Gain',
+                module: 'p5.sound'
+              },
+              connect: {
+                name: 'connect',
+                params: [
+                  {
+                    name: 'unit',
+                    description: '',
+                    type: 'Object'
+                  }
+                ],
+                class: 'p5.Gain',
+                module: 'p5.sound'
+              },
+              disconnect: {
+                name: 'disconnect',
+                class: 'p5.Gain',
+                module: 'p5.sound'
+              },
+              amp: {
+                name: 'amp',
+                params: [
+                  {
+                    name: 'volume',
+                    description: '<p>amplitude between 0 and 1.0</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'rampTime',
+                    description: '<p>create a fade that lasts rampTime</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
