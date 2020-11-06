@@ -15041,3 +15041,148 @@
               stop: {
                 name: 'stop',
                 params: [
+                  {
+                    name: 'timeFromNow',
+                    description: '<p>schedule a stopping time</p>\n',
+                    type: 'Number',
+                    optional: true
+                  }
+                ],
+                class: 'p5.SoundLoop',
+                module: 'p5.sound'
+              },
+              pause: {
+                name: 'pause',
+                params: [
+                  {
+                    name: 'timeFromNow',
+                    description: '<p>schedule a pausing time</p>\n',
+                    type: 'Number',
+                    optional: true
+                  }
+                ],
+                class: 'p5.SoundLoop',
+                module: 'p5.sound'
+              },
+              syncedStart: {
+                name: 'syncedStart',
+                params: [
+                  {
+                    name: 'otherLoop',
+                    description: '<p>a p5.SoundLoop to sync with</p>\n',
+                    type: 'Object'
+                  },
+                  {
+                    name: 'timeFromNow',
+                    description:
+                      '<p>Start the loops in sync after timeFromNow seconds</p>\n',
+                    type: 'Number',
+                    optional: true
+                  }
+                ],
+                class: 'p5.SoundLoop',
+                module: 'p5.sound'
+              },
+              bpm: {
+                name: 'bpm',
+                class: 'p5.SoundLoop',
+                module: 'p5.sound'
+              },
+              timeSignature: {
+                name: 'timeSignature',
+                class: 'p5.SoundLoop',
+                module: 'p5.sound'
+              },
+              interval: {
+                name: 'interval',
+                class: 'p5.SoundLoop',
+                module: 'p5.sound'
+              },
+              iterations: {
+                name: 'iterations',
+                class: 'p5.SoundLoop',
+                module: 'p5.sound'
+              }
+            },
+            'p5.Compressor': {
+              compressor: {
+                name: 'compressor',
+                class: 'p5.Compressor',
+                module: 'p5.sound'
+              },
+              process: {
+                name: 'process',
+                params: [
+                  {
+                    name: 'src',
+                    description: '<p>Sound source to be connected</p>\n',
+                    type: 'Object'
+                  },
+                  {
+                    name: 'attack',
+                    description:
+                      '<p>The amount of time (in seconds) to reduce the gain by 10dB,\n                           default = .003, range 0 - 1</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'knee',
+                    description:
+                      '<p>A decibel value representing the range above the\n                           threshold where the curve smoothly transitions to the "ratio" portion.\n                           default = 30, range 0 - 40</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'ratio',
+                    description:
+                      '<p>The amount of dB change in input for a 1 dB change in output\n                           default = 12, range 1 - 20</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'threshold',
+                    description:
+                      '<p>The decibel value above which the compression will start taking effect\n                           default = -24, range -100 - 0</p>\n',
+                    type: 'Number',
+                    optional: true
+                  },
+                  {
+                    name: 'release',
+                    description:
+                      '<p>The amount of time (in seconds) to increase the gain by 10dB\n                           default = .25, range 0 - 1</p>\n',
+                    type: 'Number',
+                    optional: true
+                  }
+                ],
+                class: 'p5.Compressor',
+                module: 'p5.sound'
+              },
+              set: {
+                name: 'set',
+                params: [
+                  {
+                    name: 'attack',
+                    description:
+                      '<p>The amount of time (in seconds) to reduce the gain by 10dB,\n                           default = .003, range 0 - 1</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'knee',
+                    description:
+                      '<p>A decibel value representing the range above the\n                           threshold where the curve smoothly transitions to the "ratio" portion.\n                           default = 30, range 0 - 40</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'ratio',
+                    description:
+                      '<p>The amount of dB change in input for a 1 dB change in output\n                           default = 12, range 1 - 20</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'threshold',
+                    description:
+                      '<p>The decibel value above which the compression will start taking effect\n                           default = -24, range -100 - 0</p>\n',
+                    type: 'Number'
+                  },
+                  {
+                    name: 'release',
