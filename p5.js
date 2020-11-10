@@ -15433,3 +15433,140 @@
                     type: 'Number',
                     optional: true
                   },
+                  {
+                    name: 'timeFromNow',
+                    description:
+                      '<p>schedule this event to happen\n                              seconds from now</p>\n',
+                    type: 'Number',
+                    optional: true
+                  }
+                ],
+                class: 'p5.Gain',
+                module: 'p5.sound'
+              }
+            },
+            'p5.Distortion': {
+              WaveShaperNode: {
+                name: 'WaveShaperNode',
+                class: 'p5.Distortion',
+                module: 'p5.sound'
+              },
+              process: {
+                name: 'process',
+                params: [
+                  {
+                    name: 'amount',
+                    description:
+                      '<p>Unbounded distortion amount.\n                               Normal values range from 0-1.</p>\n',
+                    type: 'Number',
+                    optional: true,
+                    optdefault: '0.25'
+                  },
+                  {
+                    name: 'oversample',
+                    description: "<p>'none', '2x', or '4x'.</p>\n",
+                    type: 'String',
+                    optional: true,
+                    optdefault: "'none'"
+                  }
+                ],
+                class: 'p5.Distortion',
+                module: 'p5.sound'
+              },
+              set: {
+                name: 'set',
+                params: [
+                  {
+                    name: 'amount',
+                    description:
+                      '<p>Unbounded distortion amount.\n                               Normal values range from 0-1.</p>\n',
+                    type: 'Number',
+                    optional: true,
+                    optdefault: '0.25'
+                  },
+                  {
+                    name: 'oversample',
+                    description: "<p>'none', '2x', or '4x'.</p>\n",
+                    type: 'String',
+                    optional: true,
+                    optdefault: "'none'"
+                  }
+                ],
+                class: 'p5.Distortion',
+                module: 'p5.sound'
+              },
+              getAmount: {
+                name: 'getAmount',
+                class: 'p5.Distortion',
+                module: 'p5.sound'
+              },
+              getOversample: {
+                name: 'getOversample',
+                class: 'p5.Distortion',
+                module: 'p5.sound'
+              }
+            }
+          };
+        },
+        {}
+      ],
+      2: [
+        function(_dereq_, module, exports) {
+          function _arrayWithHoles(arr) {
+            if (Array.isArray(arr)) return arr;
+          }
+
+          module.exports = _arrayWithHoles;
+        },
+        {}
+      ],
+      3: [
+        function(_dereq_, module, exports) {
+          function _arrayWithoutHoles(arr) {
+            if (Array.isArray(arr)) {
+              for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) {
+                arr2[i] = arr[i];
+              }
+
+              return arr2;
+            }
+          }
+
+          module.exports = _arrayWithoutHoles;
+        },
+        {}
+      ],
+      4: [
+        function(_dereq_, module, exports) {
+          function _assertThisInitialized(self) {
+            if (self === void 0) {
+              throw new ReferenceError(
+                "this hasn't been initialised - super() hasn't been called"
+              );
+            }
+
+            return self;
+          }
+
+          module.exports = _assertThisInitialized;
+        },
+        {}
+      ],
+      5: [
+        function(_dereq_, module, exports) {
+          function _classCallCheck(instance, Constructor) {
+            if (!(instance instanceof Constructor)) {
+              throw new TypeError('Cannot call a class as a function');
+            }
+          }
+
+          module.exports = _classCallCheck;
+        },
+        {}
+      ],
+      6: [
+        function(_dereq_, module, exports) {
+          function _defineProperties(target, props) {
+            for (var i = 0; i < props.length; i++) {
+              var descriptor = props[i];
+              descriptor.enumerable = descriptor.enumerable || false;
