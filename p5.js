@@ -15962,3 +15962,127 @@
           function encodeChunk(uint8, start, end) {
             var tmp;
             var output = [];
+            for (var i = start; i < end; i += 3) {
+              tmp =
+                ((uint8[i] << 16) & 0xff0000) +
+                ((uint8[i + 1] << 8) & 0xff00) +
+                (uint8[i + 2] & 0xff);
+              output.push(tripletToBase64(tmp));
+            }
+            return output.join('');
+          }
+
+          function fromByteArray(uint8) {
+            var tmp;
+            var len = uint8.length;
+            var extraBytes = len % 3; // if we have 1 byte left, pad 2 bytes
+            var parts = [];
+            var maxChunkLength = 16383; // must be multiple of 3
+
+            // go through the array every three bytes, we'll deal with trailing stuff later
+            for (var i = 0, len2 = len - extraBytes; i < len2; i += maxChunkLength) {
+              parts.push(
+                encodeChunk(uint8, i, i + maxChunkLength > len2 ? len2 : i + maxChunkLength)
+              );
+            }
+
+            // pad the end with zeros, but make sure to not forget the extra bytes
+            if (extraBytes === 1) {
+              tmp = uint8[len - 1];
+              parts.push(lookup[tmp >> 2] + lookup[(tmp << 4) & 0x3f] + '==');
+            } else if (extraBytes === 2) {
+              tmp = (uint8[len - 2] << 8) + uint8[len - 1];
+              parts.push(
+                lookup[tmp >> 10] +
+                  lookup[(tmp >> 4) & 0x3f] +
+                  lookup[(tmp << 2) & 0x3f] +
+                  '='
+              );
+            }
+
+            return parts.join('');
+          }
+        },
+        {}
+      ],
+      21: [function(_dereq_, module, exports) {}, {}],
+      22: [
+        function(_dereq_, module, exports) {
+          (function(Buffer) {
+            /*!
+ * The buffer module from node.js, for the browser.
+ *
+ * @author   Feross Aboukhadijeh <https://feross.org>
+ * @license  MIT
+ */
+            /* eslint-disable no-proto */
+
+            'use strict';
+
+            var base64 = _dereq_('base64-js');
+            var ieee754 = _dereq_('ieee754');
+            var customInspectSymbol =
+              typeof Symbol === 'function' && typeof Symbol.for === 'function'
+                ? Symbol.for('nodejs.util.inspect.custom')
+                : null;
+
+            exports.Buffer = Buffer;
+            exports.SlowBuffer = SlowBuffer;
+            exports.INSPECT_MAX_BYTES = 50;
+
+            var K_MAX_LENGTH = 0x7fffffff;
+            exports.kMaxLength = K_MAX_LENGTH;
+
+            /**
+             * If `Buffer.TYPED_ARRAY_SUPPORT`:
+             *   === true    Use Uint8Array implementation (fastest)
+             *   === false   Print warning and recommend using `buffer` v4.x which has an Object
+             *               implementation (most compatible, even IE6)
+             *
+             * Browsers that support typed arrays are IE 10+, Firefox 4+, Chrome 7+, Safari 5.1+,
+             * Opera 11.6+, iOS 4.2+.
+             *
+             * We report that the browser does not support typed arrays if the are not subclassable
+             * using __proto__. Firefox 4-29 lacks support for adding new properties to `Uint8Array`
+             * (See: https://bugzilla.mozilla.org/show_bug.cgi?id=695438). IE 10 lacks support
+             * for __proto__ and has a buggy typed array implementation.
+             */
+            Buffer.TYPED_ARRAY_SUPPORT = typedArraySupport();
+
+            if (
+              !Buffer.TYPED_ARRAY_SUPPORT &&
+              typeof console !== 'undefined' &&
+              typeof console.error === 'function'
+            ) {
+              console.error(
+                'This browser lacks typed array (Uint8Array) support which is required by ' +
+                  '`buffer` v5.x. Use `buffer` v4.x if you require old browser support.'
+              );
+            }
+
+            function typedArraySupport() {
+              // Can typed array instances can be augmented?
+              try {
+                var arr = new Uint8Array(1);
+                var proto = {
+                  foo: function() {
+                    return 42;
+                  }
+                };
+                Object.setPrototypeOf(proto, Uint8Array.prototype);
+                Object.setPrototypeOf(arr, proto);
+                return arr.foo() === 42;
+              } catch (e) {
+                return false;
+              }
+            }
+
+            Object.defineProperty(Buffer.prototype, 'parent', {
+              enumerable: true,
+              get: function() {
+                if (!Buffer.isBuffer(this)) return undefined;
+                return this.buffer;
+              }
+            });
+
+            Object.defineProperty(Buffer.prototype, 'offset', {
