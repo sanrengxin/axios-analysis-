@@ -15570,3 +15570,151 @@
             for (var i = 0; i < props.length; i++) {
               var descriptor = props[i];
               descriptor.enumerable = descriptor.enumerable || false;
+              descriptor.configurable = true;
+              if ('value' in descriptor) descriptor.writable = true;
+              Object.defineProperty(target, descriptor.key, descriptor);
+            }
+          }
+
+          function _createClass(Constructor, protoProps, staticProps) {
+            if (protoProps) _defineProperties(Constructor.prototype, protoProps);
+            if (staticProps) _defineProperties(Constructor, staticProps);
+            return Constructor;
+          }
+
+          module.exports = _createClass;
+        },
+        {}
+      ],
+      7: [
+        function(_dereq_, module, exports) {
+          function _defineProperty(obj, key, value) {
+            if (key in obj) {
+              Object.defineProperty(obj, key, {
+                value: value,
+                enumerable: true,
+                configurable: true,
+                writable: true
+              });
+            } else {
+              obj[key] = value;
+            }
+
+            return obj;
+          }
+
+          module.exports = _defineProperty;
+        },
+        {}
+      ],
+      8: [
+        function(_dereq_, module, exports) {
+          function _getPrototypeOf(o) {
+            module.exports = _getPrototypeOf = Object.setPrototypeOf
+              ? Object.getPrototypeOf
+              : function _getPrototypeOf(o) {
+                  return o.__proto__ || Object.getPrototypeOf(o);
+                };
+            return _getPrototypeOf(o);
+          }
+
+          module.exports = _getPrototypeOf;
+        },
+        {}
+      ],
+      9: [
+        function(_dereq_, module, exports) {
+          var setPrototypeOf = _dereq_('./setPrototypeOf');
+
+          function _inherits(subClass, superClass) {
+            if (typeof superClass !== 'function' && superClass !== null) {
+              throw new TypeError('Super expression must either be null or a function');
+            }
+
+            subClass.prototype = Object.create(superClass && superClass.prototype, {
+              constructor: {
+                value: subClass,
+                writable: true,
+                configurable: true
+              }
+            });
+            if (superClass) setPrototypeOf(subClass, superClass);
+          }
+
+          module.exports = _inherits;
+        },
+        { './setPrototypeOf': 16 }
+      ],
+      10: [
+        function(_dereq_, module, exports) {
+          function _iterableToArray(iter) {
+            if (
+              Symbol.iterator in Object(iter) ||
+              Object.prototype.toString.call(iter) === '[object Arguments]'
+            )
+              return Array.from(iter);
+          }
+
+          module.exports = _iterableToArray;
+        },
+        {}
+      ],
+      11: [
+        function(_dereq_, module, exports) {
+          function _iterableToArrayLimit(arr, i) {
+            var _arr = [];
+            var _n = true;
+            var _d = false;
+            var _e = undefined;
+
+            try {
+              for (
+                var _i = arr[Symbol.iterator](), _s;
+                !(_n = (_s = _i.next()).done);
+                _n = true
+              ) {
+                _arr.push(_s.value);
+
+                if (i && _arr.length === i) break;
+              }
+            } catch (err) {
+              _d = true;
+              _e = err;
+            } finally {
+              try {
+                if (!_n && _i['return'] != null) _i['return']();
+              } finally {
+                if (_d) throw _e;
+              }
+            }
+
+            return _arr;
+          }
+
+          module.exports = _iterableToArrayLimit;
+        },
+        {}
+      ],
+      12: [
+        function(_dereq_, module, exports) {
+          function _nonIterableRest() {
+            throw new TypeError('Invalid attempt to destructure non-iterable instance');
+          }
+
+          module.exports = _nonIterableRest;
+        },
+        {}
+      ],
+      13: [
+        function(_dereq_, module, exports) {
+          function _nonIterableSpread() {
+            throw new TypeError('Invalid attempt to spread non-iterable instance');
+          }
+
+          module.exports = _nonIterableSpread;
+        },
+        {}
+      ],
+      14: [
+        function(_dereq_, module, exports) {
+          var defineProperty = _dereq_('./defineProperty');
