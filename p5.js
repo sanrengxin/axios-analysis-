@@ -16086,3 +16086,142 @@
             });
 
             Object.defineProperty(Buffer.prototype, 'offset', {
+              enumerable: true,
+              get: function() {
+                if (!Buffer.isBuffer(this)) return undefined;
+                return this.byteOffset;
+              }
+            });
+
+            function createBuffer(length) {
+              if (length > K_MAX_LENGTH) {
+                throw new RangeError(
+                  'The value "' + length + '" is invalid for option "size"'
+                );
+              }
+              // Return an augmented `Uint8Array` instance
+              var buf = new Uint8Array(length);
+              Object.setPrototypeOf(buf, Buffer.prototype);
+              return buf;
+            }
+
+            /**
+             * The Buffer constructor returns instances of `Uint8Array` that have their
+             * prototype changed to `Buffer.prototype`. Furthermore, `Buffer` is a subclass of
+             * `Uint8Array`, so the returned instances will have all the node `Buffer` methods
+             * and the `Uint8Array` methods. Square bracket notation works as expected -- it
+             * returns a single octet.
+             *
+             * The `Uint8Array` prototype remains unmodified.
+             */
+
+            function Buffer(arg, encodingOrOffset, length) {
+              // Common case.
+              if (typeof arg === 'number') {
+                if (typeof encodingOrOffset === 'string') {
+                  throw new TypeError(
+                    'The "string" argument must be of type string. Received type number'
+                  );
+                }
+                return allocUnsafe(arg);
+              }
+              return from(arg, encodingOrOffset, length);
+            }
+
+            // Fix subarray() in ES2016. See: https://github.com/feross/buffer/pull/97
+            if (
+              typeof Symbol !== 'undefined' &&
+              Symbol.species != null &&
+              Buffer[Symbol.species] === Buffer
+            ) {
+              Object.defineProperty(Buffer, Symbol.species, {
+                value: null,
+                configurable: true,
+                enumerable: false,
+                writable: false
+              });
+            }
+
+            Buffer.poolSize = 8192; // not used by this implementation
+
+            function from(value, encodingOrOffset, length) {
+              if (typeof value === 'string') {
+                return fromString(value, encodingOrOffset);
+              }
+
+              if (ArrayBuffer.isView(value)) {
+                return fromArrayLike(value);
+              }
+
+              if (value == null) {
+                throw new TypeError(
+                  'The first argument must be one of type string, Buffer, ArrayBuffer, Array, ' +
+                    'or Array-like Object. Received type ' +
+                    typeof value
+                );
+              }
+
+              if (
+                isInstance(value, ArrayBuffer) ||
+                (value && isInstance(value.buffer, ArrayBuffer))
+              ) {
+                return fromArrayBuffer(value, encodingOrOffset, length);
+              }
+
+              if (typeof value === 'number') {
+                throw new TypeError(
+                  'The "value" argument must not be of type number. Received type number'
+                );
+              }
+
+              var valueOf = value.valueOf && value.valueOf();
+              if (valueOf != null && valueOf !== value) {
+                return Buffer.from(valueOf, encodingOrOffset, length);
+              }
+
+              var b = fromObject(value);
+              if (b) return b;
+
+              if (
+                typeof Symbol !== 'undefined' &&
+                Symbol.toPrimitive != null &&
+                typeof value[Symbol.toPrimitive] === 'function'
+              ) {
+                return Buffer.from(
+                  value[Symbol.toPrimitive]('string'),
+                  encodingOrOffset,
+                  length
+                );
+              }
+
+              throw new TypeError(
+                'The first argument must be one of type string, Buffer, ArrayBuffer, Array, ' +
+                  'or Array-like Object. Received type ' +
+                  typeof value
+              );
+            }
+
+            /**
+             * Functionally equivalent to Buffer(arg, encoding) but throws a TypeError
+             * if value is a number.
+             * Buffer.from(str[, encoding])
+             * Buffer.from(array)
+             * Buffer.from(buffer)
+             * Buffer.from(arrayBuffer[, byteOffset[, length]])
+             **/
+            Buffer.from = function(value, encodingOrOffset, length) {
+              return from(value, encodingOrOffset, length);
+            };
+
+            // Note: Change prototype *after* Buffer.from is defined to workaround Chrome bug:
+            // https://github.com/feross/buffer/pull/148
+            Object.setPrototypeOf(Buffer.prototype, Uint8Array.prototype);
+            Object.setPrototypeOf(Buffer, Uint8Array);
+
+            function assertSize(size) {
+              if (typeof size !== 'number') {
+                throw new TypeError('"size" argument must be of type number');
+              } else if (size < 0) {
+                throw new RangeError(
+                  'The value "' + size + '" is invalid for option "size"'
+                );
