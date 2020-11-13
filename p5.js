@@ -16225,3 +16225,141 @@
                 throw new RangeError(
                   'The value "' + size + '" is invalid for option "size"'
                 );
+              }
+            }
+
+            function alloc(size, fill, encoding) {
+              assertSize(size);
+              if (size <= 0) {
+                return createBuffer(size);
+              }
+              if (fill !== undefined) {
+                // Only pay attention to encoding if it's a string. This
+                // prevents accidentally sending in a number that would
+                // be interpretted as a start offset.
+                return typeof encoding === 'string'
+                  ? createBuffer(size).fill(fill, encoding)
+                  : createBuffer(size).fill(fill);
+              }
+              return createBuffer(size);
+            }
+
+            /**
+             * Creates a new filled Buffer instance.
+             * alloc(size[, fill[, encoding]])
+             **/
+            Buffer.alloc = function(size, fill, encoding) {
+              return alloc(size, fill, encoding);
+            };
+
+            function allocUnsafe(size) {
+              assertSize(size);
+              return createBuffer(size < 0 ? 0 : checked(size) | 0);
+            }
+
+            /**
+             * Equivalent to Buffer(num), by default creates a non-zero-filled Buffer instance.
+             * */
+            Buffer.allocUnsafe = function(size) {
+              return allocUnsafe(size);
+            };
+            /**
+             * Equivalent to SlowBuffer(num), by default creates a non-zero-filled Buffer instance.
+             */
+            Buffer.allocUnsafeSlow = function(size) {
+              return allocUnsafe(size);
+            };
+
+            function fromString(string, encoding) {
+              if (typeof encoding !== 'string' || encoding === '') {
+                encoding = 'utf8';
+              }
+
+              if (!Buffer.isEncoding(encoding)) {
+                throw new TypeError('Unknown encoding: ' + encoding);
+              }
+
+              var length = byteLength(string, encoding) | 0;
+              var buf = createBuffer(length);
+
+              var actual = buf.write(string, encoding);
+
+              if (actual !== length) {
+                // Writing a hex string, for example, that contains invalid characters will
+                // cause everything after the first invalid character to be ignored. (e.g.
+                // 'abxxcd' will be treated as 'ab')
+                buf = buf.slice(0, actual);
+              }
+
+              return buf;
+            }
+
+            function fromArrayLike(array) {
+              var length = array.length < 0 ? 0 : checked(array.length) | 0;
+              var buf = createBuffer(length);
+              for (var i = 0; i < length; i += 1) {
+                buf[i] = array[i] & 255;
+              }
+              return buf;
+            }
+
+            function fromArrayBuffer(array, byteOffset, length) {
+              if (byteOffset < 0 || array.byteLength < byteOffset) {
+                throw new RangeError('"offset" is outside of buffer bounds');
+              }
+
+              if (array.byteLength < byteOffset + (length || 0)) {
+                throw new RangeError('"length" is outside of buffer bounds');
+              }
+
+              var buf;
+              if (byteOffset === undefined && length === undefined) {
+                buf = new Uint8Array(array);
+              } else if (length === undefined) {
+                buf = new Uint8Array(array, byteOffset);
+              } else {
+                buf = new Uint8Array(array, byteOffset, length);
+              }
+
+              // Return an augmented `Uint8Array` instance
+              Object.setPrototypeOf(buf, Buffer.prototype);
+
+              return buf;
+            }
+
+            function fromObject(obj) {
+              if (Buffer.isBuffer(obj)) {
+                var len = checked(obj.length) | 0;
+                var buf = createBuffer(len);
+
+                if (buf.length === 0) {
+                  return buf;
+                }
+
+                obj.copy(buf, 0, 0, len);
+                return buf;
+              }
+
+              if (obj.length !== undefined) {
+                if (typeof obj.length !== 'number' || numberIsNaN(obj.length)) {
+                  return createBuffer(0);
+                }
+                return fromArrayLike(obj);
+              }
+
+              if (obj.type === 'Buffer' && Array.isArray(obj.data)) {
+                return fromArrayLike(obj.data);
+              }
+            }
+
+            function checked(length) {
+              // Note: cannot use `length < K_MAX_LENGTH` here because that fails when
+              // length is NaN (which is otherwise coerced to zero.)
+              if (length >= K_MAX_LENGTH) {
+                throw new RangeError(
+                  'Attempt to allocate Buffer larger than maximum ' +
+                    'size: 0x' +
+                    K_MAX_LENGTH.toString(16) +
+                    ' bytes'
+                );
+              }
