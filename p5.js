@@ -16503,3 +16503,127 @@
                     encoding = ('' + encoding).toLowerCase();
                     loweredCase = true;
                 }
+              }
+            }
+            Buffer.byteLength = byteLength;
+
+            function slowToString(encoding, start, end) {
+              var loweredCase = false;
+
+              // No need to verify that "this.length <= MAX_UINT32" since it's a read-only
+              // property of a typed array.
+
+              // This behaves neither like String nor Uint8Array in that we set start/end
+              // to their upper/lower bounds if the value passed is out of range.
+              // undefined is handled specially as per ECMA-262 6th Edition,
+              // Section 13.3.3.7 Runtime Semantics: KeyedBindingInitialization.
+              if (start === undefined || start < 0) {
+                start = 0;
+              }
+              // Return early if start > this.length. Done here to prevent potential uint32
+              // coercion fail below.
+              if (start > this.length) {
+                return '';
+              }
+
+              if (end === undefined || end > this.length) {
+                end = this.length;
+              }
+
+              if (end <= 0) {
+                return '';
+              }
+
+              // Force coersion to uint32. This will also coerce falsey/NaN values to 0.
+              end >>>= 0;
+              start >>>= 0;
+
+              if (end <= start) {
+                return '';
+              }
+
+              if (!encoding) encoding = 'utf8';
+
+              while (true) {
+                switch (encoding) {
+                  case 'hex':
+                    return hexSlice(this, start, end);
+
+                  case 'utf8':
+                  case 'utf-8':
+                    return utf8Slice(this, start, end);
+
+                  case 'ascii':
+                    return asciiSlice(this, start, end);
+
+                  case 'latin1':
+                  case 'binary':
+                    return latin1Slice(this, start, end);
+
+                  case 'base64':
+                    return base64Slice(this, start, end);
+
+                  case 'ucs2':
+                  case 'ucs-2':
+                  case 'utf16le':
+                  case 'utf-16le':
+                    return utf16leSlice(this, start, end);
+
+                  default:
+                    if (loweredCase) throw new TypeError('Unknown encoding: ' + encoding);
+                    encoding = (encoding + '').toLowerCase();
+                    loweredCase = true;
+                }
+              }
+            }
+
+            // This property is used by `Buffer.isBuffer` (and the `is-buffer` npm package)
+            // to detect a Buffer instance. It's not possible to use `instanceof Buffer`
+            // reliably in a browserify context because there could be multiple different
+            // copies of the 'buffer' package in use. This method works even for Buffer
+            // instances that were created from another copy of the `buffer` package.
+            // See: https://github.com/feross/buffer/issues/154
+            Buffer.prototype._isBuffer = true;
+
+            function swap(b, n, m) {
+              var i = b[n];
+              b[n] = b[m];
+              b[m] = i;
+            }
+
+            Buffer.prototype.swap16 = function swap16() {
+              var len = this.length;
+              if (len % 2 !== 0) {
+                throw new RangeError('Buffer size must be a multiple of 16-bits');
+              }
+              for (var i = 0; i < len; i += 2) {
+                swap(this, i, i + 1);
+              }
+              return this;
+            };
+
+            Buffer.prototype.swap32 = function swap32() {
+              var len = this.length;
+              if (len % 4 !== 0) {
+                throw new RangeError('Buffer size must be a multiple of 32-bits');
+              }
+              for (var i = 0; i < len; i += 4) {
+                swap(this, i, i + 3);
+                swap(this, i + 1, i + 2);
+              }
+              return this;
+            };
+
+            Buffer.prototype.swap64 = function swap64() {
+              var len = this.length;
+              if (len % 8 !== 0) {
+                throw new RangeError('Buffer size must be a multiple of 64-bits');
+              }
+              for (var i = 0; i < len; i += 8) {
+                swap(this, i, i + 7);
+                swap(this, i + 1, i + 6);
+                swap(this, i + 2, i + 5);
+                swap(this, i + 3, i + 4);
+              }
+              return this;
+            };
