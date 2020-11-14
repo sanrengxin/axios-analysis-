@@ -16627,3 +16627,145 @@
               }
               return this;
             };
+
+            Buffer.prototype.toString = function toString() {
+              var length = this.length;
+              if (length === 0) return '';
+              if (arguments.length === 0) return utf8Slice(this, 0, length);
+              return slowToString.apply(this, arguments);
+            };
+
+            Buffer.prototype.toLocaleString = Buffer.prototype.toString;
+
+            Buffer.prototype.equals = function equals(b) {
+              if (!Buffer.isBuffer(b)) throw new TypeError('Argument must be a Buffer');
+              if (this === b) return true;
+              return Buffer.compare(this, b) === 0;
+            };
+
+            Buffer.prototype.inspect = function inspect() {
+              var str = '';
+              var max = exports.INSPECT_MAX_BYTES;
+              str = this.toString('hex', 0, max)
+                .replace(/(.{2})/g, '$1 ')
+                .trim();
+              if (this.length > max) str += ' ... ';
+              return '<Buffer ' + str + '>';
+            };
+            if (customInspectSymbol) {
+              Buffer.prototype[customInspectSymbol] = Buffer.prototype.inspect;
+            }
+
+            Buffer.prototype.compare = function compare(
+              target,
+              start,
+              end,
+              thisStart,
+              thisEnd
+            ) {
+              if (isInstance(target, Uint8Array)) {
+                target = Buffer.from(target, target.offset, target.byteLength);
+              }
+              if (!Buffer.isBuffer(target)) {
+                throw new TypeError(
+                  'The "target" argument must be one of type Buffer or Uint8Array. ' +
+                    'Received type ' +
+                    typeof target
+                );
+              }
+
+              if (start === undefined) {
+                start = 0;
+              }
+              if (end === undefined) {
+                end = target ? target.length : 0;
+              }
+              if (thisStart === undefined) {
+                thisStart = 0;
+              }
+              if (thisEnd === undefined) {
+                thisEnd = this.length;
+              }
+
+              if (
+                start < 0 ||
+                end > target.length ||
+                thisStart < 0 ||
+                thisEnd > this.length
+              ) {
+                throw new RangeError('out of range index');
+              }
+
+              if (thisStart >= thisEnd && start >= end) {
+                return 0;
+              }
+              if (thisStart >= thisEnd) {
+                return -1;
+              }
+              if (start >= end) {
+                return 1;
+              }
+
+              start >>>= 0;
+              end >>>= 0;
+              thisStart >>>= 0;
+              thisEnd >>>= 0;
+
+              if (this === target) return 0;
+
+              var x = thisEnd - thisStart;
+              var y = end - start;
+              var len = Math.min(x, y);
+
+              var thisCopy = this.slice(thisStart, thisEnd);
+              var targetCopy = target.slice(start, end);
+
+              for (var i = 0; i < len; ++i) {
+                if (thisCopy[i] !== targetCopy[i]) {
+                  x = thisCopy[i];
+                  y = targetCopy[i];
+                  break;
+                }
+              }
+
+              if (x < y) return -1;
+              if (y < x) return 1;
+              return 0;
+            };
+
+            // Finds either the first index of `val` in `buffer` at offset >= `byteOffset`,
+            // OR the last index of `val` in `buffer` at offset <= `byteOffset`.
+            //
+            // Arguments:
+            // - buffer - a Buffer to search
+            // - val - a string, Buffer, or number
+            // - byteOffset - an index into `buffer`; will be clamped to an int32
+            // - encoding - an optional encoding, relevant is val is a string
+            // - dir - true for indexOf, false for lastIndexOf
+            function bidirectionalIndexOf(buffer, val, byteOffset, encoding, dir) {
+              // Empty buffer means no match
+              if (buffer.length === 0) return -1;
+
+              // Normalize byteOffset
+              if (typeof byteOffset === 'string') {
+                encoding = byteOffset;
+                byteOffset = 0;
+              } else if (byteOffset > 0x7fffffff) {
+                byteOffset = 0x7fffffff;
+              } else if (byteOffset < -0x80000000) {
+                byteOffset = -0x80000000;
+              }
+              byteOffset = +byteOffset; // Coerce to Number.
+              if (numberIsNaN(byteOffset)) {
+                // byteOffset: it it's undefined, null, NaN, "foo", etc, search whole buffer
+                byteOffset = dir ? 0 : buffer.length - 1;
+              }
+
+              // Normalize byteOffset: negative offsets start from the end of the buffer
+              if (byteOffset < 0) byteOffset = buffer.length + byteOffset;
+              if (byteOffset >= buffer.length) {
+                if (dir) return -1;
+                else byteOffset = buffer.length - 1;
+              } else if (byteOffset < 0) {
+                if (dir) byteOffset = 0;
+                else return -1;
