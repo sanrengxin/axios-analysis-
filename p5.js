@@ -16769,3 +16769,145 @@
               } else if (byteOffset < 0) {
                 if (dir) byteOffset = 0;
                 else return -1;
+              }
+
+              // Normalize val
+              if (typeof val === 'string') {
+                val = Buffer.from(val, encoding);
+              }
+
+              // Finally, search either indexOf (if dir is true) or lastIndexOf
+              if (Buffer.isBuffer(val)) {
+                // Special case: looking for empty string/buffer always fails
+                if (val.length === 0) {
+                  return -1;
+                }
+                return arrayIndexOf(buffer, val, byteOffset, encoding, dir);
+              } else if (typeof val === 'number') {
+                val = val & 0xff; // Search for a byte value [0-255]
+                if (typeof Uint8Array.prototype.indexOf === 'function') {
+                  if (dir) {
+                    return Uint8Array.prototype.indexOf.call(buffer, val, byteOffset);
+                  } else {
+                    return Uint8Array.prototype.lastIndexOf.call(buffer, val, byteOffset);
+                  }
+                }
+                return arrayIndexOf(buffer, [val], byteOffset, encoding, dir);
+              }
+
+              throw new TypeError('val must be string, number or Buffer');
+            }
+
+            function arrayIndexOf(arr, val, byteOffset, encoding, dir) {
+              var indexSize = 1;
+              var arrLength = arr.length;
+              var valLength = val.length;
+
+              if (encoding !== undefined) {
+                encoding = String(encoding).toLowerCase();
+                if (
+                  encoding === 'ucs2' ||
+                  encoding === 'ucs-2' ||
+                  encoding === 'utf16le' ||
+                  encoding === 'utf-16le'
+                ) {
+                  if (arr.length < 2 || val.length < 2) {
+                    return -1;
+                  }
+                  indexSize = 2;
+                  arrLength /= 2;
+                  valLength /= 2;
+                  byteOffset /= 2;
+                }
+              }
+
+              function read(buf, i) {
+                if (indexSize === 1) {
+                  return buf[i];
+                } else {
+                  return buf.readUInt16BE(i * indexSize);
+                }
+              }
+
+              var i;
+              if (dir) {
+                var foundIndex = -1;
+                for (i = byteOffset; i < arrLength; i++) {
+                  if (read(arr, i) === read(val, foundIndex === -1 ? 0 : i - foundIndex)) {
+                    if (foundIndex === -1) foundIndex = i;
+                    if (i - foundIndex + 1 === valLength) return foundIndex * indexSize;
+                  } else {
+                    if (foundIndex !== -1) i -= i - foundIndex;
+                    foundIndex = -1;
+                  }
+                }
+              } else {
+                if (byteOffset + valLength > arrLength) byteOffset = arrLength - valLength;
+                for (i = byteOffset; i >= 0; i--) {
+                  var found = true;
+                  for (var j = 0; j < valLength; j++) {
+                    if (read(arr, i + j) !== read(val, j)) {
+                      found = false;
+                      break;
+                    }
+                  }
+                  if (found) return i;
+                }
+              }
+
+              return -1;
+            }
+
+            Buffer.prototype.includes = function includes(val, byteOffset, encoding) {
+              return this.indexOf(val, byteOffset, encoding) !== -1;
+            };
+
+            Buffer.prototype.indexOf = function indexOf(val, byteOffset, encoding) {
+              return bidirectionalIndexOf(this, val, byteOffset, encoding, true);
+            };
+
+            Buffer.prototype.lastIndexOf = function lastIndexOf(val, byteOffset, encoding) {
+              return bidirectionalIndexOf(this, val, byteOffset, encoding, false);
+            };
+
+            function hexWrite(buf, string, offset, length) {
+              offset = Number(offset) || 0;
+              var remaining = buf.length - offset;
+              if (!length) {
+                length = remaining;
+              } else {
+                length = Number(length);
+                if (length > remaining) {
+                  length = remaining;
+                }
+              }
+
+              var strLen = string.length;
+
+              if (length > strLen / 2) {
+                length = strLen / 2;
+              }
+              for (var i = 0; i < length; ++i) {
+                var parsed = parseInt(string.substr(i * 2, 2), 16);
+                if (numberIsNaN(parsed)) return i;
+                buf[offset + i] = parsed;
+              }
+              return i;
+            }
+
+            function utf8Write(buf, string, offset, length) {
+              return blitBuffer(
+                utf8ToBytes(string, buf.length - offset),
+                buf,
+                offset,
+                length
+              );
+            }
+
+            function asciiWrite(buf, string, offset, length) {
+              return blitBuffer(asciiToBytes(string), buf, offset, length);
+            }
+
+            function latin1Write(buf, string, offset, length) {
+              return asciiWrite(buf, string, offset, length);
+            }
