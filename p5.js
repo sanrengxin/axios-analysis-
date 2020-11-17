@@ -16911,3 +16911,141 @@
             function latin1Write(buf, string, offset, length) {
               return asciiWrite(buf, string, offset, length);
             }
+
+            function base64Write(buf, string, offset, length) {
+              return blitBuffer(base64ToBytes(string), buf, offset, length);
+            }
+
+            function ucs2Write(buf, string, offset, length) {
+              return blitBuffer(
+                utf16leToBytes(string, buf.length - offset),
+                buf,
+                offset,
+                length
+              );
+            }
+
+            Buffer.prototype.write = function write(string, offset, length, encoding) {
+              // Buffer#write(string)
+              if (offset === undefined) {
+                encoding = 'utf8';
+                length = this.length;
+                offset = 0;
+                // Buffer#write(string, encoding)
+              } else if (length === undefined && typeof offset === 'string') {
+                encoding = offset;
+                length = this.length;
+                offset = 0;
+                // Buffer#write(string, offset[, length][, encoding])
+              } else if (isFinite(offset)) {
+                offset = offset >>> 0;
+                if (isFinite(length)) {
+                  length = length >>> 0;
+                  if (encoding === undefined) encoding = 'utf8';
+                } else {
+                  encoding = length;
+                  length = undefined;
+                }
+              } else {
+                throw new Error(
+                  'Buffer.write(string, encoding, offset[, length]) is no longer supported'
+                );
+              }
+
+              var remaining = this.length - offset;
+              if (length === undefined || length > remaining) length = remaining;
+
+              if (
+                (string.length > 0 && (length < 0 || offset < 0)) ||
+                offset > this.length
+              ) {
+                throw new RangeError('Attempt to write outside buffer bounds');
+              }
+
+              if (!encoding) encoding = 'utf8';
+
+              var loweredCase = false;
+              for (;;) {
+                switch (encoding) {
+                  case 'hex':
+                    return hexWrite(this, string, offset, length);
+
+                  case 'utf8':
+                  case 'utf-8':
+                    return utf8Write(this, string, offset, length);
+
+                  case 'ascii':
+                    return asciiWrite(this, string, offset, length);
+
+                  case 'latin1':
+                  case 'binary':
+                    return latin1Write(this, string, offset, length);
+
+                  case 'base64':
+                    // Warning: maxLength not taken into account in base64Write
+                    return base64Write(this, string, offset, length);
+
+                  case 'ucs2':
+                  case 'ucs-2':
+                  case 'utf16le':
+                  case 'utf-16le':
+                    return ucs2Write(this, string, offset, length);
+
+                  default:
+                    if (loweredCase) throw new TypeError('Unknown encoding: ' + encoding);
+                    encoding = ('' + encoding).toLowerCase();
+                    loweredCase = true;
+                }
+              }
+            };
+
+            Buffer.prototype.toJSON = function toJSON() {
+              return {
+                type: 'Buffer',
+                data: Array.prototype.slice.call(this._arr || this, 0)
+              };
+            };
+
+            function base64Slice(buf, start, end) {
+              if (start === 0 && end === buf.length) {
+                return base64.fromByteArray(buf);
+              } else {
+                return base64.fromByteArray(buf.slice(start, end));
+              }
+            }
+
+            function utf8Slice(buf, start, end) {
+              end = Math.min(buf.length, end);
+              var res = [];
+
+              var i = start;
+              while (i < end) {
+                var firstByte = buf[i];
+                var codePoint = null;
+                var bytesPerSequence =
+                  firstByte > 0xef ? 4 : firstByte > 0xdf ? 3 : firstByte > 0xbf ? 2 : 1;
+
+                if (i + bytesPerSequence <= end) {
+                  var secondByte, thirdByte, fourthByte, tempCodePoint;
+
+                  switch (bytesPerSequence) {
+                    case 1:
+                      if (firstByte < 0x80) {
+                        codePoint = firstByte;
+                      }
+                      break;
+                    case 2:
+                      secondByte = buf[i + 1];
+                      if ((secondByte & 0xc0) === 0x80) {
+                        tempCodePoint = ((firstByte & 0x1f) << 0x6) | (secondByte & 0x3f);
+                        if (tempCodePoint > 0x7f) {
+                          codePoint = tempCodePoint;
+                        }
+                      }
+                      break;
+                    case 3:
+                      secondByte = buf[i + 1];
+                      thirdByte = buf[i + 2];
+                      if ((secondByte & 0xc0) === 0x80 && (thirdByte & 0xc0) === 0x80) {
+                        tempCodePoint =
+                          ((firstByte & 0xf) << 0xc) |
