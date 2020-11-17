@@ -17049,3 +17049,121 @@
                       if ((secondByte & 0xc0) === 0x80 && (thirdByte & 0xc0) === 0x80) {
                         tempCodePoint =
                           ((firstByte & 0xf) << 0xc) |
+                          ((secondByte & 0x3f) << 0x6) |
+                          (thirdByte & 0x3f);
+                        if (
+                          tempCodePoint > 0x7ff &&
+                          (tempCodePoint < 0xd800 || tempCodePoint > 0xdfff)
+                        ) {
+                          codePoint = tempCodePoint;
+                        }
+                      }
+                      break;
+                    case 4:
+                      secondByte = buf[i + 1];
+                      thirdByte = buf[i + 2];
+                      fourthByte = buf[i + 3];
+                      if (
+                        (secondByte & 0xc0) === 0x80 &&
+                        (thirdByte & 0xc0) === 0x80 &&
+                        (fourthByte & 0xc0) === 0x80
+                      ) {
+                        tempCodePoint =
+                          ((firstByte & 0xf) << 0x12) |
+                          ((secondByte & 0x3f) << 0xc) |
+                          ((thirdByte & 0x3f) << 0x6) |
+                          (fourthByte & 0x3f);
+                        if (tempCodePoint > 0xffff && tempCodePoint < 0x110000) {
+                          codePoint = tempCodePoint;
+                        }
+                      }
+                  }
+                }
+
+                if (codePoint === null) {
+                  // we did not generate a valid codePoint so insert a
+                  // replacement char (U+FFFD) and advance only 1 byte
+                  codePoint = 0xfffd;
+                  bytesPerSequence = 1;
+                } else if (codePoint > 0xffff) {
+                  // encode to utf16 (surrogate pair dance)
+                  codePoint -= 0x10000;
+                  res.push(((codePoint >>> 10) & 0x3ff) | 0xd800);
+                  codePoint = 0xdc00 | (codePoint & 0x3ff);
+                }
+
+                res.push(codePoint);
+                i += bytesPerSequence;
+              }
+
+              return decodeCodePointsArray(res);
+            }
+
+            // Based on http://stackoverflow.com/a/22747272/680742, the browser with
+            // the lowest limit is Chrome, with 0x10000 args.
+            // We go 1 magnitude less, for safety
+            var MAX_ARGUMENTS_LENGTH = 0x1000;
+
+            function decodeCodePointsArray(codePoints) {
+              var len = codePoints.length;
+              if (len <= MAX_ARGUMENTS_LENGTH) {
+                return String.fromCharCode.apply(String, codePoints); // avoid extra slice()
+              }
+
+              // Decode in chunks to avoid "call stack size exceeded".
+              var res = '';
+              var i = 0;
+              while (i < len) {
+                res += String.fromCharCode.apply(
+                  String,
+                  codePoints.slice(i, (i += MAX_ARGUMENTS_LENGTH))
+                );
+              }
+              return res;
+            }
+
+            function asciiSlice(buf, start, end) {
+              var ret = '';
+              end = Math.min(buf.length, end);
+
+              for (var i = start; i < end; ++i) {
+                ret += String.fromCharCode(buf[i] & 0x7f);
+              }
+              return ret;
+            }
+
+            function latin1Slice(buf, start, end) {
+              var ret = '';
+              end = Math.min(buf.length, end);
+
+              for (var i = start; i < end; ++i) {
+                ret += String.fromCharCode(buf[i]);
+              }
+              return ret;
+            }
+
+            function hexSlice(buf, start, end) {
+              var len = buf.length;
+
+              if (!start || start < 0) start = 0;
+              if (!end || end < 0 || end > len) end = len;
+
+              var out = '';
+              for (var i = start; i < end; ++i) {
+                out += hexSliceLookupTable[buf[i]];
+              }
+              return out;
+            }
+
+            function utf16leSlice(buf, start, end) {
+              var bytes = buf.slice(start, end);
+              var res = '';
+              for (var i = 0; i < bytes.length; i += 2) {
+                res += String.fromCharCode(bytes[i] + bytes[i + 1] * 256);
+              }
+              return res;
+            }
+
+            Buffer.prototype.slice = function slice(start, end) {
+              var len = this.length;
+              start = ~~start;
