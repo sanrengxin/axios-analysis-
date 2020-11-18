@@ -17480,3 +17480,157 @@
               noAssert
             ) {
               value = +value;
+              offset = offset >>> 0;
+              if (!noAssert) checkInt(this, value, offset, 4, 0xffffffff, 0);
+              this[offset + 3] = value >>> 24;
+              this[offset + 2] = value >>> 16;
+              this[offset + 1] = value >>> 8;
+              this[offset] = value & 0xff;
+              return offset + 4;
+            };
+
+            Buffer.prototype.writeUInt32BE = function writeUInt32BE(
+              value,
+              offset,
+              noAssert
+            ) {
+              value = +value;
+              offset = offset >>> 0;
+              if (!noAssert) checkInt(this, value, offset, 4, 0xffffffff, 0);
+              this[offset] = value >>> 24;
+              this[offset + 1] = value >>> 16;
+              this[offset + 2] = value >>> 8;
+              this[offset + 3] = value & 0xff;
+              return offset + 4;
+            };
+
+            Buffer.prototype.writeIntLE = function writeIntLE(
+              value,
+              offset,
+              byteLength,
+              noAssert
+            ) {
+              value = +value;
+              offset = offset >>> 0;
+              if (!noAssert) {
+                var limit = Math.pow(2, 8 * byteLength - 1);
+
+                checkInt(this, value, offset, byteLength, limit - 1, -limit);
+              }
+
+              var i = 0;
+              var mul = 1;
+              var sub = 0;
+              this[offset] = value & 0xff;
+              while (++i < byteLength && (mul *= 0x100)) {
+                if (value < 0 && sub === 0 && this[offset + i - 1] !== 0) {
+                  sub = 1;
+                }
+                this[offset + i] = (((value / mul) >> 0) - sub) & 0xff;
+              }
+
+              return offset + byteLength;
+            };
+
+            Buffer.prototype.writeIntBE = function writeIntBE(
+              value,
+              offset,
+              byteLength,
+              noAssert
+            ) {
+              value = +value;
+              offset = offset >>> 0;
+              if (!noAssert) {
+                var limit = Math.pow(2, 8 * byteLength - 1);
+
+                checkInt(this, value, offset, byteLength, limit - 1, -limit);
+              }
+
+              var i = byteLength - 1;
+              var mul = 1;
+              var sub = 0;
+              this[offset + i] = value & 0xff;
+              while (--i >= 0 && (mul *= 0x100)) {
+                if (value < 0 && sub === 0 && this[offset + i + 1] !== 0) {
+                  sub = 1;
+                }
+                this[offset + i] = (((value / mul) >> 0) - sub) & 0xff;
+              }
+
+              return offset + byteLength;
+            };
+
+            Buffer.prototype.writeInt8 = function writeInt8(value, offset, noAssert) {
+              value = +value;
+              offset = offset >>> 0;
+              if (!noAssert) checkInt(this, value, offset, 1, 0x7f, -0x80);
+              if (value < 0) value = 0xff + value + 1;
+              this[offset] = value & 0xff;
+              return offset + 1;
+            };
+
+            Buffer.prototype.writeInt16LE = function writeInt16LE(value, offset, noAssert) {
+              value = +value;
+              offset = offset >>> 0;
+              if (!noAssert) checkInt(this, value, offset, 2, 0x7fff, -0x8000);
+              this[offset] = value & 0xff;
+              this[offset + 1] = value >>> 8;
+              return offset + 2;
+            };
+
+            Buffer.prototype.writeInt16BE = function writeInt16BE(value, offset, noAssert) {
+              value = +value;
+              offset = offset >>> 0;
+              if (!noAssert) checkInt(this, value, offset, 2, 0x7fff, -0x8000);
+              this[offset] = value >>> 8;
+              this[offset + 1] = value & 0xff;
+              return offset + 2;
+            };
+
+            Buffer.prototype.writeInt32LE = function writeInt32LE(value, offset, noAssert) {
+              value = +value;
+              offset = offset >>> 0;
+              if (!noAssert) checkInt(this, value, offset, 4, 0x7fffffff, -0x80000000);
+              this[offset] = value & 0xff;
+              this[offset + 1] = value >>> 8;
+              this[offset + 2] = value >>> 16;
+              this[offset + 3] = value >>> 24;
+              return offset + 4;
+            };
+
+            Buffer.prototype.writeInt32BE = function writeInt32BE(value, offset, noAssert) {
+              value = +value;
+              offset = offset >>> 0;
+              if (!noAssert) checkInt(this, value, offset, 4, 0x7fffffff, -0x80000000);
+              if (value < 0) value = 0xffffffff + value + 1;
+              this[offset] = value >>> 24;
+              this[offset + 1] = value >>> 16;
+              this[offset + 2] = value >>> 8;
+              this[offset + 3] = value & 0xff;
+              return offset + 4;
+            };
+
+            function checkIEEE754(buf, value, offset, ext, max, min) {
+              if (offset + ext > buf.length) throw new RangeError('Index out of range');
+              if (offset < 0) throw new RangeError('Index out of range');
+            }
+
+            function writeFloat(buf, value, offset, littleEndian, noAssert) {
+              value = +value;
+              offset = offset >>> 0;
+              if (!noAssert) {
+                checkIEEE754(
+                  buf,
+                  value,
+                  offset,
+                  4,
+                  3.4028234663852886e38,
+                  -3.4028234663852886e38
+                );
+              }
+              ieee754.write(buf, value, offset, littleEndian, 23, 4);
+              return offset + 4;
+            }
+
+            Buffer.prototype.writeFloatLE = function writeFloatLE(value, offset, noAssert) {
+              return writeFloat(this, value, offset, true, noAssert);
