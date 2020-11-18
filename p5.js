@@ -17167,3 +17167,157 @@
             Buffer.prototype.slice = function slice(start, end) {
               var len = this.length;
               start = ~~start;
+              end = end === undefined ? len : ~~end;
+
+              if (start < 0) {
+                start += len;
+                if (start < 0) start = 0;
+              } else if (start > len) {
+                start = len;
+              }
+
+              if (end < 0) {
+                end += len;
+                if (end < 0) end = 0;
+              } else if (end > len) {
+                end = len;
+              }
+
+              if (end < start) end = start;
+
+              var newBuf = this.subarray(start, end);
+              // Return an augmented `Uint8Array` instance
+              Object.setPrototypeOf(newBuf, Buffer.prototype);
+
+              return newBuf;
+            };
+
+            /*
+ * Need to make sure that buffer isn't trying to write out of bounds.
+ */
+            function checkOffset(offset, ext, length) {
+              if (offset % 1 !== 0 || offset < 0)
+                throw new RangeError('offset is not uint');
+              if (offset + ext > length)
+                throw new RangeError('Trying to access beyond buffer length');
+            }
+
+            Buffer.prototype.readUIntLE = function readUIntLE(
+              offset,
+              byteLength,
+              noAssert
+            ) {
+              offset = offset >>> 0;
+              byteLength = byteLength >>> 0;
+              if (!noAssert) checkOffset(offset, byteLength, this.length);
+
+              var val = this[offset];
+              var mul = 1;
+              var i = 0;
+              while (++i < byteLength && (mul *= 0x100)) {
+                val += this[offset + i] * mul;
+              }
+
+              return val;
+            };
+
+            Buffer.prototype.readUIntBE = function readUIntBE(
+              offset,
+              byteLength,
+              noAssert
+            ) {
+              offset = offset >>> 0;
+              byteLength = byteLength >>> 0;
+              if (!noAssert) {
+                checkOffset(offset, byteLength, this.length);
+              }
+
+              var val = this[offset + --byteLength];
+              var mul = 1;
+              while (byteLength > 0 && (mul *= 0x100)) {
+                val += this[offset + --byteLength] * mul;
+              }
+
+              return val;
+            };
+
+            Buffer.prototype.readUInt8 = function readUInt8(offset, noAssert) {
+              offset = offset >>> 0;
+              if (!noAssert) checkOffset(offset, 1, this.length);
+              return this[offset];
+            };
+
+            Buffer.prototype.readUInt16LE = function readUInt16LE(offset, noAssert) {
+              offset = offset >>> 0;
+              if (!noAssert) checkOffset(offset, 2, this.length);
+              return this[offset] | (this[offset + 1] << 8);
+            };
+
+            Buffer.prototype.readUInt16BE = function readUInt16BE(offset, noAssert) {
+              offset = offset >>> 0;
+              if (!noAssert) checkOffset(offset, 2, this.length);
+              return (this[offset] << 8) | this[offset + 1];
+            };
+
+            Buffer.prototype.readUInt32LE = function readUInt32LE(offset, noAssert) {
+              offset = offset >>> 0;
+              if (!noAssert) checkOffset(offset, 4, this.length);
+
+              return (
+                (this[offset] | (this[offset + 1] << 8) | (this[offset + 2] << 16)) +
+                this[offset + 3] * 0x1000000
+              );
+            };
+
+            Buffer.prototype.readUInt32BE = function readUInt32BE(offset, noAssert) {
+              offset = offset >>> 0;
+              if (!noAssert) checkOffset(offset, 4, this.length);
+
+              return (
+                this[offset] * 0x1000000 +
+                ((this[offset + 1] << 16) | (this[offset + 2] << 8) | this[offset + 3])
+              );
+            };
+
+            Buffer.prototype.readIntLE = function readIntLE(offset, byteLength, noAssert) {
+              offset = offset >>> 0;
+              byteLength = byteLength >>> 0;
+              if (!noAssert) checkOffset(offset, byteLength, this.length);
+
+              var val = this[offset];
+              var mul = 1;
+              var i = 0;
+              while (++i < byteLength && (mul *= 0x100)) {
+                val += this[offset + i] * mul;
+              }
+              mul *= 0x80;
+
+              if (val >= mul) val -= Math.pow(2, 8 * byteLength);
+
+              return val;
+            };
+
+            Buffer.prototype.readIntBE = function readIntBE(offset, byteLength, noAssert) {
+              offset = offset >>> 0;
+              byteLength = byteLength >>> 0;
+              if (!noAssert) checkOffset(offset, byteLength, this.length);
+
+              var i = byteLength;
+              var mul = 1;
+              var val = this[offset + --i];
+              while (i > 0 && (mul *= 0x100)) {
+                val += this[offset + --i] * mul;
+              }
+              mul *= 0x80;
+
+              if (val >= mul) val -= Math.pow(2, 8 * byteLength);
+
+              return val;
+            };
+
+            Buffer.prototype.readInt8 = function readInt8(offset, noAssert) {
+              offset = offset >>> 0;
+              if (!noAssert) checkOffset(offset, 1, this.length);
+              if (!(this[offset] & 0x80)) return this[offset];
+              return (0xff - this[offset] + 1) * -1;
+            };
