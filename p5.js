@@ -17781,3 +17781,124 @@
               } else {
                 var bytes = Buffer.isBuffer(val) ? val : Buffer.from(val, encoding);
                 var len = bytes.length;
+                if (len === 0) {
+                  throw new TypeError(
+                    'The value "' + val + '" is invalid for argument "value"'
+                  );
+                }
+                for (i = 0; i < end - start; ++i) {
+                  this[i + start] = bytes[i % len];
+                }
+              }
+
+              return this;
+            };
+
+            // HELPER FUNCTIONS
+            // ================
+
+            var INVALID_BASE64_RE = /[^+/0-9A-Za-z-_]/g;
+
+            function base64clean(str) {
+              // Node takes equal signs as end of the Base64 encoding
+              str = str.split('=')[0];
+              // Node strips out invalid characters like \n and \t from the string, base64-js does not
+              str = str.trim().replace(INVALID_BASE64_RE, '');
+              // Node converts strings with length < 2 to ''
+              if (str.length < 2) return '';
+              // Node allows for non-padded base64 strings (missing trailing ===), base64-js does not
+              while (str.length % 4 !== 0) {
+                str = str + '=';
+              }
+              return str;
+            }
+
+            function utf8ToBytes(string, units) {
+              units = units || Infinity;
+              var codePoint;
+              var length = string.length;
+              var leadSurrogate = null;
+              var bytes = [];
+
+              for (var i = 0; i < length; ++i) {
+                codePoint = string.charCodeAt(i);
+
+                // is surrogate component
+                if (codePoint > 0xd7ff && codePoint < 0xe000) {
+                  // last char was a lead
+                  if (!leadSurrogate) {
+                    // no lead yet
+                    if (codePoint > 0xdbff) {
+                      // unexpected trail
+                      if ((units -= 3) > -1) bytes.push(0xef, 0xbf, 0xbd);
+                      continue;
+                    } else if (i + 1 === length) {
+                      // unpaired lead
+                      if ((units -= 3) > -1) bytes.push(0xef, 0xbf, 0xbd);
+                      continue;
+                    }
+
+                    // valid lead
+                    leadSurrogate = codePoint;
+
+                    continue;
+                  }
+
+                  // 2 leads in a row
+                  if (codePoint < 0xdc00) {
+                    if ((units -= 3) > -1) bytes.push(0xef, 0xbf, 0xbd);
+                    leadSurrogate = codePoint;
+                    continue;
+                  }
+
+                  // valid surrogate pair
+                  codePoint =
+                    (((leadSurrogate - 0xd800) << 10) | (codePoint - 0xdc00)) + 0x10000;
+                } else if (leadSurrogate) {
+                  // valid bmp char, but last char was a lead
+                  if ((units -= 3) > -1) bytes.push(0xef, 0xbf, 0xbd);
+                }
+
+                leadSurrogate = null;
+
+                // encode utf8
+                if (codePoint < 0x80) {
+                  if ((units -= 1) < 0) break;
+                  bytes.push(codePoint);
+                } else if (codePoint < 0x800) {
+                  if ((units -= 2) < 0) break;
+                  bytes.push((codePoint >> 0x6) | 0xc0, (codePoint & 0x3f) | 0x80);
+                } else if (codePoint < 0x10000) {
+                  if ((units -= 3) < 0) break;
+                  bytes.push(
+                    (codePoint >> 0xc) | 0xe0,
+                    ((codePoint >> 0x6) & 0x3f) | 0x80,
+                    (codePoint & 0x3f) | 0x80
+                  );
+                } else if (codePoint < 0x110000) {
+                  if ((units -= 4) < 0) break;
+                  bytes.push(
+                    (codePoint >> 0x12) | 0xf0,
+                    ((codePoint >> 0xc) & 0x3f) | 0x80,
+                    ((codePoint >> 0x6) & 0x3f) | 0x80,
+                    (codePoint & 0x3f) | 0x80
+                  );
+                } else {
+                  throw new Error('Invalid code point');
+                }
+              }
+
+              return bytes;
+            }
+
+            function asciiToBytes(str) {
+              var byteArray = [];
+              for (var i = 0; i < str.length; ++i) {
+                // Node's code seems to be doing this and not & 0x7F..
+                byteArray.push(str.charCodeAt(i) & 0xff);
+              }
+              return byteArray;
+            }
+
+            function utf16leToBytes(str, units) {
+              var c, hi, lo;
