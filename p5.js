@@ -17902,3 +17902,167 @@
 
             function utf16leToBytes(str, units) {
               var c, hi, lo;
+              var byteArray = [];
+              for (var i = 0; i < str.length; ++i) {
+                if ((units -= 2) < 0) break;
+
+                c = str.charCodeAt(i);
+                hi = c >> 8;
+                lo = c % 256;
+                byteArray.push(lo);
+                byteArray.push(hi);
+              }
+
+              return byteArray;
+            }
+
+            function base64ToBytes(str) {
+              return base64.toByteArray(base64clean(str));
+            }
+
+            function blitBuffer(src, dst, offset, length) {
+              for (var i = 0; i < length; ++i) {
+                if (i + offset >= dst.length || i >= src.length) break;
+                dst[i + offset] = src[i];
+              }
+              return i;
+            }
+
+            // ArrayBuffer or Uint8Array objects from other contexts (i.e. iframes) do not pass
+            // the `instanceof` check but they should be treated as of that type.
+            // See: https://github.com/feross/buffer/issues/166
+            function isInstance(obj, type) {
+              return (
+                obj instanceof type ||
+                (obj != null &&
+                  obj.constructor != null &&
+                  obj.constructor.name != null &&
+                  obj.constructor.name === type.name)
+              );
+            }
+            function numberIsNaN(obj) {
+              // For IE11 support
+              return obj !== obj; // eslint-disable-line no-self-compare
+            }
+
+            // Create lookup table for `toString('hex')`
+            // See: https://github.com/feross/buffer/issues/219
+            var hexSliceLookupTable = (function() {
+              var alphabet = '0123456789abcdef';
+              var table = new Array(256);
+              for (var i = 0; i < 16; ++i) {
+                var i16 = i * 16;
+                for (var j = 0; j < 16; ++j) {
+                  table[i16 + j] = alphabet[i] + alphabet[j];
+                }
+              }
+              return table;
+            })();
+          }.call(this, _dereq_('buffer').Buffer));
+        },
+        { 'base64-js': 20, buffer: 22, ieee754: 31 }
+      ],
+      23: [
+        function(_dereq_, module, exports) {
+          // This file can be required in Browserify and Node.js for automatic polyfill
+          // To use it:  require('es6-promise/auto');
+          'use strict';
+          module.exports = _dereq_('./').polyfill();
+        },
+        { './': 24 }
+      ],
+      24: [
+        function(_dereq_, module, exports) {
+          (function(process, global) {
+            /*!
+ * @overview es6-promise - a tiny implementation of Promises/A+.
+ * @copyright Copyright (c) 2014 Yehuda Katz, Tom Dale, Stefan Penner and contributors (Conversion to ES6 API by Jake Archibald)
+ * @license   Licensed under MIT license
+ *            See https://raw.githubusercontent.com/stefanpenner/es6-promise/master/LICENSE
+ * @version   v4.2.8+1e68dce6
+ */
+
+            (function(global, factory) {
+              typeof exports === 'object' && typeof module !== 'undefined'
+                ? (module.exports = factory())
+                : typeof define === 'function' && define.amd
+                  ? define(factory)
+                  : (global.ES6Promise = factory());
+            })(this, function() {
+              'use strict';
+
+              function objectOrFunction(x) {
+                var type = typeof x;
+                return x !== null && (type === 'object' || type === 'function');
+              }
+
+              function isFunction(x) {
+                return typeof x === 'function';
+              }
+
+              var _isArray = void 0;
+              if (Array.isArray) {
+                _isArray = Array.isArray;
+              } else {
+                _isArray = function(x) {
+                  return Object.prototype.toString.call(x) === '[object Array]';
+                };
+              }
+
+              var isArray = _isArray;
+
+              var len = 0;
+              var vertxNext = void 0;
+              var customSchedulerFn = void 0;
+
+              var asap = function asap(callback, arg) {
+                queue[len] = callback;
+                queue[len + 1] = arg;
+                len += 2;
+                if (len === 2) {
+                  // If len is 2, that means that we need to schedule an async flush.
+                  // If additional callbacks are queued before the queue is flushed, they
+                  // will be processed by this flush that we are scheduling.
+                  if (customSchedulerFn) {
+                    customSchedulerFn(flush);
+                  } else {
+                    scheduleFlush();
+                  }
+                }
+              };
+
+              function setScheduler(scheduleFn) {
+                customSchedulerFn = scheduleFn;
+              }
+
+              function setAsap(asapFn) {
+                asap = asapFn;
+              }
+
+              var browserWindow = typeof window !== 'undefined' ? window : undefined;
+              var browserGlobal = browserWindow || {};
+              var BrowserMutationObserver =
+                browserGlobal.MutationObserver || browserGlobal.WebKitMutationObserver;
+              var isNode =
+                typeof self === 'undefined' &&
+                typeof process !== 'undefined' &&
+                {}.toString.call(process) === '[object process]';
+
+              // test for web worker but not in IE10
+              var isWorker =
+                typeof Uint8ClampedArray !== 'undefined' &&
+                typeof importScripts !== 'undefined' &&
+                typeof MessageChannel !== 'undefined';
+
+              // node
+              function useNextTick() {
+                // node version 0.10.x displays a deprecation warning when nextTick is used recursively
+                // see https://github.com/cujojs/when/issues/410 for details
+                return function() {
+                  return process.nextTick(flush);
+                };
+              }
+
+              // vertx
+              function useVertxTimer() {
+                if (typeof vertxNext !== 'undefined') {
