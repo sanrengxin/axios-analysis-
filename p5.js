@@ -18345,3 +18345,132 @@
 
                 promise._result = value;
                 promise._state = FULFILLED;
+
+                if (promise._subscribers.length !== 0) {
+                  asap(publish, promise);
+                }
+              }
+
+              function reject(promise, reason) {
+                if (promise._state !== PENDING) {
+                  return;
+                }
+                promise._state = REJECTED;
+                promise._result = reason;
+
+                asap(publishRejection, promise);
+              }
+
+              function subscribe(parent, child, onFulfillment, onRejection) {
+                var _subscribers = parent._subscribers;
+                var length = _subscribers.length;
+
+                parent._onerror = null;
+
+                _subscribers[length] = child;
+                _subscribers[length + FULFILLED] = onFulfillment;
+                _subscribers[length + REJECTED] = onRejection;
+
+                if (length === 0 && parent._state) {
+                  asap(publish, parent);
+                }
+              }
+
+              function publish(promise) {
+                var subscribers = promise._subscribers;
+                var settled = promise._state;
+
+                if (subscribers.length === 0) {
+                  return;
+                }
+
+                var child = void 0,
+                  callback = void 0,
+                  detail = promise._result;
+
+                for (var i = 0; i < subscribers.length; i += 3) {
+                  child = subscribers[i];
+                  callback = subscribers[i + settled];
+
+                  if (child) {
+                    invokeCallback(settled, child, callback, detail);
+                  } else {
+                    callback(detail);
+                  }
+                }
+
+                promise._subscribers.length = 0;
+              }
+
+              function invokeCallback(settled, promise, callback, detail) {
+                var hasCallback = isFunction(callback),
+                  value = void 0,
+                  error = void 0,
+                  succeeded = true;
+
+                if (hasCallback) {
+                  try {
+                    value = callback(detail);
+                  } catch (e) {
+                    succeeded = false;
+                    error = e;
+                  }
+
+                  if (promise === value) {
+                    reject(promise, cannotReturnOwn());
+                    return;
+                  }
+                } else {
+                  value = detail;
+                }
+
+                if (promise._state !== PENDING) {
+                  // noop
+                } else if (hasCallback && succeeded) {
+                  resolve(promise, value);
+                } else if (succeeded === false) {
+                  reject(promise, error);
+                } else if (settled === FULFILLED) {
+                  fulfill(promise, value);
+                } else if (settled === REJECTED) {
+                  reject(promise, value);
+                }
+              }
+
+              function initializePromise(promise, resolver) {
+                try {
+                  resolver(
+                    function resolvePromise(value) {
+                      resolve(promise, value);
+                    },
+                    function rejectPromise(reason) {
+                      reject(promise, reason);
+                    }
+                  );
+                } catch (e) {
+                  reject(promise, e);
+                }
+              }
+
+              var id = 0;
+              function nextId() {
+                return id++;
+              }
+
+              function makePromise(promise) {
+                promise[PROMISE_ID] = id++;
+                promise._state = undefined;
+                promise._result = undefined;
+                promise._subscribers = [];
+              }
+
+              function validationError() {
+                return new Error('Array Methods must be provided an Array');
+              }
+
+              var Enumerator = (function() {
+                function Enumerator(Constructor, input) {
+                  this._instanceConstructor = Constructor;
+                  this.promise = new Constructor(noop);
+
+                  if (!this.promise[PROMISE_ID]) {
