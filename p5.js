@@ -18205,3 +18205,143 @@
                   typeof object === 'object' &&
                   object.constructor === Constructor
                 ) {
+                  return object;
+                }
+
+                var promise = new Constructor(noop);
+                resolve(promise, object);
+                return promise;
+              }
+
+              var PROMISE_ID = Math.random()
+                .toString(36)
+                .substring(2);
+
+              function noop() {}
+
+              var PENDING = void 0;
+              var FULFILLED = 1;
+              var REJECTED = 2;
+
+              function selfFulfillment() {
+                return new TypeError('You cannot resolve a promise with itself');
+              }
+
+              function cannotReturnOwn() {
+                return new TypeError(
+                  'A promises callback cannot return that same promise.'
+                );
+              }
+
+              function tryThen(then$$1, value, fulfillmentHandler, rejectionHandler) {
+                try {
+                  then$$1.call(value, fulfillmentHandler, rejectionHandler);
+                } catch (e) {
+                  return e;
+                }
+              }
+
+              function handleForeignThenable(promise, thenable, then$$1) {
+                asap(function(promise) {
+                  var sealed = false;
+                  var error = tryThen(
+                    then$$1,
+                    thenable,
+                    function(value) {
+                      if (sealed) {
+                        return;
+                      }
+                      sealed = true;
+                      if (thenable !== value) {
+                        resolve(promise, value);
+                      } else {
+                        fulfill(promise, value);
+                      }
+                    },
+                    function(reason) {
+                      if (sealed) {
+                        return;
+                      }
+                      sealed = true;
+
+                      reject(promise, reason);
+                    },
+                    'Settle: ' + (promise._label || ' unknown promise')
+                  );
+
+                  if (!sealed && error) {
+                    sealed = true;
+                    reject(promise, error);
+                  }
+                }, promise);
+              }
+
+              function handleOwnThenable(promise, thenable) {
+                if (thenable._state === FULFILLED) {
+                  fulfill(promise, thenable._result);
+                } else if (thenable._state === REJECTED) {
+                  reject(promise, thenable._result);
+                } else {
+                  subscribe(
+                    thenable,
+                    undefined,
+                    function(value) {
+                      return resolve(promise, value);
+                    },
+                    function(reason) {
+                      return reject(promise, reason);
+                    }
+                  );
+                }
+              }
+
+              function handleMaybeThenable(promise, maybeThenable, then$$1) {
+                if (
+                  maybeThenable.constructor === promise.constructor &&
+                  then$$1 === then &&
+                  maybeThenable.constructor.resolve === resolve$1
+                ) {
+                  handleOwnThenable(promise, maybeThenable);
+                } else {
+                  if (then$$1 === undefined) {
+                    fulfill(promise, maybeThenable);
+                  } else if (isFunction(then$$1)) {
+                    handleForeignThenable(promise, maybeThenable, then$$1);
+                  } else {
+                    fulfill(promise, maybeThenable);
+                  }
+                }
+              }
+
+              function resolve(promise, value) {
+                if (promise === value) {
+                  reject(promise, selfFulfillment());
+                } else if (objectOrFunction(value)) {
+                  var then$$1 = void 0;
+                  try {
+                    then$$1 = value.then;
+                  } catch (error) {
+                    reject(promise, error);
+                    return;
+                  }
+                  handleMaybeThenable(promise, value, then$$1);
+                } else {
+                  fulfill(promise, value);
+                }
+              }
+
+              function publishRejection(promise) {
+                if (promise._onerror) {
+                  promise._onerror(promise._result);
+                }
+
+                publish(promise);
+              }
+
+              function fulfill(promise, value) {
+                if (promise._state !== PENDING) {
+                  return;
+                }
+
+                promise._result = value;
+                promise._state = FULFILLED;
