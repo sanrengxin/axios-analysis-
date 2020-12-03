@@ -19034,3 +19034,144 @@
    ```javascript
   findAuthor().
     then(findBooksByAuthor).
+    then(function(books){
+      // found books
+  }).catch(function(reason){
+    // something went wrong
+  });
+  ```
+   @method then
+  @param {Function} onFulfilled
+  @param {Function} onRejected
+  Useful for tooling.
+  @return {Promise}
+  */
+
+                /**
+  `catch` is simply sugar for `then(undefined, onRejection)` which makes it the same
+  as the catch block of a try/catch statement.
+  ```js
+  function findAuthor(){
+  throw new Error('couldn't find that author');
+  }
+  // synchronous
+  try {
+  findAuthor();
+  } catch(reason) {
+  // something went wrong
+  }
+  // async with promises
+  findAuthor().catch(function(reason){
+  // something went wrong
+  });
+  ```
+  @method catch
+  @param {Function} onRejection
+  Useful for tooling.
+  @return {Promise}
+  */
+
+                Promise.prototype.catch = function _catch(onRejection) {
+                  return this.then(null, onRejection);
+                };
+
+                /**
+    `finally` will be invoked regardless of the promise's fate just as native
+    try/catch/finally behaves
+  
+    Synchronous example:
+  
+    ```js
+    findAuthor() {
+      if (Math.random() > 0.5) {
+        throw new Error();
+      }
+      return new Author();
+    }
+  
+    try {
+      return findAuthor(); // succeed or fail
+    } catch(error) {
+      return findOtherAuther();
+    } finally {
+      // always runs
+      // doesn't affect the return value
+    }
+    ```
+  
+    Asynchronous example:
+  
+    ```js
+    findAuthor().catch(function(reason){
+      return findOtherAuther();
+    }).finally(function(){
+      // author was either found, or not
+    });
+    ```
+  
+    @method finally
+    @param {Function} callback
+    @return {Promise}
+  */
+
+                Promise.prototype.finally = function _finally(callback) {
+                  var promise = this;
+                  var constructor = promise.constructor;
+
+                  if (isFunction(callback)) {
+                    return promise.then(
+                      function(value) {
+                        return constructor.resolve(callback()).then(function() {
+                          return value;
+                        });
+                      },
+                      function(reason) {
+                        return constructor.resolve(callback()).then(function() {
+                          throw reason;
+                        });
+                      }
+                    );
+                  }
+
+                  return promise.then(callback, callback);
+                };
+
+                return Promise;
+              })();
+
+              Promise$1.prototype.then = then;
+              Promise$1.all = all;
+              Promise$1.race = race;
+              Promise$1.resolve = resolve$1;
+              Promise$1.reject = reject$1;
+              Promise$1._setScheduler = setScheduler;
+              Promise$1._setAsap = setAsap;
+              Promise$1._asap = asap;
+
+              /*global self*/
+              function polyfill() {
+                var local = void 0;
+
+                if (typeof global !== 'undefined') {
+                  local = global;
+                } else if (typeof self !== 'undefined') {
+                  local = self;
+                } else {
+                  try {
+                    local = Function('return this')();
+                  } catch (e) {
+                    throw new Error(
+                      'polyfill failed because global object is unavailable in this environment'
+                    );
+                  }
+                }
+
+                var P = local.Promise;
+
+                if (P) {
+                  var promiseToString = null;
+                  try {
+                    promiseToString = Object.prototype.toString.call(P.resolve());
+                  } catch (e) {
+                    // silently ignored
+                  }
