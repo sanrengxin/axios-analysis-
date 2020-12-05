@@ -19592,3 +19592,140 @@
                 }
 
                 if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+              }
+
+              return null;
+            },
+            remove: function remove(name) {
+              this.create(name, '', -1);
+            }
+          };
+          var cookie$1 = {
+            name: 'cookie',
+            lookup: function lookup(options) {
+              var found;
+
+              if (options.lookupCookie && typeof document !== 'undefined') {
+                var c = cookie.read(options.lookupCookie);
+                if (c) found = c;
+              }
+
+              return found;
+            },
+            cacheUserLanguage: function cacheUserLanguage(lng, options) {
+              if (options.lookupCookie && typeof document !== 'undefined') {
+                cookie.create(
+                  options.lookupCookie,
+                  lng,
+                  options.cookieMinutes,
+                  options.cookieDomain
+                );
+              }
+            }
+          };
+
+          var querystring = {
+            name: 'querystring',
+            lookup: function lookup(options) {
+              var found;
+
+              if (typeof window !== 'undefined') {
+                var query = window.location.search.substring(1);
+                var params = query.split('&');
+
+                for (var i = 0; i < params.length; i++) {
+                  var pos = params[i].indexOf('=');
+
+                  if (pos > 0) {
+                    var key = params[i].substring(0, pos);
+
+                    if (key === options.lookupQuerystring) {
+                      found = params[i].substring(pos + 1);
+                    }
+                  }
+                }
+              }
+
+              return found;
+            }
+          };
+
+          var hasLocalStorageSupport;
+
+          try {
+            hasLocalStorageSupport = window !== 'undefined' && window.localStorage !== null;
+            var testKey = 'i18next.translate.boo';
+            window.localStorage.setItem(testKey, 'foo');
+            window.localStorage.removeItem(testKey);
+          } catch (e) {
+            hasLocalStorageSupport = false;
+          }
+
+          var localStorage = {
+            name: 'localStorage',
+            lookup: function lookup(options) {
+              var found;
+
+              if (options.lookupLocalStorage && hasLocalStorageSupport) {
+                var lng = window.localStorage.getItem(options.lookupLocalStorage);
+                if (lng) found = lng;
+              }
+
+              return found;
+            },
+            cacheUserLanguage: function cacheUserLanguage(lng, options) {
+              if (options.lookupLocalStorage && hasLocalStorageSupport) {
+                window.localStorage.setItem(options.lookupLocalStorage, lng);
+              }
+            }
+          };
+
+          var navigator$1 = {
+            name: 'navigator',
+            lookup: function lookup(options) {
+              var found = [];
+
+              if (typeof navigator !== 'undefined') {
+                if (navigator.languages) {
+                  // chrome only; not an array, so can't use .push.apply instead of iterating
+                  for (var i = 0; i < navigator.languages.length; i++) {
+                    found.push(navigator.languages[i]);
+                  }
+                }
+
+                if (navigator.userLanguage) {
+                  found.push(navigator.userLanguage);
+                }
+
+                if (navigator.language) {
+                  found.push(navigator.language);
+                }
+              }
+
+              return found.length > 0 ? found : undefined;
+            }
+          };
+
+          var htmlTag = {
+            name: 'htmlTag',
+            lookup: function lookup(options) {
+              var found;
+              var htmlTag =
+                options.htmlTag ||
+                (typeof document !== 'undefined' ? document.documentElement : null);
+
+              if (htmlTag && typeof htmlTag.getAttribute === 'function') {
+                found = htmlTag.getAttribute('lang');
+              }
+
+              return found;
+            }
+          };
+
+          var path = {
+            name: 'path',
+            lookup: function lookup(options) {
+              var found;
+
+              if (typeof window !== 'undefined') {
+                var language = window.location.pathname.match(/\/([a-zA-Z-]*)/g);
