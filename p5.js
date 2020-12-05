@@ -19729,3 +19729,129 @@
 
               if (typeof window !== 'undefined') {
                 var language = window.location.pathname.match(/\/([a-zA-Z-]*)/g);
+
+                if (language instanceof Array) {
+                  if (typeof options.lookupFromPathIndex === 'number') {
+                    if (typeof language[options.lookupFromPathIndex] !== 'string') {
+                      return undefined;
+                    }
+
+                    found = language[options.lookupFromPathIndex].replace('/', '');
+                  } else {
+                    found = language[0].replace('/', '');
+                  }
+                }
+              }
+
+              return found;
+            }
+          };
+
+          var subdomain = {
+            name: 'subdomain',
+            lookup: function lookup(options) {
+              var found;
+
+              if (typeof window !== 'undefined') {
+                var language = window.location.href.match(
+                  /(?:http[s]*\:\/\/)*(.*?)\.(?=[^\/]*\..{2,5})/gi
+                );
+
+                if (language instanceof Array) {
+                  if (typeof options.lookupFromSubdomainIndex === 'number') {
+                    found = language[options.lookupFromSubdomainIndex]
+                      .replace('http://', '')
+                      .replace('https://', '')
+                      .replace('.', '');
+                  } else {
+                    found = language[0]
+                      .replace('http://', '')
+                      .replace('https://', '')
+                      .replace('.', '');
+                  }
+                }
+              }
+
+              return found;
+            }
+          };
+
+          function getDefaults() {
+            return {
+              order: ['querystring', 'cookie', 'localStorage', 'navigator', 'htmlTag'],
+              lookupQuerystring: 'lng',
+              lookupCookie: 'i18next',
+              lookupLocalStorage: 'i18nextLng',
+              // cache user language
+              caches: ['localStorage'],
+              excludeCacheFor: ['cimode'],
+              //cookieMinutes: 10,
+              //cookieDomain: 'myDomain'
+              checkWhitelist: true
+            };
+          }
+
+          var Browser =
+            /*#__PURE__*/
+            (function() {
+              function Browser(services) {
+                var options =
+                  arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+                _classCallCheck(this, Browser);
+
+                this.type = 'languageDetector';
+                this.detectors = {};
+                this.init(services, options);
+              }
+
+              _createClass(Browser, [
+                {
+                  key: 'init',
+                  value: function init(services) {
+                    var options =
+                      arguments.length > 1 && arguments[1] !== undefined
+                        ? arguments[1]
+                        : {};
+                    var i18nOptions =
+                      arguments.length > 2 && arguments[2] !== undefined
+                        ? arguments[2]
+                        : {};
+                    this.services = services;
+                    this.options = defaults(options, this.options || {}, getDefaults()); // backwards compatibility
+
+                    if (this.options.lookupFromUrlIndex)
+                      this.options.lookupFromPathIndex = this.options.lookupFromUrlIndex;
+                    this.i18nOptions = i18nOptions;
+                    this.addDetector(cookie$1);
+                    this.addDetector(querystring);
+                    this.addDetector(localStorage);
+                    this.addDetector(navigator$1);
+                    this.addDetector(htmlTag);
+                    this.addDetector(path);
+                    this.addDetector(subdomain);
+                  }
+                },
+                {
+                  key: 'addDetector',
+                  value: function addDetector(detector) {
+                    this.detectors[detector.name] = detector;
+                  }
+                },
+                {
+                  key: 'detect',
+                  value: function detect(detectionOrder) {
+                    var _this = this;
+
+                    if (!detectionOrder) detectionOrder = this.options.order;
+                    var detected = [];
+                    detectionOrder.forEach(function(detectorName) {
+                      if (_this.detectors[detectorName]) {
+                        var lookup = _this.detectors[detectorName].lookup(_this.options);
+
+                        if (lookup && typeof lookup === 'string') lookup = [lookup];
+                        if (lookup) detected = detected.concat(lookup);
+                      }
+                    });
+                    var found;
+                    detected.forEach(function(lng) {
