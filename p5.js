@@ -19460,3 +19460,135 @@
                         return;
                       }
                       // don't create more object URLs than needed
+                      if (!object_url) {
+                        object_url = get_URL().createObjectURL(blob);
+                      }
+                      if (force) {
+                        view.location.href = object_url;
+                      } else {
+                        var opened = view.open(object_url, '_blank');
+                        if (!opened) {
+                          // Apple does not allow window.open, see https://developer.apple.com/library/safari/documentation/Tools/Conceptual/SafariExtensionGuide/WorkingwithWindowsandTabs/WorkingwithWindowsandTabs.html
+                          view.location.href = object_url;
+                        }
+                      }
+                      filesaver.readyState = filesaver.DONE;
+                      dispatch_all();
+                      revoke(object_url);
+                    };
+                  filesaver.readyState = filesaver.INIT;
+
+                  if (can_use_save_link) {
+                    object_url = get_URL().createObjectURL(blob);
+                    setTimeout(function() {
+                      save_link.href = object_url;
+                      save_link.download = name;
+                      click(save_link);
+                      dispatch_all();
+                      revoke(object_url);
+                      filesaver.readyState = filesaver.DONE;
+                    });
+                    return;
+                  }
+
+                  fs_error();
+                },
+                FS_proto = FileSaver.prototype,
+                saveAs = function(blob, name, no_auto_bom) {
+                  return new FileSaver(blob, name || blob.name || 'download', no_auto_bom);
+                };
+              // IE 10+ (native saveAs)
+              if (typeof navigator !== 'undefined' && navigator.msSaveOrOpenBlob) {
+                return function(blob, name, no_auto_bom) {
+                  name = name || blob.name || 'download';
+
+                  if (!no_auto_bom) {
+                    blob = auto_bom(blob);
+                  }
+                  return navigator.msSaveOrOpenBlob(blob, name);
+                };
+              }
+
+              FS_proto.abort = function() {};
+              FS_proto.readyState = FS_proto.INIT = 0;
+              FS_proto.WRITING = 1;
+              FS_proto.DONE = 2;
+
+              FS_proto.error = FS_proto.onwritestart = FS_proto.onprogress = FS_proto.onwrite = FS_proto.onabort = FS_proto.onerror = FS_proto.onwriteend = null;
+
+              return saveAs;
+            })(
+              (typeof self !== 'undefined' && self) ||
+                (typeof window !== 'undefined' && window) ||
+                this.content
+            );
+          // `self` is undefined in Firefox for Android content script context
+          // while `this` is nsIContentFrameMessageManager
+          // with an attribute `content` that corresponds to the window
+
+          if (typeof module !== 'undefined' && module.exports) {
+            module.exports.saveAs = saveAs;
+          } else if (
+            typeof define !== 'undefined' &&
+            define !== null &&
+            define.amd !== null
+          ) {
+            define('FileSaver.js', function() {
+              return saveAs;
+            });
+          }
+        },
+        {}
+      ],
+      27: [
+        function(_dereq_, module, exports) {
+          'use strict';
+
+          function _interopDefault(ex) {
+            return ex && typeof ex === 'object' && 'default' in ex ? ex['default'] : ex;
+          }
+
+          var _classCallCheck = _interopDefault(
+            _dereq_('@babel/runtime/helpers/classCallCheck')
+          );
+          var _createClass = _interopDefault(_dereq_('@babel/runtime/helpers/createClass'));
+
+          var arr = [];
+          var each = arr.forEach;
+          var slice = arr.slice;
+          function defaults(obj) {
+            each.call(slice.call(arguments, 1), function(source) {
+              if (source) {
+                for (var prop in source) {
+                  if (obj[prop] === undefined) obj[prop] = source[prop];
+                }
+              }
+            });
+            return obj;
+          }
+
+          var cookie = {
+            create: function create(name, value, minutes, domain) {
+              var expires;
+
+              if (minutes) {
+                var date = new Date();
+                date.setTime(date.getTime() + minutes * 60 * 1000);
+                expires = '; expires=' + date.toGMTString();
+              } else expires = '';
+
+              domain = domain ? 'domain=' + domain + ';' : '';
+              document.cookie = name + '=' + value + expires + ';' + domain + 'path=/';
+            },
+            read: function read(name) {
+              var nameEQ = name + '=';
+              var ca = document.cookie.split(';');
+
+              for (var i = 0; i < ca.length; i++) {
+                var c = ca[i];
+
+                while (c.charAt(0) === ' ') {
+                  c = c.substring(1, c.length);
+                }
+
+                if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
