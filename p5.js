@@ -19855,3 +19855,129 @@
                     });
                     var found;
                     detected.forEach(function(lng) {
+                      if (found) return;
+
+                      var cleanedLng = _this.services.languageUtils.formatLanguageCode(lng);
+
+                      if (
+                        !_this.options.checkWhitelist ||
+                        _this.services.languageUtils.isWhitelisted(cleanedLng)
+                      )
+                        found = cleanedLng;
+                    });
+
+                    if (!found) {
+                      var fallbacks = this.i18nOptions.fallbackLng;
+                      if (typeof fallbacks === 'string') fallbacks = [fallbacks];
+                      if (!fallbacks) fallbacks = [];
+
+                      if (Object.prototype.toString.apply(fallbacks) === '[object Array]') {
+                        found = fallbacks[0];
+                      } else {
+                        found =
+                          fallbacks[0] || (fallbacks['default'] && fallbacks['default'][0]);
+                      }
+                    }
+
+                    return found;
+                  }
+                },
+                {
+                  key: 'cacheUserLanguage',
+                  value: function cacheUserLanguage(lng, caches) {
+                    var _this2 = this;
+
+                    if (!caches) caches = this.options.caches;
+                    if (!caches) return;
+                    if (
+                      this.options.excludeCacheFor &&
+                      this.options.excludeCacheFor.indexOf(lng) > -1
+                    )
+                      return;
+                    caches.forEach(function(cacheName) {
+                      if (_this2.detectors[cacheName])
+                        _this2.detectors[cacheName].cacheUserLanguage(lng, _this2.options);
+                    });
+                  }
+                }
+              ]);
+
+              return Browser;
+            })();
+
+          Browser.type = 'languageDetector';
+
+          module.exports = Browser;
+        },
+        {
+          '@babel/runtime/helpers/classCallCheck': 28,
+          '@babel/runtime/helpers/createClass': 29
+        }
+      ],
+      28: [
+        function(_dereq_, module, exports) {
+          arguments[4][5][0].apply(exports, arguments);
+        },
+        { dup: 5 }
+      ],
+      29: [
+        function(_dereq_, module, exports) {
+          arguments[4][6][0].apply(exports, arguments);
+        },
+        { dup: 6 }
+      ],
+      30: [
+        function(_dereq_, module, exports) {
+          'use strict';
+
+          function _interopDefault(ex) {
+            return ex && typeof ex === 'object' && 'default' in ex ? ex['default'] : ex;
+          }
+
+          var _typeof = _interopDefault(_dereq_('@babel/runtime/helpers/typeof'));
+          var _objectSpread = _interopDefault(
+            _dereq_('@babel/runtime/helpers/objectSpread')
+          );
+          var _classCallCheck = _interopDefault(
+            _dereq_('@babel/runtime/helpers/classCallCheck')
+          );
+          var _createClass = _interopDefault(_dereq_('@babel/runtime/helpers/createClass'));
+          var _possibleConstructorReturn = _interopDefault(
+            _dereq_('@babel/runtime/helpers/possibleConstructorReturn')
+          );
+          var _getPrototypeOf = _interopDefault(
+            _dereq_('@babel/runtime/helpers/getPrototypeOf')
+          );
+          var _assertThisInitialized = _interopDefault(
+            _dereq_('@babel/runtime/helpers/assertThisInitialized')
+          );
+          var _inherits = _interopDefault(_dereq_('@babel/runtime/helpers/inherits'));
+          var _toConsumableArray = _interopDefault(
+            _dereq_('@babel/runtime/helpers/toConsumableArray')
+          );
+          var _slicedToArray = _interopDefault(
+            _dereq_('@babel/runtime/helpers/slicedToArray')
+          );
+
+          var consoleLogger = {
+            type: 'logger',
+            log: function log(args) {
+              this.output('log', args);
+            },
+            warn: function warn(args) {
+              this.output('warn', args);
+            },
+            error: function error(args) {
+              this.output('error', args);
+            },
+            output: function output(type, args) {
+              var _console;
+
+              /* eslint no-console: 0 */
+              if (console && console[type])
+                (_console = console)[type].apply(_console, _toConsumableArray(args));
+            }
+          };
+
+          var Logger =
+            /*#__PURE__*/
