@@ -20410,3 +20410,132 @@
                   value: function addResources(lng, ns, resources) {
                     var options =
                       arguments.length > 3 && arguments[3] !== undefined
+                        ? arguments[3]
+                        : {
+                            silent: false
+                          };
+
+                    /* eslint no-restricted-syntax: 0 */
+                    for (var m in resources) {
+                      if (
+                        typeof resources[m] === 'string' ||
+                        Object.prototype.toString.apply(resources[m]) === '[object Array]'
+                      )
+                        this.addResource(lng, ns, m, resources[m], {
+                          silent: true
+                        });
+                    }
+
+                    if (!options.silent) this.emit('added', lng, ns, resources);
+                  }
+                },
+                {
+                  key: 'addResourceBundle',
+                  value: function addResourceBundle(lng, ns, resources, deep, overwrite) {
+                    var options =
+                      arguments.length > 5 && arguments[5] !== undefined
+                        ? arguments[5]
+                        : {
+                            silent: false
+                          };
+                    var path = [lng, ns];
+
+                    if (lng.indexOf('.') > -1) {
+                      path = lng.split('.');
+                      deep = resources;
+                      resources = ns;
+                      ns = path[1];
+                    }
+
+                    this.addNamespaces(ns);
+                    var pack = getPath(this.data, path) || {};
+
+                    if (deep) {
+                      deepExtend(pack, resources, overwrite);
+                    } else {
+                      pack = _objectSpread({}, pack, resources);
+                    }
+
+                    setPath(this.data, path, pack);
+                    if (!options.silent) this.emit('added', lng, ns, resources);
+                  }
+                },
+                {
+                  key: 'removeResourceBundle',
+                  value: function removeResourceBundle(lng, ns) {
+                    if (this.hasResourceBundle(lng, ns)) {
+                      delete this.data[lng][ns];
+                    }
+
+                    this.removeNamespaces(ns);
+                    this.emit('removed', lng, ns);
+                  }
+                },
+                {
+                  key: 'hasResourceBundle',
+                  value: function hasResourceBundle(lng, ns) {
+                    return this.getResource(lng, ns) !== undefined;
+                  }
+                },
+                {
+                  key: 'getResourceBundle',
+                  value: function getResourceBundle(lng, ns) {
+                    if (!ns) ns = this.options.defaultNS; // COMPATIBILITY: remove extend in v2.1.0
+
+                    if (this.options.compatibilityAPI === 'v1')
+                      return _objectSpread({}, {}, this.getResource(lng, ns));
+                    return this.getResource(lng, ns);
+                  }
+                },
+                {
+                  key: 'getDataByLanguage',
+                  value: function getDataByLanguage(lng) {
+                    return this.data[lng];
+                  }
+                },
+                {
+                  key: 'toJSON',
+                  value: function toJSON() {
+                    return this.data;
+                  }
+                }
+              ]);
+
+              return ResourceStore;
+            })(EventEmitter);
+
+          var postProcessor = {
+            processors: {},
+            addPostProcessor: function addPostProcessor(module) {
+              this.processors[module.name] = module;
+            },
+            handle: function handle(processors, value, key, options, translator) {
+              var _this = this;
+
+              processors.forEach(function(processor) {
+                if (_this.processors[processor])
+                  value = _this.processors[processor].process(
+                    value,
+                    key,
+                    options,
+                    translator
+                  );
+              });
+              return value;
+            }
+          };
+
+          var checkedLoadedFor = {};
+
+          var Translator =
+            /*#__PURE__*/
+            (function(_EventEmitter) {
+              _inherits(Translator, _EventEmitter);
+
+              function Translator(services) {
+                var _this;
+
+                var options =
+                  arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+                _classCallCheck(this, Translator);
