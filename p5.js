@@ -20255,3 +20255,158 @@
 
             return getPath(defaultData, key);
           }
+          function deepExtend(target, source, overwrite) {
+            /* eslint no-restricted-syntax: 0 */
+            for (var prop in source) {
+              if (prop in target) {
+                // If we reached a leaf string in target or source then replace with source or skip depending on the 'overwrite' switch
+                if (
+                  typeof target[prop] === 'string' ||
+                  target[prop] instanceof String ||
+                  typeof source[prop] === 'string' ||
+                  source[prop] instanceof String
+                ) {
+                  if (overwrite) target[prop] = source[prop];
+                } else {
+                  deepExtend(target[prop], source[prop], overwrite);
+                }
+              } else {
+                target[prop] = source[prop];
+              }
+            }
+
+            return target;
+          }
+          function regexEscape(str) {
+            /* eslint no-useless-escape: 0 */
+            return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, '\\$&');
+          }
+          /* eslint-disable */
+
+          var _entityMap = {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#39;',
+            '/': '&#x2F;'
+          };
+          /* eslint-enable */
+
+          function escape(data) {
+            if (typeof data === 'string') {
+              return data.replace(/[&<>"'\/]/g, function(s) {
+                return _entityMap[s];
+              });
+            }
+
+            return data;
+          }
+
+          var ResourceStore =
+            /*#__PURE__*/
+            (function(_EventEmitter) {
+              _inherits(ResourceStore, _EventEmitter);
+
+              function ResourceStore(data) {
+                var _this;
+
+                var options =
+                  arguments.length > 1 && arguments[1] !== undefined
+                    ? arguments[1]
+                    : {
+                        ns: ['translation'],
+                        defaultNS: 'translation'
+                      };
+
+                _classCallCheck(this, ResourceStore);
+
+                _this = _possibleConstructorReturn(
+                  this,
+                  _getPrototypeOf(ResourceStore).call(this)
+                );
+                EventEmitter.call(_assertThisInitialized(_this)); // <=IE10 fix (unable to call parent constructor)
+
+                _this.data = data || {};
+                _this.options = options;
+
+                if (_this.options.keySeparator === undefined) {
+                  _this.options.keySeparator = '.';
+                }
+
+                return _this;
+              }
+
+              _createClass(ResourceStore, [
+                {
+                  key: 'addNamespaces',
+                  value: function addNamespaces(ns) {
+                    if (this.options.ns.indexOf(ns) < 0) {
+                      this.options.ns.push(ns);
+                    }
+                  }
+                },
+                {
+                  key: 'removeNamespaces',
+                  value: function removeNamespaces(ns) {
+                    var index = this.options.ns.indexOf(ns);
+
+                    if (index > -1) {
+                      this.options.ns.splice(index, 1);
+                    }
+                  }
+                },
+                {
+                  key: 'getResource',
+                  value: function getResource(lng, ns, key) {
+                    var options =
+                      arguments.length > 3 && arguments[3] !== undefined
+                        ? arguments[3]
+                        : {};
+                    var keySeparator =
+                      options.keySeparator !== undefined
+                        ? options.keySeparator
+                        : this.options.keySeparator;
+                    var path = [lng, ns];
+                    if (key && typeof key !== 'string') path = path.concat(key);
+                    if (key && typeof key === 'string')
+                      path = path.concat(keySeparator ? key.split(keySeparator) : key);
+
+                    if (lng.indexOf('.') > -1) {
+                      path = lng.split('.');
+                    }
+
+                    return getPath(this.data, path);
+                  }
+                },
+                {
+                  key: 'addResource',
+                  value: function addResource(lng, ns, key, value) {
+                    var options =
+                      arguments.length > 4 && arguments[4] !== undefined
+                        ? arguments[4]
+                        : {
+                            silent: false
+                          };
+                    var keySeparator = this.options.keySeparator;
+                    if (keySeparator === undefined) keySeparator = '.';
+                    var path = [lng, ns];
+                    if (key)
+                      path = path.concat(keySeparator ? key.split(keySeparator) : key);
+
+                    if (lng.indexOf('.') > -1) {
+                      path = lng.split('.');
+                      value = ns;
+                      ns = path[1];
+                    }
+
+                    this.addNamespaces(ns);
+                    setPath(this.data, path, value);
+                    if (!options.silent) this.emit('added', lng, ns, key, value);
+                  }
+                },
+                {
+                  key: 'addResources',
+                  value: function addResources(lng, ns, resources) {
+                    var options =
+                      arguments.length > 3 && arguments[3] !== undefined
