@@ -20539,3 +20539,147 @@
                   arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
                 _classCallCheck(this, Translator);
+
+                _this = _possibleConstructorReturn(
+                  this,
+                  _getPrototypeOf(Translator).call(this)
+                );
+                EventEmitter.call(_assertThisInitialized(_this)); // <=IE10 fix (unable to call parent constructor)
+
+                copy(
+                  [
+                    'resourceStore',
+                    'languageUtils',
+                    'pluralResolver',
+                    'interpolator',
+                    'backendConnector',
+                    'i18nFormat',
+                    'utils'
+                  ],
+                  services,
+                  _assertThisInitialized(_this)
+                );
+                _this.options = options;
+
+                if (_this.options.keySeparator === undefined) {
+                  _this.options.keySeparator = '.';
+                }
+
+                _this.logger = baseLogger.create('translator');
+                return _this;
+              }
+
+              _createClass(Translator, [
+                {
+                  key: 'changeLanguage',
+                  value: function changeLanguage(lng) {
+                    if (lng) this.language = lng;
+                  }
+                },
+                {
+                  key: 'exists',
+                  value: function exists(key) {
+                    var options =
+                      arguments.length > 1 && arguments[1] !== undefined
+                        ? arguments[1]
+                        : {
+                            interpolation: {}
+                          };
+                    var resolved = this.resolve(key, options);
+                    return resolved && resolved.res !== undefined;
+                  }
+                },
+                {
+                  key: 'extractFromKey',
+                  value: function extractFromKey(key, options) {
+                    var nsSeparator = options.nsSeparator || this.options.nsSeparator;
+                    if (nsSeparator === undefined) nsSeparator = ':';
+                    var keySeparator =
+                      options.keySeparator !== undefined
+                        ? options.keySeparator
+                        : this.options.keySeparator;
+                    var namespaces = options.ns || this.options.defaultNS;
+
+                    if (nsSeparator && key.indexOf(nsSeparator) > -1) {
+                      var parts = key.split(nsSeparator);
+                      if (
+                        nsSeparator !== keySeparator ||
+                        (nsSeparator === keySeparator &&
+                          this.options.ns.indexOf(parts[0]) > -1)
+                      )
+                        namespaces = parts.shift();
+                      key = parts.join(keySeparator);
+                    }
+
+                    if (typeof namespaces === 'string') namespaces = [namespaces];
+                    return {
+                      key: key,
+                      namespaces: namespaces
+                    };
+                  }
+                },
+                {
+                  key: 'translate',
+                  value: function translate(keys, options) {
+                    var _this2 = this;
+
+                    if (
+                      _typeof(options) !== 'object' &&
+                      this.options.overloadTranslationOptionHandler
+                    ) {
+                      /* eslint prefer-rest-params: 0 */
+                      options = this.options.overloadTranslationOptionHandler(arguments);
+                    }
+
+                    if (!options) options = {}; // non valid keys handling
+
+                    if (
+                      keys === undefined ||
+                      keys === null
+                      /* || keys === ''*/
+                    )
+                      return '';
+                    if (!Array.isArray(keys)) keys = [String(keys)]; // separators
+
+                    var keySeparator =
+                      options.keySeparator !== undefined
+                        ? options.keySeparator
+                        : this.options.keySeparator; // get namespace(s)
+
+                    var _this$extractFromKey = this.extractFromKey(
+                        keys[keys.length - 1],
+                        options
+                      ),
+                      key = _this$extractFromKey.key,
+                      namespaces = _this$extractFromKey.namespaces;
+
+                    var namespace = namespaces[namespaces.length - 1]; // return key on CIMode
+
+                    var lng = options.lng || this.language;
+                    var appendNamespaceToCIMode =
+                      options.appendNamespaceToCIMode ||
+                      this.options.appendNamespaceToCIMode;
+
+                    if (lng && lng.toLowerCase() === 'cimode') {
+                      if (appendNamespaceToCIMode) {
+                        var nsSeparator = options.nsSeparator || this.options.nsSeparator;
+                        return namespace + nsSeparator + key;
+                      }
+
+                      return key;
+                    } // resolve from store
+
+                    var resolved = this.resolve(keys, options);
+                    var res = resolved && resolved.res;
+                    var resUsedKey = (resolved && resolved.usedKey) || key;
+                    var resExactUsedKey = (resolved && resolved.exactUsedKey) || key;
+                    var resType = Object.prototype.toString.apply(res);
+                    var noObject = [
+                      '[object Number]',
+                      '[object Function]',
+                      '[object RegExp]'
+                    ];
+                    var joinArrays =
+                      options.joinArrays !== undefined
+                        ? options.joinArrays
+                        : this.options.joinArrays; // object
