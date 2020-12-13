@@ -20683,3 +20683,140 @@
                       options.joinArrays !== undefined
                         ? options.joinArrays
                         : this.options.joinArrays; // object
+
+                    var handleAsObjectInI18nFormat =
+                      !this.i18nFormat || this.i18nFormat.handleAsObject;
+                    var handleAsObject =
+                      typeof res !== 'string' &&
+                      typeof res !== 'boolean' &&
+                      typeof res !== 'number';
+
+                    if (
+                      handleAsObjectInI18nFormat &&
+                      res &&
+                      handleAsObject &&
+                      noObject.indexOf(resType) < 0 &&
+                      !(typeof joinArrays === 'string' && resType === '[object Array]')
+                    ) {
+                      if (!options.returnObjects && !this.options.returnObjects) {
+                        this.logger.warn(
+                          'accessing an object - but returnObjects options is not enabled!'
+                        );
+                        return this.options.returnedObjectHandler
+                          ? this.options.returnedObjectHandler(resUsedKey, res, options)
+                          : "key '"
+                              .concat(key, ' (')
+                              .concat(
+                                this.language,
+                                ")' returned an object instead of string."
+                              );
+                      } // if we got a separator we loop over children - else we just return object as is
+                      // as having it set to false means no hierarchy so no lookup for nested values
+
+                      if (keySeparator) {
+                        var resTypeIsArray = resType === '[object Array]';
+                        var copy$$1 = resTypeIsArray ? [] : {}; // apply child translation on a copy
+
+                        /* eslint no-restricted-syntax: 0 */
+
+                        var newKeyToUse = resTypeIsArray ? resExactUsedKey : resUsedKey;
+
+                        for (var m in res) {
+                          if (Object.prototype.hasOwnProperty.call(res, m)) {
+                            var deepKey = ''
+                              .concat(newKeyToUse)
+                              .concat(keySeparator)
+                              .concat(m);
+                            copy$$1[m] = this.translate(
+                              deepKey,
+                              _objectSpread({}, options, {
+                                joinArrays: false,
+                                ns: namespaces
+                              })
+                            );
+                            if (copy$$1[m] === deepKey) copy$$1[m] = res[m]; // if nothing found use orginal value as fallback
+                          }
+                        }
+
+                        res = copy$$1;
+                      }
+                    } else if (
+                      handleAsObjectInI18nFormat &&
+                      typeof joinArrays === 'string' &&
+                      resType === '[object Array]'
+                    ) {
+                      // array special treatment
+                      res = res.join(joinArrays);
+                      if (res) res = this.extendTranslation(res, keys, options);
+                    } else {
+                      // string, empty or null
+                      var usedDefault = false;
+                      var usedKey = false; // fallback value
+
+                      if (!this.isValidLookup(res) && options.defaultValue !== undefined) {
+                        usedDefault = true;
+
+                        if (options.count !== undefined) {
+                          var suffix = this.pluralResolver.getSuffix(lng, options.count);
+                          res = options['defaultValue'.concat(suffix)];
+                        }
+
+                        if (!res) res = options.defaultValue;
+                      }
+
+                      if (!this.isValidLookup(res)) {
+                        usedKey = true;
+                        res = key;
+                      } // save missing
+
+                      var updateMissing =
+                        options.defaultValue &&
+                        options.defaultValue !== res &&
+                        this.options.updateMissing;
+
+                      if (usedKey || usedDefault || updateMissing) {
+                        this.logger.log(
+                          updateMissing ? 'updateKey' : 'missingKey',
+                          lng,
+                          namespace,
+                          key,
+                          updateMissing ? options.defaultValue : res
+                        );
+                        var lngs = [];
+                        var fallbackLngs = this.languageUtils.getFallbackCodes(
+                          this.options.fallbackLng,
+                          options.lng || this.language
+                        );
+
+                        if (
+                          this.options.saveMissingTo === 'fallback' &&
+                          fallbackLngs &&
+                          fallbackLngs[0]
+                        ) {
+                          for (var i = 0; i < fallbackLngs.length; i++) {
+                            lngs.push(fallbackLngs[i]);
+                          }
+                        } else if (this.options.saveMissingTo === 'all') {
+                          lngs = this.languageUtils.toResolveHierarchy(
+                            options.lng || this.language
+                          );
+                        } else {
+                          lngs.push(options.lng || this.language);
+                        }
+
+                        var send = function send(l, k) {
+                          if (_this2.options.missingKeyHandler) {
+                            _this2.options.missingKeyHandler(
+                              l,
+                              namespace,
+                              k,
+                              updateMissing ? options.defaultValue : res,
+                              updateMissing,
+                              options
+                            );
+                          } else if (
+                            _this2.backendConnector &&
+                            _this2.backendConnector.saveMissing
+                          ) {
+                            _this2.backendConnector.saveMissing(
+                              l,
