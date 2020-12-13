@@ -20820,3 +20820,147 @@
                           ) {
                             _this2.backendConnector.saveMissing(
                               l,
+                              namespace,
+                              k,
+                              updateMissing ? options.defaultValue : res,
+                              updateMissing,
+                              options
+                            );
+                          }
+
+                          _this2.emit('missingKey', l, namespace, k, res);
+                        };
+
+                        if (this.options.saveMissing) {
+                          var needsPluralHandling =
+                            options.count !== undefined &&
+                            typeof options.count !== 'string';
+
+                          if (this.options.saveMissingPlurals && needsPluralHandling) {
+                            lngs.forEach(function(l) {
+                              var plurals = _this2.pluralResolver.getPluralFormsOfKey(
+                                l,
+                                key
+                              );
+
+                              plurals.forEach(function(p) {
+                                return send([l], p);
+                              });
+                            });
+                          } else {
+                            send(lngs, key);
+                          }
+                        }
+                      } // extend
+
+                      res = this.extendTranslation(res, keys, options, resolved); // append namespace if still key
+
+                      if (
+                        usedKey &&
+                        res === key &&
+                        this.options.appendNamespaceToMissingKey
+                      )
+                        res = ''.concat(namespace, ':').concat(key); // parseMissingKeyHandler
+
+                      if (usedKey && this.options.parseMissingKeyHandler)
+                        res = this.options.parseMissingKeyHandler(res);
+                    } // return
+
+                    return res;
+                  }
+                },
+                {
+                  key: 'extendTranslation',
+                  value: function extendTranslation(res, key, options, resolved) {
+                    var _this3 = this;
+
+                    if (this.i18nFormat && this.i18nFormat.parse) {
+                      res = this.i18nFormat.parse(
+                        res,
+                        options,
+                        resolved.usedLng,
+                        resolved.usedNS,
+                        resolved.usedKey,
+                        {
+                          resolved: resolved
+                        }
+                      );
+                    } else if (!options.skipInterpolation) {
+                      // i18next.parsing
+                      if (options.interpolation)
+                        this.interpolator.init(
+                          _objectSpread({}, options, {
+                            interpolation: _objectSpread(
+                              {},
+                              this.options.interpolation,
+                              options.interpolation
+                            )
+                          })
+                        ); // interpolate
+
+                      var data =
+                        options.replace && typeof options.replace !== 'string'
+                          ? options.replace
+                          : options;
+                      if (this.options.interpolation.defaultVariables)
+                        data = _objectSpread(
+                          {},
+                          this.options.interpolation.defaultVariables,
+                          data
+                        );
+                      res = this.interpolator.interpolate(
+                        res,
+                        data,
+                        options.lng || this.language,
+                        options
+                      ); // nesting
+
+                      if (options.nest !== false)
+                        res = this.interpolator.nest(
+                          res,
+                          function() {
+                            return _this3.translate.apply(_this3, arguments);
+                          },
+                          options
+                        );
+                      if (options.interpolation) this.interpolator.reset();
+                    } // post process
+
+                    var postProcess = options.postProcess || this.options.postProcess;
+                    var postProcessorNames =
+                      typeof postProcess === 'string' ? [postProcess] : postProcess;
+
+                    if (
+                      res !== undefined &&
+                      res !== null &&
+                      postProcessorNames &&
+                      postProcessorNames.length &&
+                      options.applyPostProcessor !== false
+                    ) {
+                      res = postProcessor.handle(
+                        postProcessorNames,
+                        res,
+                        key,
+                        this.options && this.options.postProcessPassResolved
+                          ? _objectSpread(
+                              {
+                                i18nResolved: resolved
+                              },
+                              options
+                            )
+                          : options,
+                        this
+                      );
+                    }
+
+                    return res;
+                  }
+                },
+                {
+                  key: 'resolve',
+                  value: function resolve(keys) {
+                    var _this4 = this;
+
+                    var options =
+                      arguments.length > 1 && arguments[1] !== undefined
+                        ? arguments[1]
