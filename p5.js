@@ -21227,3 +21227,142 @@
                     var codes = [];
 
                     var addCode = function addCode(c) {
+                      if (!c) return;
+
+                      if (_this.isWhitelisted(c)) {
+                        codes.push(c);
+                      } else {
+                        _this.logger.warn(
+                          'rejecting non-whitelisted language code: '.concat(c)
+                        );
+                      }
+                    };
+
+                    if (typeof code === 'string' && code.indexOf('-') > -1) {
+                      if (this.options.load !== 'languageOnly')
+                        addCode(this.formatLanguageCode(code));
+                      if (
+                        this.options.load !== 'languageOnly' &&
+                        this.options.load !== 'currentOnly'
+                      )
+                        addCode(this.getScriptPartFromCode(code));
+                      if (this.options.load !== 'currentOnly')
+                        addCode(this.getLanguagePartFromCode(code));
+                    } else if (typeof code === 'string') {
+                      addCode(this.formatLanguageCode(code));
+                    }
+
+                    fallbackCodes.forEach(function(fc) {
+                      if (codes.indexOf(fc) < 0) addCode(_this.formatLanguageCode(fc));
+                    });
+                    return codes;
+                  }
+                }
+              ]);
+
+              return LanguageUtil;
+            })();
+
+          /* eslint-disable */
+
+          var sets = [
+            {
+              lngs: [
+                'ach',
+                'ak',
+                'am',
+                'arn',
+                'br',
+                'fil',
+                'gun',
+                'ln',
+                'mfe',
+                'mg',
+                'mi',
+                'oc',
+                'pt',
+                'pt-BR',
+                'tg',
+                'ti',
+                'tr',
+                'uz',
+                'wa'
+              ],
+              nr: [1, 2],
+              fc: 1
+            },
+            {
+              lngs: [
+                'af',
+                'an',
+                'ast',
+                'az',
+                'bg',
+                'bn',
+                'ca',
+                'da',
+                'de',
+                'dev',
+                'el',
+                'en',
+                'eo',
+                'es',
+                'et',
+                'eu',
+                'fi',
+                'fo',
+                'fur',
+                'fy',
+                'gl',
+                'gu',
+                'ha',
+                'hi',
+                'hu',
+                'hy',
+                'ia',
+                'it',
+                'kn',
+                'ku',
+                'lb',
+                'mai',
+                'ml',
+                'mn',
+                'mr',
+                'nah',
+                'nap',
+                'nb',
+                'ne',
+                'nl',
+                'nn',
+                'no',
+                'nso',
+                'pa',
+                'pap',
+                'pms',
+                'ps',
+                'pt-PT',
+                'rm',
+                'sco',
+                'se',
+                'si',
+                'so',
+                'son',
+                'sq',
+                'sv',
+                'sw',
+                'ta',
+                'te',
+                'tk',
+                'ur',
+                'yo'
+              ],
+              nr: [1, 2],
+              fc: 2
+            },
+            {
+              lngs: [
+                'ay',
+                'bo',
+                'cgg',
+                'fa',
+                'id',
