@@ -20964,3 +20964,136 @@
                     var options =
                       arguments.length > 1 && arguments[1] !== undefined
                         ? arguments[1]
+                        : {};
+                    var found;
+                    var usedKey; // plain key
+
+                    var exactUsedKey; // key with context / plural
+
+                    var usedLng;
+                    var usedNS;
+                    if (typeof keys === 'string') keys = [keys]; // forEach possible key
+
+                    keys.forEach(function(k) {
+                      if (_this4.isValidLookup(found)) return;
+
+                      var extracted = _this4.extractFromKey(k, options);
+
+                      var key = extracted.key;
+                      usedKey = key;
+                      var namespaces = extracted.namespaces;
+                      if (_this4.options.fallbackNS)
+                        namespaces = namespaces.concat(_this4.options.fallbackNS);
+                      var needsPluralHandling =
+                        options.count !== undefined && typeof options.count !== 'string';
+                      var needsContextHandling =
+                        options.context !== undefined &&
+                        typeof options.context === 'string' &&
+                        options.context !== '';
+                      var codes = options.lngs
+                        ? options.lngs
+                        : _this4.languageUtils.toResolveHierarchy(
+                            options.lng || _this4.language,
+                            options.fallbackLng
+                          );
+                      namespaces.forEach(function(ns) {
+                        if (_this4.isValidLookup(found)) return;
+                        usedNS = ns;
+
+                        if (
+                          !checkedLoadedFor[''.concat(codes[0], '-').concat(ns)] &&
+                          _this4.utils &&
+                          _this4.utils.hasLoadedNamespace &&
+                          !_this4.utils.hasLoadedNamespace(usedNS)
+                        ) {
+                          checkedLoadedFor[''.concat(codes[0], '-').concat(ns)] = true;
+
+                          _this4.logger.warn(
+                            'key "'
+                              .concat(usedKey, '" for namespace "')
+                              .concat(usedNS, '" for languages "')
+                              .concat(
+                                codes.join(', '),
+                                '" won\'t get resolved as namespace was not yet loaded'
+                              ),
+                            'This means something IS WRONG in your application setup. You access the t function before i18next.init / i18next.loadNamespace / i18next.changeLanguage was done. Wait for the callback or Promise to resolve before accessing it!!!'
+                          );
+                        }
+
+                        codes.forEach(function(code) {
+                          if (_this4.isValidLookup(found)) return;
+                          usedLng = code;
+                          var finalKey = key;
+                          var finalKeys = [finalKey];
+
+                          if (_this4.i18nFormat && _this4.i18nFormat.addLookupKeys) {
+                            _this4.i18nFormat.addLookupKeys(
+                              finalKeys,
+                              key,
+                              code,
+                              ns,
+                              options
+                            );
+                          } else {
+                            var pluralSuffix;
+                            if (needsPluralHandling)
+                              pluralSuffix = _this4.pluralResolver.getSuffix(
+                                code,
+                                options.count
+                              ); // fallback for plural if context not found
+
+                            if (needsPluralHandling && needsContextHandling)
+                              finalKeys.push(finalKey + pluralSuffix); // get key for context if needed
+
+                            if (needsContextHandling)
+                              finalKeys.push(
+                                (finalKey += ''
+                                  .concat(_this4.options.contextSeparator)
+                                  .concat(options.context))
+                              ); // get key for plural if needed
+
+                            if (needsPluralHandling)
+                              finalKeys.push((finalKey += pluralSuffix));
+                          } // iterate over finalKeys starting with most specific pluralkey (-> contextkey only) -> singularkey only
+
+                          var possibleKey;
+                          /* eslint no-cond-assign: 0 */
+
+                          while ((possibleKey = finalKeys.pop())) {
+                            if (!_this4.isValidLookup(found)) {
+                              exactUsedKey = possibleKey;
+                              found = _this4.getResource(code, ns, possibleKey, options);
+                            }
+                          }
+                        });
+                      });
+                    });
+                    return {
+                      res: found,
+                      usedKey: usedKey,
+                      exactUsedKey: exactUsedKey,
+                      usedLng: usedLng,
+                      usedNS: usedNS
+                    };
+                  }
+                },
+                {
+                  key: 'isValidLookup',
+                  value: function isValidLookup(res) {
+                    return (
+                      res !== undefined &&
+                      !(!this.options.returnNull && res === null) &&
+                      !(!this.options.returnEmptyString && res === '')
+                    );
+                  }
+                },
+                {
+                  key: 'getResource',
+                  value: function getResource(code, ns, key) {
+                    var options =
+                      arguments.length > 3 && arguments[3] !== undefined
+                        ? arguments[3]
+                        : {};
+                    if (this.i18nFormat && this.i18nFormat.getResource)
+                      return this.i18nFormat.getResource(code, ns, key, options);
+                    return this.resourceStore.getResource(code, ns, key, options);
