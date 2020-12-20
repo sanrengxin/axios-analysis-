@@ -21503,3 +21503,137 @@
                 n % 10 == 1 && n % 100 != 11
                   ? 0
                   : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20) ? 1 : 2
+              );
+            },
+            5: function _(n) {
+              return Number(
+                n === 0
+                  ? 0
+                  : n == 1
+                    ? 1
+                    : n == 2 ? 2 : n % 100 >= 3 && n % 100 <= 10 ? 3 : n % 100 >= 11 ? 4 : 5
+              );
+            },
+            6: function _(n) {
+              return Number(n == 1 ? 0 : n >= 2 && n <= 4 ? 1 : 2);
+            },
+            7: function _(n) {
+              return Number(
+                n == 1
+                  ? 0
+                  : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20) ? 1 : 2
+              );
+            },
+            8: function _(n) {
+              return Number(n == 1 ? 0 : n == 2 ? 1 : n != 8 && n != 11 ? 2 : 3);
+            },
+            9: function _(n) {
+              return Number(n >= 2);
+            },
+            10: function _(n) {
+              return Number(n == 1 ? 0 : n == 2 ? 1 : n < 7 ? 2 : n < 11 ? 3 : 4);
+            },
+            11: function _(n) {
+              return Number(
+                n == 1 || n == 11 ? 0 : n == 2 || n == 12 ? 1 : n > 2 && n < 20 ? 2 : 3
+              );
+            },
+            12: function _(n) {
+              return Number(n % 10 != 1 || n % 100 == 11);
+            },
+            13: function _(n) {
+              return Number(n !== 0);
+            },
+            14: function _(n) {
+              return Number(n == 1 ? 0 : n == 2 ? 1 : n == 3 ? 2 : 3);
+            },
+            15: function _(n) {
+              return Number(
+                n % 10 == 1 && n % 100 != 11
+                  ? 0
+                  : n % 10 >= 2 && (n % 100 < 10 || n % 100 >= 20) ? 1 : 2
+              );
+            },
+            16: function _(n) {
+              return Number(n % 10 == 1 && n % 100 != 11 ? 0 : n !== 0 ? 1 : 2);
+            },
+            17: function _(n) {
+              return Number(n == 1 || n % 10 == 1 ? 0 : 1);
+            },
+            18: function _(n) {
+              return Number(n == 0 ? 0 : n == 1 ? 1 : 2);
+            },
+            19: function _(n) {
+              return Number(
+                n == 1
+                  ? 0
+                  : n === 0 || (n % 100 > 1 && n % 100 < 11)
+                    ? 1
+                    : n % 100 > 10 && n % 100 < 20 ? 2 : 3
+              );
+            },
+            20: function _(n) {
+              return Number(n == 1 ? 0 : n === 0 || (n % 100 > 0 && n % 100 < 20) ? 1 : 2);
+            },
+            21: function _(n) {
+              return Number(
+                n % 100 == 1 ? 1 : n % 100 == 2 ? 2 : n % 100 == 3 || n % 100 == 4 ? 3 : 0
+              );
+            },
+            22: function _(n) {
+              return Number(
+                n === 1 ? 0 : n === 2 ? 1 : (n < 0 || n > 10) && n % 10 == 0 ? 2 : 3
+              );
+            }
+          };
+          /* eslint-enable */
+
+          function createRules() {
+            var rules = {};
+            sets.forEach(function(set) {
+              set.lngs.forEach(function(l) {
+                rules[l] = {
+                  numbers: set.nr,
+                  plurals: _rulesPluralsTypes[set.fc]
+                };
+              });
+            });
+            return rules;
+          }
+
+          var PluralResolver =
+            /*#__PURE__*/
+            (function() {
+              function PluralResolver(languageUtils) {
+                var options =
+                  arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+                _classCallCheck(this, PluralResolver);
+
+                this.languageUtils = languageUtils;
+                this.options = options;
+                this.logger = baseLogger.create('pluralResolver');
+                this.rules = createRules();
+              }
+
+              _createClass(PluralResolver, [
+                {
+                  key: 'addRule',
+                  value: function addRule(lng, obj) {
+                    this.rules[lng] = obj;
+                  }
+                },
+                {
+                  key: 'getRule',
+                  value: function getRule(code) {
+                    return (
+                      this.rules[code] ||
+                      this.rules[this.languageUtils.getLanguagePartFromCode(code)]
+                    );
+                  }
+                },
+                {
+                  key: 'needsPlural',
+                  value: function needsPlural(code) {
+                    var rule = this.getRule(code);
+                    return rule && rule.numbers.length > 1;
