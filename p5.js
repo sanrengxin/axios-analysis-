@@ -21637,3 +21637,132 @@
                   value: function needsPlural(code) {
                     var rule = this.getRule(code);
                     return rule && rule.numbers.length > 1;
+                  }
+                },
+                {
+                  key: 'getPluralFormsOfKey',
+                  value: function getPluralFormsOfKey(code, key) {
+                    var _this = this;
+
+                    var ret = [];
+                    var rule = this.getRule(code);
+                    if (!rule) return ret;
+                    rule.numbers.forEach(function(n) {
+                      var suffix = _this.getSuffix(code, n);
+
+                      ret.push(''.concat(key).concat(suffix));
+                    });
+                    return ret;
+                  }
+                },
+                {
+                  key: 'getSuffix',
+                  value: function getSuffix(code, count) {
+                    var _this2 = this;
+
+                    var rule = this.getRule(code);
+
+                    if (rule) {
+                      // if (rule.numbers.length === 1) return ''; // only singular
+                      var idx = rule.noAbs
+                        ? rule.plurals(count)
+                        : rule.plurals(Math.abs(count));
+                      var suffix = rule.numbers[idx]; // special treatment for lngs only having singular and plural
+
+                      if (
+                        this.options.simplifyPluralSuffix &&
+                        rule.numbers.length === 2 &&
+                        rule.numbers[0] === 1
+                      ) {
+                        if (suffix === 2) {
+                          suffix = 'plural';
+                        } else if (suffix === 1) {
+                          suffix = '';
+                        }
+                      }
+
+                      var returnSuffix = function returnSuffix() {
+                        return _this2.options.prepend && suffix.toString()
+                          ? _this2.options.prepend + suffix.toString()
+                          : suffix.toString();
+                      }; // COMPATIBILITY JSON
+                      // v1
+
+                      if (this.options.compatibilityJSON === 'v1') {
+                        if (suffix === 1) return '';
+                        if (typeof suffix === 'number')
+                          return '_plural_'.concat(suffix.toString());
+                        return returnSuffix();
+                      } else if (
+                        /* v2 */
+                        this.options.compatibilityJSON === 'v2'
+                      ) {
+                        return returnSuffix();
+                      } else if (
+                        /* v3 - gettext index */
+                        this.options.simplifyPluralSuffix &&
+                        rule.numbers.length === 2 &&
+                        rule.numbers[0] === 1
+                      ) {
+                        return returnSuffix();
+                      }
+
+                      return this.options.prepend && idx.toString()
+                        ? this.options.prepend + idx.toString()
+                        : idx.toString();
+                    }
+
+                    this.logger.warn('no plural rule found for: '.concat(code));
+                    return '';
+                  }
+                }
+              ]);
+
+              return PluralResolver;
+            })();
+
+          var Interpolator =
+            /*#__PURE__*/
+            (function() {
+              function Interpolator() {
+                var options =
+                  arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+                _classCallCheck(this, Interpolator);
+
+                this.logger = baseLogger.create('interpolator');
+                this.options = options;
+
+                this.format =
+                  (options.interpolation && options.interpolation.format) ||
+                  function(value) {
+                    return value;
+                  };
+
+                this.init(options);
+              }
+              /* eslint no-param-reassign: 0 */
+
+              _createClass(Interpolator, [
+                {
+                  key: 'init',
+                  value: function init() {
+                    var options =
+                      arguments.length > 0 && arguments[0] !== undefined
+                        ? arguments[0]
+                        : {};
+                    if (!options.interpolation)
+                      options.interpolation = {
+                        escapeValue: true
+                      };
+                    var iOpts = options.interpolation;
+                    this.escape = iOpts.escape !== undefined ? iOpts.escape : escape;
+                    this.escapeValue =
+                      iOpts.escapeValue !== undefined ? iOpts.escapeValue : true;
+                    this.useRawValueToEscape =
+                      iOpts.useRawValueToEscape !== undefined
+                        ? iOpts.useRawValueToEscape
+                        : false;
+                    this.prefix = iOpts.prefix
+                      ? regexEscape(iOpts.prefix)
+                      : iOpts.prefixEscaped || '{{';
