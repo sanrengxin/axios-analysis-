@@ -21903,3 +21903,136 @@
                       } else if (typeof value !== 'string' && !this.useRawValueToEscape) {
                         value = makeString(value);
                       }
+
+                      value = this.escapeValue
+                        ? regexSafe(this.escape(value))
+                        : regexSafe(value);
+                      str = str.replace(match[0], value);
+                      this.regexp.lastIndex = 0;
+                      replaces++;
+
+                      if (replaces >= this.maxReplaces) {
+                        break;
+                      }
+                    }
+
+                    return str;
+                  }
+                },
+                {
+                  key: 'nest',
+                  value: function nest(str, fc) {
+                    var options =
+                      arguments.length > 2 && arguments[2] !== undefined
+                        ? arguments[2]
+                        : {};
+                    var match;
+                    var value;
+
+                    var clonedOptions = _objectSpread({}, options);
+
+                    clonedOptions.applyPostProcessor = false; // avoid post processing on nested lookup
+
+                    delete clonedOptions.defaultValue; // assert we do not get a endless loop on interpolating defaultValue again and again
+                    // if value is something like "myKey": "lorem $(anotherKey, { "count": {{aValueInOptions}} })"
+
+                    function handleHasOptions(key, inheritedOptions) {
+                      if (key.indexOf(',') < 0) return key;
+                      var p = key.split(',');
+                      key = p.shift();
+                      var optionsString = p.join(',');
+                      optionsString = this.interpolate(optionsString, clonedOptions);
+                      optionsString = optionsString.replace(/'/g, '"');
+
+                      try {
+                        clonedOptions = JSON.parse(optionsString);
+                        if (inheritedOptions)
+                          clonedOptions = _objectSpread(
+                            {},
+                            inheritedOptions,
+                            clonedOptions
+                          );
+                      } catch (e) {
+                        this.logger.error(
+                          'failed parsing options string in nesting for key '.concat(key),
+                          e
+                        );
+                      } // assert we do not get a endless loop on interpolating defaultValue again and again
+
+                      delete clonedOptions.defaultValue;
+                      return key;
+                    } // regular escape on demand
+
+                    while ((match = this.nestingRegexp.exec(str))) {
+                      value = fc(
+                        handleHasOptions.call(this, match[1].trim(), clonedOptions),
+                        clonedOptions
+                      ); // is only the nesting key (key1 = '$(key2)') return the value without stringify
+
+                      if (value && match[0] === str && typeof value !== 'string')
+                        return value; // no string to include or empty
+
+                      if (typeof value !== 'string') value = makeString(value);
+
+                      if (!value) {
+                        this.logger.warn(
+                          'missed to resolve '.concat(match[1], ' for nesting ').concat(str)
+                        );
+                        value = '';
+                      } // Nested keys should not be escaped by default #854
+                      // value = this.escapeValue ? regexSafe(utils.escape(value)) : regexSafe(value);
+
+                      str = str.replace(match[0], value);
+                      this.regexp.lastIndex = 0;
+                    }
+
+                    return str;
+                  }
+                }
+              ]);
+
+              return Interpolator;
+            })();
+
+          function remove(arr, what) {
+            var found = arr.indexOf(what);
+
+            while (found !== -1) {
+              arr.splice(found, 1);
+              found = arr.indexOf(what);
+            }
+          }
+
+          var Connector =
+            /*#__PURE__*/
+            (function(_EventEmitter) {
+              _inherits(Connector, _EventEmitter);
+
+              function Connector(backend, store, services) {
+                var _this;
+
+                var options =
+                  arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
+
+                _classCallCheck(this, Connector);
+
+                _this = _possibleConstructorReturn(
+                  this,
+                  _getPrototypeOf(Connector).call(this)
+                );
+                EventEmitter.call(_assertThisInitialized(_this)); // <=IE10 fix (unable to call parent constructor)
+
+                _this.backend = backend;
+                _this.store = store;
+                _this.services = services;
+                _this.languageUtils = services.languageUtils;
+                _this.options = options;
+                _this.logger = baseLogger.create('backendConnector');
+                _this.state = {};
+                _this.queue = [];
+
+                if (_this.backend && _this.backend.init) {
+                  _this.backend.init(services, options.backend, options);
+                }
+
+                return _this;
