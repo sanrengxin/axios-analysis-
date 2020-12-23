@@ -21766,3 +21766,140 @@
                     this.prefix = iOpts.prefix
                       ? regexEscape(iOpts.prefix)
                       : iOpts.prefixEscaped || '{{';
+                    this.suffix = iOpts.suffix
+                      ? regexEscape(iOpts.suffix)
+                      : iOpts.suffixEscaped || '}}';
+                    this.formatSeparator = iOpts.formatSeparator
+                      ? iOpts.formatSeparator
+                      : iOpts.formatSeparator || ',';
+                    this.unescapePrefix = iOpts.unescapeSuffix
+                      ? ''
+                      : iOpts.unescapePrefix || '-';
+                    this.unescapeSuffix = this.unescapePrefix
+                      ? ''
+                      : iOpts.unescapeSuffix || '';
+                    this.nestingPrefix = iOpts.nestingPrefix
+                      ? regexEscape(iOpts.nestingPrefix)
+                      : iOpts.nestingPrefixEscaped || regexEscape('$t(');
+                    this.nestingSuffix = iOpts.nestingSuffix
+                      ? regexEscape(iOpts.nestingSuffix)
+                      : iOpts.nestingSuffixEscaped || regexEscape(')');
+                    this.maxReplaces = iOpts.maxReplaces ? iOpts.maxReplaces : 1000; // the regexp
+
+                    this.resetRegExp();
+                  }
+                },
+                {
+                  key: 'reset',
+                  value: function reset() {
+                    if (this.options) this.init(this.options);
+                  }
+                },
+                {
+                  key: 'resetRegExp',
+                  value: function resetRegExp() {
+                    // the regexp
+                    var regexpStr = ''.concat(this.prefix, '(.+?)').concat(this.suffix);
+                    this.regexp = new RegExp(regexpStr, 'g');
+                    var regexpUnescapeStr = ''
+                      .concat(this.prefix)
+                      .concat(this.unescapePrefix, '(.+?)')
+                      .concat(this.unescapeSuffix)
+                      .concat(this.suffix);
+                    this.regexpUnescape = new RegExp(regexpUnescapeStr, 'g');
+                    var nestingRegexpStr = ''
+                      .concat(this.nestingPrefix, '(.+?)')
+                      .concat(this.nestingSuffix);
+                    this.nestingRegexp = new RegExp(nestingRegexpStr, 'g');
+                  }
+                },
+                {
+                  key: 'interpolate',
+                  value: function interpolate(str, data, lng, options) {
+                    var _this = this;
+
+                    var match;
+                    var value;
+                    var replaces;
+                    var defaultData =
+                      (this.options &&
+                        this.options.interpolation &&
+                        this.options.interpolation.defaultVariables) ||
+                      {};
+
+                    function regexSafe(val) {
+                      return val.replace(/\$/g, '$$$$');
+                    }
+
+                    var handleFormat = function handleFormat(key) {
+                      if (key.indexOf(_this.formatSeparator) < 0) {
+                        return getPathWithDefaults(data, defaultData, key);
+                      }
+
+                      var p = key.split(_this.formatSeparator);
+                      var k = p.shift().trim();
+                      var f = p.join(_this.formatSeparator).trim();
+                      return _this.format(
+                        getPathWithDefaults(data, defaultData, k),
+                        f,
+                        lng
+                      );
+                    };
+
+                    this.resetRegExp();
+                    var missingInterpolationHandler =
+                      (options && options.missingInterpolationHandler) ||
+                      this.options.missingInterpolationHandler;
+                    replaces = 0; // unescape if has unescapePrefix/Suffix
+
+                    /* eslint no-cond-assign: 0 */
+
+                    while ((match = this.regexpUnescape.exec(str))) {
+                      value = handleFormat(match[1].trim());
+
+                      if (value === undefined) {
+                        if (typeof missingInterpolationHandler === 'function') {
+                          var temp = missingInterpolationHandler(str, match, options);
+                          value = typeof temp === 'string' ? temp : '';
+                        } else {
+                          this.logger.warn(
+                            'missed to pass in variable '
+                              .concat(match[1], ' for interpolating ')
+                              .concat(str)
+                          );
+                          value = '';
+                        }
+                      } else if (typeof value !== 'string' && !this.useRawValueToEscape) {
+                        value = makeString(value);
+                      }
+
+                      str = str.replace(match[0], regexSafe(value));
+                      this.regexpUnescape.lastIndex = 0;
+                      replaces++;
+
+                      if (replaces >= this.maxReplaces) {
+                        break;
+                      }
+                    }
+
+                    replaces = 0; // regular escape on demand
+
+                    while ((match = this.regexp.exec(str))) {
+                      value = handleFormat(match[1].trim());
+
+                      if (value === undefined) {
+                        if (typeof missingInterpolationHandler === 'function') {
+                          var _temp = missingInterpolationHandler(str, match, options);
+
+                          value = typeof _temp === 'string' ? _temp : '';
+                        } else {
+                          this.logger.warn(
+                            'missed to pass in variable '
+                              .concat(match[1], ' for interpolating ')
+                              .concat(str)
+                          );
+                          value = '';
+                        }
+                      } else if (typeof value !== 'string' && !this.useRawValueToEscape) {
+                        value = makeString(value);
+                      }
