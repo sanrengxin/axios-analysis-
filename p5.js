@@ -22178,3 +22178,163 @@
 
                       callback(err, data);
                     });
+                  }
+                  /* eslint consistent-return: 0 */
+                },
+                {
+                  key: 'prepareLoading',
+                  value: function prepareLoading(languages, namespaces) {
+                    var _this4 = this;
+
+                    var options =
+                      arguments.length > 2 && arguments[2] !== undefined
+                        ? arguments[2]
+                        : {};
+                    var callback = arguments.length > 3 ? arguments[3] : undefined;
+
+                    if (!this.backend) {
+                      this.logger.warn(
+                        'No backend was added via i18next.use. Will not load resources.'
+                      );
+                      return callback && callback();
+                    }
+
+                    if (typeof languages === 'string')
+                      languages = this.languageUtils.toResolveHierarchy(languages);
+                    if (typeof namespaces === 'string') namespaces = [namespaces];
+                    var toLoad = this.queueLoad(languages, namespaces, options, callback);
+
+                    if (!toLoad.toLoad.length) {
+                      if (!toLoad.pending.length) callback(); // nothing to load and no pendings...callback now
+
+                      return null; // pendings will trigger callback
+                    }
+
+                    toLoad.toLoad.forEach(function(name) {
+                      _this4.loadOne(name);
+                    });
+                  }
+                },
+                {
+                  key: 'load',
+                  value: function load(languages, namespaces, callback) {
+                    this.prepareLoading(languages, namespaces, {}, callback);
+                  }
+                },
+                {
+                  key: 'reload',
+                  value: function reload(languages, namespaces, callback) {
+                    this.prepareLoading(
+                      languages,
+                      namespaces,
+                      {
+                        reload: true
+                      },
+                      callback
+                    );
+                  }
+                },
+                {
+                  key: 'loadOne',
+                  value: function loadOne(name) {
+                    var _this5 = this;
+
+                    var prefix =
+                      arguments.length > 1 && arguments[1] !== undefined
+                        ? arguments[1]
+                        : '';
+
+                    var _name$split3 = name.split('|'),
+                      _name$split4 = _slicedToArray(_name$split3, 2),
+                      lng = _name$split4[0],
+                      ns = _name$split4[1];
+
+                    this.read(lng, ns, 'read', null, null, function(err, data) {
+                      if (err)
+                        _this5.logger.warn(
+                          ''
+                            .concat(prefix, 'loading namespace ')
+                            .concat(ns, ' for language ')
+                            .concat(lng, ' failed'),
+                          err
+                        );
+                      if (!err && data)
+                        _this5.logger.log(
+                          ''
+                            .concat(prefix, 'loaded namespace ')
+                            .concat(ns, ' for language ')
+                            .concat(lng),
+                          data
+                        );
+
+                      _this5.loaded(name, err, data);
+                    });
+                  }
+                },
+                {
+                  key: 'saveMissing',
+                  value: function saveMissing(
+                    languages,
+                    namespace,
+                    key,
+                    fallbackValue,
+                    isUpdate
+                  ) {
+                    var options =
+                      arguments.length > 5 && arguments[5] !== undefined
+                        ? arguments[5]
+                        : {};
+
+                    if (
+                      this.services.utils &&
+                      this.services.utils.hasLoadedNamespace &&
+                      !this.services.utils.hasLoadedNamespace(namespace)
+                    ) {
+                      this.logger.warn(
+                        'did not save key "'
+                          .concat(key, '" for namespace "')
+                          .concat(namespace, '" as the namespace was not yet loaded'),
+                        'This means something IS WRONG in your application setup. You access the t function before i18next.init / i18next.loadNamespace / i18next.changeLanguage was done. Wait for the callback or Promise to resolve before accessing it!!!'
+                      );
+                      return;
+                    } // ignore non valid keys
+
+                    if (key === undefined || key === null || key === '') return;
+
+                    if (this.backend && this.backend.create) {
+                      this.backend.create(
+                        languages,
+                        namespace,
+                        key,
+                        fallbackValue,
+                        null,
+                        /* unused callback */
+                        _objectSpread({}, options, {
+                          isUpdate: isUpdate
+                        })
+                      );
+                    } // write to store to avoid resending
+
+                    if (!languages || !languages[0]) return;
+                    this.store.addResource(languages[0], namespace, key, fallbackValue);
+                  }
+                }
+              ]);
+
+              return Connector;
+            })(EventEmitter);
+
+          function get() {
+            return {
+              debug: false,
+              initImmediate: true,
+              ns: ['translation'],
+              defaultNS: ['translation'],
+              fallbackLng: ['dev'],
+              fallbackNS: false,
+              // string or array of namespaces
+              whitelist: false,
+              // array with whitelisted languages
+              nonExplicitWhitelist: false,
+              load: 'all',
+              // | currentOnly | languageOnly
