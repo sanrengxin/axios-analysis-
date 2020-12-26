@@ -22458,3 +22458,153 @@
                 if (callback && !_this.isInitialized && !options.isClone) {
                   // https://github.com/i18next/i18next/issues/879
                   if (!_this.options.initImmediate) {
+                    _this.init(options, callback);
+
+                    return _possibleConstructorReturn(_this, _assertThisInitialized(_this));
+                  }
+
+                  setTimeout(function() {
+                    _this.init(options, callback);
+                  }, 0);
+                }
+
+                return _this;
+              }
+
+              _createClass(I18n, [
+                {
+                  key: 'init',
+                  value: function init() {
+                    var _this2 = this;
+
+                    var options =
+                      arguments.length > 0 && arguments[0] !== undefined
+                        ? arguments[0]
+                        : {};
+                    var callback = arguments.length > 1 ? arguments[1] : undefined;
+
+                    if (typeof options === 'function') {
+                      callback = options;
+                      options = {};
+                    }
+
+                    this.options = _objectSpread(
+                      {},
+                      get(),
+                      this.options,
+                      transformOptions(options)
+                    );
+                    this.format = this.options.interpolation.format;
+                    if (!callback) callback = noop;
+
+                    function createClassOnDemand(ClassOrObject) {
+                      if (!ClassOrObject) return null;
+                      if (typeof ClassOrObject === 'function') return new ClassOrObject();
+                      return ClassOrObject;
+                    } // init services
+
+                    if (!this.options.isClone) {
+                      if (this.modules.logger) {
+                        baseLogger.init(
+                          createClassOnDemand(this.modules.logger),
+                          this.options
+                        );
+                      } else {
+                        baseLogger.init(null, this.options);
+                      }
+
+                      var lu = new LanguageUtil(this.options);
+                      this.store = new ResourceStore(this.options.resources, this.options);
+                      var s = this.services;
+                      s.logger = baseLogger;
+                      s.resourceStore = this.store;
+                      s.languageUtils = lu;
+                      s.pluralResolver = new PluralResolver(lu, {
+                        prepend: this.options.pluralSeparator,
+                        compatibilityJSON: this.options.compatibilityJSON,
+                        simplifyPluralSuffix: this.options.simplifyPluralSuffix
+                      });
+                      s.interpolator = new Interpolator(this.options);
+                      s.utils = {
+                        hasLoadedNamespace: this.hasLoadedNamespace.bind(this)
+                      };
+                      s.backendConnector = new Connector(
+                        createClassOnDemand(this.modules.backend),
+                        s.resourceStore,
+                        s,
+                        this.options
+                      ); // pipe events from backendConnector
+
+                      s.backendConnector.on('*', function(event) {
+                        for (
+                          var _len = arguments.length,
+                            args = new Array(_len > 1 ? _len - 1 : 0),
+                            _key = 1;
+                          _key < _len;
+                          _key++
+                        ) {
+                          args[_key - 1] = arguments[_key];
+                        }
+
+                        _this2.emit.apply(_this2, [event].concat(args));
+                      });
+
+                      if (this.modules.languageDetector) {
+                        s.languageDetector = createClassOnDemand(
+                          this.modules.languageDetector
+                        );
+                        s.languageDetector.init(s, this.options.detection, this.options);
+                      }
+
+                      if (this.modules.i18nFormat) {
+                        s.i18nFormat = createClassOnDemand(this.modules.i18nFormat);
+                        if (s.i18nFormat.init) s.i18nFormat.init(this);
+                      }
+
+                      this.translator = new Translator(this.services, this.options); // pipe events from translator
+
+                      this.translator.on('*', function(event) {
+                        for (
+                          var _len2 = arguments.length,
+                            args = new Array(_len2 > 1 ? _len2 - 1 : 0),
+                            _key2 = 1;
+                          _key2 < _len2;
+                          _key2++
+                        ) {
+                          args[_key2 - 1] = arguments[_key2];
+                        }
+
+                        _this2.emit.apply(_this2, [event].concat(args));
+                      });
+                      this.modules.external.forEach(function(m) {
+                        if (m.init) m.init(_this2);
+                      });
+                    } // append api
+
+                    var storeApi = [
+                      'getResource',
+                      'addResource',
+                      'addResources',
+                      'addResourceBundle',
+                      'removeResourceBundle',
+                      'hasResourceBundle',
+                      'getResourceBundle',
+                      'getDataByLanguage'
+                    ];
+                    storeApi.forEach(function(fcName) {
+                      _this2[fcName] = function() {
+                        var _this2$store;
+
+                        return (_this2$store = _this2.store)[fcName].apply(
+                          _this2$store,
+                          arguments
+                        );
+                      };
+                    });
+                    var deferred = defer();
+
+                    var load = function load() {
+                      _this2.changeLanguage(_this2.options.lng, function(err, t) {
+                        _this2.isInitialized = true;
+
+                        _this2.logger.log('initialized', _this2.options);
