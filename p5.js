@@ -22608,3 +22608,135 @@
                         _this2.isInitialized = true;
 
                         _this2.logger.log('initialized', _this2.options);
+
+                        _this2.emit('initialized', _this2.options);
+
+                        deferred.resolve(t); // not rejecting on err (as err is only a loading translation failed warning)
+
+                        callback(err, t);
+                      });
+                    };
+
+                    if (this.options.resources || !this.options.initImmediate) {
+                      load();
+                    } else {
+                      setTimeout(load, 0);
+                    }
+
+                    return deferred;
+                  }
+                  /* eslint consistent-return: 0 */
+                },
+                {
+                  key: 'loadResources',
+                  value: function loadResources(language) {
+                    var _this3 = this;
+
+                    var callback =
+                      arguments.length > 1 && arguments[1] !== undefined
+                        ? arguments[1]
+                        : noop;
+                    var usedCallback = callback;
+                    var usedLng = typeof language === 'string' ? language : this.language;
+                    if (typeof language === 'function') usedCallback = language;
+
+                    if (!this.options.resources || this.options.partialBundledLanguages) {
+                      if (usedLng && usedLng.toLowerCase() === 'cimode')
+                        return usedCallback(); // avoid loading resources for cimode
+
+                      var toLoad = [];
+
+                      var append = function append(lng) {
+                        if (!lng) return;
+
+                        var lngs = _this3.services.languageUtils.toResolveHierarchy(lng);
+
+                        lngs.forEach(function(l) {
+                          if (toLoad.indexOf(l) < 0) toLoad.push(l);
+                        });
+                      };
+
+                      if (!usedLng) {
+                        // at least load fallbacks in this case
+                        var fallbacks = this.services.languageUtils.getFallbackCodes(
+                          this.options.fallbackLng
+                        );
+                        fallbacks.forEach(function(l) {
+                          return append(l);
+                        });
+                      } else {
+                        append(usedLng);
+                      }
+
+                      if (this.options.preload) {
+                        this.options.preload.forEach(function(l) {
+                          return append(l);
+                        });
+                      }
+
+                      this.services.backendConnector.load(
+                        toLoad,
+                        this.options.ns,
+                        usedCallback
+                      );
+                    } else {
+                      usedCallback(null);
+                    }
+                  }
+                },
+                {
+                  key: 'reloadResources',
+                  value: function reloadResources(lngs, ns, callback) {
+                    var deferred = defer();
+                    if (!lngs) lngs = this.languages;
+                    if (!ns) ns = this.options.ns;
+                    if (!callback) callback = noop;
+                    this.services.backendConnector.reload(lngs, ns, function(err) {
+                      deferred.resolve(); // not rejecting on err (as err is only a loading translation failed warning)
+
+                      callback(err);
+                    });
+                    return deferred;
+                  }
+                },
+                {
+                  key: 'use',
+                  value: function use(module) {
+                    if (module.type === 'backend') {
+                      this.modules.backend = module;
+                    }
+
+                    if (
+                      module.type === 'logger' ||
+                      (module.log && module.warn && module.error)
+                    ) {
+                      this.modules.logger = module;
+                    }
+
+                    if (module.type === 'languageDetector') {
+                      this.modules.languageDetector = module;
+                    }
+
+                    if (module.type === 'i18nFormat') {
+                      this.modules.i18nFormat = module;
+                    }
+
+                    if (module.type === 'postProcessor') {
+                      postProcessor.addPostProcessor(module);
+                    }
+
+                    if (module.type === '3rdParty') {
+                      this.modules.external.push(module);
+                    }
+
+                    return this;
+                  }
+                },
+                {
+                  key: 'changeLanguage',
+                  value: function changeLanguage(lng, callback) {
+                    var _this4 = this;
+
+                    this.isLanguageChangingTo = lng;
+                    var deferred = defer();
+                    this.emit('languageChanging', lng);
