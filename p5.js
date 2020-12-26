@@ -22740,3 +22740,127 @@
                     this.isLanguageChangingTo = lng;
                     var deferred = defer();
                     this.emit('languageChanging', lng);
+
+                    var done = function done(err, l) {
+                      if (l) {
+                        _this4.language = l;
+                        _this4.languages = _this4.services.languageUtils.toResolveHierarchy(
+                          l
+                        );
+
+                        _this4.translator.changeLanguage(l);
+
+                        _this4.isLanguageChangingTo = undefined;
+
+                        _this4.emit('languageChanged', l);
+
+                        _this4.logger.log('languageChanged', l);
+                      } else {
+                        _this4.isLanguageChangingTo = undefined;
+                      }
+
+                      deferred.resolve(function() {
+                        return _this4.t.apply(_this4, arguments);
+                      });
+                      if (callback)
+                        callback(err, function() {
+                          return _this4.t.apply(_this4, arguments);
+                        });
+                    };
+
+                    var setLng = function setLng(l) {
+                      if (l) {
+                        if (!_this4.language) {
+                          _this4.language = l;
+                          _this4.languages = _this4.services.languageUtils.toResolveHierarchy(
+                            l
+                          );
+                        }
+
+                        if (!_this4.translator.language)
+                          _this4.translator.changeLanguage(l);
+                        if (_this4.services.languageDetector)
+                          _this4.services.languageDetector.cacheUserLanguage(l);
+                      }
+
+                      _this4.loadResources(l, function(err) {
+                        done(err, l);
+                      });
+                    };
+
+                    if (
+                      !lng &&
+                      this.services.languageDetector &&
+                      !this.services.languageDetector.async
+                    ) {
+                      setLng(this.services.languageDetector.detect());
+                    } else if (
+                      !lng &&
+                      this.services.languageDetector &&
+                      this.services.languageDetector.async
+                    ) {
+                      this.services.languageDetector.detect(setLng);
+                    } else {
+                      setLng(lng);
+                    }
+
+                    return deferred;
+                  }
+                },
+                {
+                  key: 'getFixedT',
+                  value: function getFixedT(lng, ns) {
+                    var _this5 = this;
+
+                    var fixedT = function fixedT(key, opts) {
+                      var options;
+
+                      if (_typeof(opts) !== 'object') {
+                        for (
+                          var _len3 = arguments.length,
+                            rest = new Array(_len3 > 2 ? _len3 - 2 : 0),
+                            _key3 = 2;
+                          _key3 < _len3;
+                          _key3++
+                        ) {
+                          rest[_key3 - 2] = arguments[_key3];
+                        }
+
+                        options = _this5.options.overloadTranslationOptionHandler(
+                          [key, opts].concat(rest)
+                        );
+                      } else {
+                        options = _objectSpread({}, opts);
+                      }
+
+                      options.lng = options.lng || fixedT.lng;
+                      options.lngs = options.lngs || fixedT.lngs;
+                      options.ns = options.ns || fixedT.ns;
+                      return _this5.t(key, options);
+                    };
+
+                    if (typeof lng === 'string') {
+                      fixedT.lng = lng;
+                    } else {
+                      fixedT.lngs = lng;
+                    }
+
+                    fixedT.ns = ns;
+                    return fixedT;
+                  }
+                },
+                {
+                  key: 't',
+                  value: function t() {
+                    var _this$translator;
+
+                    return (
+                      this.translator &&
+                      (_this$translator = this.translator).translate.apply(
+                        _this$translator,
+                        arguments
+                      )
+                    );
+                  }
+                },
+                {
