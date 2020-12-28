@@ -22864,3 +22864,150 @@
                   }
                 },
                 {
+                  key: 'exists',
+                  value: function exists() {
+                    var _this$translator2;
+
+                    return (
+                      this.translator &&
+                      (_this$translator2 = this.translator).exists.apply(
+                        _this$translator2,
+                        arguments
+                      )
+                    );
+                  }
+                },
+                {
+                  key: 'setDefaultNamespace',
+                  value: function setDefaultNamespace(ns) {
+                    this.options.defaultNS = ns;
+                  }
+                },
+                {
+                  key: 'hasLoadedNamespace',
+                  value: function hasLoadedNamespace(ns) {
+                    var _this6 = this;
+
+                    if (!this.isInitialized) {
+                      this.logger.warn(
+                        'hasLoadedNamespace: i18next was not initialized',
+                        this.languages
+                      );
+                      return false;
+                    }
+
+                    if (!this.languages || !this.languages.length) {
+                      this.logger.warn(
+                        'hasLoadedNamespace: i18n.languages were undefined or empty',
+                        this.languages
+                      );
+                      return false;
+                    }
+
+                    var lng = this.languages[0];
+                    var fallbackLng = this.options ? this.options.fallbackLng : false;
+                    var lastLng = this.languages[this.languages.length - 1]; // we're in cimode so this shall pass
+
+                    if (lng.toLowerCase() === 'cimode') return true;
+
+                    var loadNotPending = function loadNotPending(l, n) {
+                      var loadState =
+                        _this6.services.backendConnector.state[''.concat(l, '|').concat(n)];
+
+                      return loadState === -1 || loadState === 2;
+                    }; // loaded -> SUCCESS
+
+                    if (this.hasResourceBundle(lng, ns)) return true; // were not loading at all -> SEMI SUCCESS
+
+                    if (!this.services.backendConnector.backend) return true; // failed loading ns - but at least fallback is not pending -> SEMI SUCCESS
+
+                    if (
+                      loadNotPending(lng, ns) &&
+                      (!fallbackLng || loadNotPending(lastLng, ns))
+                    )
+                      return true;
+                    return false;
+                  }
+                },
+                {
+                  key: 'loadNamespaces',
+                  value: function loadNamespaces(ns, callback) {
+                    var _this7 = this;
+
+                    var deferred = defer();
+
+                    if (!this.options.ns) {
+                      callback && callback();
+                      return Promise.resolve();
+                    }
+
+                    if (typeof ns === 'string') ns = [ns];
+                    ns.forEach(function(n) {
+                      if (_this7.options.ns.indexOf(n) < 0) _this7.options.ns.push(n);
+                    });
+                    this.loadResources(function(err) {
+                      deferred.resolve();
+                      if (callback) callback(err);
+                    });
+                    return deferred;
+                  }
+                },
+                {
+                  key: 'loadLanguages',
+                  value: function loadLanguages(lngs, callback) {
+                    var deferred = defer();
+                    if (typeof lngs === 'string') lngs = [lngs];
+                    var preloaded = this.options.preload || [];
+                    var newLngs = lngs.filter(function(lng) {
+                      return preloaded.indexOf(lng) < 0;
+                    }); // Exit early if all given languages are already preloaded
+
+                    if (!newLngs.length) {
+                      if (callback) callback();
+                      return Promise.resolve();
+                    }
+
+                    this.options.preload = preloaded.concat(newLngs);
+                    this.loadResources(function(err) {
+                      deferred.resolve();
+                      if (callback) callback(err);
+                    });
+                    return deferred;
+                  }
+                },
+                {
+                  key: 'dir',
+                  value: function dir(lng) {
+                    if (!lng)
+                      lng =
+                        this.languages && this.languages.length > 0
+                          ? this.languages[0]
+                          : this.language;
+                    if (!lng) return 'rtl';
+                    var rtlLngs = [
+                      'ar',
+                      'shu',
+                      'sqr',
+                      'ssh',
+                      'xaa',
+                      'yhd',
+                      'yud',
+                      'aao',
+                      'abh',
+                      'abv',
+                      'acm',
+                      'acq',
+                      'acw',
+                      'acx',
+                      'acy',
+                      'adf',
+                      'ads',
+                      'aeb',
+                      'aec',
+                      'afb',
+                      'ajp',
+                      'apc',
+                      'apd',
+                      'arb',
+                      'arq',
+                      'ars',
