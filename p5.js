@@ -23011,3 +23011,140 @@
                       'arb',
                       'arq',
                       'ars',
+                      'ary',
+                      'arz',
+                      'auz',
+                      'avl',
+                      'ayh',
+                      'ayl',
+                      'ayn',
+                      'ayp',
+                      'bbz',
+                      'pga',
+                      'he',
+                      'iw',
+                      'ps',
+                      'pbt',
+                      'pbu',
+                      'pst',
+                      'prp',
+                      'prd',
+                      'ur',
+                      'ydd',
+                      'yds',
+                      'yih',
+                      'ji',
+                      'yi',
+                      'hbo',
+                      'men',
+                      'xmn',
+                      'fa',
+                      'jpr',
+                      'peo',
+                      'pes',
+                      'prs',
+                      'dv',
+                      'sam'
+                    ];
+                    return rtlLngs.indexOf(
+                      this.services.languageUtils.getLanguagePartFromCode(lng)
+                    ) >= 0
+                      ? 'rtl'
+                      : 'ltr';
+                  }
+                  /* eslint class-methods-use-this: 0 */
+                },
+                {
+                  key: 'createInstance',
+                  value: function createInstance() {
+                    var options =
+                      arguments.length > 0 && arguments[0] !== undefined
+                        ? arguments[0]
+                        : {};
+                    var callback = arguments.length > 1 ? arguments[1] : undefined;
+                    return new I18n(options, callback);
+                  }
+                },
+                {
+                  key: 'cloneInstance',
+                  value: function cloneInstance() {
+                    var _this8 = this;
+
+                    var options =
+                      arguments.length > 0 && arguments[0] !== undefined
+                        ? arguments[0]
+                        : {};
+                    var callback =
+                      arguments.length > 1 && arguments[1] !== undefined
+                        ? arguments[1]
+                        : noop;
+
+                    var mergedOptions = _objectSpread({}, this.options, options, {
+                      isClone: true
+                    });
+
+                    var clone = new I18n(mergedOptions);
+                    var membersToCopy = ['store', 'services', 'language'];
+                    membersToCopy.forEach(function(m) {
+                      clone[m] = _this8[m];
+                    });
+                    clone.translator = new Translator(clone.services, clone.options);
+                    clone.translator.on('*', function(event) {
+                      for (
+                        var _len4 = arguments.length,
+                          args = new Array(_len4 > 1 ? _len4 - 1 : 0),
+                          _key4 = 1;
+                        _key4 < _len4;
+                        _key4++
+                      ) {
+                        args[_key4 - 1] = arguments[_key4];
+                      }
+
+                      clone.emit.apply(clone, [event].concat(args));
+                    });
+                    clone.init(mergedOptions, callback);
+                    clone.translator.options = clone.options; // sync options
+
+                    return clone;
+                  }
+                }
+              ]);
+
+              return I18n;
+            })(EventEmitter);
+
+          var i18next = new I18n();
+
+          module.exports = i18next;
+        },
+        {
+          '@babel/runtime/helpers/assertThisInitialized': 4,
+          '@babel/runtime/helpers/classCallCheck': 5,
+          '@babel/runtime/helpers/createClass': 6,
+          '@babel/runtime/helpers/getPrototypeOf': 8,
+          '@babel/runtime/helpers/inherits': 9,
+          '@babel/runtime/helpers/objectSpread': 14,
+          '@babel/runtime/helpers/possibleConstructorReturn': 15,
+          '@babel/runtime/helpers/slicedToArray': 17,
+          '@babel/runtime/helpers/toConsumableArray': 18,
+          '@babel/runtime/helpers/typeof': 19
+        }
+      ],
+      31: [
+        function(_dereq_, module, exports) {
+          exports.read = function(buffer, offset, isLE, mLen, nBytes) {
+            var e, m;
+            var eLen = nBytes * 8 - mLen - 1;
+            var eMax = (1 << eLen) - 1;
+            var eBias = eMax >> 1;
+            var nBits = -7;
+            var i = isLE ? nBytes - 1 : 0;
+            var d = isLE ? -1 : 1;
+            var s = buffer[offset + i];
+
+            i += d;
+
+            e = s & ((1 << -nBits) - 1);
+            s >>= -nBits;
+            nBits += eLen;
+            for (; nBits > 0; e = e * 256 + buffer[offset + i], i += d, nBits -= 8) {}
