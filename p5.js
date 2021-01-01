@@ -23148,3 +23148,135 @@
             s >>= -nBits;
             nBits += eLen;
             for (; nBits > 0; e = e * 256 + buffer[offset + i], i += d, nBits -= 8) {}
+
+            m = e & ((1 << -nBits) - 1);
+            e >>= -nBits;
+            nBits += mLen;
+            for (; nBits > 0; m = m * 256 + buffer[offset + i], i += d, nBits -= 8) {}
+
+            if (e === 0) {
+              e = 1 - eBias;
+            } else if (e === eMax) {
+              return m ? NaN : (s ? -1 : 1) * Infinity;
+            } else {
+              m = m + Math.pow(2, mLen);
+              e = e - eBias;
+            }
+            return (s ? -1 : 1) * m * Math.pow(2, e - mLen);
+          };
+
+          exports.write = function(buffer, value, offset, isLE, mLen, nBytes) {
+            var e, m, c;
+            var eLen = nBytes * 8 - mLen - 1;
+            var eMax = (1 << eLen) - 1;
+            var eBias = eMax >> 1;
+            var rt = mLen === 23 ? Math.pow(2, -24) - Math.pow(2, -77) : 0;
+            var i = isLE ? 0 : nBytes - 1;
+            var d = isLE ? 1 : -1;
+            var s = value < 0 || (value === 0 && 1 / value < 0) ? 1 : 0;
+
+            value = Math.abs(value);
+
+            if (isNaN(value) || value === Infinity) {
+              m = isNaN(value) ? 1 : 0;
+              e = eMax;
+            } else {
+              e = Math.floor(Math.log(value) / Math.LN2);
+              if (value * (c = Math.pow(2, -e)) < 1) {
+                e--;
+                c *= 2;
+              }
+              if (e + eBias >= 1) {
+                value += rt / c;
+              } else {
+                value += rt * Math.pow(2, 1 - eBias);
+              }
+              if (value * c >= 2) {
+                e++;
+                c /= 2;
+              }
+
+              if (e + eBias >= eMax) {
+                m = 0;
+                e = eMax;
+              } else if (e + eBias >= 1) {
+                m = (value * c - 1) * Math.pow(2, mLen);
+                e = e + eBias;
+              } else {
+                m = value * Math.pow(2, eBias - 1) * Math.pow(2, mLen);
+                e = 0;
+              }
+            }
+
+            for (; mLen >= 8; buffer[offset + i] = m & 0xff, i += d, m /= 256, mLen -= 8) {}
+
+            e = (e << mLen) | m;
+            eLen += mLen;
+            for (; eLen > 0; buffer[offset + i] = e & 0xff, i += d, e /= 256, eLen -= 8) {}
+
+            buffer[offset + i - d] |= s * 128;
+          };
+        },
+        {}
+      ],
+      32: [
+        function(_dereq_, module, exports) {
+          /*
+
+ Copyright 2000, Silicon Graphics, Inc. All Rights Reserved.
+ Copyright 2015, Google Inc. All Rights Reserved.
+
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software and associated documentation files (the "Software"), to
+ deal in the Software without restriction, including without limitation the
+ rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+ sell copies of the Software, and to permit persons to whom the Software is
+ furnished to do so, subject to the following conditions:
+
+ The above copyright notice including the dates of first publication and
+ either this permission notice or a reference to http://oss.sgi.com/projects/FreeB/
+ shall be included in all copies or substantial portions of the Software.
+
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+ SILICON GRAPHICS, INC. BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+ WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR
+ IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+ Original Code. The Original Code is: OpenGL Sample Implementation,
+ Version 1.2.1, released January 26, 2000, developed by Silicon Graphics,
+ Inc. The Original Code is Copyright (c) 1991-2000 Silicon Graphics, Inc.
+ Copyright in any portions created by third parties is as indicated
+ elsewhere herein. All Rights Reserved.
+*/
+          'use strict';
+          var n;
+          function t(a, b) {
+            return a.b === b.b && a.a === b.a;
+          }
+          function u(a, b) {
+            return a.b < b.b || (a.b === b.b && a.a <= b.a);
+          }
+          function v(a, b, c) {
+            var d = b.b - a.b,
+              e = c.b - b.b;
+            return 0 < d + e
+              ? d < e
+                ? b.a - a.a + d / (d + e) * (a.a - c.a)
+                : b.a - c.a + e / (d + e) * (c.a - a.a)
+              : 0;
+          }
+          function x(a, b, c) {
+            var d = b.b - a.b,
+              e = c.b - b.b;
+            return 0 < d + e ? (b.a - c.a) * d + (b.a - a.a) * e : 0;
+          }
+          function z(a, b) {
+            return a.a < b.a || (a.a === b.a && a.b <= b.b);
+          }
+          function aa(a, b, c) {
+            var d = b.a - a.a,
+              e = c.a - b.a;
+            return 0 < d + e
+              ? d < e
