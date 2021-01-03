@@ -23280,3 +23280,117 @@
               e = c.a - b.a;
             return 0 < d + e
               ? d < e
+                ? b.b - a.b + d / (d + e) * (a.b - c.b)
+                : b.b - c.b + e / (d + e) * (c.b - a.b)
+              : 0;
+          }
+          function ba(a, b, c) {
+            var d = b.a - a.a,
+              e = c.a - b.a;
+            return 0 < d + e ? (b.b - c.b) * d + (b.b - a.b) * e : 0;
+          }
+          function ca(a) {
+            return u(a.b.a, a.a);
+          }
+          function da(a) {
+            return u(a.a, a.b.a);
+          }
+          function A(a, b, c, d) {
+            a = 0 > a ? 0 : a;
+            c = 0 > c ? 0 : c;
+            return a <= c
+              ? 0 === c ? (b + d) / 2 : b + a / (a + c) * (d - b)
+              : d + c / (a + c) * (b - d);
+          }
+          function ea(a) {
+            var b = B(a.b);
+            C(b, a.c);
+            C(b.b, a.c);
+            D(b, a.a);
+            return b;
+          }
+          function E(a, b) {
+            var c = !1,
+              d = !1;
+            a !== b &&
+              (b.a !== a.a && ((d = !0), F(b.a, a.a)),
+              b.d !== a.d && ((c = !0), G(b.d, a.d)),
+              H(b, a),
+              d || (C(b, a.a), (a.a.c = a)),
+              c || (D(b, a.d), (a.d.a = a)));
+          }
+          function I(a) {
+            var b = a.b,
+              c = !1;
+            a.d !== a.b.d && ((c = !0), G(a.d, a.b.d));
+            a.c === a
+              ? F(a.a, null)
+              : ((a.b.d.a = J(a)), (a.a.c = a.c), H(a, J(a)), c || D(a, a.d));
+            b.c === b
+              ? (F(b.a, null), G(b.d, null))
+              : ((a.d.a = J(b)), (b.a.c = b.c), H(b, J(b)));
+            fa(a);
+          }
+          function K(a) {
+            var b = B(a),
+              c = b.b;
+            H(b, a.e);
+            b.a = a.b.a;
+            C(c, b.a);
+            b.d = c.d = a.d;
+            b = b.b;
+            H(a.b, J(a.b));
+            H(a.b, b);
+            a.b.a = b.a;
+            b.b.a.c = b.b;
+            b.b.d = a.b.d;
+            b.f = a.f;
+            b.b.f = a.b.f;
+            return b;
+          }
+          function L(a, b) {
+            var c = !1,
+              d = B(a),
+              e = d.b;
+            b.d !== a.d && ((c = !0), G(b.d, a.d));
+            H(d, a.e);
+            H(e, b);
+            d.a = a.b.a;
+            e.a = b.a;
+            d.d = e.d = a.d;
+            a.d.a = e;
+            c || D(d, a.d);
+            return d;
+          }
+          function B(a) {
+            var b = new M(),
+              c = new M(),
+              d = a.b.h;
+            c.h = d;
+            d.b.h = b;
+            b.h = a;
+            a.b.h = c;
+            b.b = c;
+            b.c = b;
+            b.e = c;
+            c.b = b;
+            c.c = c;
+            return (c.e = b);
+          }
+          function H(a, b) {
+            var c = a.c,
+              d = b.c;
+            c.b.e = b;
+            d.b.e = a;
+            a.c = d;
+            b.c = c;
+          }
+          function C(a, b) {
+            var c = b.f,
+              d = new N(b, c);
+            c.e = d;
+            b.f = d;
+            c = d.c = a;
+            do (c.a = d), (c = c.c);
+            while (c !== a);
+          }
