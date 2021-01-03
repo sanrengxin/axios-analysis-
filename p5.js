@@ -23394,3 +23394,146 @@
             do (c.a = d), (c = c.c);
             while (c !== a);
           }
+          function D(a, b) {
+            var c = b.d,
+              d = new ga(b, c);
+            c.b = d;
+            b.d = d;
+            d.a = a;
+            d.c = b.c;
+            c = a;
+            do (c.d = d), (c = c.e);
+            while (c !== a);
+          }
+          function fa(a) {
+            var b = a.h;
+            a = a.b.h;
+            b.b.h = a;
+            a.b.h = b;
+          }
+          function F(a, b) {
+            var c = a.c,
+              d = c;
+            do (d.a = b), (d = d.c);
+            while (d !== c);
+            c = a.f;
+            d = a.e;
+            d.f = c;
+            c.e = d;
+          }
+          function G(a, b) {
+            var c = a.a,
+              d = c;
+            do (d.d = b), (d = d.e);
+            while (d !== c);
+            c = a.d;
+            d = a.b;
+            d.d = c;
+            c.b = d;
+          }
+          function ha(a) {
+            var b = 0;
+            Math.abs(a[1]) > Math.abs(a[0]) && (b = 1);
+            Math.abs(a[2]) > Math.abs(a[b]) && (b = 2);
+            return b;
+          }
+          var O = 4 * 1e150;
+          function P(a, b) {
+            a.f += b.f;
+            a.b.f += b.b.f;
+          }
+          function ia(a, b, c) {
+            a = a.a;
+            b = b.a;
+            c = c.a;
+            if (b.b.a === a)
+              return c.b.a === a
+                ? u(b.a, c.a) ? 0 >= x(c.b.a, b.a, c.a) : 0 <= x(b.b.a, c.a, b.a)
+                : 0 >= x(c.b.a, a, c.a);
+            if (c.b.a === a) return 0 <= x(b.b.a, a, b.a);
+            b = v(b.b.a, a, b.a);
+            a = v(c.b.a, a, c.a);
+            return b >= a;
+          }
+          function Q(a) {
+            a.a.i = null;
+            var b = a.e;
+            b.a.c = b.c;
+            b.c.a = b.a;
+            a.e = null;
+          }
+          function ja(a, b) {
+            I(a.a);
+            a.c = !1;
+            a.a = b;
+            b.i = a;
+          }
+          function ka(a) {
+            var b = a.a.a;
+            do a = R(a);
+            while (a.a.a === b);
+            a.c && ((b = L(S(a).a.b, a.a.e)), ja(a, b), (a = R(a)));
+            return a;
+          }
+          function la(a, b, c) {
+            var d = new ma();
+            d.a = c;
+            d.e = na(a.f, b.e, d);
+            return (c.i = d);
+          }
+          function oa(a, b) {
+            switch (a.s) {
+              case 100130:
+                return 0 !== (b & 1);
+              case 100131:
+                return 0 !== b;
+              case 100132:
+                return 0 < b;
+              case 100133:
+                return 0 > b;
+              case 100134:
+                return 2 <= b || -2 >= b;
+            }
+            return !1;
+          }
+          function pa(a) {
+            var b = a.a,
+              c = b.d;
+            c.c = a.d;
+            c.a = b;
+            Q(a);
+          }
+          function T(a, b, c) {
+            a = b;
+            for (b = b.a; a !== c; ) {
+              a.c = !1;
+              var d = S(a),
+                e = d.a;
+              if (e.a !== b.a) {
+                if (!d.c) {
+                  pa(a);
+                  break;
+                }
+                e = L(b.c.b, e.b);
+                ja(d, e);
+              }
+              b.c !== e && (E(J(e), e), E(b, e));
+              pa(a);
+              b = d.a;
+              a = d;
+            }
+            return b;
+          }
+          function U(a, b, c, d, e, f) {
+            var g = !0;
+            do la(a, b, c.b), (c = c.c);
+            while (c !== d);
+            for (null === e && (e = S(b).a.b.c); ; ) {
+              d = S(b);
+              c = d.a.b;
+              if (c.a !== e.a) break;
+              c.c !== e && (E(J(c), c), E(J(e), c));
+              d.f = b.f - c.f;
+              d.d = oa(a, d.f);
+              b.b = !0;
+              !g && qa(a, b) && (P(c, e), Q(b), I(e));
