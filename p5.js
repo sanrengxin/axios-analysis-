@@ -23537,3 +23537,132 @@
               d.d = oa(a, d.f);
               b.b = !0;
               !g && qa(a, b) && (P(c, e), Q(b), I(e));
+              g = !1;
+              b = d;
+              e = c;
+            }
+            b.b = !0;
+            f && ra(a, b);
+          }
+          function sa(a, b, c, d, e) {
+            var f = [b.g[0], b.g[1], b.g[2]];
+            b.d = null;
+            b.d = a.o ? a.o(f, c, d, a.c) || null : null;
+            null === b.d && (e ? a.n || (V(a, 100156), (a.n = !0)) : (b.d = c[0]));
+          }
+          function ta(a, b, c) {
+            var d = [null, null, null, null];
+            d[0] = b.a.d;
+            d[1] = c.a.d;
+            sa(a, b.a, d, [0.5, 0.5, 0, 0], !1);
+            E(b, c);
+          }
+          function ua(a, b, c, d, e) {
+            var f = Math.abs(b.b - a.b) + Math.abs(b.a - a.a),
+              g = Math.abs(c.b - a.b) + Math.abs(c.a - a.a),
+              h = e + 1;
+            d[e] = 0.5 * g / (f + g);
+            d[h] = 0.5 * f / (f + g);
+            a.g[0] += d[e] * b.g[0] + d[h] * c.g[0];
+            a.g[1] += d[e] * b.g[1] + d[h] * c.g[1];
+            a.g[2] += d[e] * b.g[2] + d[h] * c.g[2];
+          }
+          function qa(a, b) {
+            var c = S(b),
+              d = b.a,
+              e = c.a;
+            if (u(d.a, e.a)) {
+              if (0 < x(e.b.a, d.a, e.a)) return !1;
+              if (!t(d.a, e.a)) K(e.b), E(d, J(e)), (b.b = c.b = !0);
+              else if (d.a !== e.a) {
+                var c = a.e,
+                  f = d.a.h;
+                if (0 <= f) {
+                  var c = c.b,
+                    g = c.d,
+                    h = c.e,
+                    k = c.c,
+                    l = k[f];
+                  g[l] = g[c.a];
+                  k[g[l]] = l;
+                  l <= --c.a &&
+                    (1 >= l ? W(c, l) : u(h[g[l >> 1]], h[g[l]]) ? W(c, l) : va(c, l));
+                  h[f] = null;
+                  k[f] = c.b;
+                  c.b = f;
+                } else
+                  for (c.c[-(f + 1)] = null; 0 < c.a && null === c.c[c.d[c.a - 1]]; ) --c.a;
+                ta(a, J(e), d);
+              }
+            } else {
+              if (0 > x(d.b.a, e.a, d.a)) return !1;
+              R(b).b = b.b = !0;
+              K(d.b);
+              E(J(e), d);
+            }
+            return !0;
+          }
+          function wa(a, b) {
+            var c = S(b),
+              d = b.a,
+              e = c.a,
+              f = d.a,
+              g = e.a,
+              h = d.b.a,
+              k = e.b.a,
+              l = new N();
+            x(h, a.a, f);
+            x(k, a.a, g);
+            if (f === g || Math.min(f.a, h.a) > Math.max(g.a, k.a)) return !1;
+            if (u(f, g)) {
+              if (0 < x(k, f, g)) return !1;
+            } else if (0 > x(h, g, f)) return !1;
+            var r = h,
+              p = f,
+              q = k,
+              y = g,
+              m,
+              w;
+            u(r, p) || ((m = r), (r = p), (p = m));
+            u(q, y) || ((m = q), (q = y), (y = m));
+            u(r, q) || ((m = r), (r = q), (q = m), (m = p), (p = y), (y = m));
+            u(q, p)
+              ? u(p, y)
+                ? ((m = v(r, q, p)),
+                  (w = v(q, p, y)),
+                  0 > m + w && ((m = -m), (w = -w)),
+                  (l.b = A(m, q.b, w, p.b)))
+                : ((m = x(r, q, p)),
+                  (w = -x(r, y, p)),
+                  0 > m + w && ((m = -m), (w = -w)),
+                  (l.b = A(m, q.b, w, y.b)))
+              : (l.b = (q.b + p.b) / 2);
+            z(r, p) || ((m = r), (r = p), (p = m));
+            z(q, y) || ((m = q), (q = y), (y = m));
+            z(r, q) || ((m = r), (r = q), (q = m), (m = p), (p = y), (y = m));
+            z(q, p)
+              ? z(p, y)
+                ? ((m = aa(r, q, p)),
+                  (w = aa(q, p, y)),
+                  0 > m + w && ((m = -m), (w = -w)),
+                  (l.a = A(m, q.a, w, p.a)))
+                : ((m = ba(r, q, p)),
+                  (w = -ba(r, y, p)),
+                  0 > m + w && ((m = -m), (w = -w)),
+                  (l.a = A(m, q.a, w, y.a)))
+              : (l.a = (q.a + p.a) / 2);
+            u(l, a.a) && ((l.b = a.a.b), (l.a = a.a.a));
+            r = u(f, g) ? f : g;
+            u(r, l) && ((l.b = r.b), (l.a = r.a));
+            if (t(l, f) || t(l, g)) return qa(a, b), !1;
+            if ((!t(h, a.a) && 0 <= x(h, a.a, l)) || (!t(k, a.a) && 0 >= x(k, a.a, l))) {
+              if (k === a.a)
+                return (
+                  K(d.b),
+                  E(e.b, d),
+                  (b = ka(b)),
+                  (d = S(b).a),
+                  T(a, S(b), c),
+                  U(a, b, J(d), d, d, !0),
+                  !0
+                );
