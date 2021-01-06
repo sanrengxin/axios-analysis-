@@ -23666,3 +23666,149 @@
                   U(a, b, J(d), d, d, !0),
                   !0
                 );
+              if (h === a.a) {
+                K(e.b);
+                E(d.e, J(e));
+                f = c = b;
+                g = f.a.b.a;
+                do f = R(f);
+                while (f.a.b.a === g);
+                b = f;
+                f = S(b).a.b.c;
+                c.a = J(e);
+                e = T(a, c, null);
+                U(a, b, e.c, d.b.c, f, !0);
+                return !0;
+              }
+              0 <= x(h, a.a, l) &&
+                ((R(b).b = b.b = !0), K(d.b), (d.a.b = a.a.b), (d.a.a = a.a.a));
+              0 >= x(k, a.a, l) &&
+                ((b.b = c.b = !0), K(e.b), (e.a.b = a.a.b), (e.a.a = a.a.a));
+              return !1;
+            }
+            K(d.b);
+            K(e.b);
+            E(J(e), d);
+            d.a.b = l.b;
+            d.a.a = l.a;
+            d.a.h = xa(a.e, d.a);
+            d = d.a;
+            e = [0, 0, 0, 0];
+            l = [f.d, h.d, g.d, k.d];
+            d.g[0] = d.g[1] = d.g[2] = 0;
+            ua(d, f, h, e, 0);
+            ua(d, g, k, e, 2);
+            sa(a, d, l, e, !0);
+            R(b).b = b.b = c.b = !0;
+            return !1;
+          }
+          function ra(a, b) {
+            for (var c = S(b); ; ) {
+              for (; c.b; ) (b = c), (c = S(c));
+              if (!b.b && ((c = b), (b = R(b)), null === b || !b.b)) break;
+              b.b = !1;
+              var d = b.a,
+                e = c.a,
+                f;
+              if ((f = d.b.a !== e.b.a))
+                a: {
+                  f = b;
+                  var g = S(f),
+                    h = f.a,
+                    k = g.a,
+                    l = void 0;
+                  if (u(h.b.a, k.b.a)) {
+                    if (0 > x(h.b.a, k.b.a, h.a)) {
+                      f = !1;
+                      break a;
+                    }
+                    R(f).b = f.b = !0;
+                    l = K(h);
+                    E(k.b, l);
+                    l.d.c = f.d;
+                  } else {
+                    if (0 < x(k.b.a, h.b.a, k.a)) {
+                      f = !1;
+                      break a;
+                    }
+                    f.b = g.b = !0;
+                    l = K(k);
+                    E(h.e, k.b);
+                    l.b.d.c = f.d;
+                  }
+                  f = !0;
+                }
+              f &&
+                (c.c
+                  ? (Q(c), I(e), (c = S(b)), (e = c.a))
+                  : b.c && (Q(b), I(d), (b = R(c)), (d = b.a)));
+              if (d.a !== e.a)
+                if (d.b.a === e.b.a || b.c || c.c || (d.b.a !== a.a && e.b.a !== a.a))
+                  qa(a, b);
+                else if (wa(a, b)) break;
+              d.a === e.a && d.b.a === e.b.a && (P(e, d), Q(b), I(d), (b = R(c)));
+            }
+          }
+          function ya(a, b) {
+            a.a = b;
+            for (var c = b.c; null === c.i; )
+              if (((c = c.c), c === b.c)) {
+                var c = a,
+                  d = b,
+                  e = new ma();
+                e.a = d.c.b;
+                var f = c.f,
+                  g = f.a;
+                do g = g.a;
+                while (null !== g.b && !f.c(f.b, e, g.b));
+                var f = g.b,
+                  h = S(f),
+                  e = f.a,
+                  g = h.a;
+                if (0 === x(e.b.a, d, e.a))
+                  (e = f.a),
+                    t(e.a, d) ||
+                      t(e.b.a, d) ||
+                      (K(e.b), f.c && (I(e.c), (f.c = !1)), E(d.c, e), ya(c, d));
+                else {
+                  var k = u(g.b.a, e.b.a) ? f : h,
+                    h = void 0;
+                  f.d || k.c
+                    ? (k === f ? (h = L(d.c.b, e.e)) : (h = L(g.b.c.b, d.c).b),
+                      k.c
+                        ? ja(k, h)
+                        : ((e = c),
+                          (f = la(c, f, h)),
+                          (f.f = R(f).f + f.a.f),
+                          (f.d = oa(e, f.f))),
+                      ya(c, d))
+                    : U(c, f, d.c, d.c, null, !0);
+                }
+                return;
+              }
+            c = ka(c.i);
+            e = S(c);
+            f = e.a;
+            e = T(a, e, null);
+            if (e.c === f) {
+              var f = e,
+                e = f.c,
+                g = S(c),
+                h = c.a,
+                k = g.a,
+                l = !1;
+              h.b.a !== k.b.a && wa(a, c);
+              t(h.a, a.a) &&
+                (E(J(e), h), (c = ka(c)), (e = S(c).a), T(a, S(c), g), (l = !0));
+              t(k.a, a.a) && (E(f, J(k)), (f = T(a, g, null)), (l = !0));
+              l
+                ? U(a, c, f.c, e, e, !0)
+                : (u(k.a, h.a) ? (d = J(k)) : (d = h),
+                  (d = L(f.c.b, d)),
+                  U(a, c, d, d.c, d.c, !1),
+                  (d.b.i.c = !0),
+                  ra(a, c));
+            } else U(a, c, e.c, f, f, !0);
+          }
+          function za(a, b) {
+            var c = new ma(),
