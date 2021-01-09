@@ -23951,3 +23951,131 @@
             null === c ? ((c = ea(this.b)), E(c, c.b)) : (K(c), (c = c.e));
             c.a.d = b;
             c.a.g[0] = d[0];
+            c.a.g[1] = d[1];
+            c.a.g[2] = d[2];
+            c.f = 1;
+            c.b.f = -1;
+            this.q = c;
+          };
+          n.u = function(a) {
+            Z(this, Y);
+            this.d = 1;
+            this.b = new Ca();
+            this.c = a;
+          };
+          n.t = function() {
+            Z(this, 1);
+            this.d = 2;
+            this.q = null;
+          };
+          n.v = function() {
+            Z(this, 2);
+            this.d = 1;
+          };
+          n.w = function() {
+            Z(this, 1);
+            this.d = Y;
+            var a = this.j[0],
+              b = this.j[1],
+              c = this.j[2],
+              d = !1,
+              e = [a, b, c];
+            if (0 === a && 0 === b && 0 === c) {
+              for (
+                var b = [-2 * 1e150, -2 * 1e150, -2 * 1e150],
+                  f = [2 * 1e150, 2 * 1e150, 2 * 1e150],
+                  c = [],
+                  g = [],
+                  d = this.b.c,
+                  a = d.e;
+                a !== d;
+                a = a.e
+              )
+                for (var h = 0; 3 > h; ++h) {
+                  var k = a.g[h];
+                  k < f[h] && ((f[h] = k), (g[h] = a));
+                  k > b[h] && ((b[h] = k), (c[h] = a));
+                }
+              a = 0;
+              b[1] - f[1] > b[0] - f[0] && (a = 1);
+              b[2] - f[2] > b[a] - f[a] && (a = 2);
+              if (f[a] >= b[a]) (e[0] = 0), (e[1] = 0), (e[2] = 1);
+              else {
+                b = 0;
+                f = g[a];
+                c = c[a];
+                g = [0, 0, 0];
+                f = [f.g[0] - c.g[0], f.g[1] - c.g[1], f.g[2] - c.g[2]];
+                h = [0, 0, 0];
+                for (a = d.e; a !== d; a = a.e)
+                  (h[0] = a.g[0] - c.g[0]),
+                    (h[1] = a.g[1] - c.g[1]),
+                    (h[2] = a.g[2] - c.g[2]),
+                    (g[0] = f[1] * h[2] - f[2] * h[1]),
+                    (g[1] = f[2] * h[0] - f[0] * h[2]),
+                    (g[2] = f[0] * h[1] - f[1] * h[0]),
+                    (k = g[0] * g[0] + g[1] * g[1] + g[2] * g[2]),
+                    k > b && ((b = k), (e[0] = g[0]), (e[1] = g[1]), (e[2] = g[2]));
+                0 >= b && ((e[0] = e[1] = e[2] = 0), (e[ha(f)] = 1));
+              }
+              d = !0;
+            }
+            g = ha(e);
+            a = this.b.c;
+            b = (g + 1) % 3;
+            c = (g + 2) % 3;
+            g = 0 < e[g] ? 1 : -1;
+            for (e = a.e; e !== a; e = e.e) (e.b = e.g[b]), (e.a = g * e.g[c]);
+            if (d) {
+              e = 0;
+              d = this.b.a;
+              for (a = d.b; a !== d; a = a.b)
+                if (((b = a.a), !(0 >= b.f))) {
+                  do (e += (b.a.b - b.b.a.b) * (b.a.a + b.b.a.a)), (b = b.e);
+                  while (b !== a.a);
+                }
+              if (0 > e) for (e = this.b.c, d = e.e; d !== e; d = d.e) d.a = -d.a;
+            }
+            this.n = !1;
+            e = this.b.b;
+            for (a = e.h; a !== e; a = d)
+              if (
+                ((d = a.h),
+                (b = a.e),
+                t(a.a, a.b.a) && a.e.e !== a && (ta(this, b, a), I(a), (a = b), (b = a.e)),
+                b.e === a)
+              ) {
+                if (b !== a) {
+                  if (b === d || b === d.b) d = d.h;
+                  I(b);
+                }
+                if (a === d || a === d.b) d = d.h;
+                I(a);
+              }
+            this.e = e = new Da();
+            d = this.b.c;
+            for (a = d.e; a !== d; a = a.e) a.h = xa(e, a);
+            Ea(e);
+            this.f = new Aa(this);
+            za(this, -O);
+            for (za(this, O); null !== (e = Fa(this.e)); ) {
+              for (;;) {
+                a: if (((a = this.e), 0 === a.a)) d = Ga(a.b);
+                else if (
+                  ((d = a.c[a.d[a.a - 1]]), 0 !== a.b.a && ((a = Ga(a.b)), u(a, d)))
+                ) {
+                  d = a;
+                  break a;
+                }
+                if (null === d || !t(d, e)) break;
+                d = Fa(this.e);
+                ta(this, e.c, d.c);
+              }
+              ya(this, e);
+            }
+            this.a = this.f.a.a.b.a.a;
+            for (e = 0; null !== (d = this.f.a.a.b); ) d.h || ++e, Q(d);
+            this.f = null;
+            e = this.e;
+            e.b = null;
+            e.d = null;
