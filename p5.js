@@ -24210,3 +24210,126 @@
             this.b = new M();
             this.d = new M();
             this.b.b = this.d;
+            this.d.b = this.b;
+          }
+          function N(a, b) {
+            this.e = a || this;
+            this.f = b || this;
+            this.d = this.c = null;
+            this.g = [0, 0, 0];
+            this.h = this.a = this.b = 0;
+          }
+          function Da() {
+            this.c = [];
+            this.d = null;
+            this.a = 0;
+            this.e = !1;
+            this.b = new Ha();
+          }
+          function Ea(a) {
+            a.d = [];
+            for (var b = 0; b < a.a; b++) a.d[b] = b;
+            a.d.sort(
+              (function(a) {
+                return function(b, e) {
+                  return u(a[b], a[e]) ? 1 : -1;
+                };
+              })(a.c)
+            );
+            a.e = !0;
+            Ia(a.b);
+          }
+          function xa(a, b) {
+            if (a.e) {
+              var c = a.b,
+                d = ++c.a;
+              2 * d > c.f && ((c.f *= 2), (c.c = Ja(c.c, c.f + 1)));
+              var e;
+              0 === c.b ? (e = d) : ((e = c.b), (c.b = c.c[c.b]));
+              c.e[e] = b;
+              c.c[e] = d;
+              c.d[d] = e;
+              c.h && va(c, d);
+              return e;
+            }
+            c = a.a++;
+            a.c[c] = b;
+            return -(c + 1);
+          }
+          function Fa(a) {
+            if (0 === a.a) return Ka(a.b);
+            var b = a.c[a.d[a.a - 1]];
+            if (0 !== a.b.a && u(Ga(a.b), b)) return Ka(a.b);
+            do --a.a;
+            while (0 < a.a && null === a.c[a.d[a.a - 1]]);
+            return b;
+          }
+          function Ha() {
+            this.d = Ja([0], 33);
+            this.e = [null, null];
+            this.c = [0, 0];
+            this.a = 0;
+            this.f = 32;
+            this.b = 0;
+            this.h = !1;
+            this.d[1] = 1;
+          }
+          function Ja(a, b) {
+            for (var c = Array(b), d = 0; d < a.length; d++) c[d] = a[d];
+            for (; d < b; d++) c[d] = 0;
+            return c;
+          }
+          function Ia(a) {
+            for (var b = a.a; 1 <= b; --b) W(a, b);
+            a.h = !0;
+          }
+          function Ga(a) {
+            return a.e[a.d[1]];
+          }
+          function Ka(a) {
+            var b = a.d,
+              c = a.e,
+              d = a.c,
+              e = b[1],
+              f = c[e];
+            0 < a.a &&
+              ((b[1] = b[a.a]),
+              (d[b[1]] = 1),
+              (c[e] = null),
+              (d[e] = a.b),
+              (a.b = e),
+              0 < --a.a && W(a, 1));
+            return f;
+          }
+          function W(a, b) {
+            for (var c = a.d, d = a.e, e = a.c, f = b, g = c[f]; ; ) {
+              var h = f << 1;
+              h < a.a && u(d[c[h + 1]], d[c[h]]) && (h += 1);
+              var k = c[h];
+              if (h > a.a || u(d[g], d[k])) {
+                c[f] = g;
+                e[g] = f;
+                break;
+              }
+              c[f] = k;
+              e[k] = f;
+              f = h;
+            }
+          }
+          function va(a, b) {
+            for (var c = a.d, d = a.e, e = a.c, f = b, g = c[f]; ; ) {
+              var h = f >> 1,
+                k = c[h];
+              if (0 === h || u(d[k], d[g])) {
+                c[f] = g;
+                e[g] = f;
+                break;
+              }
+              c[f] = k;
+              e[k] = f;
+              f = h;
+            }
+          }
+          function ma() {
+            this.e = this.a = null;
+            this.f = 0;
