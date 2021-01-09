@@ -24079,3 +24079,134 @@
             e = this.e;
             e.b = null;
             e.d = null;
+            this.e = e.c = null;
+            e = this.b;
+            for (a = e.a.b; a !== e.a; a = d)
+              (d = a.b), (a = a.a), a.e.e === a && (P(a.c, a), I(a));
+            if (!this.n) {
+              e = this.b;
+              if (this.m)
+                for (a = e.b.h; a !== e.b; a = d)
+                  (d = a.h), a.b.d.c !== a.d.c ? (a.f = a.d.c ? 1 : -1) : I(a);
+              else
+                for (a = e.a.b; a !== e.a; a = d)
+                  if (((d = a.b), a.c)) {
+                    for (a = a.a; u(a.b.a, a.a); a = a.c.b);
+                    for (; u(a.a, a.b.a); a = a.e);
+                    b = a.c.b;
+                    for (c = void 0; a.e !== b; )
+                      if (u(a.b.a, b.a)) {
+                        for (; b.e !== a && (ca(b.e) || 0 >= x(b.a, b.b.a, b.e.b.a)); )
+                          (c = L(b.e, b)), (b = c.b);
+                        b = b.c.b;
+                      } else {
+                        for (; b.e !== a && (da(a.c.b) || 0 <= x(a.b.a, a.a, a.c.b.a)); )
+                          (c = L(a, a.c.b)), (a = c.b);
+                        a = a.e;
+                      }
+                    for (; b.e.e !== a; ) (c = L(b.e, b)), (b = c.b);
+                  }
+              if (this.h || this.i || this.k || this.l)
+                if (this.m)
+                  for (e = this.b, d = e.a.b; d !== e.a; d = d.b) {
+                    if (d.c) {
+                      this.h && this.h(2, this.c);
+                      a = d.a;
+                      do this.k && this.k(a.a.d, this.c), (a = a.e);
+                      while (a !== d.a);
+                      this.i && this.i(this.c);
+                    }
+                  }
+                else {
+                  e = this.b;
+                  d = !!this.l;
+                  a = !1;
+                  b = -1;
+                  for (c = e.a.d; c !== e.a; c = c.d)
+                    if (c.c) {
+                      a || (this.h && this.h(4, this.c), (a = !0));
+                      g = c.a;
+                      do
+                        d &&
+                          ((f = g.b.d.c ? 0 : 1),
+                          b !== f && ((b = f), this.l && this.l(!!b, this.c))),
+                          this.k && this.k(g.a.d, this.c),
+                          (g = g.e);
+                      while (g !== c.a);
+                    }
+                  a && this.i && this.i(this.c);
+                }
+              if (this.r) {
+                e = this.b;
+                for (a = e.a.b; a !== e.a; a = d)
+                  if (((d = a.b), !a.c)) {
+                    b = a.a;
+                    c = b.e;
+                    g = void 0;
+                    do
+                      (g = c),
+                        (c = g.e),
+                        (g.d = null),
+                        null === g.b.d &&
+                          (g.c === g ? F(g.a, null) : ((g.a.c = g.c), H(g, J(g))),
+                          (f = g.b),
+                          f.c === f ? F(f.a, null) : ((f.a.c = f.c), H(f, J(f))),
+                          fa(g));
+                    while (g !== b);
+                    b = a.d;
+                    a = a.b;
+                    a.d = b;
+                    b.b = a;
+                  }
+                this.r(this.b);
+                this.c = this.b = null;
+                return;
+              }
+            }
+            this.b = this.c = null;
+          };
+          function Z(a, b) {
+            if (a.d !== b)
+              for (; a.d !== b; )
+                if (a.d < b)
+                  switch (a.d) {
+                    case Y:
+                      V(a, 100151);
+                      a.u(null);
+                      break;
+                    case 1:
+                      V(a, 100152), a.t();
+                  }
+                else
+                  switch (a.d) {
+                    case 2:
+                      V(a, 100154);
+                      a.v();
+                      break;
+                    case 1:
+                      V(a, 100153), a.w();
+                  }
+          }
+          function V(a, b) {
+            a.p && a.p(b, a.c);
+          }
+          function ga(a, b) {
+            this.b = a || this;
+            this.d = b || this;
+            this.a = null;
+            this.c = !1;
+          }
+          function M() {
+            this.h = this;
+            this.i = this.d = this.a = this.e = this.c = this.b = null;
+            this.f = 0;
+          }
+          function J(a) {
+            return a.b.e;
+          }
+          function Ca() {
+            this.c = new N();
+            this.a = new ga();
+            this.b = new M();
+            this.d = new M();
+            this.b.b = this.d;
