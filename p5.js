@@ -24333,3 +24333,151 @@
           function ma() {
             this.e = this.a = null;
             this.f = 0;
+            this.c = this.b = this.h = this.d = !1;
+          }
+          function S(a) {
+            return a.e.c.b;
+          }
+          function R(a) {
+            return a.e.a.b;
+          }
+          this.libtess = {
+            GluTesselator: X,
+            windingRule: {
+              GLU_TESS_WINDING_ODD: 100130,
+              GLU_TESS_WINDING_NONZERO: 100131,
+              GLU_TESS_WINDING_POSITIVE: 100132,
+              GLU_TESS_WINDING_NEGATIVE: 100133,
+              GLU_TESS_WINDING_ABS_GEQ_TWO: 100134
+            },
+            primitiveType: {
+              GL_LINE_LOOP: 2,
+              GL_TRIANGLES: 4,
+              GL_TRIANGLE_STRIP: 5,
+              GL_TRIANGLE_FAN: 6
+            },
+            errorType: {
+              GLU_TESS_MISSING_BEGIN_POLYGON: 100151,
+              GLU_TESS_MISSING_END_POLYGON: 100153,
+              GLU_TESS_MISSING_BEGIN_CONTOUR: 100152,
+              GLU_TESS_MISSING_END_CONTOUR: 100154,
+              GLU_TESS_COORD_TOO_LARGE: 100155,
+              GLU_TESS_NEED_COMBINE_CALLBACK: 100156
+            },
+            gluEnum: {
+              GLU_TESS_MESH: 100112,
+              GLU_TESS_TOLERANCE: 100142,
+              GLU_TESS_WINDING_RULE: 100140,
+              GLU_TESS_BOUNDARY_ONLY: 100141,
+              GLU_INVALID_ENUM: 100900,
+              GLU_INVALID_VALUE: 100901,
+              GLU_TESS_BEGIN: 100100,
+              GLU_TESS_VERTEX: 100101,
+              GLU_TESS_END: 100102,
+              GLU_TESS_ERROR: 100103,
+              GLU_TESS_EDGE_FLAG: 100104,
+              GLU_TESS_COMBINE: 100105,
+              GLU_TESS_BEGIN_DATA: 100106,
+              GLU_TESS_VERTEX_DATA: 100107,
+              GLU_TESS_END_DATA: 100108,
+              GLU_TESS_ERROR_DATA: 100109,
+              GLU_TESS_EDGE_FLAG_DATA: 100110,
+              GLU_TESS_COMBINE_DATA: 100111
+            }
+          };
+          X.prototype.gluDeleteTess = X.prototype.x;
+          X.prototype.gluTessProperty = X.prototype.B;
+          X.prototype.gluGetTessProperty = X.prototype.y;
+          X.prototype.gluTessNormal = X.prototype.A;
+          X.prototype.gluTessCallback = X.prototype.z;
+          X.prototype.gluTessVertex = X.prototype.C;
+          X.prototype.gluTessBeginPolygon = X.prototype.u;
+          X.prototype.gluTessBeginContour = X.prototype.t;
+          X.prototype.gluTessEndContour = X.prototype.v;
+          X.prototype.gluTessEndPolygon = X.prototype.w;
+          if (typeof module !== 'undefined') {
+            module.exports = this.libtess;
+          }
+        },
+        {}
+      ],
+      33: [
+        function(_dereq_, module, exports) {
+          // (c) Dean McNamee <dean@gmail.com>, 2013.
+          //
+          // https://github.com/deanm/omggif
+          //
+          // Permission is hereby granted, free of charge, to any person obtaining a copy
+          // of this software and associated documentation files (the "Software"), to
+          // deal in the Software without restriction, including without limitation the
+          // rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+          // sell copies of the Software, and to permit persons to whom the Software is
+          // furnished to do so, subject to the following conditions:
+          //
+          // The above copyright notice and this permission notice shall be included in
+          // all copies or substantial portions of the Software.
+          //
+          // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+          // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+          // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+          // AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+          // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+          // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+          // IN THE SOFTWARE.
+          //
+          // omggif is a JavaScript implementation of a GIF 89a encoder and decoder,
+          // including animation and compression.  It does not rely on any specific
+          // underlying system, so should run in the browser, Node, or Plask.
+
+          'use strict';
+
+          function GifWriter(buf, width, height, gopts) {
+            var p = 0;
+
+            var gopts = gopts === undefined ? {} : gopts;
+            var loop_count = gopts.loop === undefined ? null : gopts.loop;
+            var global_palette = gopts.palette === undefined ? null : gopts.palette;
+
+            if (width <= 0 || height <= 0 || width > 65535 || height > 65535)
+              throw new Error('Width/Height invalid.');
+
+            function check_palette_and_num_colors(palette) {
+              var num_colors = palette.length;
+              if (num_colors < 2 || num_colors > 256 || num_colors & (num_colors - 1)) {
+                throw new Error(
+                  'Invalid code/color length, must be power of 2 and 2 .. 256.'
+                );
+              }
+              return num_colors;
+            }
+
+            // - Header.
+            buf[p++] = 0x47;
+            buf[p++] = 0x49;
+            buf[p++] = 0x46; // GIF
+            buf[p++] = 0x38;
+            buf[p++] = 0x39;
+            buf[p++] = 0x61; // 89a
+
+            // Handling of Global Color Table (palette) and background index.
+            var gp_num_colors_pow2 = 0;
+            var background = 0;
+            if (global_palette !== null) {
+              var gp_num_colors = check_palette_and_num_colors(global_palette);
+              while ((gp_num_colors >>= 1)) ++gp_num_colors_pow2;
+              gp_num_colors = 1 << gp_num_colors_pow2;
+              --gp_num_colors_pow2;
+              if (gopts.background !== undefined) {
+                background = gopts.background;
+                if (background >= gp_num_colors)
+                  throw new Error('Background index out of range.');
+                // The GIF spec states that a background index of 0 should be ignored, so
+                // this is probably a mistake and you really want to set it to another
+                // slot in the palette.  But actually in the end most browsers, etc end
+                // up ignoring this almost completely (including for dispose background).
+                if (background === 0)
+                  throw new Error('Background index explicitly passed as 0.');
+              }
+            }
+
+            // - Logical Screen Descriptor.
