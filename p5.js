@@ -24610,3 +24610,133 @@
               }
 
               // - Image Descriptor
+              buf[p++] = 0x2c; // Image Seperator.
+              buf[p++] = x & 0xff;
+              buf[p++] = (x >> 8) & 0xff; // Left.
+              buf[p++] = y & 0xff;
+              buf[p++] = (y >> 8) & 0xff; // Top.
+              buf[p++] = w & 0xff;
+              buf[p++] = (w >> 8) & 0xff;
+              buf[p++] = h & 0xff;
+              buf[p++] = (h >> 8) & 0xff;
+              // NOTE: No sort flag (unused?).
+              // TODO(deanm): Support interlace.
+              buf[p++] = using_local_palette === true ? 0x80 | (min_code_size - 1) : 0;
+
+              // - Local Color Table
+              if (using_local_palette === true) {
+                for (var i = 0, il = palette.length; i < il; ++i) {
+                  var rgb = palette[i];
+                  buf[p++] = (rgb >> 16) & 0xff;
+                  buf[p++] = (rgb >> 8) & 0xff;
+                  buf[p++] = rgb & 0xff;
+                }
+              }
+
+              p = GifWriterOutputLZWCodeStream(
+                buf,
+                p,
+                min_code_size < 2 ? 2 : min_code_size,
+                indexed_pixels
+              );
+
+              return p;
+            };
+
+            this.end = function() {
+              if (ended === false) {
+                buf[p++] = 0x3b; // Trailer.
+                ended = true;
+              }
+              return p;
+            };
+
+            this.getOutputBuffer = function() {
+              return buf;
+            };
+            this.setOutputBuffer = function(v) {
+              buf = v;
+            };
+            this.getOutputBufferPosition = function() {
+              return p;
+            };
+            this.setOutputBufferPosition = function(v) {
+              p = v;
+            };
+          }
+
+          // Main compression routine, palette indexes -> LZW code stream.
+          // |index_stream| must have at least one entry.
+          function GifWriterOutputLZWCodeStream(buf, p, min_code_size, index_stream) {
+            buf[p++] = min_code_size;
+            var cur_subblock = p++; // Pointing at the length field.
+
+            var clear_code = 1 << min_code_size;
+            var code_mask = clear_code - 1;
+            var eoi_code = clear_code + 1;
+            var next_code = eoi_code + 1;
+
+            var cur_code_size = min_code_size + 1; // Number of bits per code.
+            var cur_shift = 0;
+            // We have at most 12-bit codes, so we should have to hold a max of 19
+            // bits here (and then we would write out).
+            var cur = 0;
+
+            function emit_bytes_to_buffer(bit_block_size) {
+              while (cur_shift >= bit_block_size) {
+                buf[p++] = cur & 0xff;
+                cur >>= 8;
+                cur_shift -= 8;
+                if (p === cur_subblock + 256) {
+                  // Finished a subblock.
+                  buf[cur_subblock] = 255;
+                  cur_subblock = p++;
+                }
+              }
+            }
+
+            function emit_code(c) {
+              cur |= c << cur_shift;
+              cur_shift += cur_code_size;
+              emit_bytes_to_buffer(8);
+            }
+
+            // I am not an expert on the topic, and I don't want to write a thesis.
+            // However, it is good to outline here the basic algorithm and the few data
+            // structures and optimizations here that make this implementation fast.
+            // The basic idea behind LZW is to build a table of previously seen runs
+            // addressed by a short id (herein called output code).  All data is
+            // referenced by a code, which represents one or more values from the
+            // original input stream.  All input bytes can be referenced as the same
+            // value as an output code.  So if you didn't want any compression, you
+            // could more or less just output the original bytes as codes (there are
+            // some details to this, but it is the idea).  In order to achieve
+            // compression, values greater then the input range (codes can be up to
+            // 12-bit while input only 8-bit) represent a sequence of previously seen
+            // inputs.  The decompressor is able to build the same mapping while
+            // decoding, so there is always a shared common knowledge between the
+            // encoding and decoder, which is also important for "timing" aspects like
+            // how to handle variable bit width code encoding.
+            //
+            // One obvious but very important consequence of the table system is there
+            // is always a unique id (at most 12-bits) to map the runs.  'A' might be
+            // 4, then 'AA' might be 10, 'AAA' 11, 'AAAA' 12, etc.  This relationship
+            // can be used for an effecient lookup strategy for the code mapping.  We
+            // need to know if a run has been seen before, and be able to map that run
+            // to the output code.  Since we start with known unique ids (input bytes),
+            // and then from those build more unique ids (table entries), we can
+            // continue this chain (almost like a linked list) to always have small
+            // integer values that represent the current byte chains in the encoder.
+            // This means instead of tracking the input bytes (AAAABCD) to know our
+            // current state, we can track the table entry for AAAABC (it is guaranteed
+            // to exist by the nature of the algorithm) and the next character D.
+            // Therefor the tuple of (table_entry, byte) is guaranteed to also be
+            // unique.  This allows us to create a simple lookup key for mapping input
+            // sequences to codes (table indices) without having to store or search
+            // any of the code sequences.  So if 'AAAA' has a table entry of 12, the
+            // tuple of ('AAAA', K) for any input byte K will be unique, and can be our
+            // key.  This leads to a integer value at most 20-bits, which can always
+            // fit in an SMI value and be used as a fast sparse array / object key.
+
+            // Output code for the current contents of the index buffer.
+            var ib_code = index_stream[0] & code_mask; // Load first input index.
