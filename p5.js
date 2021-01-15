@@ -24890,3 +24890,147 @@
                       ) {
                         p += 14;
                         loop_count = buf[p++] | (buf[p++] << 8);
+                        p++; // Skip terminator.
+                      } else {
+                        // We don't know what it is, just try to get past it.
+                        p += 12;
+                        while (true) {
+                          // Seek through subblocks.
+                          var block_size = buf[p++];
+                          // Bad block size (ex: undefined from an out of bounds read).
+                          if (!(block_size >= 0)) throw Error('Invalid block size');
+                          if (block_size === 0) break; // 0 size is terminator
+                          p += block_size;
+                        }
+                      }
+                      break;
+
+                    case 0xf9: // Graphics Control Extension
+                      if (buf[p++] !== 0x4 || buf[p + 4] !== 0)
+                        throw new Error('Invalid graphics extension block.');
+                      var pf1 = buf[p++];
+                      delay = buf[p++] | (buf[p++] << 8);
+                      transparent_index = buf[p++];
+                      if ((pf1 & 1) === 0) transparent_index = null;
+                      disposal = (pf1 >> 2) & 0x7;
+                      p++; // Skip terminator.
+                      break;
+
+                    case 0xfe: // Comment Extension.
+                      while (true) {
+                        // Seek through subblocks.
+                        var block_size = buf[p++];
+                        // Bad block size (ex: undefined from an out of bounds read).
+                        if (!(block_size >= 0)) throw Error('Invalid block size');
+                        if (block_size === 0) break; // 0 size is terminator
+                        // console.log(buf.slice(p, p+block_size).toString('ascii'));
+                        p += block_size;
+                      }
+                      break;
+
+                    default:
+                      throw new Error(
+                        'Unknown graphic control label: 0x' + buf[p - 1].toString(16)
+                      );
+                  }
+                  break;
+
+                case 0x2c: // Image Descriptor.
+                  var x = buf[p++] | (buf[p++] << 8);
+                  var y = buf[p++] | (buf[p++] << 8);
+                  var w = buf[p++] | (buf[p++] << 8);
+                  var h = buf[p++] | (buf[p++] << 8);
+                  var pf2 = buf[p++];
+                  var local_palette_flag = pf2 >> 7;
+                  var interlace_flag = (pf2 >> 6) & 1;
+                  var num_local_colors_pow2 = pf2 & 0x7;
+                  var num_local_colors = 1 << (num_local_colors_pow2 + 1);
+                  var palette_offset = global_palette_offset;
+                  var palette_size = global_palette_size;
+                  var has_local_palette = false;
+                  if (local_palette_flag) {
+                    var has_local_palette = true;
+                    palette_offset = p; // Override with local palette.
+                    palette_size = num_local_colors;
+                    p += num_local_colors * 3; // Seek past palette.
+                  }
+
+                  var data_offset = p;
+
+                  p++; // codesize
+                  while (true) {
+                    var block_size = buf[p++];
+                    // Bad block size (ex: undefined from an out of bounds read).
+                    if (!(block_size >= 0)) throw Error('Invalid block size');
+                    if (block_size === 0) break; // 0 size is terminator
+                    p += block_size;
+                  }
+
+                  frames.push({
+                    x: x,
+                    y: y,
+                    width: w,
+                    height: h,
+                    has_local_palette: has_local_palette,
+                    palette_offset: palette_offset,
+                    palette_size: palette_size,
+                    data_offset: data_offset,
+                    data_length: p - data_offset,
+                    transparent_index: transparent_index,
+                    interlaced: !!interlace_flag,
+                    delay: delay,
+                    disposal: disposal
+                  });
+                  break;
+
+                case 0x3b: // Trailer Marker (end of file).
+                  no_eof = false;
+                  break;
+
+                default:
+                  throw new Error('Unknown gif block: 0x' + buf[p - 1].toString(16));
+                  break;
+              }
+            }
+
+            this.numFrames = function() {
+              return frames.length;
+            };
+
+            this.loopCount = function() {
+              return loop_count;
+            };
+
+            this.frameInfo = function(frame_num) {
+              if (frame_num < 0 || frame_num >= frames.length)
+                throw new Error('Frame index out of range.');
+              return frames[frame_num];
+            };
+
+            this.decodeAndBlitFrameBGRA = function(frame_num, pixels) {
+              var frame = this.frameInfo(frame_num);
+              var num_pixels = frame.width * frame.height;
+              var index_stream = new Uint8Array(num_pixels); // At most 8-bit indices.
+              GifReaderLZWOutputIndexStream(
+                buf,
+                frame.data_offset,
+                index_stream,
+                num_pixels
+              );
+              var palette_offset = frame.palette_offset;
+
+              // NOTE(deanm): It seems to be much faster to compare index to 256 than
+              // to === null.  Not sure why, but CompareStub_EQ_STRICT shows up high in
+              // the profile, not sure if it's related to using a Uint8Array.
+              var trans = frame.transparent_index;
+              if (trans === null) trans = 256;
+
+              // We are possibly just blitting to a portion of the entire frame.
+              // That is a subrect within the framerect, so the additional pixels
+              // must be skipped over after we finished a scanline.
+              var framewidth = frame.width;
+              var framestride = width - framewidth;
+              var xleft = framewidth; // Number of subrect pixels left in scanline.
+
+              // Output indicies of the top left and bottom right corners of the subrect.
+              var opbeg = (frame.y * width + frame.x) * 4;
