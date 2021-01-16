@@ -25292,3 +25292,135 @@
             if (op !== output_length) {
               console.log('Warning, gif stream shorter than expected.');
             }
+
+            return output;
+          }
+
+          // CommonJS.
+          try {
+            exports.GifWriter = GifWriter;
+            exports.GifReader = GifReader;
+          } catch (e) {}
+        },
+        {}
+      ],
+      34: [
+        function(_dereq_, module, exports) {
+          (function(Buffer) {
+            /**
+             * https://opentype.js.org v0.9.0 | (c) Frederik De Bleser and other contributors | MIT License | Uses tiny-inflate by Devon Govett and string.prototype.codepointat polyfill by Mathias Bynens
+             */
+
+            (function(global, factory) {
+              typeof exports === 'object' && typeof module !== 'undefined'
+                ? factory(exports)
+                : typeof define === 'function' && define.amd
+                  ? define(['exports'], factory)
+                  : factory((global.opentype = {}));
+            })(this, function(exports) {
+              'use strict';
+
+              /*! https://mths.be/codepointat v0.2.0 by @mathias */
+              if (!String.prototype.codePointAt) {
+                (function() {
+                  var defineProperty = (function() {
+                    // IE 8 only supports `Object.defineProperty` on DOM elements
+                    try {
+                      var object = {};
+                      var $defineProperty = Object.defineProperty;
+                      var result =
+                        $defineProperty(object, object, object) && $defineProperty;
+                    } catch (error) {}
+                    return result;
+                  })();
+                  var codePointAt = function(position) {
+                    if (this == null) {
+                      throw TypeError();
+                    }
+                    var string = String(this);
+                    var size = string.length;
+                    // `ToInteger`
+                    var index = position ? Number(position) : 0;
+                    if (index != index) {
+                      // better `isNaN`
+                      index = 0;
+                    }
+                    // Account for out-of-bounds indices:
+                    if (index < 0 || index >= size) {
+                      return undefined;
+                    }
+                    // Get the first code unit
+                    var first = string.charCodeAt(index);
+                    var second;
+                    if (
+                      // check if it’s the start of a surrogate pair
+                      first >= 0xd800 &&
+                      first <= 0xdbff && // high surrogate
+                      size > index + 1 // there is a next code unit
+                    ) {
+                      second = string.charCodeAt(index + 1);
+                      if (second >= 0xdc00 && second <= 0xdfff) {
+                        // low surrogate
+                        // https://mathiasbynens.be/notes/javascript-encoding#surrogate-formulae
+                        return (first - 0xd800) * 0x400 + second - 0xdc00 + 0x10000;
+                      }
+                    }
+                    return first;
+                  };
+                  if (defineProperty) {
+                    defineProperty(String.prototype, 'codePointAt', {
+                      value: codePointAt,
+                      configurable: true,
+                      writable: true
+                    });
+                  } else {
+                    String.prototype.codePointAt = codePointAt;
+                  }
+                })();
+              }
+
+              var TINF_OK = 0;
+              var TINF_DATA_ERROR = -3;
+
+              function Tree() {
+                this.table = new Uint16Array(16); /* table of code length counts */
+                this.trans = new Uint16Array(288); /* code -> symbol translation table */
+              }
+
+              function Data(source, dest) {
+                this.source = source;
+                this.sourceIndex = 0;
+                this.tag = 0;
+                this.bitcount = 0;
+
+                this.dest = dest;
+                this.destLen = 0;
+
+                this.ltree = new Tree(); /* dynamic length/symbol tree */
+                this.dtree = new Tree(); /* dynamic distance tree */
+              }
+
+              /* --------------------------------------------------- *
+	 * -- uninitialized global data (static structures) -- *
+	 * --------------------------------------------------- */
+
+              var sltree = new Tree();
+              var sdtree = new Tree();
+
+              /* extra bits and base tables for length codes */
+              var length_bits = new Uint8Array(30);
+              var length_base = new Uint16Array(30);
+
+              /* extra bits and base tables for distance codes */
+              var dist_bits = new Uint8Array(30);
+              var dist_base = new Uint16Array(30);
+
+              /* special ordering of code length codes */
+              var clcidx = new Uint8Array([
+                16,
+                17,
+                18,
+                0,
+                8,
+                7,
+                9,
