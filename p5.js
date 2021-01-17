@@ -25576,3 +25576,141 @@
               function tinf_decode_symbol(d, t) {
                 while (d.bitcount < 24) {
                   d.tag |= d.source[d.sourceIndex++] << d.bitcount;
+                  d.bitcount += 8;
+                }
+
+                var sum = 0,
+                  cur = 0,
+                  len = 0;
+                var tag = d.tag;
+
+                /* get more bits while code value is above sum */
+                do {
+                  cur = 2 * cur + (tag & 1);
+                  tag >>>= 1;
+                  ++len;
+
+                  sum += t.table[len];
+                  cur -= t.table[len];
+                } while (cur >= 0);
+
+                d.tag = tag;
+                d.bitcount -= len;
+
+                return t.trans[sum + cur];
+              }
+
+              /* given a data stream, decode dynamic trees from it */
+              function tinf_decode_trees(d, lt, dt) {
+                var hlit, hdist, hclen;
+                var i, num, length;
+
+                /* get 5 bits HLIT (257-286) */
+                hlit = tinf_read_bits(d, 5, 257);
+
+                /* get 5 bits HDIST (1-32) */
+                hdist = tinf_read_bits(d, 5, 1);
+
+                /* get 4 bits HCLEN (4-19) */
+                hclen = tinf_read_bits(d, 4, 4);
+
+                for (i = 0; i < 19; ++i) {
+                  lengths[i] = 0;
+                }
+
+                /* read code lengths for code length alphabet */
+                for (i = 0; i < hclen; ++i) {
+                  /* get 3 bits code length (0-7) */
+                  var clen = tinf_read_bits(d, 3, 0);
+                  lengths[clcidx[i]] = clen;
+                }
+
+                /* build code length tree */
+                tinf_build_tree(code_tree, lengths, 0, 19);
+
+                /* decode code lengths for the dynamic trees */
+                for (num = 0; num < hlit + hdist; ) {
+                  var sym = tinf_decode_symbol(d, code_tree);
+
+                  switch (sym) {
+                    case 16:
+                      /* copy previous code length 3-6 times (read 2 bits) */
+                      var prev = lengths[num - 1];
+                      for (length = tinf_read_bits(d, 2, 3); length; --length) {
+                        lengths[num++] = prev;
+                      }
+                      break;
+                    case 17:
+                      /* repeat code length 0 for 3-10 times (read 3 bits) */
+                      for (length = tinf_read_bits(d, 3, 3); length; --length) {
+                        lengths[num++] = 0;
+                      }
+                      break;
+                    case 18:
+                      /* repeat code length 0 for 11-138 times (read 7 bits) */
+                      for (length = tinf_read_bits(d, 7, 11); length; --length) {
+                        lengths[num++] = 0;
+                      }
+                      break;
+                    default:
+                      /* values 0-15 represent the actual code lengths */
+                      lengths[num++] = sym;
+                      break;
+                  }
+                }
+
+                /* build dynamic trees */
+                tinf_build_tree(lt, lengths, 0, hlit);
+                tinf_build_tree(dt, lengths, hlit, hdist);
+              }
+
+              /* ----------------------------- *
+	 * -- block inflate functions -- *
+	 * ----------------------------- */
+
+              /* given a stream and two trees, inflate a block of data */
+              function tinf_inflate_block_data(d, lt, dt) {
+                while (1) {
+                  var sym = tinf_decode_symbol(d, lt);
+
+                  /* check for end of block */
+                  if (sym === 256) {
+                    return TINF_OK;
+                  }
+
+                  if (sym < 256) {
+                    d.dest[d.destLen++] = sym;
+                  } else {
+                    var length, dist, offs;
+                    var i;
+
+                    sym -= 257;
+
+                    /* possibly get more bits from length code */
+                    length = tinf_read_bits(d, length_bits[sym], length_base[sym]);
+
+                    dist = tinf_decode_symbol(d, dt);
+
+                    /* possibly get more bits from distance code */
+                    offs = d.destLen - tinf_read_bits(d, dist_bits[dist], dist_base[dist]);
+
+                    /* copy match */
+                    for (i = offs; i < offs + length; ++i) {
+                      d.dest[d.destLen++] = d.dest[i];
+                    }
+                  }
+                }
+              }
+
+              /* inflate an uncompressed block of data */
+              function tinf_inflate_uncompressed_block(d) {
+                var length, invlength;
+                var i;
+
+                /* unread from bitbuffer */
+                while (d.bitcount > 8) {
+                  d.sourceIndex--;
+                  d.bitcount -= 8;
+                }
+
+                /* get length */
