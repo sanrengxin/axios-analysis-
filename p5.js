@@ -25714,3 +25714,131 @@
                 }
 
                 /* get length */
+                length = d.source[d.sourceIndex + 1];
+                length = 256 * length + d.source[d.sourceIndex];
+
+                /* get one's complement of length */
+                invlength = d.source[d.sourceIndex + 3];
+                invlength = 256 * invlength + d.source[d.sourceIndex + 2];
+
+                /* check length */
+                if (length !== (~invlength & 0x0000ffff)) {
+                  return TINF_DATA_ERROR;
+                }
+
+                d.sourceIndex += 4;
+
+                /* copy block */
+                for (i = length; i; --i) {
+                  d.dest[d.destLen++] = d.source[d.sourceIndex++];
+                }
+
+                /* make sure we start next block on a byte boundary */
+                d.bitcount = 0;
+
+                return TINF_OK;
+              }
+
+              /* inflate stream from source to dest */
+              function tinf_uncompress(source, dest) {
+                var d = new Data(source, dest);
+                var bfinal, btype, res;
+
+                do {
+                  /* read final block flag */
+                  bfinal = tinf_getbit(d);
+
+                  /* read block type (2 bits) */
+                  btype = tinf_read_bits(d, 2, 0);
+
+                  /* decompress block */
+                  switch (btype) {
+                    case 0:
+                      /* decompress uncompressed block */
+                      res = tinf_inflate_uncompressed_block(d);
+                      break;
+                    case 1:
+                      /* decompress block with fixed huffman trees */
+                      res = tinf_inflate_block_data(d, sltree, sdtree);
+                      break;
+                    case 2:
+                      /* decompress block with dynamic huffman trees */
+                      tinf_decode_trees(d, d.ltree, d.dtree);
+                      res = tinf_inflate_block_data(d, d.ltree, d.dtree);
+                      break;
+                    default:
+                      res = TINF_DATA_ERROR;
+                  }
+
+                  if (res !== TINF_OK) {
+                    throw new Error('Data error');
+                  }
+                } while (!bfinal);
+
+                if (d.destLen < d.dest.length) {
+                  if (typeof d.dest.slice === 'function') {
+                    return d.dest.slice(0, d.destLen);
+                  } else {
+                    return d.dest.subarray(0, d.destLen);
+                  }
+                }
+
+                return d.dest;
+              }
+
+              /* -------------------- *
+	 * -- initialization -- *
+	 * -------------------- */
+
+              /* build fixed huffman trees */
+              tinf_build_fixed_trees(sltree, sdtree);
+
+              /* build extra bits and base tables */
+              tinf_build_bits_base(length_bits, length_base, 4, 3);
+              tinf_build_bits_base(dist_bits, dist_base, 2, 1);
+
+              /* fix a special case */
+              length_bits[28] = 0;
+              length_base[28] = 258;
+
+              var tinyInflate = tinf_uncompress;
+
+              // The Bounding Box object
+
+              function derive(v0, v1, v2, v3, t) {
+                return (
+                  Math.pow(1 - t, 3) * v0 +
+                  3 * Math.pow(1 - t, 2) * t * v1 +
+                  3 * (1 - t) * Math.pow(t, 2) * v2 +
+                  Math.pow(t, 3) * v3
+                );
+              }
+              /**
+               * A bounding box is an enclosing box that describes the smallest measure within which all the points lie.
+               * It is used to calculate the bounding box of a glyph or text path.
+               *
+               * On initialization, x1/y1/x2/y2 will be NaN. Check if the bounding box is empty using `isEmpty()`.
+               *
+               * @exports opentype.BoundingBox
+               * @class
+               * @constructor
+               */
+              function BoundingBox() {
+                this.x1 = Number.NaN;
+                this.y1 = Number.NaN;
+                this.x2 = Number.NaN;
+                this.y2 = Number.NaN;
+              }
+
+              /**
+               * Returns true if the bounding box is empty, that is, no points have been added to the box yet.
+               */
+              BoundingBox.prototype.isEmpty = function() {
+                return isNaN(this.x1) || isNaN(this.y1) || isNaN(this.x2) || isNaN(this.y2);
+              };
+
+              /**
+               * Add the point to the bounding box.
+               * The x1/y1/x2/y2 coordinates of the bounding box will now encompass the given point.
+               * @param {number} x - The X coordinate of the point.
+               * @param {number} y - The Y coordinate of the point.
