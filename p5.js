@@ -25424,3 +25424,155 @@
                 8,
                 7,
                 9,
+                6,
+                10,
+                5,
+                11,
+                4,
+                12,
+                3,
+                13,
+                2,
+                14,
+                1,
+                15
+              ]);
+
+              /* used by tinf_decode_trees, avoids allocations every call */
+              var code_tree = new Tree();
+              var lengths = new Uint8Array(288 + 32);
+
+              /* ----------------------- *
+	 * -- utility functions -- *
+	 * ----------------------- */
+
+              /* build extra bits and base tables */
+              function tinf_build_bits_base(bits, base, delta, first) {
+                var i, sum;
+
+                /* build bits table */
+                for (i = 0; i < delta; ++i) {
+                  bits[i] = 0;
+                }
+                for (i = 0; i < 30 - delta; ++i) {
+                  bits[i + delta] = (i / delta) | 0;
+                }
+
+                /* build base table */
+                for (sum = first, i = 0; i < 30; ++i) {
+                  base[i] = sum;
+                  sum += 1 << bits[i];
+                }
+              }
+
+              /* build the fixed huffman trees */
+              function tinf_build_fixed_trees(lt, dt) {
+                var i;
+
+                /* build fixed length tree */
+                for (i = 0; i < 7; ++i) {
+                  lt.table[i] = 0;
+                }
+
+                lt.table[7] = 24;
+                lt.table[8] = 152;
+                lt.table[9] = 112;
+
+                for (i = 0; i < 24; ++i) {
+                  lt.trans[i] = 256 + i;
+                }
+                for (i = 0; i < 144; ++i) {
+                  lt.trans[24 + i] = i;
+                }
+                for (i = 0; i < 8; ++i) {
+                  lt.trans[24 + 144 + i] = 280 + i;
+                }
+                for (i = 0; i < 112; ++i) {
+                  lt.trans[24 + 144 + 8 + i] = 144 + i;
+                }
+
+                /* build fixed distance tree */
+                for (i = 0; i < 5; ++i) {
+                  dt.table[i] = 0;
+                }
+
+                dt.table[5] = 32;
+
+                for (i = 0; i < 32; ++i) {
+                  dt.trans[i] = i;
+                }
+              }
+
+              /* given an array of code lengths, build a tree */
+              var offs = new Uint16Array(16);
+
+              function tinf_build_tree(t, lengths, off, num) {
+                var i, sum;
+
+                /* clear code length count table */
+                for (i = 0; i < 16; ++i) {
+                  t.table[i] = 0;
+                }
+
+                /* scan symbol lengths, and sum code length counts */
+                for (i = 0; i < num; ++i) {
+                  t.table[lengths[off + i]]++;
+                }
+
+                t.table[0] = 0;
+
+                /* compute offset table for distribution sort */
+                for (sum = 0, i = 0; i < 16; ++i) {
+                  offs[i] = sum;
+                  sum += t.table[i];
+                }
+
+                /* create code->symbol translation table (symbols sorted by code) */
+                for (i = 0; i < num; ++i) {
+                  if (lengths[off + i]) {
+                    t.trans[offs[lengths[off + i]]++] = i;
+                  }
+                }
+              }
+
+              /* ---------------------- *
+	 * -- decode functions -- *
+	 * ---------------------- */
+
+              /* get one bit from source stream */
+              function tinf_getbit(d) {
+                /* check if tag is empty */
+                if (!d.bitcount--) {
+                  /* load next tag */
+                  d.tag = d.source[d.sourceIndex++];
+                  d.bitcount = 7;
+                }
+
+                /* shift bit out of tag */
+                var bit = d.tag & 1;
+                d.tag >>>= 1;
+
+                return bit;
+              }
+
+              /* read a num bit value from a stream and add base */
+              function tinf_read_bits(d, num, base) {
+                if (!num) {
+                  return base;
+                }
+
+                while (d.bitcount < 24) {
+                  d.tag |= d.source[d.sourceIndex++] << d.bitcount;
+                  d.bitcount += 8;
+                }
+
+                var val = d.tag & (0xffff >>> (16 - num));
+                d.tag >>>= num;
+                d.bitcount -= num;
+                return val + base;
+              }
+
+              /* given a data stream and a tree, decode a symbol */
+              function tinf_decode_symbol(d, t) {
+                while (d.bitcount < 24) {
+                  d.tag |= d.source[d.sourceIndex++] << d.bitcount;
