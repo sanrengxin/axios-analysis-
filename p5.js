@@ -25842,3 +25842,122 @@
                * The x1/y1/x2/y2 coordinates of the bounding box will now encompass the given point.
                * @param {number} x - The X coordinate of the point.
                * @param {number} y - The Y coordinate of the point.
+               */
+              BoundingBox.prototype.addPoint = function(x, y) {
+                if (typeof x === 'number') {
+                  if (isNaN(this.x1) || isNaN(this.x2)) {
+                    this.x1 = x;
+                    this.x2 = x;
+                  }
+                  if (x < this.x1) {
+                    this.x1 = x;
+                  }
+                  if (x > this.x2) {
+                    this.x2 = x;
+                  }
+                }
+                if (typeof y === 'number') {
+                  if (isNaN(this.y1) || isNaN(this.y2)) {
+                    this.y1 = y;
+                    this.y2 = y;
+                  }
+                  if (y < this.y1) {
+                    this.y1 = y;
+                  }
+                  if (y > this.y2) {
+                    this.y2 = y;
+                  }
+                }
+              };
+
+              /**
+               * Add a X coordinate to the bounding box.
+               * This extends the bounding box to include the X coordinate.
+               * This function is used internally inside of addBezier.
+               * @param {number} x - The X coordinate of the point.
+               */
+              BoundingBox.prototype.addX = function(x) {
+                this.addPoint(x, null);
+              };
+
+              /**
+               * Add a Y coordinate to the bounding box.
+               * This extends the bounding box to include the Y coordinate.
+               * This function is used internally inside of addBezier.
+               * @param {number} y - The Y coordinate of the point.
+               */
+              BoundingBox.prototype.addY = function(y) {
+                this.addPoint(null, y);
+              };
+
+              /**
+               * Add a Bézier curve to the bounding box.
+               * This extends the bounding box to include the entire Bézier.
+               * @param {number} x0 - The starting X coordinate.
+               * @param {number} y0 - The starting Y coordinate.
+               * @param {number} x1 - The X coordinate of the first control point.
+               * @param {number} y1 - The Y coordinate of the first control point.
+               * @param {number} x2 - The X coordinate of the second control point.
+               * @param {number} y2 - The Y coordinate of the second control point.
+               * @param {number} x - The ending X coordinate.
+               * @param {number} y - The ending Y coordinate.
+               */
+              BoundingBox.prototype.addBezier = function(x0, y0, x1, y1, x2, y2, x, y) {
+                var this$1 = this;
+
+                // This code is based on http://nishiohirokazu.blogspot.com/2009/06/how-to-calculate-bezier-curves-bounding.html
+                // and https://github.com/icons8/svg-path-bounding-box
+
+                var p0 = [x0, y0];
+                var p1 = [x1, y1];
+                var p2 = [x2, y2];
+                var p3 = [x, y];
+
+                this.addPoint(x0, y0);
+                this.addPoint(x, y);
+
+                for (var i = 0; i <= 1; i++) {
+                  var b = 6 * p0[i] - 12 * p1[i] + 6 * p2[i];
+                  var a = -3 * p0[i] + 9 * p1[i] - 9 * p2[i] + 3 * p3[i];
+                  var c = 3 * p1[i] - 3 * p0[i];
+
+                  if (a === 0) {
+                    if (b === 0) {
+                      continue;
+                    }
+                    var t = -c / b;
+                    if (0 < t && t < 1) {
+                      if (i === 0) {
+                        this$1.addX(derive(p0[i], p1[i], p2[i], p3[i], t));
+                      }
+                      if (i === 1) {
+                        this$1.addY(derive(p0[i], p1[i], p2[i], p3[i], t));
+                      }
+                    }
+                    continue;
+                  }
+
+                  var b2ac = Math.pow(b, 2) - 4 * c * a;
+                  if (b2ac < 0) {
+                    continue;
+                  }
+                  var t1 = (-b + Math.sqrt(b2ac)) / (2 * a);
+                  if (0 < t1 && t1 < 1) {
+                    if (i === 0) {
+                      this$1.addX(derive(p0[i], p1[i], p2[i], p3[i], t1));
+                    }
+                    if (i === 1) {
+                      this$1.addY(derive(p0[i], p1[i], p2[i], p3[i], t1));
+                    }
+                  }
+                  var t2 = (-b - Math.sqrt(b2ac)) / (2 * a);
+                  if (0 < t2 && t2 < 1) {
+                    if (i === 0) {
+                      this$1.addX(derive(p0[i], p1[i], p2[i], p3[i], t2));
+                    }
+                    if (i === 1) {
+                      this$1.addY(derive(p0[i], p1[i], p2[i], p3[i], t2));
+                    }
+                  }
+                }
+              };
