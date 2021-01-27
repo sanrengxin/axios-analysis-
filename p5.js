@@ -25961,3 +25961,128 @@
                   }
                 }
               };
+
+              /**
+               * Add a quadratic curve to the bounding box.
+               * This extends the bounding box to include the entire quadratic curve.
+               * @param {number} x0 - The starting X coordinate.
+               * @param {number} y0 - The starting Y coordinate.
+               * @param {number} x1 - The X coordinate of the control point.
+               * @param {number} y1 - The Y coordinate of the control point.
+               * @param {number} x - The ending X coordinate.
+               * @param {number} y - The ending Y coordinate.
+               */
+              BoundingBox.prototype.addQuad = function(x0, y0, x1, y1, x, y) {
+                var cp1x = x0 + 2 / 3 * (x1 - x0);
+                var cp1y = y0 + 2 / 3 * (y1 - y0);
+                var cp2x = cp1x + 1 / 3 * (x - x0);
+                var cp2y = cp1y + 1 / 3 * (y - y0);
+                this.addBezier(x0, y0, cp1x, cp1y, cp2x, cp2y, x, y);
+              };
+
+              // Geometric objects
+
+              /**
+               * A bézier path containing a set of path commands similar to a SVG path.
+               * Paths can be drawn on a context using `draw`.
+               * @exports opentype.Path
+               * @class
+               * @constructor
+               */
+              function Path() {
+                this.commands = [];
+                this.fill = 'black';
+                this.stroke = null;
+                this.strokeWidth = 1;
+              }
+
+              /**
+               * @param  {number} x
+               * @param  {number} y
+               */
+              Path.prototype.moveTo = function(x, y) {
+                this.commands.push({
+                  type: 'M',
+                  x: x,
+                  y: y
+                });
+              };
+
+              /**
+               * @param  {number} x
+               * @param  {number} y
+               */
+              Path.prototype.lineTo = function(x, y) {
+                this.commands.push({
+                  type: 'L',
+                  x: x,
+                  y: y
+                });
+              };
+
+              /**
+               * Draws cubic curve
+               * @function
+               * curveTo
+               * @memberof opentype.Path.prototype
+               * @param  {number} x1 - x of control 1
+               * @param  {number} y1 - y of control 1
+               * @param  {number} x2 - x of control 2
+               * @param  {number} y2 - y of control 2
+               * @param  {number} x - x of path point
+               * @param  {number} y - y of path point
+               */
+
+              /**
+               * Draws cubic curve
+               * @function
+               * bezierCurveTo
+               * @memberof opentype.Path.prototype
+               * @param  {number} x1 - x of control 1
+               * @param  {number} y1 - y of control 1
+               * @param  {number} x2 - x of control 2
+               * @param  {number} y2 - y of control 2
+               * @param  {number} x - x of path point
+               * @param  {number} y - y of path point
+               * @see curveTo
+               */
+              Path.prototype.curveTo = Path.prototype.bezierCurveTo = function(
+                x1,
+                y1,
+                x2,
+                y2,
+                x,
+                y
+              ) {
+                this.commands.push({
+                  type: 'C',
+                  x1: x1,
+                  y1: y1,
+                  x2: x2,
+                  y2: y2,
+                  x: x,
+                  y: y
+                });
+              };
+
+              /**
+               * Draws quadratic curve
+               * @function
+               * quadraticCurveTo
+               * @memberof opentype.Path.prototype
+               * @param  {number} x1 - x of control
+               * @param  {number} y1 - y of control
+               * @param  {number} x - x of path point
+               * @param  {number} y - y of path point
+               */
+
+              /**
+               * Draws quadratic curve
+               * @function
+               * quadTo
+               * @memberof opentype.Path.prototype
+               * @param  {number} x1 - x of control
+               * @param  {number} y1 - y of control
+               * @param  {number} x - x of path point
+               * @param  {number} y - y of path point
+               */
