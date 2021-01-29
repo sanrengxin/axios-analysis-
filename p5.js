@@ -26208,3 +26208,135 @@
                 for (var i = 0; i < this.commands.length; i += 1) {
                   var cmd = this$1.commands[i];
                   if (cmd.type === 'M') {
+                    ctx.moveTo(cmd.x, cmd.y);
+                  } else if (cmd.type === 'L') {
+                    ctx.lineTo(cmd.x, cmd.y);
+                  } else if (cmd.type === 'C') {
+                    ctx.bezierCurveTo(cmd.x1, cmd.y1, cmd.x2, cmd.y2, cmd.x, cmd.y);
+                  } else if (cmd.type === 'Q') {
+                    ctx.quadraticCurveTo(cmd.x1, cmd.y1, cmd.x, cmd.y);
+                  } else if (cmd.type === 'Z') {
+                    ctx.closePath();
+                  }
+                }
+
+                if (this.fill) {
+                  ctx.fillStyle = this.fill;
+                  ctx.fill();
+                }
+
+                if (this.stroke) {
+                  ctx.strokeStyle = this.stroke;
+                  ctx.lineWidth = this.strokeWidth;
+                  ctx.stroke();
+                }
+              };
+
+              /**
+               * Convert the Path to a string of path data instructions
+               * See http://www.w3.org/TR/SVG/paths.html#PathData
+               * @param  {number} [decimalPlaces=2] - The amount of decimal places for floating-point values
+               * @return {string}
+               */
+              Path.prototype.toPathData = function(decimalPlaces) {
+                var this$1 = this;
+
+                decimalPlaces = decimalPlaces !== undefined ? decimalPlaces : 2;
+
+                function floatToString(v) {
+                  if (Math.round(v) === v) {
+                    return '' + Math.round(v);
+                  } else {
+                    return v.toFixed(decimalPlaces);
+                  }
+                }
+
+                function packValues() {
+                  var arguments$1 = arguments;
+
+                  var s = '';
+                  for (var i = 0; i < arguments.length; i += 1) {
+                    var v = arguments$1[i];
+                    if (v >= 0 && i > 0) {
+                      s += ' ';
+                    }
+
+                    s += floatToString(v);
+                  }
+
+                  return s;
+                }
+
+                var d = '';
+                for (var i = 0; i < this.commands.length; i += 1) {
+                  var cmd = this$1.commands[i];
+                  if (cmd.type === 'M') {
+                    d += 'M' + packValues(cmd.x, cmd.y);
+                  } else if (cmd.type === 'L') {
+                    d += 'L' + packValues(cmd.x, cmd.y);
+                  } else if (cmd.type === 'C') {
+                    d += 'C' + packValues(cmd.x1, cmd.y1, cmd.x2, cmd.y2, cmd.x, cmd.y);
+                  } else if (cmd.type === 'Q') {
+                    d += 'Q' + packValues(cmd.x1, cmd.y1, cmd.x, cmd.y);
+                  } else if (cmd.type === 'Z') {
+                    d += 'Z';
+                  }
+                }
+
+                return d;
+              };
+
+              /**
+               * Convert the path to an SVG <path> element, as a string.
+               * @param  {number} [decimalPlaces=2] - The amount of decimal places for floating-point values
+               * @return {string}
+               */
+              Path.prototype.toSVG = function(decimalPlaces) {
+                var svg = '<path d="';
+                svg += this.toPathData(decimalPlaces);
+                svg += '"';
+                if (this.fill && this.fill !== 'black') {
+                  if (this.fill === null) {
+                    svg += ' fill="none"';
+                  } else {
+                    svg += ' fill="' + this.fill + '"';
+                  }
+                }
+
+                if (this.stroke) {
+                  svg +=
+                    ' stroke="' + this.stroke + '" stroke-width="' + this.strokeWidth + '"';
+                }
+
+                svg += '/>';
+                return svg;
+              };
+
+              /**
+               * Convert the path to a DOM element.
+               * @param  {number} [decimalPlaces=2] - The amount of decimal places for floating-point values
+               * @return {SVGPathElement}
+               */
+              Path.prototype.toDOMElement = function(decimalPlaces) {
+                var temporaryPath = this.toPathData(decimalPlaces);
+                var newPath = document.createElementNS(
+                  'http://www.w3.org/2000/svg',
+                  'path'
+                );
+
+                newPath.setAttribute('d', temporaryPath);
+
+                return newPath;
+              };
+
+              // Run-time checking of preconditions.
+
+              function fail(message) {
+                throw new Error(message);
+              }
+
+              // Precondition function that checks if the given predicate is true.
+              // If not, it will throw an error.
+              function argument(predicate, message) {
+                if (!predicate) {
+                  fail(message);
