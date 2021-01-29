@@ -26086,3 +26086,125 @@
                * @param  {number} x - x of path point
                * @param  {number} y - y of path point
                */
+              Path.prototype.quadTo = Path.prototype.quadraticCurveTo = function(
+                x1,
+                y1,
+                x,
+                y
+              ) {
+                this.commands.push({
+                  type: 'Q',
+                  x1: x1,
+                  y1: y1,
+                  x: x,
+                  y: y
+                });
+              };
+
+              /**
+               * Closes the path
+               * @function closePath
+               * @memberof opentype.Path.prototype
+               */
+
+              /**
+               * Close the path
+               * @function close
+               * @memberof opentype.Path.prototype
+               */
+              Path.prototype.close = Path.prototype.closePath = function() {
+                this.commands.push({
+                  type: 'Z'
+                });
+              };
+
+              /**
+               * Add the given path or list of commands to the commands of this path.
+               * @param  {Array} pathOrCommands - another opentype.Path, an opentype.BoundingBox, or an array of commands.
+               */
+              Path.prototype.extend = function(pathOrCommands) {
+                if (pathOrCommands.commands) {
+                  pathOrCommands = pathOrCommands.commands;
+                } else if (pathOrCommands instanceof BoundingBox) {
+                  var box = pathOrCommands;
+                  this.moveTo(box.x1, box.y1);
+                  this.lineTo(box.x2, box.y1);
+                  this.lineTo(box.x2, box.y2);
+                  this.lineTo(box.x1, box.y2);
+                  this.close();
+                  return;
+                }
+
+                Array.prototype.push.apply(this.commands, pathOrCommands);
+              };
+
+              /**
+               * Calculate the bounding box of the path.
+               * @returns {opentype.BoundingBox}
+               */
+              Path.prototype.getBoundingBox = function() {
+                var this$1 = this;
+
+                var box = new BoundingBox();
+
+                var startX = 0;
+                var startY = 0;
+                var prevX = 0;
+                var prevY = 0;
+                for (var i = 0; i < this.commands.length; i++) {
+                  var cmd = this$1.commands[i];
+                  switch (cmd.type) {
+                    case 'M':
+                      box.addPoint(cmd.x, cmd.y);
+                      startX = prevX = cmd.x;
+                      startY = prevY = cmd.y;
+                      break;
+                    case 'L':
+                      box.addPoint(cmd.x, cmd.y);
+                      prevX = cmd.x;
+                      prevY = cmd.y;
+                      break;
+                    case 'Q':
+                      box.addQuad(prevX, prevY, cmd.x1, cmd.y1, cmd.x, cmd.y);
+                      prevX = cmd.x;
+                      prevY = cmd.y;
+                      break;
+                    case 'C':
+                      box.addBezier(
+                        prevX,
+                        prevY,
+                        cmd.x1,
+                        cmd.y1,
+                        cmd.x2,
+                        cmd.y2,
+                        cmd.x,
+                        cmd.y
+                      );
+                      prevX = cmd.x;
+                      prevY = cmd.y;
+                      break;
+                    case 'Z':
+                      prevX = startX;
+                      prevY = startY;
+                      break;
+                    default:
+                      throw new Error('Unexpected path command ' + cmd.type);
+                  }
+                }
+                if (box.isEmpty()) {
+                  box.addPoint(0, 0);
+                }
+                return box;
+              };
+
+              /**
+               * Draw the path to a 2D context.
+               * @param {CanvasRenderingContext2D} ctx - A 2D drawing context.
+               */
+              Path.prototype.draw = function(ctx) {
+                var this$1 = this;
+
+                ctx.beginPath();
+                for (var i = 0; i < this.commands.length; i += 1) {
+                  var cmd = this$1.commands[i];
+                  if (cmd.type === 'M') {
