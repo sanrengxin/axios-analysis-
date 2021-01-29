@@ -26480,3 +26480,155 @@
               sizeOf.UINT24 = constant(3);
 
               /**
+               * Convert a 32-bit unsigned integer to a list of 4 bytes.
+               * @param {number}
+               * @returns {Array}
+               */
+              encode.ULONG = function(v) {
+                return [(v >> 24) & 0xff, (v >> 16) & 0xff, (v >> 8) & 0xff, v & 0xff];
+              };
+
+              /**
+               * @constant
+               * @type {number}
+               */
+              sizeOf.ULONG = constant(4);
+
+              /**
+               * Convert a 32-bit unsigned integer to a list of 4 bytes.
+               * @param {number}
+               * @returns {Array}
+               */
+              encode.LONG = function(v) {
+                // Two's complement
+                if (v >= LIMIT32) {
+                  v = -(2 * LIMIT32 - v);
+                }
+
+                return [(v >> 24) & 0xff, (v >> 16) & 0xff, (v >> 8) & 0xff, v & 0xff];
+              };
+
+              /**
+               * @constant
+               * @type {number}
+               */
+              sizeOf.LONG = constant(4);
+
+              encode.FIXED = encode.ULONG;
+              sizeOf.FIXED = sizeOf.ULONG;
+
+              encode.FWORD = encode.SHORT;
+              sizeOf.FWORD = sizeOf.SHORT;
+
+              encode.UFWORD = encode.USHORT;
+              sizeOf.UFWORD = sizeOf.USHORT;
+
+              /**
+               * Convert a 32-bit Apple Mac timestamp integer to a list of 8 bytes, 64-bit timestamp.
+               * @param {number}
+               * @returns {Array}
+               */
+              encode.LONGDATETIME = function(v) {
+                return [
+                  0,
+                  0,
+                  0,
+                  0,
+                  (v >> 24) & 0xff,
+                  (v >> 16) & 0xff,
+                  (v >> 8) & 0xff,
+                  v & 0xff
+                ];
+              };
+
+              /**
+               * @constant
+               * @type {number}
+               */
+              sizeOf.LONGDATETIME = constant(8);
+
+              /**
+               * Convert a 4-char tag to a list of 4 bytes.
+               * @param {string}
+               * @returns {Array}
+               */
+              encode.TAG = function(v) {
+                check.argument(v.length === 4, 'Tag should be exactly 4 ASCII characters.');
+                return [v.charCodeAt(0), v.charCodeAt(1), v.charCodeAt(2), v.charCodeAt(3)];
+              };
+
+              /**
+               * @constant
+               * @type {number}
+               */
+              sizeOf.TAG = constant(4);
+
+              // CFF data types ///////////////////////////////////////////////////////////
+
+              encode.Card8 = encode.BYTE;
+              sizeOf.Card8 = sizeOf.BYTE;
+
+              encode.Card16 = encode.USHORT;
+              sizeOf.Card16 = sizeOf.USHORT;
+
+              encode.OffSize = encode.BYTE;
+              sizeOf.OffSize = sizeOf.BYTE;
+
+              encode.SID = encode.USHORT;
+              sizeOf.SID = sizeOf.USHORT;
+
+              // Convert a numeric operand or charstring number to a variable-size list of bytes.
+              /**
+               * Convert a numeric operand or charstring number to a variable-size list of bytes.
+               * @param {number}
+               * @returns {Array}
+               */
+              encode.NUMBER = function(v) {
+                if (v >= -107 && v <= 107) {
+                  return [v + 139];
+                } else if (v >= 108 && v <= 1131) {
+                  v = v - 108;
+                  return [(v >> 8) + 247, v & 0xff];
+                } else if (v >= -1131 && v <= -108) {
+                  v = -v - 108;
+                  return [(v >> 8) + 251, v & 0xff];
+                } else if (v >= -32768 && v <= 32767) {
+                  return encode.NUMBER16(v);
+                } else {
+                  return encode.NUMBER32(v);
+                }
+              };
+
+              /**
+               * @param {number}
+               * @returns {number}
+               */
+              sizeOf.NUMBER = function(v) {
+                return encode.NUMBER(v).length;
+              };
+
+              /**
+               * Convert a signed number between -32768 and +32767 to a three-byte value.
+               * This ensures we always use three bytes, but is not the most compact format.
+               * @param {number}
+               * @returns {Array}
+               */
+              encode.NUMBER16 = function(v) {
+                return [28, (v >> 8) & 0xff, v & 0xff];
+              };
+
+              /**
+               * @constant
+               * @type {number}
+               */
+              sizeOf.NUMBER16 = constant(3);
+
+              /**
+               * Convert a signed number between -(2^31) and +(2^31-1) to a five-byte value.
+               * This is useful if you want to be sure you always use four bytes,
+               * at the expense of wasting a few bytes for smaller numbers.
+               * @param {number}
+               * @returns {Array}
+               */
+              encode.NUMBER32 = function(v) {
+                return [29, (v >> 24) & 0xff, (v >> 16) & 0xff, (v >> 8) & 0xff, v & 0xff];
