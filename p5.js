@@ -26340,3 +26340,143 @@
               function argument(predicate, message) {
                 if (!predicate) {
                   fail(message);
+                }
+              }
+              var check = { fail: fail, argument: argument, assert: argument };
+
+              // Data types used in the OpenType font file.
+
+              var LIMIT16 = 32768; // The limit at which a 16-bit number switches signs == 2^15
+              var LIMIT32 = 2147483648; // The limit at which a 32-bit number switches signs == 2 ^ 31
+
+              /**
+               * @exports opentype.decode
+               * @class
+               */
+              var decode = {};
+              /**
+               * @exports opentype.encode
+               * @class
+               */
+              var encode = {};
+              /**
+               * @exports opentype.sizeOf
+               * @class
+               */
+              var sizeOf = {};
+
+              // Return a function that always returns the same value.
+              function constant(v) {
+                return function() {
+                  return v;
+                };
+              }
+
+              // OpenType data types //////////////////////////////////////////////////////
+
+              /**
+               * Convert an 8-bit unsigned integer to a list of 1 byte.
+               * @param {number}
+               * @returns {Array}
+               */
+              encode.BYTE = function(v) {
+                check.argument(
+                  v >= 0 && v <= 255,
+                  'Byte value should be between 0 and 255.'
+                );
+                return [v];
+              };
+              /**
+               * @constant
+               * @type {number}
+               */
+              sizeOf.BYTE = constant(1);
+
+              /**
+               * Convert a 8-bit signed integer to a list of 1 byte.
+               * @param {string}
+               * @returns {Array}
+               */
+              encode.CHAR = function(v) {
+                return [v.charCodeAt(0)];
+              };
+
+              /**
+               * @constant
+               * @type {number}
+               */
+              sizeOf.CHAR = constant(1);
+
+              /**
+               * Convert an ASCII string to a list of bytes.
+               * @param {string}
+               * @returns {Array}
+               */
+              encode.CHARARRAY = function(v) {
+                var b = [];
+                for (var i = 0; i < v.length; i += 1) {
+                  b[i] = v.charCodeAt(i);
+                }
+
+                return b;
+              };
+
+              /**
+               * @param {Array}
+               * @returns {number}
+               */
+              sizeOf.CHARARRAY = function(v) {
+                return v.length;
+              };
+
+              /**
+               * Convert a 16-bit unsigned integer to a list of 2 bytes.
+               * @param {number}
+               * @returns {Array}
+               */
+              encode.USHORT = function(v) {
+                return [(v >> 8) & 0xff, v & 0xff];
+              };
+
+              /**
+               * @constant
+               * @type {number}
+               */
+              sizeOf.USHORT = constant(2);
+
+              /**
+               * Convert a 16-bit signed integer to a list of 2 bytes.
+               * @param {number}
+               * @returns {Array}
+               */
+              encode.SHORT = function(v) {
+                // Two's complement
+                if (v >= LIMIT16) {
+                  v = -(2 * LIMIT16 - v);
+                }
+
+                return [(v >> 8) & 0xff, v & 0xff];
+              };
+
+              /**
+               * @constant
+               * @type {number}
+               */
+              sizeOf.SHORT = constant(2);
+
+              /**
+               * Convert a 24-bit unsigned integer to a list of 3 bytes.
+               * @param {number}
+               * @returns {Array}
+               */
+              encode.UINT24 = function(v) {
+                return [(v >> 16) & 0xff, (v >> 8) & 0xff, v & 0xff];
+              };
+
+              /**
+               * @constant
+               * @type {number}
+               */
+              sizeOf.UINT24 = constant(3);
+
+              /**
