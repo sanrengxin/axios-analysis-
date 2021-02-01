@@ -26632,3 +26632,135 @@
                */
               encode.NUMBER32 = function(v) {
                 return [29, (v >> 24) & 0xff, (v >> 16) & 0xff, (v >> 8) & 0xff, v & 0xff];
+              };
+
+              /**
+               * @constant
+               * @type {number}
+               */
+              sizeOf.NUMBER32 = constant(5);
+
+              /**
+               * @param {number}
+               * @returns {Array}
+               */
+              encode.REAL = function(v) {
+                var value = v.toString();
+
+                // Some numbers use an epsilon to encode the value. (e.g. JavaScript will store 0.0000001 as 1e-7)
+                // This code converts it back to a number without the epsilon.
+                var m = /\.(\d*?)(?:9{5,20}|0{5,20})\d{0,2}(?:e(.+)|$)/.exec(value);
+                if (m) {
+                  var epsilon = parseFloat('1e' + ((m[2] ? +m[2] : 0) + m[1].length));
+                  value = (Math.round(v * epsilon) / epsilon).toString();
+                }
+
+                var nibbles = '';
+                for (var i = 0, ii = value.length; i < ii; i += 1) {
+                  var c = value[i];
+                  if (c === 'e') {
+                    nibbles += value[++i] === '-' ? 'c' : 'b';
+                  } else if (c === '.') {
+                    nibbles += 'a';
+                  } else if (c === '-') {
+                    nibbles += 'e';
+                  } else {
+                    nibbles += c;
+                  }
+                }
+
+                nibbles += nibbles.length & 1 ? 'f' : 'ff';
+                var out = [30];
+                for (var i$1 = 0, ii$1 = nibbles.length; i$1 < ii$1; i$1 += 2) {
+                  out.push(parseInt(nibbles.substr(i$1, 2), 16));
+                }
+
+                return out;
+              };
+
+              /**
+               * @param {number}
+               * @returns {number}
+               */
+              sizeOf.REAL = function(v) {
+                return encode.REAL(v).length;
+              };
+
+              encode.NAME = encode.CHARARRAY;
+              sizeOf.NAME = sizeOf.CHARARRAY;
+
+              encode.STRING = encode.CHARARRAY;
+              sizeOf.STRING = sizeOf.CHARARRAY;
+
+              /**
+               * @param {DataView} data
+               * @param {number} offset
+               * @param {number} numBytes
+               * @returns {string}
+               */
+              decode.UTF8 = function(data, offset, numBytes) {
+                var codePoints = [];
+                var numChars = numBytes;
+                for (var j = 0; j < numChars; j++, offset += 1) {
+                  codePoints[j] = data.getUint8(offset);
+                }
+
+                return String.fromCharCode.apply(null, codePoints);
+              };
+
+              /**
+               * @param {DataView} data
+               * @param {number} offset
+               * @param {number} numBytes
+               * @returns {string}
+               */
+              decode.UTF16 = function(data, offset, numBytes) {
+                var codePoints = [];
+                var numChars = numBytes / 2;
+                for (var j = 0; j < numChars; j++, offset += 2) {
+                  codePoints[j] = data.getUint16(offset);
+                }
+
+                return String.fromCharCode.apply(null, codePoints);
+              };
+
+              /**
+               * Convert a JavaScript string to UTF16-BE.
+               * @param {string}
+               * @returns {Array}
+               */
+              encode.UTF16 = function(v) {
+                var b = [];
+                for (var i = 0; i < v.length; i += 1) {
+                  var codepoint = v.charCodeAt(i);
+                  b[b.length] = (codepoint >> 8) & 0xff;
+                  b[b.length] = codepoint & 0xff;
+                }
+
+                return b;
+              };
+
+              /**
+               * @param {string}
+               * @returns {number}
+               */
+              sizeOf.UTF16 = function(v) {
+                return v.length * 2;
+              };
+
+              // Data for converting old eight-bit Macintosh encodings to Unicode.
+              // This representation is optimized for decoding; encoding is slower
+              // and needs more memory. The assumption is that all opentype.js users
+              // want to open fonts, but saving a font will be comparatively rare
+              // so it can be more expensive. Keyed by IANA character set name.
+              //
+              // Python script for generating these strings:
+              //
+              //     s = u''.join([chr(c).decode('mac_greek') for c in range(128, 256)])
+              //     print(s.encode('utf-8'))
+              /**
+               * @private
+               */
+              var eightBitMacEncodings = {
+                // Python: 'mac_croatian'
+                'x-mac-croatian':
