@@ -26764,3 +26764,151 @@
               var eightBitMacEncodings = {
                 // Python: 'mac_croatian'
                 'x-mac-croatian':
+                  'ÄÅÇÉÑÖÜáàâäãåçéèêëíìîïñóòôöõúùûü†°¢£§•¶ß®Š™´¨≠ŽØ∞±≤≥∆µ∂∑∏š∫ªºΩžø' +
+                  '¿¡¬√ƒ≈Ć«Č… ÀÃÕŒœĐ—“”‘’÷◊©⁄€‹›Æ»–·‚„‰ÂćÁčÈÍÎÏÌÓÔđÒÚÛÙıˆ˜¯πË˚¸Êæˇ',
+                // Python: 'mac_cyrillic'
+                'x-mac-cyrillic':
+                  'АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ†°Ґ£§•¶І®©™Ђђ≠Ѓѓ∞±≤≥іµґЈЄєЇїЉљЊњ' +
+                  'јЅ¬√ƒ≈∆«»… ЋћЌќѕ–—“”‘’÷„ЎўЏџ№Ёёяабвгдежзийклмнопрстуфхцчшщъыьэю',
+                // http://unicode.org/Public/MAPPINGS/VENDORS/APPLE/GAELIC.TXT
+                'x-mac-gaelic':
+                  'ÄÅÇÉÑÖÜáàâäãåçéèêëíìîïñóòôöõúùûü†°¢£§•¶ß®©™´¨≠ÆØḂ±≤≥ḃĊċḊḋḞḟĠġṀæø' +
+                  'ṁṖṗɼƒſṠ«»… ÀÃÕŒœ–—“”‘’ṡẛÿŸṪ€‹›Ŷŷṫ·Ỳỳ⁊ÂÊÁËÈÍÎÏÌÓÔ♣ÒÚÛÙıÝýŴŵẄẅẀẁẂẃ',
+                // Python: 'mac_greek'
+                'x-mac-greek':
+                  'Ä¹²É³ÖÜ΅àâä΄¨çéèêë£™îï•½‰ôö¦€ùûü†ΓΔΘΛΞΠß®©ΣΪ§≠°·Α±≤≥¥ΒΕΖΗΙΚΜΦΫΨΩ' +
+                  'άΝ¬ΟΡ≈Τ«»… ΥΧΆΈœ–―“”‘’÷ΉΊΌΎέήίόΏύαβψδεφγηιξκλμνοπώρστθωςχυζϊϋΐΰ\u00AD',
+                // Python: 'mac_iceland'
+                'x-mac-icelandic':
+                  'ÄÅÇÉÑÖÜáàâäãåçéèêëíìîïñóòôöõúùûüÝ°¢£§•¶ß®©™´¨≠ÆØ∞±≤≥¥µ∂∑∏π∫ªºΩæø' +
+                  '¿¡¬√ƒ≈∆«»… ÀÃÕŒœ–—“”‘’÷◊ÿŸ⁄€ÐðÞþý·‚„‰ÂÊÁËÈÍÎÏÌÓÔÒÚÛÙıˆ˜¯˘˙˚¸˝˛ˇ',
+                // http://unicode.org/Public/MAPPINGS/VENDORS/APPLE/INUIT.TXT
+                'x-mac-inuit':
+                  'ᐃᐄᐅᐆᐊᐋᐱᐲᐳᐴᐸᐹᑉᑎᑏᑐᑑᑕᑖᑦᑭᑮᑯᑰᑲᑳᒃᒋᒌᒍᒎᒐᒑ°ᒡᒥᒦ•¶ᒧ®©™ᒨᒪᒫᒻᓂᓃᓄᓅᓇᓈᓐᓯᓰᓱᓲᓴᓵᔅᓕᓖᓗ' +
+                  'ᓘᓚᓛᓪᔨᔩᔪᔫᔭ… ᔮᔾᕕᕖᕗ–—“”‘’ᕘᕙᕚᕝᕆᕇᕈᕉᕋᕌᕐᕿᖀᖁᖂᖃᖄᖅᖏᖐᖑᖒᖓᖔᖕᙱᙲᙳᙴᙵᙶᖖᖠᖡᖢᖣᖤᖥᖦᕼŁł',
+                // Python: 'mac_latin2'
+                'x-mac-ce':
+                  'ÄĀāÉĄÖÜáąČäčĆćéŹźĎíďĒēĖóėôöõúĚěü†°Ę£§•¶ß®©™ę¨≠ģĮįĪ≤≥īĶ∂∑łĻļĽľĹĺŅ' +
+                  'ņŃ¬√ńŇ∆«»… ňŐÕőŌ–—“”‘’÷◊ōŔŕŘ‹›řŖŗŠ‚„šŚśÁŤťÍŽžŪÓÔūŮÚůŰűŲųÝýķŻŁżĢˇ',
+                // Python: 'mac_roman'
+                macintosh:
+                  'ÄÅÇÉÑÖÜáàâäãåçéèêëíìîïñóòôöõúùûü†°¢£§•¶ß®©™´¨≠ÆØ∞±≤≥¥µ∂∑∏π∫ªºΩæø' +
+                  '¿¡¬√ƒ≈∆«»… ÀÃÕŒœ–—“”‘’÷◊ÿŸ⁄€‹›ﬁﬂ‡·‚„‰ÂÊÁËÈÍÎÏÌÓÔÒÚÛÙıˆ˜¯˘˙˚¸˝˛ˇ',
+                // Python: 'mac_romanian'
+                'x-mac-romanian':
+                  'ÄÅÇÉÑÖÜáàâäãåçéèêëíìîïñóòôöõúùûü†°¢£§•¶ß®©™´¨≠ĂȘ∞±≤≥¥µ∂∑∏π∫ªºΩăș' +
+                  '¿¡¬√ƒ≈∆«»… ÀÃÕŒœ–—“”‘’÷◊ÿŸ⁄€‹›Țț‡·‚„‰ÂÊÁËÈÍÎÏÌÓÔÒÚÛÙıˆ˜¯˘˙˚¸˝˛ˇ',
+                // Python: 'mac_turkish'
+                'x-mac-turkish':
+                  'ÄÅÇÉÑÖÜáàâäãåçéèêëíìîïñóòôöõúùûü†°¢£§•¶ß®©™´¨≠ÆØ∞±≤≥¥µ∂∑∏π∫ªºΩæø' +
+                  '¿¡¬√ƒ≈∆«»… ÀÃÕŒœ–—“”‘’÷◊ÿŸĞğİıŞş‡·‚„‰ÂÊÁËÈÍÎÏÌÓÔÒÚÛÙˆ˜¯˘˙˚¸˝˛ˇ'
+              };
+
+              /**
+               * Decodes an old-style Macintosh string. Returns either a Unicode JavaScript
+               * string, or 'undefined' if the encoding is unsupported. For example, we do
+               * not support Chinese, Japanese or Korean because these would need large
+               * mapping tables.
+               * @param {DataView} dataView
+               * @param {number} offset
+               * @param {number} dataLength
+               * @param {string} encoding
+               * @returns {string}
+               */
+              decode.MACSTRING = function(dataView, offset, dataLength, encoding) {
+                var table = eightBitMacEncodings[encoding];
+                if (table === undefined) {
+                  return undefined;
+                }
+
+                var result = '';
+                for (var i = 0; i < dataLength; i++) {
+                  var c = dataView.getUint8(offset + i);
+                  // In all eight-bit Mac encodings, the characters 0x00..0x7F are
+                  // mapped to U+0000..U+007F; we only need to look up the others.
+                  if (c <= 0x7f) {
+                    result += String.fromCharCode(c);
+                  } else {
+                    result += table[c & 0x7f];
+                  }
+                }
+
+                return result;
+              };
+
+              // Helper function for encode.MACSTRING. Returns a dictionary for mapping
+              // Unicode character codes to their 8-bit MacOS equivalent. This table
+              // is not exactly a super cheap data structure, but we do not care because
+              // encoding Macintosh strings is only rarely needed in typical applications.
+              var macEncodingTableCache = typeof WeakMap === 'function' && new WeakMap();
+              var macEncodingCacheKeys;
+              var getMacEncodingTable = function(encoding) {
+                // Since we use encoding as a cache key for WeakMap, it has to be
+                // a String object and not a literal. And at least on NodeJS 2.10.1,
+                // WeakMap requires that the same String instance is passed for cache hits.
+                if (!macEncodingCacheKeys) {
+                  macEncodingCacheKeys = {};
+                  for (var e in eightBitMacEncodings) {
+                    /*jshint -W053 */ // Suppress "Do not use String as a constructor."
+                    macEncodingCacheKeys[e] = new String(e);
+                  }
+                }
+
+                var cacheKey = macEncodingCacheKeys[encoding];
+                if (cacheKey === undefined) {
+                  return undefined;
+                }
+
+                // We can't do "if (cache.has(key)) {return cache.get(key)}" here:
+                // since garbage collection may run at any time, it could also kick in
+                // between the calls to cache.has() and cache.get(). In that case,
+                // we would return 'undefined' even though we do support the encoding.
+                if (macEncodingTableCache) {
+                  var cachedTable = macEncodingTableCache.get(cacheKey);
+                  if (cachedTable !== undefined) {
+                    return cachedTable;
+                  }
+                }
+
+                var decodingTable = eightBitMacEncodings[encoding];
+                if (decodingTable === undefined) {
+                  return undefined;
+                }
+
+                var encodingTable = {};
+                for (var i = 0; i < decodingTable.length; i++) {
+                  encodingTable[decodingTable.charCodeAt(i)] = i + 0x80;
+                }
+
+                if (macEncodingTableCache) {
+                  macEncodingTableCache.set(cacheKey, encodingTable);
+                }
+
+                return encodingTable;
+              };
+
+              /**
+               * Encodes an old-style Macintosh string. Returns a byte array upon success.
+               * If the requested encoding is unsupported, or if the input string contains
+               * a character that cannot be expressed in the encoding, the function returns
+               * 'undefined'.
+               * @param {string} str
+               * @param {string} encoding
+               * @returns {Array}
+               */
+              encode.MACSTRING = function(str, encoding) {
+                var table = getMacEncodingTable(encoding);
+                if (table === undefined) {
+                  return undefined;
+                }
+
+                var result = [];
+                for (var i = 0; i < str.length; i++) {
+                  var c = str.charCodeAt(i);
+
+                  // In all eight-bit Mac encodings, the characters 0x00..0x7F are
+                  // mapped to U+0000..U+007F; we only need to look up the others.
+                  if (c >= 0x80) {
+                    c = table[c];
+                    if (c === undefined) {
+                      // str contains a Unicode character that cannot be encoded
