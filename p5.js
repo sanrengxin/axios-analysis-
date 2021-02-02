@@ -27056,3 +27056,147 @@
                 }
                 return result;
               };
+
+              // Convert a list of values to a CFF INDEX structure.
+              // The values should be objects containing name / type / value.
+              /**
+               * @param {Array} l
+               * @returns {Array}
+               */
+              encode.INDEX = function(l) {
+                //var offset, offsets, offsetEncoder, encodedOffsets, encodedOffset, data,
+                //    i, v;
+                // Because we have to know which data type to use to encode the offsets,
+                // we have to go through the values twice: once to encode the data and
+                // calculate the offsets, then again to encode the offsets using the fitting data type.
+                var offset = 1; // First offset is always 1.
+                var offsets = [offset];
+                var data = [];
+                for (var i = 0; i < l.length; i += 1) {
+                  var v = encode.OBJECT(l[i]);
+                  Array.prototype.push.apply(data, v);
+                  offset += v.length;
+                  offsets.push(offset);
+                }
+
+                if (data.length === 0) {
+                  return [0, 0];
+                }
+
+                var encodedOffsets = [];
+                var offSize = (1 + Math.floor(Math.log(offset) / Math.log(2)) / 8) | 0;
+                var offsetEncoder = [
+                  undefined,
+                  encode.BYTE,
+                  encode.USHORT,
+                  encode.UINT24,
+                  encode.ULONG
+                ][offSize];
+                for (var i$1 = 0; i$1 < offsets.length; i$1 += 1) {
+                  var encodedOffset = offsetEncoder(offsets[i$1]);
+                  Array.prototype.push.apply(encodedOffsets, encodedOffset);
+                }
+
+                return Array.prototype.concat(
+                  encode.Card16(l.length),
+                  encode.OffSize(offSize),
+                  encodedOffsets,
+                  data
+                );
+              };
+
+              /**
+               * @param {Array}
+               * @returns {number}
+               */
+              sizeOf.INDEX = function(v) {
+                return encode.INDEX(v).length;
+              };
+
+              /**
+               * Convert an object to a CFF DICT structure.
+               * The keys should be numeric.
+               * The values should be objects containing name / type / value.
+               * @param {Object} m
+               * @returns {Array}
+               */
+              encode.DICT = function(m) {
+                var d = [];
+                var keys = Object.keys(m);
+                var length = keys.length;
+
+                for (var i = 0; i < length; i += 1) {
+                  // Object.keys() return string keys, but our keys are always numeric.
+                  var k = parseInt(keys[i], 0);
+                  var v = m[k];
+                  // Value comes before the key.
+                  d = d.concat(encode.OPERAND(v.value, v.type));
+                  d = d.concat(encode.OPERATOR(k));
+                }
+
+                return d;
+              };
+
+              /**
+               * @param {Object}
+               * @returns {number}
+               */
+              sizeOf.DICT = function(m) {
+                return encode.DICT(m).length;
+              };
+
+              /**
+               * @param {number}
+               * @returns {Array}
+               */
+              encode.OPERATOR = function(v) {
+                if (v < 1200) {
+                  return [v];
+                } else {
+                  return [12, v - 1200];
+                }
+              };
+
+              /**
+               * @param {Array} v
+               * @param {string}
+               * @returns {Array}
+               */
+              encode.OPERAND = function(v, type) {
+                var d = [];
+                if (Array.isArray(type)) {
+                  for (var i = 0; i < type.length; i += 1) {
+                    check.argument(
+                      v.length === type.length,
+                      'Not enough arguments given for type' + type
+                    );
+                    d = d.concat(encode.OPERAND(v[i], type[i]));
+                  }
+                } else {
+                  if (type === 'SID') {
+                    d = d.concat(encode.NUMBER(v));
+                  } else if (type === 'offset') {
+                    // We make it easy for ourselves and always encode offsets as
+                    // 4 bytes. This makes offset calculation for the top dict easier.
+                    d = d.concat(encode.NUMBER32(v));
+                  } else if (type === 'number') {
+                    d = d.concat(encode.NUMBER(v));
+                  } else if (type === 'real') {
+                    d = d.concat(encode.REAL(v));
+                  } else {
+                    throw new Error('Unknown operand type ' + type);
+                    // FIXME Add support for booleans
+                  }
+                }
+
+                return d;
+              };
+
+              encode.OP = encode.BYTE;
+              sizeOf.OP = sizeOf.BYTE;
+
+              // memoize charstring encoding using WeakMap if available
+              var wmm = typeof WeakMap === 'function' && new WeakMap();
+
+              /**
+               * Convert a list of CharString operations to bytes.
