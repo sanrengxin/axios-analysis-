@@ -27200,3 +27200,142 @@
 
               /**
                * Convert a list of CharString operations to bytes.
+               * @param {Array}
+               * @returns {Array}
+               */
+              encode.CHARSTRING = function(ops) {
+                // See encode.MACSTRING for why we don't do "if (wmm && wmm.has(ops))".
+                if (wmm) {
+                  var cachedValue = wmm.get(ops);
+                  if (cachedValue !== undefined) {
+                    return cachedValue;
+                  }
+                }
+
+                var d = [];
+                var length = ops.length;
+
+                for (var i = 0; i < length; i += 1) {
+                  var op = ops[i];
+                  d = d.concat(encode[op.type](op.value));
+                }
+
+                if (wmm) {
+                  wmm.set(ops, d);
+                }
+
+                return d;
+              };
+
+              /**
+               * @param {Array}
+               * @returns {number}
+               */
+              sizeOf.CHARSTRING = function(ops) {
+                return encode.CHARSTRING(ops).length;
+              };
+
+              // Utility functions ////////////////////////////////////////////////////////
+
+              /**
+               * Convert an object containing name / type / value to bytes.
+               * @param {Object}
+               * @returns {Array}
+               */
+              encode.OBJECT = function(v) {
+                var encodingFunction = encode[v.type];
+                check.argument(
+                  encodingFunction !== undefined,
+                  'No encoding function for type ' + v.type
+                );
+                return encodingFunction(v.value);
+              };
+
+              /**
+               * @param {Object}
+               * @returns {number}
+               */
+              sizeOf.OBJECT = function(v) {
+                var sizeOfFunction = sizeOf[v.type];
+                check.argument(
+                  sizeOfFunction !== undefined,
+                  'No sizeOf function for type ' + v.type
+                );
+                return sizeOfFunction(v.value);
+              };
+
+              /**
+               * Convert a table object to bytes.
+               * A table contains a list of fields containing the metadata (name, type and default value).
+               * The table itself has the field values set as attributes.
+               * @param {opentype.Table}
+               * @returns {Array}
+               */
+              encode.TABLE = function(table) {
+                var d = [];
+                var length = table.fields.length;
+                var subtables = [];
+                var subtableOffsets = [];
+
+                for (var i = 0; i < length; i += 1) {
+                  var field = table.fields[i];
+                  var encodingFunction = encode[field.type];
+                  check.argument(
+                    encodingFunction !== undefined,
+                    'No encoding function for field type ' +
+                      field.type +
+                      ' (' +
+                      field.name +
+                      ')'
+                  );
+                  var value = table[field.name];
+                  if (value === undefined) {
+                    value = field.value;
+                  }
+
+                  var bytes = encodingFunction(value);
+
+                  if (field.type === 'TABLE') {
+                    subtableOffsets.push(d.length);
+                    d = d.concat([0, 0]);
+                    subtables.push(bytes);
+                  } else {
+                    d = d.concat(bytes);
+                  }
+                }
+
+                for (var i$1 = 0; i$1 < subtables.length; i$1 += 1) {
+                  var o = subtableOffsets[i$1];
+                  var offset = d.length;
+                  check.argument(offset < 65536, 'Table ' + table.tableName + ' too big.');
+                  d[o] = offset >> 8;
+                  d[o + 1] = offset & 0xff;
+                  d = d.concat(subtables[i$1]);
+                }
+
+                return d;
+              };
+
+              /**
+               * @param {opentype.Table}
+               * @returns {number}
+               */
+              sizeOf.TABLE = function(table) {
+                var numBytes = 0;
+                var length = table.fields.length;
+
+                for (var i = 0; i < length; i += 1) {
+                  var field = table.fields[i];
+                  var sizeOfFunction = sizeOf[field.type];
+                  check.argument(
+                    sizeOfFunction !== undefined,
+                    'No sizeOf function for field type ' +
+                      field.type +
+                      ' (' +
+                      field.name +
+                      ')'
+                  );
+                  var value = table[field.name];
+                  if (value === undefined) {
+                    value = field.value;
+                  }
