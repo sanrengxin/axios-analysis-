@@ -27707,3 +27707,139 @@
                 }
 
                 return v;
+              }
+
+              // Retrieve a number of bytes from start offset to the end offset from the DataView.
+              function getBytes(dataView, startOffset, endOffset) {
+                var bytes = [];
+                for (var i = startOffset; i < endOffset; i += 1) {
+                  bytes.push(dataView.getUint8(i));
+                }
+
+                return bytes;
+              }
+
+              // Convert the list of bytes to a string.
+              function bytesToString(bytes) {
+                var s = '';
+                for (var i = 0; i < bytes.length; i += 1) {
+                  s += String.fromCharCode(bytes[i]);
+                }
+
+                return s;
+              }
+
+              var typeOffsets = {
+                byte: 1,
+                uShort: 2,
+                short: 2,
+                uLong: 4,
+                fixed: 4,
+                longDateTime: 8,
+                tag: 4
+              };
+
+              // A stateful parser that changes the offset whenever a value is retrieved.
+              // The data is a DataView.
+              function Parser(data, offset) {
+                this.data = data;
+                this.offset = offset;
+                this.relativeOffset = 0;
+              }
+
+              Parser.prototype.parseByte = function() {
+                var v = this.data.getUint8(this.offset + this.relativeOffset);
+                this.relativeOffset += 1;
+                return v;
+              };
+
+              Parser.prototype.parseChar = function() {
+                var v = this.data.getInt8(this.offset + this.relativeOffset);
+                this.relativeOffset += 1;
+                return v;
+              };
+
+              Parser.prototype.parseCard8 = Parser.prototype.parseByte;
+
+              Parser.prototype.parseUShort = function() {
+                var v = this.data.getUint16(this.offset + this.relativeOffset);
+                this.relativeOffset += 2;
+                return v;
+              };
+
+              Parser.prototype.parseCard16 = Parser.prototype.parseUShort;
+              Parser.prototype.parseSID = Parser.prototype.parseUShort;
+              Parser.prototype.parseOffset16 = Parser.prototype.parseUShort;
+
+              Parser.prototype.parseShort = function() {
+                var v = this.data.getInt16(this.offset + this.relativeOffset);
+                this.relativeOffset += 2;
+                return v;
+              };
+
+              Parser.prototype.parseF2Dot14 = function() {
+                var v = this.data.getInt16(this.offset + this.relativeOffset) / 16384;
+                this.relativeOffset += 2;
+                return v;
+              };
+
+              Parser.prototype.parseULong = function() {
+                var v = getULong(this.data, this.offset + this.relativeOffset);
+                this.relativeOffset += 4;
+                return v;
+              };
+
+              Parser.prototype.parseOffset32 = Parser.prototype.parseULong;
+
+              Parser.prototype.parseFixed = function() {
+                var v = getFixed(this.data, this.offset + this.relativeOffset);
+                this.relativeOffset += 4;
+                return v;
+              };
+
+              Parser.prototype.parseString = function(length) {
+                var dataView = this.data;
+                var offset = this.offset + this.relativeOffset;
+                var string = '';
+                this.relativeOffset += length;
+                for (var i = 0; i < length; i++) {
+                  string += String.fromCharCode(dataView.getUint8(offset + i));
+                }
+
+                return string;
+              };
+
+              Parser.prototype.parseTag = function() {
+                return this.parseString(4);
+              };
+
+              // LONGDATETIME is a 64-bit integer.
+              // JavaScript and unix timestamps traditionally use 32 bits, so we
+              // only take the last 32 bits.
+              // + Since until 2038 those bits will be filled by zeros we can ignore them.
+              Parser.prototype.parseLongDateTime = function() {
+                var v = getULong(this.data, this.offset + this.relativeOffset + 4);
+                // Subtract seconds between 01/01/1904 and 01/01/1970
+                // to convert Apple Mac timestamp to Standard Unix timestamp
+                v -= 2082844800;
+                this.relativeOffset += 8;
+                return v;
+              };
+
+              Parser.prototype.parseVersion = function(minorBase) {
+                var major = getUShort(this.data, this.offset + this.relativeOffset);
+
+                // How to interpret the minor version is very vague in the spec. 0x5000 is 5, 0x1000 is 1
+                // Default returns the correct number if minor = 0xN000 where N is 0-9
+                // Set minorBase to 1 for tables that use minor = N where N is 0-9
+                var minor = getUShort(this.data, this.offset + this.relativeOffset + 2);
+                this.relativeOffset += 4;
+                if (minorBase === undefined) {
+                  minorBase = 0x1000;
+                }
+                return major + minor / minorBase / 10;
+              };
+
+              Parser.prototype.skip = function(type, amount) {
+                if (amount === undefined) {
+                  amount = 1;
