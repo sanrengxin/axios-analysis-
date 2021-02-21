@@ -27339,3 +27339,126 @@
                   if (value === undefined) {
                     value = field.value;
                   }
+
+                  numBytes += sizeOfFunction(value);
+
+                  // Subtables take 2 more bytes for offsets.
+                  if (field.type === 'TABLE') {
+                    numBytes += 2;
+                  }
+                }
+
+                return numBytes;
+              };
+
+              encode.RECORD = encode.TABLE;
+              sizeOf.RECORD = sizeOf.TABLE;
+
+              // Merge in a list of bytes.
+              encode.LITERAL = function(v) {
+                return v;
+              };
+
+              sizeOf.LITERAL = function(v) {
+                return v.length;
+              };
+
+              // Table metadata
+
+              /**
+               * @exports opentype.Table
+               * @class
+               * @param {string} tableName
+               * @param {Array} fields
+               * @param {Object} options
+               * @constructor
+               */
+              function Table(tableName, fields, options) {
+                var this$1 = this;
+
+                for (var i = 0; i < fields.length; i += 1) {
+                  var field = fields[i];
+                  this$1[field.name] = field.value;
+                }
+
+                this.tableName = tableName;
+                this.fields = fields;
+                if (options) {
+                  var optionKeys = Object.keys(options);
+                  for (var i$1 = 0; i$1 < optionKeys.length; i$1 += 1) {
+                    var k = optionKeys[i$1];
+                    var v = options[k];
+                    if (this$1[k] !== undefined) {
+                      this$1[k] = v;
+                    }
+                  }
+                }
+              }
+
+              /**
+               * Encodes the table and returns an array of bytes
+               * @return {Array}
+               */
+              Table.prototype.encode = function() {
+                return encode.TABLE(this);
+              };
+
+              /**
+               * Get the size of the table.
+               * @return {number}
+               */
+              Table.prototype.sizeOf = function() {
+                return sizeOf.TABLE(this);
+              };
+
+              /**
+               * @private
+               */
+              function ushortList(itemName, list, count) {
+                if (count === undefined) {
+                  count = list.length;
+                }
+                var fields = new Array(list.length + 1);
+                fields[0] = { name: itemName + 'Count', type: 'USHORT', value: count };
+                for (var i = 0; i < list.length; i++) {
+                  fields[i + 1] = { name: itemName + i, type: 'USHORT', value: list[i] };
+                }
+                return fields;
+              }
+
+              /**
+               * @private
+               */
+              function tableList(itemName, records, itemCallback) {
+                var count = records.length;
+                var fields = new Array(count + 1);
+                fields[0] = { name: itemName + 'Count', type: 'USHORT', value: count };
+                for (var i = 0; i < count; i++) {
+                  fields[i + 1] = {
+                    name: itemName + i,
+                    type: 'TABLE',
+                    value: itemCallback(records[i], i)
+                  };
+                }
+                return fields;
+              }
+
+              /**
+               * @private
+               */
+              function recordList(itemName, records, itemCallback) {
+                var count = records.length;
+                var fields = [];
+                fields[0] = { name: itemName + 'Count', type: 'USHORT', value: count };
+                for (var i = 0; i < count; i++) {
+                  fields = fields.concat(itemCallback(records[i], i));
+                }
+                return fields;
+              }
+
+              // Common Layout Tables
+
+              /**
+               * @exports opentype.Coverage
+               * @class
+               * @param {opentype.Table}
