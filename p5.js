@@ -27583,3 +27583,127 @@
                           [
                             {
                               name: 'featureParams',
+                              type: 'USHORT',
+                              value: feature.featureParams
+                            }
+                          ].concat(ushortList('lookupListIndex', feature.lookupListIndexes))
+                        )
+                      }
+                    ];
+                  })
+                );
+              }
+              FeatureList.prototype = Object.create(Table.prototype);
+              FeatureList.prototype.constructor = FeatureList;
+
+              /**
+               * @exports opentype.LookupList
+               * @class
+               * @param {opentype.Table}
+               * @param {Object}
+               * @constructor
+               * @extends opentype.Table
+               */
+              function LookupList(lookupListTable, subtableMakers) {
+                Table.call(
+                  this,
+                  'lookupListTable',
+                  tableList('lookup', lookupListTable, function(lookupTable) {
+                    var subtableCallback = subtableMakers[lookupTable.lookupType];
+                    check.assert(
+                      !!subtableCallback,
+                      'Unable to write GSUB lookup type ' +
+                        lookupTable.lookupType +
+                        ' tables.'
+                    );
+                    return new Table(
+                      'lookupTable',
+                      [
+                        {
+                          name: 'lookupType',
+                          type: 'USHORT',
+                          value: lookupTable.lookupType
+                        },
+                        {
+                          name: 'lookupFlag',
+                          type: 'USHORT',
+                          value: lookupTable.lookupFlag
+                        }
+                      ].concat(
+                        tableList('subtable', lookupTable.subtables, subtableCallback)
+                      )
+                    );
+                  })
+                );
+              }
+              LookupList.prototype = Object.create(Table.prototype);
+              LookupList.prototype.constructor = LookupList;
+
+              // Record = same as Table, but inlined (a Table has an offset and its data is further in the stream)
+              // Don't use offsets inside Records (probable bug), only in Tables.
+              var table = {
+                Table: Table,
+                Record: Table,
+                Coverage: Coverage,
+                ScriptList: ScriptList,
+                FeatureList: FeatureList,
+                LookupList: LookupList,
+                ushortList: ushortList,
+                tableList: tableList,
+                recordList: recordList
+              };
+
+              // Parsing utility functions
+
+              // Retrieve an unsigned byte from the DataView.
+              function getByte(dataView, offset) {
+                return dataView.getUint8(offset);
+              }
+
+              // Retrieve an unsigned 16-bit short from the DataView.
+              // The value is stored in big endian.
+              function getUShort(dataView, offset) {
+                return dataView.getUint16(offset, false);
+              }
+
+              // Retrieve a signed 16-bit short from the DataView.
+              // The value is stored in big endian.
+              function getShort(dataView, offset) {
+                return dataView.getInt16(offset, false);
+              }
+
+              // Retrieve an unsigned 32-bit long from the DataView.
+              // The value is stored in big endian.
+              function getULong(dataView, offset) {
+                return dataView.getUint32(offset, false);
+              }
+
+              // Retrieve a 32-bit signed fixed-point number (16.16) from the DataView.
+              // The value is stored in big endian.
+              function getFixed(dataView, offset) {
+                var decimal = dataView.getInt16(offset, false);
+                var fraction = dataView.getUint16(offset + 2, false);
+                return decimal + fraction / 65535;
+              }
+
+              // Retrieve a 4-character tag from the DataView.
+              // Tags are used to identify tables.
+              function getTag(dataView, offset) {
+                var tag = '';
+                for (var i = offset; i < offset + 4; i += 1) {
+                  tag += String.fromCharCode(dataView.getInt8(i));
+                }
+
+                return tag;
+              }
+
+              // Retrieve an offset from the DataView.
+              // Offsets are 1 to 4 bytes in length, depending on the offSize argument.
+              function getOffset(dataView, offset, offSize) {
+                var v = 0;
+                for (var i = 0; i < offSize; i += 1) {
+                  v <<= 8;
+                  v += dataView.getUint8(offset + i);
+                }
+
+                return v;
