@@ -27843,3 +27843,124 @@
               Parser.prototype.skip = function(type, amount) {
                 if (amount === undefined) {
                   amount = 1;
+                }
+
+                this.relativeOffset += typeOffsets[type] * amount;
+              };
+
+              ///// Parsing lists and records ///////////////////////////////
+
+              // Parse a list of 32 bit unsigned integers.
+              Parser.prototype.parseULongList = function(count) {
+                if (count === undefined) {
+                  count = this.parseULong();
+                }
+                var offsets = new Array(count);
+                var dataView = this.data;
+                var offset = this.offset + this.relativeOffset;
+                for (var i = 0; i < count; i++) {
+                  offsets[i] = dataView.getUint32(offset);
+                  offset += 4;
+                }
+
+                this.relativeOffset += count * 4;
+                return offsets;
+              };
+
+              // Parse a list of 16 bit unsigned integers. The length of the list can be read on the stream
+              // or provided as an argument.
+              Parser.prototype.parseOffset16List = Parser.prototype.parseUShortList = function(
+                count
+              ) {
+                if (count === undefined) {
+                  count = this.parseUShort();
+                }
+                var offsets = new Array(count);
+                var dataView = this.data;
+                var offset = this.offset + this.relativeOffset;
+                for (var i = 0; i < count; i++) {
+                  offsets[i] = dataView.getUint16(offset);
+                  offset += 2;
+                }
+
+                this.relativeOffset += count * 2;
+                return offsets;
+              };
+
+              // Parses a list of 16 bit signed integers.
+              Parser.prototype.parseShortList = function(count) {
+                var list = new Array(count);
+                var dataView = this.data;
+                var offset = this.offset + this.relativeOffset;
+                for (var i = 0; i < count; i++) {
+                  list[i] = dataView.getInt16(offset);
+                  offset += 2;
+                }
+
+                this.relativeOffset += count * 2;
+                return list;
+              };
+
+              // Parses a list of bytes.
+              Parser.prototype.parseByteList = function(count) {
+                var list = new Array(count);
+                var dataView = this.data;
+                var offset = this.offset + this.relativeOffset;
+                for (var i = 0; i < count; i++) {
+                  list[i] = dataView.getUint8(offset++);
+                }
+
+                this.relativeOffset += count;
+                return list;
+              };
+
+              /**
+               * Parse a list of items.
+               * Record count is optional, if omitted it is read from the stream.
+               * itemCallback is one of the Parser methods.
+               */
+              Parser.prototype.parseList = function(count, itemCallback) {
+                var this$1 = this;
+
+                if (!itemCallback) {
+                  itemCallback = count;
+                  count = this.parseUShort();
+                }
+                var list = new Array(count);
+                for (var i = 0; i < count; i++) {
+                  list[i] = itemCallback.call(this$1);
+                }
+                return list;
+              };
+
+              Parser.prototype.parseList32 = function(count, itemCallback) {
+                var this$1 = this;
+
+                if (!itemCallback) {
+                  itemCallback = count;
+                  count = this.parseULong();
+                }
+                var list = new Array(count);
+                for (var i = 0; i < count; i++) {
+                  list[i] = itemCallback.call(this$1);
+                }
+                return list;
+              };
+
+              /**
+               * Parse a list of records.
+               * Record count is optional, if omitted it is read from the stream.
+               * Example of recordDescription: { sequenceIndex: Parser.uShort, lookupListIndex: Parser.uShort }
+               */
+              Parser.prototype.parseRecordList = function(count, recordDescription) {
+                var this$1 = this;
+
+                // If the count argument is absent, read it in the stream.
+                if (!recordDescription) {
+                  recordDescription = count;
+                  count = this.parseUShort();
+                }
+                var records = new Array(count);
+                var fields = Object.keys(recordDescription);
+                for (var i = 0; i < count; i++) {
+                  var rec = {};
