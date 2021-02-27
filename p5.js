@@ -27964,3 +27964,145 @@
                 var fields = Object.keys(recordDescription);
                 for (var i = 0; i < count; i++) {
                   var rec = {};
+                  for (var j = 0; j < fields.length; j++) {
+                    var fieldName = fields[j];
+                    var fieldType = recordDescription[fieldName];
+                    rec[fieldName] = fieldType.call(this$1);
+                  }
+                  records[i] = rec;
+                }
+                return records;
+              };
+
+              Parser.prototype.parseRecordList32 = function(count, recordDescription) {
+                var this$1 = this;
+
+                // If the count argument is absent, read it in the stream.
+                if (!recordDescription) {
+                  recordDescription = count;
+                  count = this.parseULong();
+                }
+                var records = new Array(count);
+                var fields = Object.keys(recordDescription);
+                for (var i = 0; i < count; i++) {
+                  var rec = {};
+                  for (var j = 0; j < fields.length; j++) {
+                    var fieldName = fields[j];
+                    var fieldType = recordDescription[fieldName];
+                    rec[fieldName] = fieldType.call(this$1);
+                  }
+                  records[i] = rec;
+                }
+                return records;
+              };
+
+              // Parse a data structure into an object
+              // Example of description: { sequenceIndex: Parser.uShort, lookupListIndex: Parser.uShort }
+              Parser.prototype.parseStruct = function(description) {
+                var this$1 = this;
+
+                if (typeof description === 'function') {
+                  return description.call(this);
+                } else {
+                  var fields = Object.keys(description);
+                  var struct = {};
+                  for (var j = 0; j < fields.length; j++) {
+                    var fieldName = fields[j];
+                    var fieldType = description[fieldName];
+                    struct[fieldName] = fieldType.call(this$1);
+                  }
+                  return struct;
+                }
+              };
+
+              /**
+               * Parse a GPOS valueRecord
+               * https://docs.microsoft.com/en-us/typography/opentype/spec/gpos#value-record
+               * valueFormat is optional, if omitted it is read from the stream.
+               */
+              Parser.prototype.parseValueRecord = function(valueFormat) {
+                if (valueFormat === undefined) {
+                  valueFormat = this.parseUShort();
+                }
+                if (valueFormat === 0) {
+                  // valueFormat2 in kerning pairs is most often 0
+                  // in this case return undefined instead of an empty object, to save space
+                  return;
+                }
+                var valueRecord = {};
+
+                if (valueFormat & 0x0001) {
+                  valueRecord.xPlacement = this.parseShort();
+                }
+                if (valueFormat & 0x0002) {
+                  valueRecord.yPlacement = this.parseShort();
+                }
+                if (valueFormat & 0x0004) {
+                  valueRecord.xAdvance = this.parseShort();
+                }
+                if (valueFormat & 0x0008) {
+                  valueRecord.yAdvance = this.parseShort();
+                }
+
+                // Device table (non-variable font) / VariationIndex table (variable font) not supported
+                // https://docs.microsoft.com/fr-fr/typography/opentype/spec/chapter2#devVarIdxTbls
+                if (valueFormat & 0x0010) {
+                  valueRecord.xPlaDevice = undefined;
+                  this.parseShort();
+                }
+                if (valueFormat & 0x0020) {
+                  valueRecord.yPlaDevice = undefined;
+                  this.parseShort();
+                }
+                if (valueFormat & 0x0040) {
+                  valueRecord.xAdvDevice = undefined;
+                  this.parseShort();
+                }
+                if (valueFormat & 0x0080) {
+                  valueRecord.yAdvDevice = undefined;
+                  this.parseShort();
+                }
+
+                return valueRecord;
+              };
+
+              /**
+               * Parse a list of GPOS valueRecords
+               * https://docs.microsoft.com/en-us/typography/opentype/spec/gpos#value-record
+               * valueFormat and valueCount are read from the stream.
+               */
+              Parser.prototype.parseValueRecordList = function() {
+                var this$1 = this;
+
+                var valueFormat = this.parseUShort();
+                var valueCount = this.parseUShort();
+                var values = new Array(valueCount);
+                for (var i = 0; i < valueCount; i++) {
+                  values[i] = this$1.parseValueRecord(valueFormat);
+                }
+                return values;
+              };
+
+              Parser.prototype.parsePointer = function(description) {
+                var structOffset = this.parseOffset16();
+                if (structOffset > 0) {
+                  // NULL offset => return undefined
+                  return new Parser(this.data, this.offset + structOffset).parseStruct(
+                    description
+                  );
+                }
+                return undefined;
+              };
+
+              Parser.prototype.parsePointer32 = function(description) {
+                var structOffset = this.parseOffset32();
+                if (structOffset > 0) {
+                  // NULL offset => return undefined
+                  return new Parser(this.data, this.offset + structOffset).parseStruct(
+                    description
+                  );
+                }
+                return undefined;
+              };
+
+              /**
