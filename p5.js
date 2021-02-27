@@ -28106,3 +28106,134 @@
               };
 
               /**
+               * Parse a list of offsets to lists of 16-bit integers,
+               * or a list of offsets to lists of offsets to any kind of items.
+               * If itemCallback is not provided, a list of list of UShort is assumed.
+               * If provided, itemCallback is called on each item and must parse the item.
+               * See examples in tables/gsub.js
+               */
+              Parser.prototype.parseListOfLists = function(itemCallback) {
+                var this$1 = this;
+
+                var offsets = this.parseOffset16List();
+                var count = offsets.length;
+                var relativeOffset = this.relativeOffset;
+                var list = new Array(count);
+                for (var i = 0; i < count; i++) {
+                  var start = offsets[i];
+                  if (start === 0) {
+                    // NULL offset
+                    // Add i as owned property to list. Convenient with assert.
+                    list[i] = undefined;
+                    continue;
+                  }
+                  this$1.relativeOffset = start;
+                  if (itemCallback) {
+                    var subOffsets = this$1.parseOffset16List();
+                    var subList = new Array(subOffsets.length);
+                    for (var j = 0; j < subOffsets.length; j++) {
+                      this$1.relativeOffset = start + subOffsets[j];
+                      subList[j] = itemCallback.call(this$1);
+                    }
+                    list[i] = subList;
+                  } else {
+                    list[i] = this$1.parseUShortList();
+                  }
+                }
+                this.relativeOffset = relativeOffset;
+                return list;
+              };
+
+              ///// Complex tables parsing //////////////////////////////////
+
+              // Parse a coverage table in a GSUB, GPOS or GDEF table.
+              // https://www.microsoft.com/typography/OTSPEC/chapter2.htm
+              // parser.offset must point to the start of the table containing the coverage.
+              Parser.prototype.parseCoverage = function() {
+                var this$1 = this;
+
+                var startOffset = this.offset + this.relativeOffset;
+                var format = this.parseUShort();
+                var count = this.parseUShort();
+                if (format === 1) {
+                  return {
+                    format: 1,
+                    glyphs: this.parseUShortList(count)
+                  };
+                } else if (format === 2) {
+                  var ranges = new Array(count);
+                  for (var i = 0; i < count; i++) {
+                    ranges[i] = {
+                      start: this$1.parseUShort(),
+                      end: this$1.parseUShort(),
+                      index: this$1.parseUShort()
+                    };
+                  }
+                  return {
+                    format: 2,
+                    ranges: ranges
+                  };
+                }
+                throw new Error(
+                  '0x' + startOffset.toString(16) + ': Coverage format must be 1 or 2.'
+                );
+              };
+
+              // Parse a Class Definition Table in a GSUB, GPOS or GDEF table.
+              // https://www.microsoft.com/typography/OTSPEC/chapter2.htm
+              Parser.prototype.parseClassDef = function() {
+                var startOffset = this.offset + this.relativeOffset;
+                var format = this.parseUShort();
+                if (format === 1) {
+                  return {
+                    format: 1,
+                    startGlyph: this.parseUShort(),
+                    classes: this.parseUShortList()
+                  };
+                } else if (format === 2) {
+                  return {
+                    format: 2,
+                    ranges: this.parseRecordList({
+                      start: Parser.uShort,
+                      end: Parser.uShort,
+                      classId: Parser.uShort
+                    })
+                  };
+                }
+                throw new Error(
+                  '0x' + startOffset.toString(16) + ': ClassDef format must be 1 or 2.'
+                );
+              };
+
+              ///// Static methods ///////////////////////////////////
+              // These convenience methods can be used as callbacks and should be called with "this" context set to a Parser instance.
+
+              Parser.list = function(count, itemCallback) {
+                return function() {
+                  return this.parseList(count, itemCallback);
+                };
+              };
+
+              Parser.list32 = function(count, itemCallback) {
+                return function() {
+                  return this.parseList32(count, itemCallback);
+                };
+              };
+
+              Parser.recordList = function(count, recordDescription) {
+                return function() {
+                  return this.parseRecordList(count, recordDescription);
+                };
+              };
+
+              Parser.recordList32 = function(count, recordDescription) {
+                return function() {
+                  return this.parseRecordList32(count, recordDescription);
+                };
+              };
+
+              Parser.pointer = function(description) {
+                return function() {
+                  return this.parsePointer(description);
+                };
+              };
