@@ -28237,3 +28237,134 @@
                   return this.parsePointer(description);
                 };
               };
+
+              Parser.pointer32 = function(description) {
+                return function() {
+                  return this.parsePointer32(description);
+                };
+              };
+
+              Parser.tag = Parser.prototype.parseTag;
+              Parser.byte = Parser.prototype.parseByte;
+              Parser.uShort = Parser.offset16 = Parser.prototype.parseUShort;
+              Parser.uShortList = Parser.prototype.parseUShortList;
+              Parser.uLong = Parser.offset32 = Parser.prototype.parseULong;
+              Parser.uLongList = Parser.prototype.parseULongList;
+              Parser.struct = Parser.prototype.parseStruct;
+              Parser.coverage = Parser.prototype.parseCoverage;
+              Parser.classDef = Parser.prototype.parseClassDef;
+
+              ///// Script, Feature, Lookup lists ///////////////////////////////////////////////
+              // https://www.microsoft.com/typography/OTSPEC/chapter2.htm
+
+              var langSysTable = {
+                reserved: Parser.uShort,
+                reqFeatureIndex: Parser.uShort,
+                featureIndexes: Parser.uShortList
+              };
+
+              Parser.prototype.parseScriptList = function() {
+                return (
+                  this.parsePointer(
+                    Parser.recordList({
+                      tag: Parser.tag,
+                      script: Parser.pointer({
+                        defaultLangSys: Parser.pointer(langSysTable),
+                        langSysRecords: Parser.recordList({
+                          tag: Parser.tag,
+                          langSys: Parser.pointer(langSysTable)
+                        })
+                      })
+                    })
+                  ) || []
+                );
+              };
+
+              Parser.prototype.parseFeatureList = function() {
+                return (
+                  this.parsePointer(
+                    Parser.recordList({
+                      tag: Parser.tag,
+                      feature: Parser.pointer({
+                        featureParams: Parser.offset16,
+                        lookupListIndexes: Parser.uShortList
+                      })
+                    })
+                  ) || []
+                );
+              };
+
+              Parser.prototype.parseLookupList = function(lookupTableParsers) {
+                return (
+                  this.parsePointer(
+                    Parser.list(
+                      Parser.pointer(function() {
+                        var lookupType = this.parseUShort();
+                        check.argument(
+                          1 <= lookupType && lookupType <= 9,
+                          'GPOS/GSUB lookup type ' + lookupType + ' unknown.'
+                        );
+                        var lookupFlag = this.parseUShort();
+                        var useMarkFilteringSet = lookupFlag & 0x10;
+                        return {
+                          lookupType: lookupType,
+                          lookupFlag: lookupFlag,
+                          subtables: this.parseList(
+                            Parser.pointer(lookupTableParsers[lookupType])
+                          ),
+                          markFilteringSet: useMarkFilteringSet
+                            ? this.parseUShort()
+                            : undefined
+                        };
+                      })
+                    )
+                  ) || []
+                );
+              };
+
+              Parser.prototype.parseFeatureVariationsList = function() {
+                return (
+                  this.parsePointer32(function() {
+                    var majorVersion = this.parseUShort();
+                    var minorVersion = this.parseUShort();
+                    check.argument(
+                      majorVersion === 1 && minorVersion < 1,
+                      'GPOS/GSUB feature variations table unknown.'
+                    );
+                    var featureVariations = this.parseRecordList32({
+                      conditionSetOffset: Parser.offset32,
+                      featureTableSubstitutionOffset: Parser.offset32
+                    });
+                    return featureVariations;
+                  }) || []
+                );
+              };
+
+              var parse = {
+                getByte: getByte,
+                getCard8: getByte,
+                getUShort: getUShort,
+                getCard16: getUShort,
+                getShort: getShort,
+                getULong: getULong,
+                getFixed: getFixed,
+                getTag: getTag,
+                getOffset: getOffset,
+                getBytes: getBytes,
+                bytesToString: bytesToString,
+                Parser: Parser
+              };
+
+              // The `cmap` table stores the mappings from characters to glyphs.
+
+              function parseCmapTableFormat12(cmap, p) {
+                //Skip reserved.
+                p.parseUShort();
+
+                // Length in bytes of the sub-tables.
+                cmap.length = p.parseULong();
+                cmap.language = p.parseULong();
+
+                var groupCount;
+                cmap.groupCount = groupCount = p.parseULong();
+                cmap.glyphIndexMap = {};
