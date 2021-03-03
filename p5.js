@@ -28651,3 +28651,138 @@
                 }
 
                 // CMAP 4 Subtable
+                t.segCountX2 = (segCount - segCountToRemove) * 2;
+                t.searchRange =
+                  Math.pow(
+                    2,
+                    Math.floor(Math.log(segCount - segCountToRemove) / Math.log(2))
+                  ) * 2;
+                t.entrySelector = Math.log(t.searchRange / 2) / Math.log(2);
+                t.rangeShift = t.segCountX2 - t.searchRange;
+
+                t.fields = t.fields.concat(endCounts);
+                t.fields.push({ name: 'reservedPad', type: 'USHORT', value: 0 });
+                t.fields = t.fields.concat(startCounts);
+                t.fields = t.fields.concat(idDeltas);
+                t.fields = t.fields.concat(idRangeOffsets);
+                t.fields = t.fields.concat(glyphIds);
+
+                t.cmap4Length =
+                  14 + // Subtable header
+                  endCounts.length * 2 +
+                  2 + // reservedPad
+                  startCounts.length * 2 +
+                  idDeltas.length * 2 +
+                  idRangeOffsets.length * 2 +
+                  glyphIds.length * 2;
+
+                if (!isPlan0Only) {
+                  // CMAP 12 Subtable
+                  var cmap12Length =
+                    16 + // Subtable header
+                    cmap12Groups.length * 4;
+
+                  t.cmap12Offset = 12 + 2 * 2 + 4 + t.cmap4Length;
+                  t.fields = t.fields.concat([
+                    { name: 'cmap12Format', type: 'USHORT', value: 12 },
+                    { name: 'cmap12Reserved', type: 'USHORT', value: 0 },
+                    { name: 'cmap12Length', type: 'ULONG', value: cmap12Length },
+                    { name: 'cmap12Language', type: 'ULONG', value: 0 },
+                    { name: 'cmap12nGroups', type: 'ULONG', value: cmap12Groups.length / 3 }
+                  ]);
+
+                  t.fields = t.fields.concat(cmap12Groups);
+                }
+
+                return t;
+              }
+
+              var cmap = { parse: parseCmapTable, make: makeCmapTable };
+
+              // Glyph encoding
+
+              var cffStandardStrings = [
+                '.notdef',
+                'space',
+                'exclam',
+                'quotedbl',
+                'numbersign',
+                'dollar',
+                'percent',
+                'ampersand',
+                'quoteright',
+                'parenleft',
+                'parenright',
+                'asterisk',
+                'plus',
+                'comma',
+                'hyphen',
+                'period',
+                'slash',
+                'zero',
+                'one',
+                'two',
+                'three',
+                'four',
+                'five',
+                'six',
+                'seven',
+                'eight',
+                'nine',
+                'colon',
+                'semicolon',
+                'less',
+                'equal',
+                'greater',
+                'question',
+                'at',
+                'A',
+                'B',
+                'C',
+                'D',
+                'E',
+                'F',
+                'G',
+                'H',
+                'I',
+                'J',
+                'K',
+                'L',
+                'M',
+                'N',
+                'O',
+                'P',
+                'Q',
+                'R',
+                'S',
+                'T',
+                'U',
+                'V',
+                'W',
+                'X',
+                'Y',
+                'Z',
+                'bracketleft',
+                'backslash',
+                'bracketright',
+                'asciicircum',
+                'underscore',
+                'quoteleft',
+                'a',
+                'b',
+                'c',
+                'd',
+                'e',
+                'f',
+                'g',
+                'h',
+                'i',
+                'j',
+                'k',
+                'l',
+                'm',
+                'n',
+                'o',
+                'p',
+                'q',
+                'r',
