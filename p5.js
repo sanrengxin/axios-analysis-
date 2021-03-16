@@ -29763,3 +29763,137 @@
                 'mu',
                 'partialdiff',
                 'summation',
+                'product',
+                'pi',
+                'integral',
+                'ordfeminine',
+                'ordmasculine',
+                'Omega',
+                'ae',
+                'oslash',
+                'questiondown',
+                'exclamdown',
+                'logicalnot',
+                'radical',
+                'florin',
+                'approxequal',
+                'Delta',
+                'guillemotleft',
+                'guillemotright',
+                'ellipsis',
+                'nonbreakingspace',
+                'Agrave',
+                'Atilde',
+                'Otilde',
+                'OE',
+                'oe',
+                'endash',
+                'emdash',
+                'quotedblleft',
+                'quotedblright',
+                'quoteleft',
+                'quoteright',
+                'divide',
+                'lozenge',
+                'ydieresis',
+                'Ydieresis',
+                'fraction',
+                'currency',
+                'guilsinglleft',
+                'guilsinglright',
+                'fi',
+                'fl',
+                'daggerdbl',
+                'periodcentered',
+                'quotesinglbase',
+                'quotedblbase',
+                'perthousand',
+                'Acircumflex',
+                'Ecircumflex',
+                'Aacute',
+                'Edieresis',
+                'Egrave',
+                'Iacute',
+                'Icircumflex',
+                'Idieresis',
+                'Igrave',
+                'Oacute',
+                'Ocircumflex',
+                'apple',
+                'Ograve',
+                'Uacute',
+                'Ucircumflex',
+                'Ugrave',
+                'dotlessi',
+                'circumflex',
+                'tilde',
+                'macron',
+                'breve',
+                'dotaccent',
+                'ring',
+                'cedilla',
+                'hungarumlaut',
+                'ogonek',
+                'caron',
+                'Lslash',
+                'lslash',
+                'Scaron',
+                'scaron',
+                'Zcaron',
+                'zcaron',
+                'brokenbar',
+                'Eth',
+                'eth',
+                'Yacute',
+                'yacute',
+                'Thorn',
+                'thorn',
+                'minus',
+                'multiply',
+                'onesuperior',
+                'twosuperior',
+                'threesuperior',
+                'onehalf',
+                'onequarter',
+                'threequarters',
+                'franc',
+                'Gbreve',
+                'gbreve',
+                'Idotaccent',
+                'Scedilla',
+                'scedilla',
+                'Cacute',
+                'cacute',
+                'Ccaron',
+                'ccaron',
+                'dcroat'
+              ];
+
+              /**
+               * This is the encoding used for fonts created from scratch.
+               * It loops through all glyphs and finds the appropriate unicode value.
+               * Since it's linear time, other encodings will be faster.
+               * @exports opentype.DefaultEncoding
+               * @class
+               * @constructor
+               * @param {opentype.Font}
+               */
+              function DefaultEncoding(font) {
+                this.font = font;
+              }
+
+              DefaultEncoding.prototype.charToGlyphIndex = function(c) {
+                var code = c.codePointAt(0);
+                var glyphs = this.font.glyphs;
+                if (glyphs) {
+                  for (var i = 0; i < glyphs.length; i += 1) {
+                    var glyph = glyphs.get(i);
+                    for (var j = 0; j < glyph.unicodes.length; j += 1) {
+                      if (glyph.unicodes[j] === code) {
+                        return i;
+                      }
+                    }
+                  }
+                }
+                return null;
+              };
