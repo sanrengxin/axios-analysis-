@@ -29897,3 +29897,140 @@
                 }
                 return null;
               };
+
+              /**
+               * @exports opentype.CmapEncoding
+               * @class
+               * @constructor
+               * @param {Object} cmap - a object with the cmap encoded data
+               */
+              function CmapEncoding(cmap) {
+                this.cmap = cmap;
+              }
+
+              /**
+               * @param  {string} c - the character
+               * @return {number} The glyph index.
+               */
+              CmapEncoding.prototype.charToGlyphIndex = function(c) {
+                return this.cmap.glyphIndexMap[c.codePointAt(0)] || 0;
+              };
+
+              /**
+               * @exports opentype.CffEncoding
+               * @class
+               * @constructor
+               * @param {string} encoding - The encoding
+               * @param {Array} charset - The character set.
+               */
+              function CffEncoding(encoding, charset) {
+                this.encoding = encoding;
+                this.charset = charset;
+              }
+
+              /**
+               * @param  {string} s - The character
+               * @return {number} The index.
+               */
+              CffEncoding.prototype.charToGlyphIndex = function(s) {
+                var code = s.codePointAt(0);
+                var charName = this.encoding[code];
+                return this.charset.indexOf(charName);
+              };
+
+              /**
+               * @exports opentype.GlyphNames
+               * @class
+               * @constructor
+               * @param {Object} post
+               */
+              function GlyphNames(post) {
+                var this$1 = this;
+
+                switch (post.version) {
+                  case 1:
+                    this.names = standardNames.slice();
+                    break;
+                  case 2:
+                    this.names = new Array(post.numberOfGlyphs);
+                    for (var i = 0; i < post.numberOfGlyphs; i++) {
+                      if (post.glyphNameIndex[i] < standardNames.length) {
+                        this$1.names[i] = standardNames[post.glyphNameIndex[i]];
+                      } else {
+                        this$1.names[i] =
+                          post.names[post.glyphNameIndex[i] - standardNames.length];
+                      }
+                    }
+
+                    break;
+                  case 2.5:
+                    this.names = new Array(post.numberOfGlyphs);
+                    for (var i$1 = 0; i$1 < post.numberOfGlyphs; i$1++) {
+                      this$1.names[i$1] = standardNames[i$1 + post.glyphNameIndex[i$1]];
+                    }
+
+                    break;
+                  case 3:
+                    this.names = [];
+                    break;
+                  default:
+                    this.names = [];
+                    break;
+                }
+              }
+
+              /**
+               * Gets the index of a glyph by name.
+               * @param  {string} name - The glyph name
+               * @return {number} The index
+               */
+              GlyphNames.prototype.nameToGlyphIndex = function(name) {
+                return this.names.indexOf(name);
+              };
+
+              /**
+               * @param  {number} gid
+               * @return {string}
+               */
+              GlyphNames.prototype.glyphIndexToName = function(gid) {
+                return this.names[gid];
+              };
+
+              /**
+               * @alias opentype.addGlyphNames
+               * @param {opentype.Font}
+               */
+              function addGlyphNames(font) {
+                var glyph;
+                var glyphIndexMap = font.tables.cmap.glyphIndexMap;
+                var charCodes = Object.keys(glyphIndexMap);
+
+                for (var i = 0; i < charCodes.length; i += 1) {
+                  var c = charCodes[i];
+                  var glyphIndex = glyphIndexMap[c];
+                  glyph = font.glyphs.get(glyphIndex);
+                  glyph.addUnicode(parseInt(c));
+                }
+
+                for (var i$1 = 0; i$1 < font.glyphs.length; i$1 += 1) {
+                  glyph = font.glyphs.get(i$1);
+                  if (font.cffEncoding) {
+                    if (font.isCIDFont) {
+                      glyph.name = 'gid' + i$1;
+                    } else {
+                      glyph.name = font.cffEncoding.charset[i$1];
+                    }
+                  } else if (font.glyphNames.names) {
+                    glyph.name = font.glyphNames.glyphIndexToName(i$1);
+                  }
+                }
+              }
+
+              // Drawing utility functions.
+
+              // Draw a line on the given context from point `x1,y1` to point `x2,y2`.
+              function line(ctx, x1, y1, x2, y2) {
+                ctx.beginPath();
+                ctx.moveTo(x1, y1);
+                ctx.lineTo(x2, y2);
+                ctx.stroke();
