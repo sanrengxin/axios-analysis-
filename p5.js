@@ -30154,3 +30154,143 @@
                * Convert the glyph to a Path we can draw on a drawing context.
                * @param  {number} [x=0] - Horizontal position of the beginning of the text.
                * @param  {number} [y=0] - Vertical position of the *baseline* of the text.
+               * @param  {number} [fontSize=72] - Font size in pixels. We scale the glyph units by `1 / unitsPerEm * fontSize`.
+               * @param  {Object=} options - xScale, yScale to stretch the glyph.
+               * @param  {opentype.Font} if hinting is to be used, the font
+               * @return {opentype.Path}
+               */
+              Glyph.prototype.getPath = function(x, y, fontSize, options, font) {
+                x = x !== undefined ? x : 0;
+                y = y !== undefined ? y : 0;
+                fontSize = fontSize !== undefined ? fontSize : 72;
+                var commands;
+                var hPoints;
+                if (!options) {
+                  options = {};
+                }
+                var xScale = options.xScale;
+                var yScale = options.yScale;
+
+                if (options.hinting && font && font.hinting) {
+                  // in case of hinting, the hinting engine takes care
+                  // of scaling the points (not the path) before hinting.
+                  hPoints = this.path && font.hinting.exec(this, fontSize);
+                  // in case the hinting engine failed hPoints is undefined
+                  // and thus reverts to plain rending
+                }
+
+                if (hPoints) {
+                  // Call font.hinting.getCommands instead of `glyf.getPath(hPoints).commands` to avoid a circular dependency
+                  commands = font.hinting.getCommands(hPoints);
+                  x = Math.round(x);
+                  y = Math.round(y);
+                  // TODO in case of hinting xyScaling is not yet supported
+                  xScale = yScale = 1;
+                } else {
+                  commands = this.path.commands;
+                  var scale = 1 / this.path.unitsPerEm * fontSize;
+                  if (xScale === undefined) {
+                    xScale = scale;
+                  }
+                  if (yScale === undefined) {
+                    yScale = scale;
+                  }
+                }
+
+                var p = new Path();
+                for (var i = 0; i < commands.length; i += 1) {
+                  var cmd = commands[i];
+                  if (cmd.type === 'M') {
+                    p.moveTo(x + cmd.x * xScale, y + -cmd.y * yScale);
+                  } else if (cmd.type === 'L') {
+                    p.lineTo(x + cmd.x * xScale, y + -cmd.y * yScale);
+                  } else if (cmd.type === 'Q') {
+                    p.quadraticCurveTo(
+                      x + cmd.x1 * xScale,
+                      y + -cmd.y1 * yScale,
+                      x + cmd.x * xScale,
+                      y + -cmd.y * yScale
+                    );
+                  } else if (cmd.type === 'C') {
+                    p.curveTo(
+                      x + cmd.x1 * xScale,
+                      y + -cmd.y1 * yScale,
+                      x + cmd.x2 * xScale,
+                      y + -cmd.y2 * yScale,
+                      x + cmd.x * xScale,
+                      y + -cmd.y * yScale
+                    );
+                  } else if (cmd.type === 'Z') {
+                    p.closePath();
+                  }
+                }
+
+                return p;
+              };
+
+              /**
+               * Split the glyph into contours.
+               * This function is here for backwards compatibility, and to
+               * provide raw access to the TrueType glyph outlines.
+               * @return {Array}
+               */
+              Glyph.prototype.getContours = function() {
+                var this$1 = this;
+
+                if (this.points === undefined) {
+                  return [];
+                }
+
+                var contours = [];
+                var currentContour = [];
+                for (var i = 0; i < this.points.length; i += 1) {
+                  var pt = this$1.points[i];
+                  currentContour.push(pt);
+                  if (pt.lastPointOfContour) {
+                    contours.push(currentContour);
+                    currentContour = [];
+                  }
+                }
+
+                check.argument(
+                  currentContour.length === 0,
+                  'There are still points left in the current contour.'
+                );
+                return contours;
+              };
+
+              /**
+               * Calculate the xMin/yMin/xMax/yMax/lsb/rsb for a Glyph.
+               * @return {Object}
+               */
+              Glyph.prototype.getMetrics = function() {
+                var commands = this.path.commands;
+                var xCoords = [];
+                var yCoords = [];
+                for (var i = 0; i < commands.length; i += 1) {
+                  var cmd = commands[i];
+                  if (cmd.type !== 'Z') {
+                    xCoords.push(cmd.x);
+                    yCoords.push(cmd.y);
+                  }
+
+                  if (cmd.type === 'Q' || cmd.type === 'C') {
+                    xCoords.push(cmd.x1);
+                    yCoords.push(cmd.y1);
+                  }
+
+                  if (cmd.type === 'C') {
+                    xCoords.push(cmd.x2);
+                    yCoords.push(cmd.y2);
+                  }
+                }
+
+                var metrics = {
+                  xMin: Math.min.apply(null, xCoords),
+                  yMin: Math.min.apply(null, yCoords),
+                  xMax: Math.max.apply(null, xCoords),
+                  yMax: Math.max.apply(null, yCoords),
+                  leftSideBearing: this.leftSideBearing
+                };
+
+                if (!isFinite(metrics.xMin)) {
