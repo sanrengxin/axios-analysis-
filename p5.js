@@ -30294,3 +30294,160 @@
                 };
 
                 if (!isFinite(metrics.xMin)) {
+                  metrics.xMin = 0;
+                }
+
+                if (!isFinite(metrics.xMax)) {
+                  metrics.xMax = this.advanceWidth;
+                }
+
+                if (!isFinite(metrics.yMin)) {
+                  metrics.yMin = 0;
+                }
+
+                if (!isFinite(metrics.yMax)) {
+                  metrics.yMax = 0;
+                }
+
+                metrics.rightSideBearing =
+                  this.advanceWidth -
+                  metrics.leftSideBearing -
+                  (metrics.xMax - metrics.xMin);
+                return metrics;
+              };
+
+              /**
+               * Draw the glyph on the given context.
+               * @param  {CanvasRenderingContext2D} ctx - A 2D drawing context, like Canvas.
+               * @param  {number} [x=0] - Horizontal position of the beginning of the text.
+               * @param  {number} [y=0] - Vertical position of the *baseline* of the text.
+               * @param  {number} [fontSize=72] - Font size in pixels. We scale the glyph units by `1 / unitsPerEm * fontSize`.
+               * @param  {Object=} options - xScale, yScale to stretch the glyph.
+               */
+              Glyph.prototype.draw = function(ctx, x, y, fontSize, options) {
+                this.getPath(x, y, fontSize, options).draw(ctx);
+              };
+
+              /**
+               * Draw the points of the glyph.
+               * On-curve points will be drawn in blue, off-curve points will be drawn in red.
+               * @param  {CanvasRenderingContext2D} ctx - A 2D drawing context, like Canvas.
+               * @param  {number} [x=0] - Horizontal position of the beginning of the text.
+               * @param  {number} [y=0] - Vertical position of the *baseline* of the text.
+               * @param  {number} [fontSize=72] - Font size in pixels. We scale the glyph units by `1 / unitsPerEm * fontSize`.
+               */
+              Glyph.prototype.drawPoints = function(ctx, x, y, fontSize) {
+                function drawCircles(l, x, y, scale) {
+                  var PI_SQ = Math.PI * 2;
+                  ctx.beginPath();
+                  for (var j = 0; j < l.length; j += 1) {
+                    ctx.moveTo(x + l[j].x * scale, y + l[j].y * scale);
+                    ctx.arc(x + l[j].x * scale, y + l[j].y * scale, 2, 0, PI_SQ, false);
+                  }
+
+                  ctx.closePath();
+                  ctx.fill();
+                }
+
+                x = x !== undefined ? x : 0;
+                y = y !== undefined ? y : 0;
+                fontSize = fontSize !== undefined ? fontSize : 24;
+                var scale = 1 / this.path.unitsPerEm * fontSize;
+
+                var blueCircles = [];
+                var redCircles = [];
+                var path = this.path;
+                for (var i = 0; i < path.commands.length; i += 1) {
+                  var cmd = path.commands[i];
+                  if (cmd.x !== undefined) {
+                    blueCircles.push({ x: cmd.x, y: -cmd.y });
+                  }
+
+                  if (cmd.x1 !== undefined) {
+                    redCircles.push({ x: cmd.x1, y: -cmd.y1 });
+                  }
+
+                  if (cmd.x2 !== undefined) {
+                    redCircles.push({ x: cmd.x2, y: -cmd.y2 });
+                  }
+                }
+
+                ctx.fillStyle = 'blue';
+                drawCircles(blueCircles, x, y, scale);
+                ctx.fillStyle = 'red';
+                drawCircles(redCircles, x, y, scale);
+              };
+
+              /**
+               * Draw lines indicating important font measurements.
+               * Black lines indicate the origin of the coordinate system (point 0,0).
+               * Blue lines indicate the glyph bounding box.
+               * Green line indicates the advance width of the glyph.
+               * @param  {CanvasRenderingContext2D} ctx - A 2D drawing context, like Canvas.
+               * @param  {number} [x=0] - Horizontal position of the beginning of the text.
+               * @param  {number} [y=0] - Vertical position of the *baseline* of the text.
+               * @param  {number} [fontSize=72] - Font size in pixels. We scale the glyph units by `1 / unitsPerEm * fontSize`.
+               */
+              Glyph.prototype.drawMetrics = function(ctx, x, y, fontSize) {
+                var scale;
+                x = x !== undefined ? x : 0;
+                y = y !== undefined ? y : 0;
+                fontSize = fontSize !== undefined ? fontSize : 24;
+                scale = 1 / this.path.unitsPerEm * fontSize;
+                ctx.lineWidth = 1;
+
+                // Draw the origin
+                ctx.strokeStyle = 'black';
+                draw.line(ctx, x, -10000, x, 10000);
+                draw.line(ctx, -10000, y, 10000, y);
+
+                // This code is here due to memory optimization: by not using
+                // defaults in the constructor, we save a notable amount of memory.
+                var xMin = this.xMin || 0;
+                var yMin = this.yMin || 0;
+                var xMax = this.xMax || 0;
+                var yMax = this.yMax || 0;
+                var advanceWidth = this.advanceWidth || 0;
+
+                // Draw the glyph box
+                ctx.strokeStyle = 'blue';
+                draw.line(ctx, x + xMin * scale, -10000, x + xMin * scale, 10000);
+                draw.line(ctx, x + xMax * scale, -10000, x + xMax * scale, 10000);
+                draw.line(ctx, -10000, y + -yMin * scale, 10000, y + -yMin * scale);
+                draw.line(ctx, -10000, y + -yMax * scale, 10000, y + -yMax * scale);
+
+                // Draw the advance width
+                ctx.strokeStyle = 'green';
+                draw.line(
+                  ctx,
+                  x + advanceWidth * scale,
+                  -10000,
+                  x + advanceWidth * scale,
+                  10000
+                );
+              };
+
+              // The GlyphSet object
+
+              // Define a property on the glyph that depends on the path being loaded.
+              function defineDependentProperty(glyph, externalName, internalName) {
+                Object.defineProperty(glyph, externalName, {
+                  get: function() {
+                    // Request the path property to make sure the path is loaded.
+                    glyph.path; // jshint ignore:line
+                    return glyph[internalName];
+                  },
+                  set: function(newValue) {
+                    glyph[internalName] = newValue;
+                  },
+                  enumerable: true,
+                  configurable: true
+                });
+              }
+
+              /**
+               * A GlyphSet represents all glyphs available in the font, but modelled using
+               * a deferred glyph loader, for retrieving glyphs only once they are absolutely
+               * necessary, to keep the memory footprint down.
+               * @exports opentype.GlyphSet
+               * @class
