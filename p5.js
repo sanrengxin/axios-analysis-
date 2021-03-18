@@ -30034,3 +30034,123 @@
                 ctx.moveTo(x1, y1);
                 ctx.lineTo(x2, y2);
                 ctx.stroke();
+              }
+
+              var draw = { line: line };
+
+              // The Glyph object
+              // import glyf from './tables/glyf' Can't be imported here, because it's a circular dependency
+
+              function getPathDefinition(glyph, path) {
+                var _path = path || new Path();
+                return {
+                  configurable: true,
+
+                  get: function() {
+                    if (typeof _path === 'function') {
+                      _path = _path();
+                    }
+
+                    return _path;
+                  },
+
+                  set: function(p) {
+                    _path = p;
+                  }
+                };
+              }
+              /**
+               * @typedef GlyphOptions
+               * @type Object
+               * @property {string} [name] - The glyph name
+               * @property {number} [unicode]
+               * @property {Array} [unicodes]
+               * @property {number} [xMin]
+               * @property {number} [yMin]
+               * @property {number} [xMax]
+               * @property {number} [yMax]
+               * @property {number} [advanceWidth]
+               */
+
+              // A Glyph is an individual mark that often corresponds to a character.
+              // Some glyphs, such as ligatures, are a combination of many characters.
+              // Glyphs are the basic building blocks of a font.
+              //
+              // The `Glyph` class contains utility methods for drawing the path and its points.
+              /**
+               * @exports opentype.Glyph
+               * @class
+               * @param {GlyphOptions}
+               * @constructor
+               */
+              function Glyph(options) {
+                // By putting all the code on a prototype function (which is only declared once)
+                // we reduce the memory requirements for larger fonts by some 2%
+                this.bindConstructorValues(options);
+              }
+
+              /**
+               * @param  {GlyphOptions}
+               */
+              Glyph.prototype.bindConstructorValues = function(options) {
+                this.index = options.index || 0;
+
+                // These three values cannot be deferred for memory optimization:
+                this.name = options.name || null;
+                this.unicode = options.unicode || undefined;
+                this.unicodes =
+                  options.unicodes || options.unicode !== undefined
+                    ? [options.unicode]
+                    : [];
+
+                // But by binding these values only when necessary, we reduce can
+                // the memory requirements by almost 3% for larger fonts.
+                if (options.xMin) {
+                  this.xMin = options.xMin;
+                }
+
+                if (options.yMin) {
+                  this.yMin = options.yMin;
+                }
+
+                if (options.xMax) {
+                  this.xMax = options.xMax;
+                }
+
+                if (options.yMax) {
+                  this.yMax = options.yMax;
+                }
+
+                if (options.advanceWidth) {
+                  this.advanceWidth = options.advanceWidth;
+                }
+
+                // The path for a glyph is the most memory intensive, and is bound as a value
+                // with a getter/setter to ensure we actually do path parsing only once the
+                // path is actually needed by anything.
+                Object.defineProperty(this, 'path', getPathDefinition(this, options.path));
+              };
+
+              /**
+               * @param {number}
+               */
+              Glyph.prototype.addUnicode = function(unicode) {
+                if (this.unicodes.length === 0) {
+                  this.unicode = unicode;
+                }
+
+                this.unicodes.push(unicode);
+              };
+
+              /**
+               * Calculate the minimum bounding box for this glyph.
+               * @return {opentype.BoundingBox}
+               */
+              Glyph.prototype.getBoundingBox = function() {
+                return this.path.getBoundingBox();
+              };
+
+              /**
+               * Convert the glyph to a Path we can draw on a drawing context.
+               * @param  {number} [x=0] - Horizontal position of the beginning of the text.
+               * @param  {number} [y=0] - Vertical position of the *baseline* of the text.
