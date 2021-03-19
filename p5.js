@@ -30907,3 +30907,142 @@
               }
 
               // Returns a list of "Top DICT"s found using an INDEX list.
+              // Used to read both the usual high-level Top DICTs and also the FDArray
+              // discovered inside CID-keyed fonts.  When a Top DICT has a reference to
+              // a Private DICT that is read and saved into the Top DICT.
+              //
+              // In addition to the expected/optional values as outlined in TOP_DICT_META
+              // the following values might be saved into the Top DICT.
+              //
+              //    _subrs []        array of local CFF subroutines from Private DICT
+              //    _subrsBias       bias value computed from number of subroutines
+              //                      (see calcCFFSubroutineBias() and parseCFFCharstring())
+              //    _defaultWidthX   default widths for CFF characters
+              //    _nominalWidthX   bias added to width embedded within glyph description
+              //
+              //    _privateDict     saved copy of parsed Private DICT from Top DICT
+              function gatherCFFTopDicts(data, start, cffIndex, strings) {
+                var topDictArray = [];
+                for (var iTopDict = 0; iTopDict < cffIndex.length; iTopDict += 1) {
+                  var topDictData = new DataView(new Uint8Array(cffIndex[iTopDict]).buffer);
+                  var topDict = parseCFFTopDict(topDictData, strings);
+                  topDict._subrs = [];
+                  topDict._subrsBias = 0;
+                  var privateSize = topDict.private[0];
+                  var privateOffset = topDict.private[1];
+                  if (privateSize !== 0 && privateOffset !== 0) {
+                    var privateDict = parseCFFPrivateDict(
+                      data,
+                      privateOffset + start,
+                      privateSize,
+                      strings
+                    );
+                    topDict._defaultWidthX = privateDict.defaultWidthX;
+                    topDict._nominalWidthX = privateDict.nominalWidthX;
+                    if (privateDict.subrs !== 0) {
+                      var subrOffset = privateOffset + privateDict.subrs;
+                      var subrIndex = parseCFFIndex(data, subrOffset + start);
+                      topDict._subrs = subrIndex.objects;
+                      topDict._subrsBias = calcCFFSubroutineBias(topDict._subrs);
+                    }
+                    topDict._privateDict = privateDict;
+                  }
+                  topDictArray.push(topDict);
+                }
+                return topDictArray;
+              }
+
+              // Parse the CFF charset table, which contains internal names for all the glyphs.
+              // This function will return a list of glyph names.
+              // See Adobe TN #5176 chapter 13, "Charsets".
+              function parseCFFCharset(data, start, nGlyphs, strings) {
+                var sid;
+                var count;
+                var parser = new parse.Parser(data, start);
+
+                // The .notdef glyph is not included, so subtract 1.
+                nGlyphs -= 1;
+                var charset = ['.notdef'];
+
+                var format = parser.parseCard8();
+                if (format === 0) {
+                  for (var i = 0; i < nGlyphs; i += 1) {
+                    sid = parser.parseSID();
+                    charset.push(getCFFString(strings, sid));
+                  }
+                } else if (format === 1) {
+                  while (charset.length <= nGlyphs) {
+                    sid = parser.parseSID();
+                    count = parser.parseCard8();
+                    for (var i$1 = 0; i$1 <= count; i$1 += 1) {
+                      charset.push(getCFFString(strings, sid));
+                      sid += 1;
+                    }
+                  }
+                } else if (format === 2) {
+                  while (charset.length <= nGlyphs) {
+                    sid = parser.parseSID();
+                    count = parser.parseCard16();
+                    for (var i$2 = 0; i$2 <= count; i$2 += 1) {
+                      charset.push(getCFFString(strings, sid));
+                      sid += 1;
+                    }
+                  }
+                } else {
+                  throw new Error('Unknown charset format ' + format);
+                }
+
+                return charset;
+              }
+
+              // Parse the CFF encoding data. Only one encoding can be specified per font.
+              // See Adobe TN #5176 chapter 12, "Encodings".
+              function parseCFFEncoding(data, start, charset) {
+                var code;
+                var enc = {};
+                var parser = new parse.Parser(data, start);
+                var format = parser.parseCard8();
+                if (format === 0) {
+                  var nCodes = parser.parseCard8();
+                  for (var i = 0; i < nCodes; i += 1) {
+                    code = parser.parseCard8();
+                    enc[code] = i;
+                  }
+                } else if (format === 1) {
+                  var nRanges = parser.parseCard8();
+                  code = 1;
+                  for (var i$1 = 0; i$1 < nRanges; i$1 += 1) {
+                    var first = parser.parseCard8();
+                    var nLeft = parser.parseCard8();
+                    for (var j = first; j <= first + nLeft; j += 1) {
+                      enc[j] = code;
+                      code += 1;
+                    }
+                  }
+                } else {
+                  throw new Error('Unknown encoding format ' + format);
+                }
+
+                return new CffEncoding(enc, charset);
+              }
+
+              // Take in charstring code and return a Glyph object.
+              // The encoding is described in the Type 2 Charstring Format
+              // https://www.microsoft.com/typography/OTSPEC/charstr2.htm
+              function parseCFFCharstring(font, glyph, code) {
+                var c1x;
+                var c1y;
+                var c2x;
+                var c2y;
+                var p = new Path();
+                var stack = [];
+                var nStems = 0;
+                var haveWidth = false;
+                var open = false;
+                var x = 0;
+                var y = 0;
+                var subrs;
+                var subrsBias;
+                var defaultWidthX;
+                var nominalWidthX;
+                if (font.isCIDFont) {
