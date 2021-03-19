@@ -30592,3 +30592,165 @@
                 } else if (subrs.length < 33900) {
                   bias = 1131;
                 } else {
+                  bias = 32768;
+                }
+
+                return bias;
+              }
+
+              // Parse a `CFF` INDEX array.
+              // An index array consists of a list of offsets, then a list of objects at those offsets.
+              function parseCFFIndex(data, start, conversionFn) {
+                var offsets = [];
+                var objects = [];
+                var count = parse.getCard16(data, start);
+                var objectOffset;
+                var endOffset;
+                if (count !== 0) {
+                  var offsetSize = parse.getByte(data, start + 2);
+                  objectOffset = start + (count + 1) * offsetSize + 2;
+                  var pos = start + 3;
+                  for (var i = 0; i < count + 1; i += 1) {
+                    offsets.push(parse.getOffset(data, pos, offsetSize));
+                    pos += offsetSize;
+                  }
+
+                  // The total size of the index array is 4 header bytes + the value of the last offset.
+                  endOffset = objectOffset + offsets[count];
+                } else {
+                  endOffset = start + 2;
+                }
+
+                for (var i$1 = 0; i$1 < offsets.length - 1; i$1 += 1) {
+                  var value = parse.getBytes(
+                    data,
+                    objectOffset + offsets[i$1],
+                    objectOffset + offsets[i$1 + 1]
+                  );
+                  if (conversionFn) {
+                    value = conversionFn(value);
+                  }
+
+                  objects.push(value);
+                }
+
+                return { objects: objects, startOffset: start, endOffset: endOffset };
+              }
+
+              // Parse a `CFF` DICT real value.
+              function parseFloatOperand(parser) {
+                var s = '';
+                var eof = 15;
+                var lookup = [
+                  '0',
+                  '1',
+                  '2',
+                  '3',
+                  '4',
+                  '5',
+                  '6',
+                  '7',
+                  '8',
+                  '9',
+                  '.',
+                  'E',
+                  'E-',
+                  null,
+                  '-'
+                ];
+                while (true) {
+                  var b = parser.parseByte();
+                  var n1 = b >> 4;
+                  var n2 = b & 15;
+
+                  if (n1 === eof) {
+                    break;
+                  }
+
+                  s += lookup[n1];
+
+                  if (n2 === eof) {
+                    break;
+                  }
+
+                  s += lookup[n2];
+                }
+
+                return parseFloat(s);
+              }
+
+              // Parse a `CFF` DICT operand.
+              function parseOperand(parser, b0) {
+                var b1;
+                var b2;
+                var b3;
+                var b4;
+                if (b0 === 28) {
+                  b1 = parser.parseByte();
+                  b2 = parser.parseByte();
+                  return (b1 << 8) | b2;
+                }
+
+                if (b0 === 29) {
+                  b1 = parser.parseByte();
+                  b2 = parser.parseByte();
+                  b3 = parser.parseByte();
+                  b4 = parser.parseByte();
+                  return (b1 << 24) | (b2 << 16) | (b3 << 8) | b4;
+                }
+
+                if (b0 === 30) {
+                  return parseFloatOperand(parser);
+                }
+
+                if (b0 >= 32 && b0 <= 246) {
+                  return b0 - 139;
+                }
+
+                if (b0 >= 247 && b0 <= 250) {
+                  b1 = parser.parseByte();
+                  return (b0 - 247) * 256 + b1 + 108;
+                }
+
+                if (b0 >= 251 && b0 <= 254) {
+                  b1 = parser.parseByte();
+                  return -(b0 - 251) * 256 - b1 - 108;
+                }
+
+                throw new Error('Invalid b0 ' + b0);
+              }
+
+              // Convert the entries returned by `parseDict` to a proper dictionary.
+              // If a value is a list of one, it is unpacked.
+              function entriesToObject(entries) {
+                var o = {};
+                for (var i = 0; i < entries.length; i += 1) {
+                  var key = entries[i][0];
+                  var values = entries[i][1];
+                  var value = void 0;
+                  if (values.length === 1) {
+                    value = values[0];
+                  } else {
+                    value = values;
+                  }
+
+                  if (o.hasOwnProperty(key) && !isNaN(o[key])) {
+                    throw new Error('Object ' + o + ' already has key ' + key);
+                  }
+
+                  o[key] = value;
+                }
+
+                return o;
+              }
+
+              // Parse a `CFF` DICT object.
+              // A dictionary contains key-value pairs in a compact tokenized format.
+              function parseCFFDict(data, start, size) {
+                start = start !== undefined ? start : 0;
+                var parser = new parse.Parser(data, start);
+                var entries = [];
+                var operands = [];
+                size = size !== undefined ? size : data.length;
+
+                while (parser.relativeOffset < size) {
