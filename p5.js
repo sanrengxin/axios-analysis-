@@ -30754,3 +30754,156 @@
                 size = size !== undefined ? size : data.length;
 
                 while (parser.relativeOffset < size) {
+                  var op = parser.parseByte();
+
+                  // The first byte for each dict item distinguishes between operator (key) and operand (value).
+                  // Values <= 21 are operators.
+                  if (op <= 21) {
+                    // Two-byte operators have an initial escape byte of 12.
+                    if (op === 12) {
+                      op = 1200 + parser.parseByte();
+                    }
+
+                    entries.push([op, operands]);
+                    operands = [];
+                  } else {
+                    // Since the operands (values) come before the operators (keys), we store all operands in a list
+                    // until we encounter an operator.
+                    operands.push(parseOperand(parser, op));
+                  }
+                }
+
+                return entriesToObject(entries);
+              }
+
+              // Given a String Index (SID), return the value of the string.
+              // Strings below index 392 are standard CFF strings and are not encoded in the font.
+              function getCFFString(strings, index) {
+                if (index <= 390) {
+                  index = cffStandardStrings[index];
+                } else {
+                  index = strings[index - 391];
+                }
+
+                return index;
+              }
+
+              // Interpret a dictionary and return a new dictionary with readable keys and values for missing entries.
+              // This function takes `meta` which is a list of objects containing `operand`, `name` and `default`.
+              function interpretDict(dict, meta, strings) {
+                var newDict = {};
+                var value;
+
+                // Because we also want to include missing values, we start out from the meta list
+                // and lookup values in the dict.
+                for (var i = 0; i < meta.length; i += 1) {
+                  var m = meta[i];
+
+                  if (Array.isArray(m.type)) {
+                    var values = [];
+                    values.length = m.type.length;
+                    for (var j = 0; j < m.type.length; j++) {
+                      value = dict[m.op] !== undefined ? dict[m.op][j] : undefined;
+                      if (value === undefined) {
+                        value =
+                          m.value !== undefined && m.value[j] !== undefined
+                            ? m.value[j]
+                            : null;
+                      }
+                      if (m.type[j] === 'SID') {
+                        value = getCFFString(strings, value);
+                      }
+                      values[j] = value;
+                    }
+                    newDict[m.name] = values;
+                  } else {
+                    value = dict[m.op];
+                    if (value === undefined) {
+                      value = m.value !== undefined ? m.value : null;
+                    }
+
+                    if (m.type === 'SID') {
+                      value = getCFFString(strings, value);
+                    }
+                    newDict[m.name] = value;
+                  }
+                }
+
+                return newDict;
+              }
+
+              // Parse the CFF header.
+              function parseCFFHeader(data, start) {
+                var header = {};
+                header.formatMajor = parse.getCard8(data, start);
+                header.formatMinor = parse.getCard8(data, start + 1);
+                header.size = parse.getCard8(data, start + 2);
+                header.offsetSize = parse.getCard8(data, start + 3);
+                header.startOffset = start;
+                header.endOffset = start + 4;
+                return header;
+              }
+
+              var TOP_DICT_META = [
+                { name: 'version', op: 0, type: 'SID' },
+                { name: 'notice', op: 1, type: 'SID' },
+                { name: 'copyright', op: 1200, type: 'SID' },
+                { name: 'fullName', op: 2, type: 'SID' },
+                { name: 'familyName', op: 3, type: 'SID' },
+                { name: 'weight', op: 4, type: 'SID' },
+                { name: 'isFixedPitch', op: 1201, type: 'number', value: 0 },
+                { name: 'italicAngle', op: 1202, type: 'number', value: 0 },
+                { name: 'underlinePosition', op: 1203, type: 'number', value: -100 },
+                { name: 'underlineThickness', op: 1204, type: 'number', value: 50 },
+                { name: 'paintType', op: 1205, type: 'number', value: 0 },
+                { name: 'charstringType', op: 1206, type: 'number', value: 2 },
+                {
+                  name: 'fontMatrix',
+                  op: 1207,
+                  type: ['real', 'real', 'real', 'real', 'real', 'real'],
+                  value: [0.001, 0, 0, 0.001, 0, 0]
+                },
+                { name: 'uniqueId', op: 13, type: 'number' },
+                {
+                  name: 'fontBBox',
+                  op: 5,
+                  type: ['number', 'number', 'number', 'number'],
+                  value: [0, 0, 0, 0]
+                },
+                { name: 'strokeWidth', op: 1208, type: 'number', value: 0 },
+                { name: 'xuid', op: 14, type: [], value: null },
+                { name: 'charset', op: 15, type: 'offset', value: 0 },
+                { name: 'encoding', op: 16, type: 'offset', value: 0 },
+                { name: 'charStrings', op: 17, type: 'offset', value: 0 },
+                { name: 'private', op: 18, type: ['number', 'offset'], value: [0, 0] },
+                { name: 'ros', op: 1230, type: ['SID', 'SID', 'number'] },
+                { name: 'cidFontVersion', op: 1231, type: 'number', value: 0 },
+                { name: 'cidFontRevision', op: 1232, type: 'number', value: 0 },
+                { name: 'cidFontType', op: 1233, type: 'number', value: 0 },
+                { name: 'cidCount', op: 1234, type: 'number', value: 8720 },
+                { name: 'uidBase', op: 1235, type: 'number' },
+                { name: 'fdArray', op: 1236, type: 'offset' },
+                { name: 'fdSelect', op: 1237, type: 'offset' },
+                { name: 'fontName', op: 1238, type: 'SID' }
+              ];
+
+              var PRIVATE_DICT_META = [
+                { name: 'subrs', op: 19, type: 'offset', value: 0 },
+                { name: 'defaultWidthX', op: 20, type: 'number', value: 0 },
+                { name: 'nominalWidthX', op: 21, type: 'number', value: 0 }
+              ];
+
+              // Parse the CFF top dictionary. A CFF table can contain multiple fonts, each with their own top dictionary.
+              // The top dictionary contains the essential metadata for the font, together with the private dictionary.
+              function parseCFFTopDict(data, strings) {
+                var dict = parseCFFDict(data, 0, data.byteLength);
+                return interpretDict(dict, TOP_DICT_META, strings);
+              }
+
+              // Parse the CFF private dictionary. We don't fully parse out all the values, only the ones we need.
+              function parseCFFPrivateDict(data, start, size, strings) {
+                var dict = parseCFFDict(data, start, size);
+                return interpretDict(dict, PRIVATE_DICT_META, strings);
+              }
+
+              // Returns a list of "Top DICT"s found using an INDEX list.
