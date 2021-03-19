@@ -30451,3 +30451,144 @@
                * necessary, to keep the memory footprint down.
                * @exports opentype.GlyphSet
                * @class
+               * @param {opentype.Font}
+               * @param {Array}
+               */
+              function GlyphSet(font, glyphs) {
+                var this$1 = this;
+
+                this.font = font;
+                this.glyphs = {};
+                if (Array.isArray(glyphs)) {
+                  for (var i = 0; i < glyphs.length; i++) {
+                    this$1.glyphs[i] = glyphs[i];
+                  }
+                }
+
+                this.length = (glyphs && glyphs.length) || 0;
+              }
+
+              /**
+               * @param  {number} index
+               * @return {opentype.Glyph}
+               */
+              GlyphSet.prototype.get = function(index) {
+                if (typeof this.glyphs[index] === 'function') {
+                  this.glyphs[index] = this.glyphs[index]();
+                }
+
+                return this.glyphs[index];
+              };
+
+              /**
+               * @param  {number} index
+               * @param  {Object}
+               */
+              GlyphSet.prototype.push = function(index, loader) {
+                this.glyphs[index] = loader;
+                this.length++;
+              };
+
+              /**
+               * @alias opentype.glyphLoader
+               * @param  {opentype.Font} font
+               * @param  {number} index
+               * @return {opentype.Glyph}
+               */
+              function glyphLoader(font, index) {
+                return new Glyph({ index: index, font: font });
+              }
+
+              /**
+               * Generate a stub glyph that can be filled with all metadata *except*
+               * the "points" and "path" properties, which must be loaded only once
+               * the glyph's path is actually requested for text shaping.
+               * @alias opentype.ttfGlyphLoader
+               * @param  {opentype.Font} font
+               * @param  {number} index
+               * @param  {Function} parseGlyph
+               * @param  {Object} data
+               * @param  {number} position
+               * @param  {Function} buildPath
+               * @return {opentype.Glyph}
+               */
+              function ttfGlyphLoader(font, index, parseGlyph, data, position, buildPath) {
+                return function() {
+                  var glyph = new Glyph({ index: index, font: font });
+
+                  glyph.path = function() {
+                    parseGlyph(glyph, data, position);
+                    var path = buildPath(font.glyphs, glyph);
+                    path.unitsPerEm = font.unitsPerEm;
+                    return path;
+                  };
+
+                  defineDependentProperty(glyph, 'xMin', '_xMin');
+                  defineDependentProperty(glyph, 'xMax', '_xMax');
+                  defineDependentProperty(glyph, 'yMin', '_yMin');
+                  defineDependentProperty(glyph, 'yMax', '_yMax');
+
+                  return glyph;
+                };
+              }
+              /**
+               * @alias opentype.cffGlyphLoader
+               * @param  {opentype.Font} font
+               * @param  {number} index
+               * @param  {Function} parseCFFCharstring
+               * @param  {string} charstring
+               * @return {opentype.Glyph}
+               */
+              function cffGlyphLoader(font, index, parseCFFCharstring, charstring) {
+                return function() {
+                  var glyph = new Glyph({ index: index, font: font });
+
+                  glyph.path = function() {
+                    var path = parseCFFCharstring(font, glyph, charstring);
+                    path.unitsPerEm = font.unitsPerEm;
+                    return path;
+                  };
+
+                  return glyph;
+                };
+              }
+
+              var glyphset = {
+                GlyphSet: GlyphSet,
+                glyphLoader: glyphLoader,
+                ttfGlyphLoader: ttfGlyphLoader,
+                cffGlyphLoader: cffGlyphLoader
+              };
+
+              // The `CFF` table contains the glyph outlines in PostScript format.
+
+              // Custom equals function that can also check lists.
+              function equals(a, b) {
+                if (a === b) {
+                  return true;
+                } else if (Array.isArray(a) && Array.isArray(b)) {
+                  if (a.length !== b.length) {
+                    return false;
+                  }
+
+                  for (var i = 0; i < a.length; i += 1) {
+                    if (!equals(a[i], b[i])) {
+                      return false;
+                    }
+                  }
+
+                  return true;
+                } else {
+                  return false;
+                }
+              }
+
+              // Subroutines are encoded using the negative half of the number space.
+              // See type 2 chapter 4.7 "Subroutine operators".
+              function calcCFFSubroutineBias(subrs) {
+                var bias;
+                if (subrs.length < 1240) {
+                  bias = 107;
+                } else if (subrs.length < 33900) {
+                  bias = 1131;
+                } else {
