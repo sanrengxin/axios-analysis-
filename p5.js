@@ -31046,3 +31046,138 @@
                 var defaultWidthX;
                 var nominalWidthX;
                 if (font.isCIDFont) {
+                  var fdIndex = font.tables.cff.topDict._fdSelect[glyph.index];
+                  var fdDict = font.tables.cff.topDict._fdArray[fdIndex];
+                  subrs = fdDict._subrs;
+                  subrsBias = fdDict._subrsBias;
+                  defaultWidthX = fdDict._defaultWidthX;
+                  nominalWidthX = fdDict._nominalWidthX;
+                } else {
+                  subrs = font.tables.cff.topDict._subrs;
+                  subrsBias = font.tables.cff.topDict._subrsBias;
+                  defaultWidthX = font.tables.cff.topDict._defaultWidthX;
+                  nominalWidthX = font.tables.cff.topDict._nominalWidthX;
+                }
+                var width = defaultWidthX;
+
+                function newContour(x, y) {
+                  if (open) {
+                    p.closePath();
+                  }
+
+                  p.moveTo(x, y);
+                  open = true;
+                }
+
+                function parseStems() {
+                  var hasWidthArg;
+
+                  // The number of stem operators on the stack is always even.
+                  // If the value is uneven, that means a width is specified.
+                  hasWidthArg = stack.length % 2 !== 0;
+                  if (hasWidthArg && !haveWidth) {
+                    width = stack.shift() + nominalWidthX;
+                  }
+
+                  nStems += stack.length >> 1;
+                  stack.length = 0;
+                  haveWidth = true;
+                }
+
+                function parse$$1(code) {
+                  var b1;
+                  var b2;
+                  var b3;
+                  var b4;
+                  var codeIndex;
+                  var subrCode;
+                  var jpx;
+                  var jpy;
+                  var c3x;
+                  var c3y;
+                  var c4x;
+                  var c4y;
+
+                  var i = 0;
+                  while (i < code.length) {
+                    var v = code[i];
+                    i += 1;
+                    switch (v) {
+                      case 1: // hstem
+                        parseStems();
+                        break;
+                      case 3: // vstem
+                        parseStems();
+                        break;
+                      case 4: // vmoveto
+                        if (stack.length > 1 && !haveWidth) {
+                          width = stack.shift() + nominalWidthX;
+                          haveWidth = true;
+                        }
+
+                        y += stack.pop();
+                        newContour(x, y);
+                        break;
+                      case 5: // rlineto
+                        while (stack.length > 0) {
+                          x += stack.shift();
+                          y += stack.shift();
+                          p.lineTo(x, y);
+                        }
+
+                        break;
+                      case 6: // hlineto
+                        while (stack.length > 0) {
+                          x += stack.shift();
+                          p.lineTo(x, y);
+                          if (stack.length === 0) {
+                            break;
+                          }
+
+                          y += stack.shift();
+                          p.lineTo(x, y);
+                        }
+
+                        break;
+                      case 7: // vlineto
+                        while (stack.length > 0) {
+                          y += stack.shift();
+                          p.lineTo(x, y);
+                          if (stack.length === 0) {
+                            break;
+                          }
+
+                          x += stack.shift();
+                          p.lineTo(x, y);
+                        }
+
+                        break;
+                      case 8: // rrcurveto
+                        while (stack.length > 0) {
+                          c1x = x + stack.shift();
+                          c1y = y + stack.shift();
+                          c2x = c1x + stack.shift();
+                          c2y = c1y + stack.shift();
+                          x = c2x + stack.shift();
+                          y = c2y + stack.shift();
+                          p.curveTo(c1x, c1y, c2x, c2y, x, y);
+                        }
+
+                        break;
+                      case 10: // callsubr
+                        codeIndex = stack.pop() + subrsBias;
+                        subrCode = subrs[codeIndex];
+                        if (subrCode) {
+                          parse$$1(subrCode);
+                        }
+
+                        break;
+                      case 11: // return
+                        return;
+                      case 12: // flex operators
+                        v = code[i];
+                        i += 1;
+                        switch (v) {
+                          case 35: // flex
+                            // |- dx1 dy1 dx2 dy2 dx3 dy3 dx4 dy4 dx5 dy5 dx6 dy6 fd flex (12 35) |-
+                            c1x = x + stack.shift(); // dx1
