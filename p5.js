@@ -31597,3 +31597,137 @@
                   var subrOffset = privateDictOffset + privateDict.subrs;
                   var subrIndex = parseCFFIndex(data, subrOffset);
                   font.subrs = subrIndex.objects;
+                  font.subrsBias = calcCFFSubroutineBias(font.subrs);
+                } else {
+                  font.subrs = [];
+                  font.subrsBias = 0;
+                }
+
+                // Offsets in the top dict are relative to the beginning of the CFF data, so add the CFF start offset.
+                var charStringsIndex = parseCFFIndex(data, start + topDict.charStrings);
+                font.nGlyphs = charStringsIndex.objects.length;
+
+                var charset = parseCFFCharset(
+                  data,
+                  start + topDict.charset,
+                  font.nGlyphs,
+                  stringIndex.objects
+                );
+                if (topDict.encoding === 0) {
+                  // Standard encoding
+                  font.cffEncoding = new CffEncoding(cffStandardEncoding, charset);
+                } else if (topDict.encoding === 1) {
+                  // Expert encoding
+                  font.cffEncoding = new CffEncoding(cffExpertEncoding, charset);
+                } else {
+                  font.cffEncoding = parseCFFEncoding(
+                    data,
+                    start + topDict.encoding,
+                    charset
+                  );
+                }
+
+                // Prefer the CMAP encoding to the CFF encoding.
+                font.encoding = font.encoding || font.cffEncoding;
+
+                font.glyphs = new glyphset.GlyphSet(font);
+                for (var i = 0; i < font.nGlyphs; i += 1) {
+                  var charString = charStringsIndex.objects[i];
+                  font.glyphs.push(
+                    i,
+                    glyphset.cffGlyphLoader(font, i, parseCFFCharstring, charString)
+                  );
+                }
+              }
+
+              // Convert a string to a String ID (SID).
+              // The list of strings is modified in place.
+              function encodeString(s, strings) {
+                var sid;
+
+                // Is the string in the CFF standard strings?
+                var i = cffStandardStrings.indexOf(s);
+                if (i >= 0) {
+                  sid = i;
+                }
+
+                // Is the string already in the string index?
+                i = strings.indexOf(s);
+                if (i >= 0) {
+                  sid = i + cffStandardStrings.length;
+                } else {
+                  sid = cffStandardStrings.length + strings.length;
+                  strings.push(s);
+                }
+
+                return sid;
+              }
+
+              function makeHeader() {
+                return new table.Record('Header', [
+                  { name: 'major', type: 'Card8', value: 1 },
+                  { name: 'minor', type: 'Card8', value: 0 },
+                  { name: 'hdrSize', type: 'Card8', value: 4 },
+                  { name: 'major', type: 'Card8', value: 1 }
+                ]);
+              }
+
+              function makeNameIndex(fontNames) {
+                var t = new table.Record('Name INDEX', [
+                  { name: 'names', type: 'INDEX', value: [] }
+                ]);
+                t.names = [];
+                for (var i = 0; i < fontNames.length; i += 1) {
+                  t.names.push({ name: 'name_' + i, type: 'NAME', value: fontNames[i] });
+                }
+
+                return t;
+              }
+
+              // Given a dictionary's metadata, create a DICT structure.
+              function makeDict(meta, attrs, strings) {
+                var m = {};
+                for (var i = 0; i < meta.length; i += 1) {
+                  var entry = meta[i];
+                  var value = attrs[entry.name];
+                  if (value !== undefined && !equals(value, entry.value)) {
+                    if (entry.type === 'SID') {
+                      value = encodeString(value, strings);
+                    }
+
+                    m[entry.op] = { name: entry.name, type: entry.type, value: value };
+                  }
+                }
+
+                return m;
+              }
+
+              // The Top DICT houses the global font attributes.
+              function makeTopDict(attrs, strings) {
+                var t = new table.Record('Top DICT', [
+                  { name: 'dict', type: 'DICT', value: {} }
+                ]);
+                t.dict = makeDict(TOP_DICT_META, attrs, strings);
+                return t;
+              }
+
+              function makeTopDictIndex(topDict) {
+                var t = new table.Record('Top DICT INDEX', [
+                  { name: 'topDicts', type: 'INDEX', value: [] }
+                ]);
+                t.topDicts = [{ name: 'topDict_0', type: 'TABLE', value: topDict }];
+                return t;
+              }
+
+              function makeStringIndex(strings) {
+                var t = new table.Record('String INDEX', [
+                  { name: 'strings', type: 'INDEX', value: [] }
+                ]);
+                t.strings = [];
+                for (var i = 0; i < strings.length; i += 1) {
+                  t.strings.push({
+                    name: 'string_' + i,
+                    type: 'STRING',
+                    value: strings[i]
+                  });
+                }
