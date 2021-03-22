@@ -31308,3 +31308,137 @@
                           y = c2y + stack.shift();
                           p.curveTo(c1x, c1y, c2x, c2y, x, y);
                         }
+
+                        x += stack.shift();
+                        y += stack.shift();
+                        p.lineTo(x, y);
+                        break;
+                      case 25: // rlinecurve
+                        while (stack.length > 6) {
+                          x += stack.shift();
+                          y += stack.shift();
+                          p.lineTo(x, y);
+                        }
+
+                        c1x = x + stack.shift();
+                        c1y = y + stack.shift();
+                        c2x = c1x + stack.shift();
+                        c2y = c1y + stack.shift();
+                        x = c2x + stack.shift();
+                        y = c2y + stack.shift();
+                        p.curveTo(c1x, c1y, c2x, c2y, x, y);
+                        break;
+                      case 26: // vvcurveto
+                        if (stack.length % 2) {
+                          x += stack.shift();
+                        }
+
+                        while (stack.length > 0) {
+                          c1x = x;
+                          c1y = y + stack.shift();
+                          c2x = c1x + stack.shift();
+                          c2y = c1y + stack.shift();
+                          x = c2x;
+                          y = c2y + stack.shift();
+                          p.curveTo(c1x, c1y, c2x, c2y, x, y);
+                        }
+
+                        break;
+                      case 27: // hhcurveto
+                        if (stack.length % 2) {
+                          y += stack.shift();
+                        }
+
+                        while (stack.length > 0) {
+                          c1x = x + stack.shift();
+                          c1y = y;
+                          c2x = c1x + stack.shift();
+                          c2y = c1y + stack.shift();
+                          x = c2x + stack.shift();
+                          y = c2y;
+                          p.curveTo(c1x, c1y, c2x, c2y, x, y);
+                        }
+
+                        break;
+                      case 28: // shortint
+                        b1 = code[i];
+                        b2 = code[i + 1];
+                        stack.push(((b1 << 24) | (b2 << 16)) >> 16);
+                        i += 2;
+                        break;
+                      case 29: // callgsubr
+                        codeIndex = stack.pop() + font.gsubrsBias;
+                        subrCode = font.gsubrs[codeIndex];
+                        if (subrCode) {
+                          parse$$1(subrCode);
+                        }
+
+                        break;
+                      case 30: // vhcurveto
+                        while (stack.length > 0) {
+                          c1x = x;
+                          c1y = y + stack.shift();
+                          c2x = c1x + stack.shift();
+                          c2y = c1y + stack.shift();
+                          x = c2x + stack.shift();
+                          y = c2y + (stack.length === 1 ? stack.shift() : 0);
+                          p.curveTo(c1x, c1y, c2x, c2y, x, y);
+                          if (stack.length === 0) {
+                            break;
+                          }
+
+                          c1x = x + stack.shift();
+                          c1y = y;
+                          c2x = c1x + stack.shift();
+                          c2y = c1y + stack.shift();
+                          y = c2y + stack.shift();
+                          x = c2x + (stack.length === 1 ? stack.shift() : 0);
+                          p.curveTo(c1x, c1y, c2x, c2y, x, y);
+                        }
+
+                        break;
+                      case 31: // hvcurveto
+                        while (stack.length > 0) {
+                          c1x = x + stack.shift();
+                          c1y = y;
+                          c2x = c1x + stack.shift();
+                          c2y = c1y + stack.shift();
+                          y = c2y + stack.shift();
+                          x = c2x + (stack.length === 1 ? stack.shift() : 0);
+                          p.curveTo(c1x, c1y, c2x, c2y, x, y);
+                          if (stack.length === 0) {
+                            break;
+                          }
+
+                          c1x = x;
+                          c1y = y + stack.shift();
+                          c2x = c1x + stack.shift();
+                          c2y = c1y + stack.shift();
+                          x = c2x + stack.shift();
+                          y = c2y + (stack.length === 1 ? stack.shift() : 0);
+                          p.curveTo(c1x, c1y, c2x, c2y, x, y);
+                        }
+
+                        break;
+                      default:
+                        if (v < 32) {
+                          console.log('Glyph ' + glyph.index + ': unknown operator ' + v);
+                        } else if (v < 247) {
+                          stack.push(v - 139);
+                        } else if (v < 251) {
+                          b1 = code[i];
+                          i += 1;
+                          stack.push((v - 247) * 256 + b1 + 108);
+                        } else if (v < 255) {
+                          b1 = code[i];
+                          i += 1;
+                          stack.push(-(v - 251) * 256 - b1 - 108);
+                        } else {
+                          b1 = code[i];
+                          b2 = code[i + 1];
+                          b3 = code[i + 2];
+                          b4 = code[i + 3];
+                          i += 4;
+                          stack.push(((b1 << 24) | (b2 << 16) | (b3 << 8) | b4) / 65536);
+                        }
+                    }
