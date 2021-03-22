@@ -31442,3 +31442,158 @@
                           stack.push(((b1 << 24) | (b2 << 16) | (b3 << 8) | b4) / 65536);
                         }
                     }
+                  }
+                }
+
+                parse$$1(code);
+
+                glyph.advanceWidth = width;
+                return p;
+              }
+
+              function parseCFFFDSelect(data, start, nGlyphs, fdArrayCount) {
+                var fdSelect = [];
+                var fdIndex;
+                var parser = new parse.Parser(data, start);
+                var format = parser.parseCard8();
+                if (format === 0) {
+                  // Simple list of nGlyphs elements
+                  for (var iGid = 0; iGid < nGlyphs; iGid++) {
+                    fdIndex = parser.parseCard8();
+                    if (fdIndex >= fdArrayCount) {
+                      throw new Error(
+                        'CFF table CID Font FDSelect has bad FD index value ' +
+                          fdIndex +
+                          ' (FD count ' +
+                          fdArrayCount +
+                          ')'
+                      );
+                    }
+                    fdSelect.push(fdIndex);
+                  }
+                } else if (format === 3) {
+                  // Ranges
+                  var nRanges = parser.parseCard16();
+                  var first = parser.parseCard16();
+                  if (first !== 0) {
+                    throw new Error(
+                      'CFF Table CID Font FDSelect format 3 range has bad initial GID ' +
+                        first
+                    );
+                  }
+                  var next;
+                  for (var iRange = 0; iRange < nRanges; iRange++) {
+                    fdIndex = parser.parseCard8();
+                    next = parser.parseCard16();
+                    if (fdIndex >= fdArrayCount) {
+                      throw new Error(
+                        'CFF table CID Font FDSelect has bad FD index value ' +
+                          fdIndex +
+                          ' (FD count ' +
+                          fdArrayCount +
+                          ')'
+                      );
+                    }
+                    if (next > nGlyphs) {
+                      throw new Error(
+                        'CFF Table CID Font FDSelect format 3 range has bad GID ' + next
+                      );
+                    }
+                    for (; first < next; first++) {
+                      fdSelect.push(fdIndex);
+                    }
+                    first = next;
+                  }
+                  if (next !== nGlyphs) {
+                    throw new Error(
+                      'CFF Table CID Font FDSelect format 3 range has bad final GID ' + next
+                    );
+                  }
+                } else {
+                  throw new Error(
+                    'CFF Table CID Font FDSelect table has unsupported format ' + format
+                  );
+                }
+                return fdSelect;
+              }
+
+              // Parse the `CFF` table, which contains the glyph outlines in PostScript format.
+              function parseCFFTable(data, start, font) {
+                font.tables.cff = {};
+                var header = parseCFFHeader(data, start);
+                var nameIndex = parseCFFIndex(data, header.endOffset, parse.bytesToString);
+                var topDictIndex = parseCFFIndex(data, nameIndex.endOffset);
+                var stringIndex = parseCFFIndex(
+                  data,
+                  topDictIndex.endOffset,
+                  parse.bytesToString
+                );
+                var globalSubrIndex = parseCFFIndex(data, stringIndex.endOffset);
+                font.gsubrs = globalSubrIndex.objects;
+                font.gsubrsBias = calcCFFSubroutineBias(font.gsubrs);
+
+                var topDictArray = gatherCFFTopDicts(
+                  data,
+                  start,
+                  topDictIndex.objects,
+                  stringIndex.objects
+                );
+                if (topDictArray.length !== 1) {
+                  throw new Error(
+                    "CFF table has too many fonts in 'FontSet' - count of fonts NameIndex.length = " +
+                      topDictArray.length
+                  );
+                }
+
+                var topDict = topDictArray[0];
+                font.tables.cff.topDict = topDict;
+
+                if (topDict._privateDict) {
+                  font.defaultWidthX = topDict._privateDict.defaultWidthX;
+                  font.nominalWidthX = topDict._privateDict.nominalWidthX;
+                }
+
+                if (topDict.ros[0] !== undefined && topDict.ros[1] !== undefined) {
+                  font.isCIDFont = true;
+                }
+
+                if (font.isCIDFont) {
+                  var fdArrayOffset = topDict.fdArray;
+                  var fdSelectOffset = topDict.fdSelect;
+                  if (fdArrayOffset === 0 || fdSelectOffset === 0) {
+                    throw new Error(
+                      'Font is marked as a CID font, but FDArray and/or FDSelect information is missing'
+                    );
+                  }
+                  fdArrayOffset += start;
+                  var fdArrayIndex = parseCFFIndex(data, fdArrayOffset);
+                  var fdArray = gatherCFFTopDicts(
+                    data,
+                    start,
+                    fdArrayIndex.objects,
+                    stringIndex.objects
+                  );
+                  topDict._fdArray = fdArray;
+                  fdSelectOffset += start;
+                  topDict._fdSelect = parseCFFFDSelect(
+                    data,
+                    fdSelectOffset,
+                    font.numGlyphs,
+                    fdArray.length
+                  );
+                }
+
+                var privateDictOffset = start + topDict.private[1];
+                var privateDict = parseCFFPrivateDict(
+                  data,
+                  privateDictOffset,
+                  topDict.private[0],
+                  stringIndex.objects
+                );
+                font.defaultWidthX = privateDict.defaultWidthX;
+                font.nominalWidthX = privateDict.nominalWidthX;
+
+                if (privateDict.subrs !== 0) {
+                  var subrOffset = privateDictOffset + privateDict.subrs;
+                  var subrIndex = parseCFFIndex(data, subrOffset);
+                  font.subrs = subrIndex.objects;
