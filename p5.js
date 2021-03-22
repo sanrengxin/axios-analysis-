@@ -31181,3 +31181,130 @@
                           case 35: // flex
                             // |- dx1 dy1 dx2 dy2 dx3 dy3 dx4 dy4 dx5 dy5 dx6 dy6 fd flex (12 35) |-
                             c1x = x + stack.shift(); // dx1
+                            c1y = y + stack.shift(); // dy1
+                            c2x = c1x + stack.shift(); // dx2
+                            c2y = c1y + stack.shift(); // dy2
+                            jpx = c2x + stack.shift(); // dx3
+                            jpy = c2y + stack.shift(); // dy3
+                            c3x = jpx + stack.shift(); // dx4
+                            c3y = jpy + stack.shift(); // dy4
+                            c4x = c3x + stack.shift(); // dx5
+                            c4y = c3y + stack.shift(); // dy5
+                            x = c4x + stack.shift(); // dx6
+                            y = c4y + stack.shift(); // dy6
+                            stack.shift(); // flex depth
+                            p.curveTo(c1x, c1y, c2x, c2y, jpx, jpy);
+                            p.curveTo(c3x, c3y, c4x, c4y, x, y);
+                            break;
+                          case 34: // hflex
+                            // |- dx1 dx2 dy2 dx3 dx4 dx5 dx6 hflex (12 34) |-
+                            c1x = x + stack.shift(); // dx1
+                            c1y = y; // dy1
+                            c2x = c1x + stack.shift(); // dx2
+                            c2y = c1y + stack.shift(); // dy2
+                            jpx = c2x + stack.shift(); // dx3
+                            jpy = c2y; // dy3
+                            c3x = jpx + stack.shift(); // dx4
+                            c3y = c2y; // dy4
+                            c4x = c3x + stack.shift(); // dx5
+                            c4y = y; // dy5
+                            x = c4x + stack.shift(); // dx6
+                            p.curveTo(c1x, c1y, c2x, c2y, jpx, jpy);
+                            p.curveTo(c3x, c3y, c4x, c4y, x, y);
+                            break;
+                          case 36: // hflex1
+                            // |- dx1 dy1 dx2 dy2 dx3 dx4 dx5 dy5 dx6 hflex1 (12 36) |-
+                            c1x = x + stack.shift(); // dx1
+                            c1y = y + stack.shift(); // dy1
+                            c2x = c1x + stack.shift(); // dx2
+                            c2y = c1y + stack.shift(); // dy2
+                            jpx = c2x + stack.shift(); // dx3
+                            jpy = c2y; // dy3
+                            c3x = jpx + stack.shift(); // dx4
+                            c3y = c2y; // dy4
+                            c4x = c3x + stack.shift(); // dx5
+                            c4y = c3y + stack.shift(); // dy5
+                            x = c4x + stack.shift(); // dx6
+                            p.curveTo(c1x, c1y, c2x, c2y, jpx, jpy);
+                            p.curveTo(c3x, c3y, c4x, c4y, x, y);
+                            break;
+                          case 37: // flex1
+                            // |- dx1 dy1 dx2 dy2 dx3 dy3 dx4 dy4 dx5 dy5 d6 flex1 (12 37) |-
+                            c1x = x + stack.shift(); // dx1
+                            c1y = y + stack.shift(); // dy1
+                            c2x = c1x + stack.shift(); // dx2
+                            c2y = c1y + stack.shift(); // dy2
+                            jpx = c2x + stack.shift(); // dx3
+                            jpy = c2y + stack.shift(); // dy3
+                            c3x = jpx + stack.shift(); // dx4
+                            c3y = jpy + stack.shift(); // dy4
+                            c4x = c3x + stack.shift(); // dx5
+                            c4y = c3y + stack.shift(); // dy5
+                            if (Math.abs(c4x - x) > Math.abs(c4y - y)) {
+                              x = c4x + stack.shift();
+                            } else {
+                              y = c4y + stack.shift();
+                            }
+
+                            p.curveTo(c1x, c1y, c2x, c2y, jpx, jpy);
+                            p.curveTo(c3x, c3y, c4x, c4y, x, y);
+                            break;
+                          default:
+                            console.log(
+                              'Glyph ' + glyph.index + ': unknown operator ' + 1200 + v
+                            );
+                            stack.length = 0;
+                        }
+                        break;
+                      case 14: // endchar
+                        if (stack.length > 0 && !haveWidth) {
+                          width = stack.shift() + nominalWidthX;
+                          haveWidth = true;
+                        }
+
+                        if (open) {
+                          p.closePath();
+                          open = false;
+                        }
+
+                        break;
+                      case 18: // hstemhm
+                        parseStems();
+                        break;
+                      case 19: // hintmask
+                      case 20: // cntrmask
+                        parseStems();
+                        i += (nStems + 7) >> 3;
+                        break;
+                      case 21: // rmoveto
+                        if (stack.length > 2 && !haveWidth) {
+                          width = stack.shift() + nominalWidthX;
+                          haveWidth = true;
+                        }
+
+                        y += stack.pop();
+                        x += stack.pop();
+                        newContour(x, y);
+                        break;
+                      case 22: // hmoveto
+                        if (stack.length > 1 && !haveWidth) {
+                          width = stack.shift() + nominalWidthX;
+                          haveWidth = true;
+                        }
+
+                        x += stack.pop();
+                        newContour(x, y);
+                        break;
+                      case 23: // vstemhm
+                        parseStems();
+                        break;
+                      case 24: // rcurveline
+                        while (stack.length > 2) {
+                          c1x = x + stack.shift();
+                          c1y = y + stack.shift();
+                          c2x = c1x + stack.shift();
+                          c2y = c1y + stack.shift();
+                          x = c2x + stack.shift();
+                          y = c2y + stack.shift();
+                          p.curveTo(c1x, c1y, c2x, c2y, x, y);
+                        }
