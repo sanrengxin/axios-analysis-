@@ -31878,3 +31878,151 @@
 
                 var glyphNames = [];
                 var glyph;
+
+                // Skip first glyph (.notdef)
+                for (var i = 1; i < glyphs.length; i += 1) {
+                  glyph = glyphs.get(i);
+                  glyphNames.push(glyph.name);
+                }
+
+                var strings = [];
+
+                t.header = makeHeader();
+                t.nameIndex = makeNameIndex([options.postScriptName]);
+                var topDict = makeTopDict(attrs, strings);
+                t.topDictIndex = makeTopDictIndex(topDict);
+                t.globalSubrIndex = makeGlobalSubrIndex();
+                t.charsets = makeCharsets(glyphNames, strings);
+                t.charStringsIndex = makeCharStringsIndex(glyphs);
+                t.privateDict = makePrivateDict(privateAttrs, strings);
+
+                // Needs to come at the end, to encode all custom strings used in the font.
+                t.stringIndex = makeStringIndex(strings);
+
+                var startOffset =
+                  t.header.sizeOf() +
+                  t.nameIndex.sizeOf() +
+                  t.topDictIndex.sizeOf() +
+                  t.stringIndex.sizeOf() +
+                  t.globalSubrIndex.sizeOf();
+                attrs.charset = startOffset;
+
+                // We use the CFF standard encoding; proper encoding will be handled in cmap.
+                attrs.encoding = 0;
+                attrs.charStrings = attrs.charset + t.charsets.sizeOf();
+                attrs.private[1] = attrs.charStrings + t.charStringsIndex.sizeOf();
+
+                // Recreate the Top DICT INDEX with the correct offsets.
+                topDict = makeTopDict(attrs, strings);
+                t.topDictIndex = makeTopDictIndex(topDict);
+
+                return t;
+              }
+
+              var cff = { parse: parseCFFTable, make: makeCFFTable };
+
+              // The `head` table contains global information about the font.
+
+              // Parse the header `head` table
+              function parseHeadTable(data, start) {
+                var head = {};
+                var p = new parse.Parser(data, start);
+                head.version = p.parseVersion();
+                head.fontRevision = Math.round(p.parseFixed() * 1000) / 1000;
+                head.checkSumAdjustment = p.parseULong();
+                head.magicNumber = p.parseULong();
+                check.argument(
+                  head.magicNumber === 0x5f0f3cf5,
+                  'Font header has wrong magic number.'
+                );
+                head.flags = p.parseUShort();
+                head.unitsPerEm = p.parseUShort();
+                head.created = p.parseLongDateTime();
+                head.modified = p.parseLongDateTime();
+                head.xMin = p.parseShort();
+                head.yMin = p.parseShort();
+                head.xMax = p.parseShort();
+                head.yMax = p.parseShort();
+                head.macStyle = p.parseUShort();
+                head.lowestRecPPEM = p.parseUShort();
+                head.fontDirectionHint = p.parseShort();
+                head.indexToLocFormat = p.parseShort();
+                head.glyphDataFormat = p.parseShort();
+                return head;
+              }
+
+              function makeHeadTable(options) {
+                // Apple Mac timestamp epoch is 01/01/1904 not 01/01/1970
+                var timestamp = Math.round(new Date().getTime() / 1000) + 2082844800;
+                var createdTimestamp = timestamp;
+
+                if (options.createdTimestamp) {
+                  createdTimestamp = options.createdTimestamp + 2082844800;
+                }
+
+                return new table.Table(
+                  'head',
+                  [
+                    { name: 'version', type: 'FIXED', value: 0x00010000 },
+                    { name: 'fontRevision', type: 'FIXED', value: 0x00010000 },
+                    { name: 'checkSumAdjustment', type: 'ULONG', value: 0 },
+                    { name: 'magicNumber', type: 'ULONG', value: 0x5f0f3cf5 },
+                    { name: 'flags', type: 'USHORT', value: 0 },
+                    { name: 'unitsPerEm', type: 'USHORT', value: 1000 },
+                    { name: 'created', type: 'LONGDATETIME', value: createdTimestamp },
+                    { name: 'modified', type: 'LONGDATETIME', value: timestamp },
+                    { name: 'xMin', type: 'SHORT', value: 0 },
+                    { name: 'yMin', type: 'SHORT', value: 0 },
+                    { name: 'xMax', type: 'SHORT', value: 0 },
+                    { name: 'yMax', type: 'SHORT', value: 0 },
+                    { name: 'macStyle', type: 'USHORT', value: 0 },
+                    { name: 'lowestRecPPEM', type: 'USHORT', value: 0 },
+                    { name: 'fontDirectionHint', type: 'SHORT', value: 2 },
+                    { name: 'indexToLocFormat', type: 'SHORT', value: 0 },
+                    { name: 'glyphDataFormat', type: 'SHORT', value: 0 }
+                  ],
+                  options
+                );
+              }
+
+              var head = { parse: parseHeadTable, make: makeHeadTable };
+
+              // The `hhea` table contains information for horizontal layout.
+
+              // Parse the horizontal header `hhea` table
+              function parseHheaTable(data, start) {
+                var hhea = {};
+                var p = new parse.Parser(data, start);
+                hhea.version = p.parseVersion();
+                hhea.ascender = p.parseShort();
+                hhea.descender = p.parseShort();
+                hhea.lineGap = p.parseShort();
+                hhea.advanceWidthMax = p.parseUShort();
+                hhea.minLeftSideBearing = p.parseShort();
+                hhea.minRightSideBearing = p.parseShort();
+                hhea.xMaxExtent = p.parseShort();
+                hhea.caretSlopeRise = p.parseShort();
+                hhea.caretSlopeRun = p.parseShort();
+                hhea.caretOffset = p.parseShort();
+                p.relativeOffset += 8;
+                hhea.metricDataFormat = p.parseShort();
+                hhea.numberOfHMetrics = p.parseUShort();
+                return hhea;
+              }
+
+              function makeHheaTable(options) {
+                return new table.Table(
+                  'hhea',
+                  [
+                    { name: 'version', type: 'FIXED', value: 0x00010000 },
+                    { name: 'ascender', type: 'FWORD', value: 0 },
+                    { name: 'descender', type: 'FWORD', value: 0 },
+                    { name: 'lineGap', type: 'FWORD', value: 0 },
+                    { name: 'advanceWidthMax', type: 'UFWORD', value: 0 },
+                    { name: 'minLeftSideBearing', type: 'FWORD', value: 0 },
+                    { name: 'minRightSideBearing', type: 'FWORD', value: 0 },
+                    { name: 'xMaxExtent', type: 'FWORD', value: 0 },
+                    { name: 'caretSlopeRise', type: 'SHORT', value: 1 },
+                    { name: 'caretSlopeRun', type: 'SHORT', value: 0 },
+                    { name: 'caretOffset', type: 'SHORT', value: 0 },
+                    { name: 'reserved1', type: 'SHORT', value: 0 },
