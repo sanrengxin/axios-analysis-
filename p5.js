@@ -31731,3 +31731,150 @@
                     value: strings[i]
                   });
                 }
+
+                return t;
+              }
+
+              function makeGlobalSubrIndex() {
+                // Currently we don't use subroutines.
+                return new table.Record('Global Subr INDEX', [
+                  { name: 'subrs', type: 'INDEX', value: [] }
+                ]);
+              }
+
+              function makeCharsets(glyphNames, strings) {
+                var t = new table.Record('Charsets', [
+                  { name: 'format', type: 'Card8', value: 0 }
+                ]);
+                for (var i = 0; i < glyphNames.length; i += 1) {
+                  var glyphName = glyphNames[i];
+                  var glyphSID = encodeString(glyphName, strings);
+                  t.fields.push({ name: 'glyph_' + i, type: 'SID', value: glyphSID });
+                }
+
+                return t;
+              }
+
+              function glyphToOps(glyph) {
+                var ops = [];
+                var path = glyph.path;
+                ops.push({ name: 'width', type: 'NUMBER', value: glyph.advanceWidth });
+                var x = 0;
+                var y = 0;
+                for (var i = 0; i < path.commands.length; i += 1) {
+                  var dx = void 0;
+                  var dy = void 0;
+                  var cmd = path.commands[i];
+                  if (cmd.type === 'Q') {
+                    // CFF only supports bézier curves, so convert the quad to a bézier.
+                    var _13 = 1 / 3;
+                    var _23 = 2 / 3;
+
+                    // We're going to create a new command so we don't change the original path.
+                    cmd = {
+                      type: 'C',
+                      x: cmd.x,
+                      y: cmd.y,
+                      x1: _13 * x + _23 * cmd.x1,
+                      y1: _13 * y + _23 * cmd.y1,
+                      x2: _13 * cmd.x + _23 * cmd.x1,
+                      y2: _13 * cmd.y + _23 * cmd.y1
+                    };
+                  }
+
+                  if (cmd.type === 'M') {
+                    dx = Math.round(cmd.x - x);
+                    dy = Math.round(cmd.y - y);
+                    ops.push({ name: 'dx', type: 'NUMBER', value: dx });
+                    ops.push({ name: 'dy', type: 'NUMBER', value: dy });
+                    ops.push({ name: 'rmoveto', type: 'OP', value: 21 });
+                    x = Math.round(cmd.x);
+                    y = Math.round(cmd.y);
+                  } else if (cmd.type === 'L') {
+                    dx = Math.round(cmd.x - x);
+                    dy = Math.round(cmd.y - y);
+                    ops.push({ name: 'dx', type: 'NUMBER', value: dx });
+                    ops.push({ name: 'dy', type: 'NUMBER', value: dy });
+                    ops.push({ name: 'rlineto', type: 'OP', value: 5 });
+                    x = Math.round(cmd.x);
+                    y = Math.round(cmd.y);
+                  } else if (cmd.type === 'C') {
+                    var dx1 = Math.round(cmd.x1 - x);
+                    var dy1 = Math.round(cmd.y1 - y);
+                    var dx2 = Math.round(cmd.x2 - cmd.x1);
+                    var dy2 = Math.round(cmd.y2 - cmd.y1);
+                    dx = Math.round(cmd.x - cmd.x2);
+                    dy = Math.round(cmd.y - cmd.y2);
+                    ops.push({ name: 'dx1', type: 'NUMBER', value: dx1 });
+                    ops.push({ name: 'dy1', type: 'NUMBER', value: dy1 });
+                    ops.push({ name: 'dx2', type: 'NUMBER', value: dx2 });
+                    ops.push({ name: 'dy2', type: 'NUMBER', value: dy2 });
+                    ops.push({ name: 'dx', type: 'NUMBER', value: dx });
+                    ops.push({ name: 'dy', type: 'NUMBER', value: dy });
+                    ops.push({ name: 'rrcurveto', type: 'OP', value: 8 });
+                    x = Math.round(cmd.x);
+                    y = Math.round(cmd.y);
+                  }
+
+                  // Contours are closed automatically.
+                }
+
+                ops.push({ name: 'endchar', type: 'OP', value: 14 });
+                return ops;
+              }
+
+              function makeCharStringsIndex(glyphs) {
+                var t = new table.Record('CharStrings INDEX', [
+                  { name: 'charStrings', type: 'INDEX', value: [] }
+                ]);
+
+                for (var i = 0; i < glyphs.length; i += 1) {
+                  var glyph = glyphs.get(i);
+                  var ops = glyphToOps(glyph);
+                  t.charStrings.push({ name: glyph.name, type: 'CHARSTRING', value: ops });
+                }
+
+                return t;
+              }
+
+              function makePrivateDict(attrs, strings) {
+                var t = new table.Record('Private DICT', [
+                  { name: 'dict', type: 'DICT', value: {} }
+                ]);
+                t.dict = makeDict(PRIVATE_DICT_META, attrs, strings);
+                return t;
+              }
+
+              function makeCFFTable(glyphs, options) {
+                var t = new table.Table('CFF ', [
+                  { name: 'header', type: 'RECORD' },
+                  { name: 'nameIndex', type: 'RECORD' },
+                  { name: 'topDictIndex', type: 'RECORD' },
+                  { name: 'stringIndex', type: 'RECORD' },
+                  { name: 'globalSubrIndex', type: 'RECORD' },
+                  { name: 'charsets', type: 'RECORD' },
+                  { name: 'charStringsIndex', type: 'RECORD' },
+                  { name: 'privateDict', type: 'RECORD' }
+                ]);
+
+                var fontScale = 1 / options.unitsPerEm;
+                // We use non-zero values for the offsets so that the DICT encodes them.
+                // This is important because the size of the Top DICT plays a role in offset calculation,
+                // and the size shouldn't change after we've written correct offsets.
+                var attrs = {
+                  version: options.version,
+                  fullName: options.fullName,
+                  familyName: options.familyName,
+                  weight: options.weightName,
+                  fontBBox: options.fontBBox || [0, 0, 0, 0],
+                  fontMatrix: [fontScale, 0, 0, fontScale, 0, 0],
+                  charset: 999,
+                  encoding: 0,
+                  charStrings: 999,
+                  private: [0, 999]
+                };
+
+                var privateAttrs = {};
+
+                var glyphNames = [];
+                var glyph;
