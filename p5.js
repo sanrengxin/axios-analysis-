@@ -32026,3 +32026,165 @@
                     { name: 'caretSlopeRun', type: 'SHORT', value: 0 },
                     { name: 'caretOffset', type: 'SHORT', value: 0 },
                     { name: 'reserved1', type: 'SHORT', value: 0 },
+                    { name: 'reserved2', type: 'SHORT', value: 0 },
+                    { name: 'reserved3', type: 'SHORT', value: 0 },
+                    { name: 'reserved4', type: 'SHORT', value: 0 },
+                    { name: 'metricDataFormat', type: 'SHORT', value: 0 },
+                    { name: 'numberOfHMetrics', type: 'USHORT', value: 0 }
+                  ],
+                  options
+                );
+              }
+
+              var hhea = { parse: parseHheaTable, make: makeHheaTable };
+
+              // The `hmtx` table contains the horizontal metrics for all glyphs.
+
+              // Parse the `hmtx` table, which contains the horizontal metrics for all glyphs.
+              // This function augments the glyph array, adding the advanceWidth and leftSideBearing to each glyph.
+              function parseHmtxTable(data, start, numMetrics, numGlyphs, glyphs) {
+                var advanceWidth;
+                var leftSideBearing;
+                var p = new parse.Parser(data, start);
+                for (var i = 0; i < numGlyphs; i += 1) {
+                  // If the font is monospaced, only one entry is needed. This last entry applies to all subsequent glyphs.
+                  if (i < numMetrics) {
+                    advanceWidth = p.parseUShort();
+                    leftSideBearing = p.parseShort();
+                  }
+
+                  var glyph = glyphs.get(i);
+                  glyph.advanceWidth = advanceWidth;
+                  glyph.leftSideBearing = leftSideBearing;
+                }
+              }
+
+              function makeHmtxTable(glyphs) {
+                var t = new table.Table('hmtx', []);
+                for (var i = 0; i < glyphs.length; i += 1) {
+                  var glyph = glyphs.get(i);
+                  var advanceWidth = glyph.advanceWidth || 0;
+                  var leftSideBearing = glyph.leftSideBearing || 0;
+                  t.fields.push({
+                    name: 'advanceWidth_' + i,
+                    type: 'USHORT',
+                    value: advanceWidth
+                  });
+                  t.fields.push({
+                    name: 'leftSideBearing_' + i,
+                    type: 'SHORT',
+                    value: leftSideBearing
+                  });
+                }
+
+                return t;
+              }
+
+              var hmtx = { parse: parseHmtxTable, make: makeHmtxTable };
+
+              // The `ltag` table stores IETF BCP-47 language tags. It allows supporting
+
+              function makeLtagTable(tags) {
+                var result = new table.Table('ltag', [
+                  { name: 'version', type: 'ULONG', value: 1 },
+                  { name: 'flags', type: 'ULONG', value: 0 },
+                  { name: 'numTags', type: 'ULONG', value: tags.length }
+                ]);
+
+                var stringPool = '';
+                var stringPoolOffset = 12 + tags.length * 4;
+                for (var i = 0; i < tags.length; ++i) {
+                  var pos = stringPool.indexOf(tags[i]);
+                  if (pos < 0) {
+                    pos = stringPool.length;
+                    stringPool += tags[i];
+                  }
+
+                  result.fields.push({
+                    name: 'offset ' + i,
+                    type: 'USHORT',
+                    value: stringPoolOffset + pos
+                  });
+                  result.fields.push({
+                    name: 'length ' + i,
+                    type: 'USHORT',
+                    value: tags[i].length
+                  });
+                }
+
+                result.fields.push({
+                  name: 'stringPool',
+                  type: 'CHARARRAY',
+                  value: stringPool
+                });
+                return result;
+              }
+
+              function parseLtagTable(data, start) {
+                var p = new parse.Parser(data, start);
+                var tableVersion = p.parseULong();
+                check.argument(tableVersion === 1, 'Unsupported ltag table version.');
+                // The 'ltag' specification does not define any flags; skip the field.
+                p.skip('uLong', 1);
+                var numTags = p.parseULong();
+
+                var tags = [];
+                for (var i = 0; i < numTags; i++) {
+                  var tag = '';
+                  var offset = start + p.parseUShort();
+                  var length = p.parseUShort();
+                  for (var j = offset; j < offset + length; ++j) {
+                    tag += String.fromCharCode(data.getInt8(j));
+                  }
+
+                  tags.push(tag);
+                }
+
+                return tags;
+              }
+
+              var ltag = { make: makeLtagTable, parse: parseLtagTable };
+
+              // The `maxp` table establishes the memory requirements for the font.
+
+              // Parse the maximum profile `maxp` table.
+              function parseMaxpTable(data, start) {
+                var maxp = {};
+                var p = new parse.Parser(data, start);
+                maxp.version = p.parseVersion();
+                maxp.numGlyphs = p.parseUShort();
+                if (maxp.version === 1.0) {
+                  maxp.maxPoints = p.parseUShort();
+                  maxp.maxContours = p.parseUShort();
+                  maxp.maxCompositePoints = p.parseUShort();
+                  maxp.maxCompositeContours = p.parseUShort();
+                  maxp.maxZones = p.parseUShort();
+                  maxp.maxTwilightPoints = p.parseUShort();
+                  maxp.maxStorage = p.parseUShort();
+                  maxp.maxFunctionDefs = p.parseUShort();
+                  maxp.maxInstructionDefs = p.parseUShort();
+                  maxp.maxStackElements = p.parseUShort();
+                  maxp.maxSizeOfInstructions = p.parseUShort();
+                  maxp.maxComponentElements = p.parseUShort();
+                  maxp.maxComponentDepth = p.parseUShort();
+                }
+
+                return maxp;
+              }
+
+              function makeMaxpTable(numGlyphs) {
+                return new table.Table('maxp', [
+                  { name: 'version', type: 'FIXED', value: 0x00005000 },
+                  { name: 'numGlyphs', type: 'USHORT', value: numGlyphs }
+                ]);
+              }
+
+              var maxp = { parse: parseMaxpTable, make: makeMaxpTable };
+
+              // The `name` naming table.
+
+              // NameIDs for the name table.
+              var nameTableNames = [
+                'copyright', // 0
+                'fontFamily', // 1
+                'fontSubfamily', // 2
