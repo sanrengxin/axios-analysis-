@@ -32455,3 +32455,141 @@
                 140: 0, // langGalician → smRoman
                 141: 0, // langAfrikaans → smRoman
                 142: 0, // langBreton → smRoman (modified)
+                143: 28, // langInuktitut → smEthiopic (modified)
+                144: 0, // langScottishGaelic → smRoman (modified)
+                145: 0, // langManxGaelic → smRoman (modified)
+                146: 0, // langIrishGaelicScript → smRoman (modified)
+                147: 0, // langTongan → smRoman
+                148: 6, // langGreekAncient → smRoman
+                149: 0, // langGreenlandic → smRoman
+                150: 0, // langAzerbaijanRoman → smRoman
+                151: 0 // langNynorsk → smRoman
+              };
+
+              // While Microsoft indicates a region/country for all its language
+              // IDs, we omit the region code if it's equal to the "most likely
+              // region subtag" according to Unicode CLDR. For scripts, we omit
+              // the subtag if it is equal to the Suppress-Script entry in the
+              // IANA language subtag registry for IETF BCP 47.
+              //
+              // For example, Microsoft states that its language code 0x041A is
+              // Croatian in Croatia. We transform this to the BCP 47 language code 'hr'
+              // and not 'hr-HR' because Croatia is the default country for Croatian,
+              // according to Unicode CLDR. As another example, Microsoft states
+              // that 0x101A is Croatian (Latin) in Bosnia-Herzegovina. We transform
+              // this to 'hr-BA' and not 'hr-Latn-BA' because Latin is the default script
+              // for the Croatian language, according to IANA.
+              //
+              // http://www.unicode.org/cldr/charts/latest/supplemental/likely_subtags.html
+              // http://www.iana.org/assignments/language-subtag-registry/language-subtag-registry
+              var windowsLanguages = {
+                0x0436: 'af',
+                0x041c: 'sq',
+                0x0484: 'gsw',
+                0x045e: 'am',
+                0x1401: 'ar-DZ',
+                0x3c01: 'ar-BH',
+                0x0c01: 'ar',
+                0x0801: 'ar-IQ',
+                0x2c01: 'ar-JO',
+                0x3401: 'ar-KW',
+                0x3001: 'ar-LB',
+                0x1001: 'ar-LY',
+                0x1801: 'ary',
+                0x2001: 'ar-OM',
+                0x4001: 'ar-QA',
+                0x0401: 'ar-SA',
+                0x2801: 'ar-SY',
+                0x1c01: 'aeb',
+                0x3801: 'ar-AE',
+                0x2401: 'ar-YE',
+                0x042b: 'hy',
+                0x044d: 'as',
+                0x082c: 'az-Cyrl',
+                0x042c: 'az',
+                0x046d: 'ba',
+                0x042d: 'eu',
+                0x0423: 'be',
+                0x0845: 'bn',
+                0x0445: 'bn-IN',
+                0x201a: 'bs-Cyrl',
+                0x141a: 'bs',
+                0x047e: 'br',
+                0x0402: 'bg',
+                0x0403: 'ca',
+                0x0c04: 'zh-HK',
+                0x1404: 'zh-MO',
+                0x0804: 'zh',
+                0x1004: 'zh-SG',
+                0x0404: 'zh-TW',
+                0x0483: 'co',
+                0x041a: 'hr',
+                0x101a: 'hr-BA',
+                0x0405: 'cs',
+                0x0406: 'da',
+                0x048c: 'prs',
+                0x0465: 'dv',
+                0x0813: 'nl-BE',
+                0x0413: 'nl',
+                0x0c09: 'en-AU',
+                0x2809: 'en-BZ',
+                0x1009: 'en-CA',
+                0x2409: 'en-029',
+                0x4009: 'en-IN',
+                0x1809: 'en-IE',
+                0x2009: 'en-JM',
+                0x4409: 'en-MY',
+                0x1409: 'en-NZ',
+                0x3409: 'en-PH',
+                0x4809: 'en-SG',
+                0x1c09: 'en-ZA',
+                0x2c09: 'en-TT',
+                0x0809: 'en-GB',
+                0x0409: 'en',
+                0x3009: 'en-ZW',
+                0x0425: 'et',
+                0x0438: 'fo',
+                0x0464: 'fil',
+                0x040b: 'fi',
+                0x080c: 'fr-BE',
+                0x0c0c: 'fr-CA',
+                0x040c: 'fr',
+                0x140c: 'fr-LU',
+                0x180c: 'fr-MC',
+                0x100c: 'fr-CH',
+                0x0462: 'fy',
+                0x0456: 'gl',
+                0x0437: 'ka',
+                0x0c07: 'de-AT',
+                0x0407: 'de',
+                0x1407: 'de-LI',
+                0x1007: 'de-LU',
+                0x0807: 'de-CH',
+                0x0408: 'el',
+                0x046f: 'kl',
+                0x0447: 'gu',
+                0x0468: 'ha',
+                0x040d: 'he',
+                0x0439: 'hi',
+                0x040e: 'hu',
+                0x040f: 'is',
+                0x0470: 'ig',
+                0x0421: 'id',
+                0x045d: 'iu',
+                0x085d: 'iu-Latn',
+                0x083c: 'ga',
+                0x0434: 'xh',
+                0x0435: 'zu',
+                0x0410: 'it',
+                0x0810: 'it-CH',
+                0x0411: 'ja',
+                0x044b: 'kn',
+                0x043f: 'kk',
+                0x0453: 'km',
+                0x0486: 'quc',
+                0x0487: 'rw',
+                0x0441: 'sw',
+                0x0457: 'kok',
+                0x0412: 'ko',
+                0x0440: 'ky',
+                0x0454: 'lo',
