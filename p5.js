@@ -32593,3 +32593,130 @@
                 0x0412: 'ko',
                 0x0440: 'ky',
                 0x0454: 'lo',
+                0x0426: 'lv',
+                0x0427: 'lt',
+                0x082e: 'dsb',
+                0x046e: 'lb',
+                0x042f: 'mk',
+                0x083e: 'ms-BN',
+                0x043e: 'ms',
+                0x044c: 'ml',
+                0x043a: 'mt',
+                0x0481: 'mi',
+                0x047a: 'arn',
+                0x044e: 'mr',
+                0x047c: 'moh',
+                0x0450: 'mn',
+                0x0850: 'mn-CN',
+                0x0461: 'ne',
+                0x0414: 'nb',
+                0x0814: 'nn',
+                0x0482: 'oc',
+                0x0448: 'or',
+                0x0463: 'ps',
+                0x0415: 'pl',
+                0x0416: 'pt',
+                0x0816: 'pt-PT',
+                0x0446: 'pa',
+                0x046b: 'qu-BO',
+                0x086b: 'qu-EC',
+                0x0c6b: 'qu',
+                0x0418: 'ro',
+                0x0417: 'rm',
+                0x0419: 'ru',
+                0x243b: 'smn',
+                0x103b: 'smj-NO',
+                0x143b: 'smj',
+                0x0c3b: 'se-FI',
+                0x043b: 'se',
+                0x083b: 'se-SE',
+                0x203b: 'sms',
+                0x183b: 'sma-NO',
+                0x1c3b: 'sms',
+                0x044f: 'sa',
+                0x1c1a: 'sr-Cyrl-BA',
+                0x0c1a: 'sr',
+                0x181a: 'sr-Latn-BA',
+                0x081a: 'sr-Latn',
+                0x046c: 'nso',
+                0x0432: 'tn',
+                0x045b: 'si',
+                0x041b: 'sk',
+                0x0424: 'sl',
+                0x2c0a: 'es-AR',
+                0x400a: 'es-BO',
+                0x340a: 'es-CL',
+                0x240a: 'es-CO',
+                0x140a: 'es-CR',
+                0x1c0a: 'es-DO',
+                0x300a: 'es-EC',
+                0x440a: 'es-SV',
+                0x100a: 'es-GT',
+                0x480a: 'es-HN',
+                0x080a: 'es-MX',
+                0x4c0a: 'es-NI',
+                0x180a: 'es-PA',
+                0x3c0a: 'es-PY',
+                0x280a: 'es-PE',
+                0x500a: 'es-PR',
+
+                // Microsoft has defined two different language codes for
+                // “Spanish with modern sorting” and “Spanish with traditional
+                // sorting”. This makes sense for collation APIs, and it would be
+                // possible to express this in BCP 47 language tags via Unicode
+                // extensions (eg., es-u-co-trad is Spanish with traditional
+                // sorting). However, for storing names in fonts, the distinction
+                // does not make sense, so we give “es” in both cases.
+                0x0c0a: 'es',
+                0x040a: 'es',
+
+                0x540a: 'es-US',
+                0x380a: 'es-UY',
+                0x200a: 'es-VE',
+                0x081d: 'sv-FI',
+                0x041d: 'sv',
+                0x045a: 'syr',
+                0x0428: 'tg',
+                0x085f: 'tzm',
+                0x0449: 'ta',
+                0x0444: 'tt',
+                0x044a: 'te',
+                0x041e: 'th',
+                0x0451: 'bo',
+                0x041f: 'tr',
+                0x0442: 'tk',
+                0x0480: 'ug',
+                0x0422: 'uk',
+                0x042e: 'hsb',
+                0x0420: 'ur',
+                0x0843: 'uz-Cyrl',
+                0x0443: 'uz',
+                0x042a: 'vi',
+                0x0452: 'cy',
+                0x0488: 'wo',
+                0x0485: 'sah',
+                0x0478: 'ii',
+                0x046a: 'yo'
+              };
+
+              // Returns a IETF BCP 47 language code, for example 'zh-Hant'
+              // for 'Chinese in the traditional script'.
+              function getLanguageCode(platformID, languageID, ltag) {
+                switch (platformID) {
+                  case 0: // Unicode
+                    if (languageID === 0xffff) {
+                      return 'und';
+                    } else if (ltag) {
+                      return ltag[languageID];
+                    }
+
+                    break;
+
+                  case 1: // Macintosh
+                    return macLanguages[languageID];
+
+                  case 3: // Windows
+                    return windowsLanguages[languageID];
+                }
+
+                return undefined;
