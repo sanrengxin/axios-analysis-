@@ -32848,3 +32848,141 @@
 
                 var langTagCount = 0;
                 if (format === 1) {
+                  // FIXME: Also handle Microsoft's 'name' table 1.
+                  langTagCount = p.parseUShort();
+                }
+
+                return name;
+              }
+
+              // {23: 'foo'} → {'foo': 23}
+              // ['bar', 'baz'] → {'bar': 0, 'baz': 1}
+              function reverseDict(dict) {
+                var result = {};
+                for (var key in dict) {
+                  result[dict[key]] = parseInt(key);
+                }
+
+                return result;
+              }
+
+              function makeNameRecord(
+                platformID,
+                encodingID,
+                languageID,
+                nameID,
+                length,
+                offset
+              ) {
+                return new table.Record('NameRecord', [
+                  { name: 'platformID', type: 'USHORT', value: platformID },
+                  { name: 'encodingID', type: 'USHORT', value: encodingID },
+                  { name: 'languageID', type: 'USHORT', value: languageID },
+                  { name: 'nameID', type: 'USHORT', value: nameID },
+                  { name: 'length', type: 'USHORT', value: length },
+                  { name: 'offset', type: 'USHORT', value: offset }
+                ]);
+              }
+
+              // Finds the position of needle in haystack, or -1 if not there.
+              // Like String.indexOf(), but for arrays.
+              function findSubArray(needle, haystack) {
+                var needleLength = needle.length;
+                var limit = haystack.length - needleLength + 1;
+
+                loop: for (var pos = 0; pos < limit; pos++) {
+                  for (; pos < limit; pos++) {
+                    for (var k = 0; k < needleLength; k++) {
+                      if (haystack[pos + k] !== needle[k]) {
+                        continue loop;
+                      }
+                    }
+
+                    return pos;
+                  }
+                }
+
+                return -1;
+              }
+
+              function addStringToPool(s, pool) {
+                var offset = findSubArray(s, pool);
+                if (offset < 0) {
+                  offset = pool.length;
+                  var i = 0;
+                  var len = s.length;
+                  for (; i < len; ++i) {
+                    pool.push(s[i]);
+                  }
+                }
+
+                return offset;
+              }
+
+              function makeNameTable(names, ltag) {
+                var nameID;
+                var nameIDs = [];
+
+                var namesWithNumericKeys = {};
+                var nameTableIds = reverseDict(nameTableNames);
+                for (var key in names) {
+                  var id = nameTableIds[key];
+                  if (id === undefined) {
+                    id = key;
+                  }
+
+                  nameID = parseInt(id);
+
+                  if (isNaN(nameID)) {
+                    throw new Error(
+                      'Name table entry "' +
+                        key +
+                        '" does not exist, see nameTableNames for complete list.'
+                    );
+                  }
+
+                  namesWithNumericKeys[nameID] = names[key];
+                  nameIDs.push(nameID);
+                }
+
+                var macLanguageIds = reverseDict(macLanguages);
+                var windowsLanguageIds = reverseDict(windowsLanguages);
+
+                var nameRecords = [];
+                var stringPool = [];
+
+                for (var i = 0; i < nameIDs.length; i++) {
+                  nameID = nameIDs[i];
+                  var translations = namesWithNumericKeys[nameID];
+                  for (var lang in translations) {
+                    var text = translations[lang];
+
+                    // For MacOS, we try to emit the name in the form that was introduced
+                    // in the initial version of the TrueType spec (in the late 1980s).
+                    // However, this can fail for various reasons: the requested BCP 47
+                    // language code might not have an old-style Mac equivalent;
+                    // we might not have a codec for the needed character encoding;
+                    // or the name might contain characters that cannot be expressed
+                    // in the old-style Macintosh encoding. In case of failure, we emit
+                    // the name in a more modern fashion (Unicode encoding with BCP 47
+                    // language tags) that is recognized by MacOS 10.5, released in 2009.
+                    // If fonts were only read by operating systems, we could simply
+                    // emit all names in the modern form; this would be much easier.
+                    // However, there are many applications and libraries that read
+                    // 'name' tables directly, and these will usually only recognize
+                    // the ancient form (silently skipping the unrecognized names).
+                    var macPlatform = 1; // Macintosh
+                    var macLanguage = macLanguageIds[lang];
+                    var macScript = macLanguageToScript[macLanguage];
+                    var macEncoding = getEncoding(macPlatform, macScript, macLanguage);
+                    var macName = encode.MACSTRING(text, macEncoding);
+                    if (macName === undefined) {
+                      macPlatform = 0; // Unicode
+                      macLanguage = ltag.indexOf(lang);
+                      if (macLanguage < 0) {
+                        macLanguage = ltag.length;
+                        ltag.push(lang);
+                      }
+
+                      macScript = 4; // Unicode 2.0 and later
+                      macName = encode.UTF16(text);
