@@ -32986,3 +32986,148 @@
 
                       macScript = 4; // Unicode 2.0 and later
                       macName = encode.UTF16(text);
+                    }
+
+                    var macNameOffset = addStringToPool(macName, stringPool);
+                    nameRecords.push(
+                      makeNameRecord(
+                        macPlatform,
+                        macScript,
+                        macLanguage,
+                        nameID,
+                        macName.length,
+                        macNameOffset
+                      )
+                    );
+
+                    var winLanguage = windowsLanguageIds[lang];
+                    if (winLanguage !== undefined) {
+                      var winName = encode.UTF16(text);
+                      var winNameOffset = addStringToPool(winName, stringPool);
+                      nameRecords.push(
+                        makeNameRecord(
+                          3,
+                          1,
+                          winLanguage,
+                          nameID,
+                          winName.length,
+                          winNameOffset
+                        )
+                      );
+                    }
+                  }
+                }
+
+                nameRecords.sort(function(a, b) {
+                  return (
+                    a.platformID - b.platformID ||
+                    a.encodingID - b.encodingID ||
+                    a.languageID - b.languageID ||
+                    a.nameID - b.nameID
+                  );
+                });
+
+                var t = new table.Table('name', [
+                  { name: 'format', type: 'USHORT', value: 0 },
+                  { name: 'count', type: 'USHORT', value: nameRecords.length },
+                  {
+                    name: 'stringOffset',
+                    type: 'USHORT',
+                    value: 6 + nameRecords.length * 12
+                  }
+                ]);
+
+                for (var r = 0; r < nameRecords.length; r++) {
+                  t.fields.push({
+                    name: 'record_' + r,
+                    type: 'RECORD',
+                    value: nameRecords[r]
+                  });
+                }
+
+                t.fields.push({ name: 'strings', type: 'LITERAL', value: stringPool });
+                return t;
+              }
+
+              var _name = { parse: parseNameTable, make: makeNameTable };
+
+              // The `OS/2` table contains metrics required in OpenType fonts.
+
+              var unicodeRanges = [
+                { begin: 0x0000, end: 0x007f }, // Basic Latin
+                { begin: 0x0080, end: 0x00ff }, // Latin-1 Supplement
+                { begin: 0x0100, end: 0x017f }, // Latin Extended-A
+                { begin: 0x0180, end: 0x024f }, // Latin Extended-B
+                { begin: 0x0250, end: 0x02af }, // IPA Extensions
+                { begin: 0x02b0, end: 0x02ff }, // Spacing Modifier Letters
+                { begin: 0x0300, end: 0x036f }, // Combining Diacritical Marks
+                { begin: 0x0370, end: 0x03ff }, // Greek and Coptic
+                { begin: 0x2c80, end: 0x2cff }, // Coptic
+                { begin: 0x0400, end: 0x04ff }, // Cyrillic
+                { begin: 0x0530, end: 0x058f }, // Armenian
+                { begin: 0x0590, end: 0x05ff }, // Hebrew
+                { begin: 0xa500, end: 0xa63f }, // Vai
+                { begin: 0x0600, end: 0x06ff }, // Arabic
+                { begin: 0x07c0, end: 0x07ff }, // NKo
+                { begin: 0x0900, end: 0x097f }, // Devanagari
+                { begin: 0x0980, end: 0x09ff }, // Bengali
+                { begin: 0x0a00, end: 0x0a7f }, // Gurmukhi
+                { begin: 0x0a80, end: 0x0aff }, // Gujarati
+                { begin: 0x0b00, end: 0x0b7f }, // Oriya
+                { begin: 0x0b80, end: 0x0bff }, // Tamil
+                { begin: 0x0c00, end: 0x0c7f }, // Telugu
+                { begin: 0x0c80, end: 0x0cff }, // Kannada
+                { begin: 0x0d00, end: 0x0d7f }, // Malayalam
+                { begin: 0x0e00, end: 0x0e7f }, // Thai
+                { begin: 0x0e80, end: 0x0eff }, // Lao
+                { begin: 0x10a0, end: 0x10ff }, // Georgian
+                { begin: 0x1b00, end: 0x1b7f }, // Balinese
+                { begin: 0x1100, end: 0x11ff }, // Hangul Jamo
+                { begin: 0x1e00, end: 0x1eff }, // Latin Extended Additional
+                { begin: 0x1f00, end: 0x1fff }, // Greek Extended
+                { begin: 0x2000, end: 0x206f }, // General Punctuation
+                { begin: 0x2070, end: 0x209f }, // Superscripts And Subscripts
+                { begin: 0x20a0, end: 0x20cf }, // Currency Symbol
+                { begin: 0x20d0, end: 0x20ff }, // Combining Diacritical Marks For Symbols
+                { begin: 0x2100, end: 0x214f }, // Letterlike Symbols
+                { begin: 0x2150, end: 0x218f }, // Number Forms
+                { begin: 0x2190, end: 0x21ff }, // Arrows
+                { begin: 0x2200, end: 0x22ff }, // Mathematical Operators
+                { begin: 0x2300, end: 0x23ff }, // Miscellaneous Technical
+                { begin: 0x2400, end: 0x243f }, // Control Pictures
+                { begin: 0x2440, end: 0x245f }, // Optical Character Recognition
+                { begin: 0x2460, end: 0x24ff }, // Enclosed Alphanumerics
+                { begin: 0x2500, end: 0x257f }, // Box Drawing
+                { begin: 0x2580, end: 0x259f }, // Block Elements
+                { begin: 0x25a0, end: 0x25ff }, // Geometric Shapes
+                { begin: 0x2600, end: 0x26ff }, // Miscellaneous Symbols
+                { begin: 0x2700, end: 0x27bf }, // Dingbats
+                { begin: 0x3000, end: 0x303f }, // CJK Symbols And Punctuation
+                { begin: 0x3040, end: 0x309f }, // Hiragana
+                { begin: 0x30a0, end: 0x30ff }, // Katakana
+                { begin: 0x3100, end: 0x312f }, // Bopomofo
+                { begin: 0x3130, end: 0x318f }, // Hangul Compatibility Jamo
+                { begin: 0xa840, end: 0xa87f }, // Phags-pa
+                { begin: 0x3200, end: 0x32ff }, // Enclosed CJK Letters And Months
+                { begin: 0x3300, end: 0x33ff }, // CJK Compatibility
+                { begin: 0xac00, end: 0xd7af }, // Hangul Syllables
+                { begin: 0xd800, end: 0xdfff }, // Non-Plane 0 *
+                { begin: 0x10900, end: 0x1091f }, // Phoenicia
+                { begin: 0x4e00, end: 0x9fff }, // CJK Unified Ideographs
+                { begin: 0xe000, end: 0xf8ff }, // Private Use Area (plane 0)
+                { begin: 0x31c0, end: 0x31ef }, // CJK Strokes
+                { begin: 0xfb00, end: 0xfb4f }, // Alphabetic Presentation Forms
+                { begin: 0xfb50, end: 0xfdff }, // Arabic Presentation Forms-A
+                { begin: 0xfe20, end: 0xfe2f }, // Combining Half Marks
+                { begin: 0xfe10, end: 0xfe1f }, // Vertical Forms
+                { begin: 0xfe50, end: 0xfe6f }, // Small Form Variants
+                { begin: 0xfe70, end: 0xfeff }, // Arabic Presentation Forms-B
+                { begin: 0xff00, end: 0xffef }, // Halfwidth And Fullwidth Forms
+                { begin: 0xfff0, end: 0xffff }, // Specials
+                { begin: 0x0f00, end: 0x0fff }, // Tibetan
+                { begin: 0x0700, end: 0x074f }, // Syriac
+                { begin: 0x0780, end: 0x07bf }, // Thaana
+                { begin: 0x0d80, end: 0x0dff }, // Sinhala
+                { begin: 0x1000, end: 0x109f }, // Myanmar
+                { begin: 0x1200, end: 0x137f }, // Ethiopic
+                { begin: 0x13a0, end: 0x13ff }, // Cherokee
