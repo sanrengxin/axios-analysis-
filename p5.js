@@ -33131,3 +33131,117 @@
                 { begin: 0x1000, end: 0x109f }, // Myanmar
                 { begin: 0x1200, end: 0x137f }, // Ethiopic
                 { begin: 0x13a0, end: 0x13ff }, // Cherokee
+                { begin: 0x1400, end: 0x167f }, // Unified Canadian Aboriginal Syllabics
+                { begin: 0x1680, end: 0x169f }, // Ogham
+                { begin: 0x16a0, end: 0x16ff }, // Runic
+                { begin: 0x1780, end: 0x17ff }, // Khmer
+                { begin: 0x1800, end: 0x18af }, // Mongolian
+                { begin: 0x2800, end: 0x28ff }, // Braille Patterns
+                { begin: 0xa000, end: 0xa48f }, // Yi Syllables
+                { begin: 0x1700, end: 0x171f }, // Tagalog
+                { begin: 0x10300, end: 0x1032f }, // Old Italic
+                { begin: 0x10330, end: 0x1034f }, // Gothic
+                { begin: 0x10400, end: 0x1044f }, // Deseret
+                { begin: 0x1d000, end: 0x1d0ff }, // Byzantine Musical Symbols
+                { begin: 0x1d400, end: 0x1d7ff }, // Mathematical Alphanumeric Symbols
+                { begin: 0xff000, end: 0xffffd }, // Private Use (plane 15)
+                { begin: 0xfe00, end: 0xfe0f }, // Variation Selectors
+                { begin: 0xe0000, end: 0xe007f }, // Tags
+                { begin: 0x1900, end: 0x194f }, // Limbu
+                { begin: 0x1950, end: 0x197f }, // Tai Le
+                { begin: 0x1980, end: 0x19df }, // New Tai Lue
+                { begin: 0x1a00, end: 0x1a1f }, // Buginese
+                { begin: 0x2c00, end: 0x2c5f }, // Glagolitic
+                { begin: 0x2d30, end: 0x2d7f }, // Tifinagh
+                { begin: 0x4dc0, end: 0x4dff }, // Yijing Hexagram Symbols
+                { begin: 0xa800, end: 0xa82f }, // Syloti Nagri
+                { begin: 0x10000, end: 0x1007f }, // Linear B Syllabary
+                { begin: 0x10140, end: 0x1018f }, // Ancient Greek Numbers
+                { begin: 0x10380, end: 0x1039f }, // Ugaritic
+                { begin: 0x103a0, end: 0x103df }, // Old Persian
+                { begin: 0x10450, end: 0x1047f }, // Shavian
+                { begin: 0x10480, end: 0x104af }, // Osmanya
+                { begin: 0x10800, end: 0x1083f }, // Cypriot Syllabary
+                { begin: 0x10a00, end: 0x10a5f }, // Kharoshthi
+                { begin: 0x1d300, end: 0x1d35f }, // Tai Xuan Jing Symbols
+                { begin: 0x12000, end: 0x123ff }, // Cuneiform
+                { begin: 0x1d360, end: 0x1d37f }, // Counting Rod Numerals
+                { begin: 0x1b80, end: 0x1bbf }, // Sundanese
+                { begin: 0x1c00, end: 0x1c4f }, // Lepcha
+                { begin: 0x1c50, end: 0x1c7f }, // Ol Chiki
+                { begin: 0xa880, end: 0xa8df }, // Saurashtra
+                { begin: 0xa900, end: 0xa92f }, // Kayah Li
+                { begin: 0xa930, end: 0xa95f }, // Rejang
+                { begin: 0xaa00, end: 0xaa5f }, // Cham
+                { begin: 0x10190, end: 0x101cf }, // Ancient Symbols
+                { begin: 0x101d0, end: 0x101ff }, // Phaistos Disc
+                { begin: 0x102a0, end: 0x102df }, // Carian
+                { begin: 0x1f030, end: 0x1f09f } // Domino Tiles
+              ];
+
+              function getUnicodeRange(unicode) {
+                for (var i = 0; i < unicodeRanges.length; i += 1) {
+                  var range = unicodeRanges[i];
+                  if (unicode >= range.begin && unicode < range.end) {
+                    return i;
+                  }
+                }
+
+                return -1;
+              }
+
+              // Parse the OS/2 and Windows metrics `OS/2` table
+              function parseOS2Table(data, start) {
+                var os2 = {};
+                var p = new parse.Parser(data, start);
+                os2.version = p.parseUShort();
+                os2.xAvgCharWidth = p.parseShort();
+                os2.usWeightClass = p.parseUShort();
+                os2.usWidthClass = p.parseUShort();
+                os2.fsType = p.parseUShort();
+                os2.ySubscriptXSize = p.parseShort();
+                os2.ySubscriptYSize = p.parseShort();
+                os2.ySubscriptXOffset = p.parseShort();
+                os2.ySubscriptYOffset = p.parseShort();
+                os2.ySuperscriptXSize = p.parseShort();
+                os2.ySuperscriptYSize = p.parseShort();
+                os2.ySuperscriptXOffset = p.parseShort();
+                os2.ySuperscriptYOffset = p.parseShort();
+                os2.yStrikeoutSize = p.parseShort();
+                os2.yStrikeoutPosition = p.parseShort();
+                os2.sFamilyClass = p.parseShort();
+                os2.panose = [];
+                for (var i = 0; i < 10; i++) {
+                  os2.panose[i] = p.parseByte();
+                }
+
+                os2.ulUnicodeRange1 = p.parseULong();
+                os2.ulUnicodeRange2 = p.parseULong();
+                os2.ulUnicodeRange3 = p.parseULong();
+                os2.ulUnicodeRange4 = p.parseULong();
+                os2.achVendID = String.fromCharCode(
+                  p.parseByte(),
+                  p.parseByte(),
+                  p.parseByte(),
+                  p.parseByte()
+                );
+                os2.fsSelection = p.parseUShort();
+                os2.usFirstCharIndex = p.parseUShort();
+                os2.usLastCharIndex = p.parseUShort();
+                os2.sTypoAscender = p.parseShort();
+                os2.sTypoDescender = p.parseShort();
+                os2.sTypoLineGap = p.parseShort();
+                os2.usWinAscent = p.parseUShort();
+                os2.usWinDescent = p.parseUShort();
+                if (os2.version >= 1) {
+                  os2.ulCodePageRange1 = p.parseULong();
+                  os2.ulCodePageRange2 = p.parseULong();
+                }
+
+                if (os2.version >= 2) {
+                  os2.sxHeight = p.parseShort();
+                  os2.sCapHeight = p.parseShort();
+                  os2.usDefaultChar = p.parseUShort();
+                  os2.usBreakChar = p.parseUShort();
+                  os2.usMaxContent = p.parseUShort();
+                }
