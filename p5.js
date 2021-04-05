@@ -33245,3 +33245,137 @@
                   os2.usBreakChar = p.parseUShort();
                   os2.usMaxContent = p.parseUShort();
                 }
+
+                return os2;
+              }
+
+              function makeOS2Table(options) {
+                return new table.Table(
+                  'OS/2',
+                  [
+                    { name: 'version', type: 'USHORT', value: 0x0003 },
+                    { name: 'xAvgCharWidth', type: 'SHORT', value: 0 },
+                    { name: 'usWeightClass', type: 'USHORT', value: 0 },
+                    { name: 'usWidthClass', type: 'USHORT', value: 0 },
+                    { name: 'fsType', type: 'USHORT', value: 0 },
+                    { name: 'ySubscriptXSize', type: 'SHORT', value: 650 },
+                    { name: 'ySubscriptYSize', type: 'SHORT', value: 699 },
+                    { name: 'ySubscriptXOffset', type: 'SHORT', value: 0 },
+                    { name: 'ySubscriptYOffset', type: 'SHORT', value: 140 },
+                    { name: 'ySuperscriptXSize', type: 'SHORT', value: 650 },
+                    { name: 'ySuperscriptYSize', type: 'SHORT', value: 699 },
+                    { name: 'ySuperscriptXOffset', type: 'SHORT', value: 0 },
+                    { name: 'ySuperscriptYOffset', type: 'SHORT', value: 479 },
+                    { name: 'yStrikeoutSize', type: 'SHORT', value: 49 },
+                    { name: 'yStrikeoutPosition', type: 'SHORT', value: 258 },
+                    { name: 'sFamilyClass', type: 'SHORT', value: 0 },
+                    { name: 'bFamilyType', type: 'BYTE', value: 0 },
+                    { name: 'bSerifStyle', type: 'BYTE', value: 0 },
+                    { name: 'bWeight', type: 'BYTE', value: 0 },
+                    { name: 'bProportion', type: 'BYTE', value: 0 },
+                    { name: 'bContrast', type: 'BYTE', value: 0 },
+                    { name: 'bStrokeVariation', type: 'BYTE', value: 0 },
+                    { name: 'bArmStyle', type: 'BYTE', value: 0 },
+                    { name: 'bLetterform', type: 'BYTE', value: 0 },
+                    { name: 'bMidline', type: 'BYTE', value: 0 },
+                    { name: 'bXHeight', type: 'BYTE', value: 0 },
+                    { name: 'ulUnicodeRange1', type: 'ULONG', value: 0 },
+                    { name: 'ulUnicodeRange2', type: 'ULONG', value: 0 },
+                    { name: 'ulUnicodeRange3', type: 'ULONG', value: 0 },
+                    { name: 'ulUnicodeRange4', type: 'ULONG', value: 0 },
+                    { name: 'achVendID', type: 'CHARARRAY', value: 'XXXX' },
+                    { name: 'fsSelection', type: 'USHORT', value: 0 },
+                    { name: 'usFirstCharIndex', type: 'USHORT', value: 0 },
+                    { name: 'usLastCharIndex', type: 'USHORT', value: 0 },
+                    { name: 'sTypoAscender', type: 'SHORT', value: 0 },
+                    { name: 'sTypoDescender', type: 'SHORT', value: 0 },
+                    { name: 'sTypoLineGap', type: 'SHORT', value: 0 },
+                    { name: 'usWinAscent', type: 'USHORT', value: 0 },
+                    { name: 'usWinDescent', type: 'USHORT', value: 0 },
+                    { name: 'ulCodePageRange1', type: 'ULONG', value: 0 },
+                    { name: 'ulCodePageRange2', type: 'ULONG', value: 0 },
+                    { name: 'sxHeight', type: 'SHORT', value: 0 },
+                    { name: 'sCapHeight', type: 'SHORT', value: 0 },
+                    { name: 'usDefaultChar', type: 'USHORT', value: 0 },
+                    { name: 'usBreakChar', type: 'USHORT', value: 0 },
+                    { name: 'usMaxContext', type: 'USHORT', value: 0 }
+                  ],
+                  options
+                );
+              }
+
+              var os2 = {
+                parse: parseOS2Table,
+                make: makeOS2Table,
+                unicodeRanges: unicodeRanges,
+                getUnicodeRange: getUnicodeRange
+              };
+
+              // The `post` table stores additional PostScript information, such as glyph names.
+
+              // Parse the PostScript `post` table
+              function parsePostTable(data, start) {
+                var post = {};
+                var p = new parse.Parser(data, start);
+                post.version = p.parseVersion();
+                post.italicAngle = p.parseFixed();
+                post.underlinePosition = p.parseShort();
+                post.underlineThickness = p.parseShort();
+                post.isFixedPitch = p.parseULong();
+                post.minMemType42 = p.parseULong();
+                post.maxMemType42 = p.parseULong();
+                post.minMemType1 = p.parseULong();
+                post.maxMemType1 = p.parseULong();
+                switch (post.version) {
+                  case 1:
+                    post.names = standardNames.slice();
+                    break;
+                  case 2:
+                    post.numberOfGlyphs = p.parseUShort();
+                    post.glyphNameIndex = new Array(post.numberOfGlyphs);
+                    for (var i = 0; i < post.numberOfGlyphs; i++) {
+                      post.glyphNameIndex[i] = p.parseUShort();
+                    }
+
+                    post.names = [];
+                    for (var i$1 = 0; i$1 < post.numberOfGlyphs; i$1++) {
+                      if (post.glyphNameIndex[i$1] >= standardNames.length) {
+                        var nameLength = p.parseChar();
+                        post.names.push(p.parseString(nameLength));
+                      }
+                    }
+
+                    break;
+                  case 2.5:
+                    post.numberOfGlyphs = p.parseUShort();
+                    post.offset = new Array(post.numberOfGlyphs);
+                    for (var i$2 = 0; i$2 < post.numberOfGlyphs; i$2++) {
+                      post.offset[i$2] = p.parseChar();
+                    }
+
+                    break;
+                }
+                return post;
+              }
+
+              function makePostTable() {
+                return new table.Table('post', [
+                  { name: 'version', type: 'FIXED', value: 0x00030000 },
+                  { name: 'italicAngle', type: 'FIXED', value: 0 },
+                  { name: 'underlinePosition', type: 'FWORD', value: 0 },
+                  { name: 'underlineThickness', type: 'FWORD', value: 0 },
+                  { name: 'isFixedPitch', type: 'ULONG', value: 0 },
+                  { name: 'minMemType42', type: 'ULONG', value: 0 },
+                  { name: 'maxMemType42', type: 'ULONG', value: 0 },
+                  { name: 'minMemType1', type: 'ULONG', value: 0 },
+                  { name: 'maxMemType1', type: 'ULONG', value: 0 }
+                ]);
+              }
+
+              var post = { parse: parsePostTable, make: makePostTable };
+
+              // The `GSUB` table contains ligatures, among other things.
+
+              var subtableParsers = new Array(9); // subtableParsers[0] is unused
+
+              // https://www.microsoft.com/typography/OTSPEC/GSUB.htm#SS
