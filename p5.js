@@ -33642,3 +33642,153 @@
               };
 
               subtableMakers[3] = function makeLookup3(subtable) {
+                check.assert(
+                  subtable.substFormat === 1,
+                  'Lookup type 3 substFormat must be 1.'
+                );
+                return new table.Table(
+                  'substitutionTable',
+                  [
+                    { name: 'substFormat', type: 'USHORT', value: 1 },
+                    {
+                      name: 'coverage',
+                      type: 'TABLE',
+                      value: new table.Coverage(subtable.coverage)
+                    }
+                  ].concat(
+                    table.tableList('altSet', subtable.alternateSets, function(
+                      alternateSet
+                    ) {
+                      return new table.Table(
+                        'alternateSetTable',
+                        table.ushortList('alternate', alternateSet)
+                      );
+                    })
+                  )
+                );
+              };
+
+              subtableMakers[4] = function makeLookup4(subtable) {
+                check.assert(
+                  subtable.substFormat === 1,
+                  'Lookup type 4 substFormat must be 1.'
+                );
+                return new table.Table(
+                  'substitutionTable',
+                  [
+                    { name: 'substFormat', type: 'USHORT', value: 1 },
+                    {
+                      name: 'coverage',
+                      type: 'TABLE',
+                      value: new table.Coverage(subtable.coverage)
+                    }
+                  ].concat(
+                    table.tableList('ligSet', subtable.ligatureSets, function(ligatureSet) {
+                      return new table.Table(
+                        'ligatureSetTable',
+                        table.tableList('ligature', ligatureSet, function(ligature) {
+                          return new table.Table(
+                            'ligatureTable',
+                            [
+                              { name: 'ligGlyph', type: 'USHORT', value: ligature.ligGlyph }
+                            ].concat(
+                              table.ushortList(
+                                'component',
+                                ligature.components,
+                                ligature.components.length + 1
+                              )
+                            )
+                          );
+                        })
+                      );
+                    })
+                  )
+                );
+              };
+
+              function makeGsubTable(gsub) {
+                return new table.Table('GSUB', [
+                  { name: 'version', type: 'ULONG', value: 0x10000 },
+                  {
+                    name: 'scripts',
+                    type: 'TABLE',
+                    value: new table.ScriptList(gsub.scripts)
+                  },
+                  {
+                    name: 'features',
+                    type: 'TABLE',
+                    value: new table.FeatureList(gsub.features)
+                  },
+                  {
+                    name: 'lookups',
+                    type: 'TABLE',
+                    value: new table.LookupList(gsub.lookups, subtableMakers)
+                  }
+                ]);
+              }
+
+              var gsub = { parse: parseGsubTable, make: makeGsubTable };
+
+              // The `GPOS` table contains kerning pairs, among other things.
+
+              // Parse the metadata `meta` table.
+              // https://developer.apple.com/fonts/TrueType-Reference-Manual/RM06/Chap6meta.html
+              function parseMetaTable(data, start) {
+                var p = new parse.Parser(data, start);
+                var tableVersion = p.parseULong();
+                check.argument(tableVersion === 1, 'Unsupported META table version.');
+                p.parseULong(); // flags - currently unused and set to 0
+                p.parseULong(); // tableOffset
+                var numDataMaps = p.parseULong();
+
+                var tags = {};
+                for (var i = 0; i < numDataMaps; i++) {
+                  var tag = p.parseTag();
+                  var dataOffset = p.parseULong();
+                  var dataLength = p.parseULong();
+                  var text = decode.UTF8(data, start + dataOffset, dataLength);
+
+                  tags[tag] = text;
+                }
+                return tags;
+              }
+
+              function makeMetaTable(tags) {
+                var numTags = Object.keys(tags).length;
+                var stringPool = '';
+                var stringPoolOffset = 16 + numTags * 12;
+
+                var result = new table.Table('meta', [
+                  { name: 'version', type: 'ULONG', value: 1 },
+                  { name: 'flags', type: 'ULONG', value: 0 },
+                  { name: 'offset', type: 'ULONG', value: stringPoolOffset },
+                  { name: 'numTags', type: 'ULONG', value: numTags }
+                ]);
+
+                for (var tag in tags) {
+                  var pos = stringPool.length;
+                  stringPool += tags[tag];
+
+                  result.fields.push({ name: 'tag ' + tag, type: 'TAG', value: tag });
+                  result.fields.push({
+                    name: 'offset ' + tag,
+                    type: 'ULONG',
+                    value: stringPoolOffset + pos
+                  });
+                  result.fields.push({
+                    name: 'length ' + tag,
+                    type: 'ULONG',
+                    value: tags[tag].length
+                  });
+                }
+
+                result.fields.push({
+                  name: 'stringPool',
+                  type: 'CHARARRAY',
+                  value: stringPool
+                });
+
+                return result;
+              }
+
+              var meta = { parse: parseMetaTable, make: makeMetaTable };
