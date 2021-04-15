@@ -33940,3 +33940,123 @@
                 var xMins = [];
                 var yMins = [];
                 var xMaxs = [];
+                var yMaxs = [];
+                var advanceWidths = [];
+                var leftSideBearings = [];
+                var rightSideBearings = [];
+                var firstCharIndex;
+                var lastCharIndex = 0;
+                var ulUnicodeRange1 = 0;
+                var ulUnicodeRange2 = 0;
+                var ulUnicodeRange3 = 0;
+                var ulUnicodeRange4 = 0;
+
+                for (var i = 0; i < font.glyphs.length; i += 1) {
+                  var glyph = font.glyphs.get(i);
+                  var unicode = glyph.unicode | 0;
+
+                  if (isNaN(glyph.advanceWidth)) {
+                    throw new Error(
+                      'Glyph ' + glyph.name + ' (' + i + '): advanceWidth is not a number.'
+                    );
+                  }
+
+                  if (firstCharIndex > unicode || firstCharIndex === undefined) {
+                    // ignore .notdef char
+                    if (unicode > 0) {
+                      firstCharIndex = unicode;
+                    }
+                  }
+
+                  if (lastCharIndex < unicode) {
+                    lastCharIndex = unicode;
+                  }
+
+                  var position = os2.getUnicodeRange(unicode);
+                  if (position < 32) {
+                    ulUnicodeRange1 |= 1 << position;
+                  } else if (position < 64) {
+                    ulUnicodeRange2 |= 1 << (position - 32);
+                  } else if (position < 96) {
+                    ulUnicodeRange3 |= 1 << (position - 64);
+                  } else if (position < 123) {
+                    ulUnicodeRange4 |= 1 << (position - 96);
+                  } else {
+                    throw new Error(
+                      'Unicode ranges bits > 123 are reserved for internal usage'
+                    );
+                  }
+                  // Skip non-important characters.
+                  if (glyph.name === '.notdef') {
+                    continue;
+                  }
+                  var metrics = glyph.getMetrics();
+                  xMins.push(metrics.xMin);
+                  yMins.push(metrics.yMin);
+                  xMaxs.push(metrics.xMax);
+                  yMaxs.push(metrics.yMax);
+                  leftSideBearings.push(metrics.leftSideBearing);
+                  rightSideBearings.push(metrics.rightSideBearing);
+                  advanceWidths.push(glyph.advanceWidth);
+                }
+
+                var globals = {
+                  xMin: Math.min.apply(null, xMins),
+                  yMin: Math.min.apply(null, yMins),
+                  xMax: Math.max.apply(null, xMaxs),
+                  yMax: Math.max.apply(null, yMaxs),
+                  advanceWidthMax: Math.max.apply(null, advanceWidths),
+                  advanceWidthAvg: average(advanceWidths),
+                  minLeftSideBearing: Math.min.apply(null, leftSideBearings),
+                  maxLeftSideBearing: Math.max.apply(null, leftSideBearings),
+                  minRightSideBearing: Math.min.apply(null, rightSideBearings)
+                };
+                globals.ascender = font.ascender;
+                globals.descender = font.descender;
+
+                var headTable = head.make({
+                  flags: 3, // 00000011 (baseline for font at y=0; left sidebearing point at x=0)
+                  unitsPerEm: font.unitsPerEm,
+                  xMin: globals.xMin,
+                  yMin: globals.yMin,
+                  xMax: globals.xMax,
+                  yMax: globals.yMax,
+                  lowestRecPPEM: 3,
+                  createdTimestamp: font.createdTimestamp
+                });
+
+                var hheaTable = hhea.make({
+                  ascender: globals.ascender,
+                  descender: globals.descender,
+                  advanceWidthMax: globals.advanceWidthMax,
+                  minLeftSideBearing: globals.minLeftSideBearing,
+                  minRightSideBearing: globals.minRightSideBearing,
+                  xMaxExtent: globals.maxLeftSideBearing + (globals.xMax - globals.xMin),
+                  numberOfHMetrics: font.glyphs.length
+                });
+
+                var maxpTable = maxp.make(font.glyphs.length);
+
+                var os2Table = os2.make({
+                  xAvgCharWidth: Math.round(globals.advanceWidthAvg),
+                  usWeightClass: font.tables.os2.usWeightClass,
+                  usWidthClass: font.tables.os2.usWidthClass,
+                  usFirstCharIndex: firstCharIndex,
+                  usLastCharIndex: lastCharIndex,
+                  ulUnicodeRange1: ulUnicodeRange1,
+                  ulUnicodeRange2: ulUnicodeRange2,
+                  ulUnicodeRange3: ulUnicodeRange3,
+                  ulUnicodeRange4: ulUnicodeRange4,
+                  fsSelection: font.tables.os2.fsSelection, // REGULAR
+                  // See http://typophile.com/node/13081 for more info on vertical metrics.
+                  // We get metrics for typical characters (such as "x" for xHeight).
+                  // We provide some fallback characters if characters are unavailable: their
+                  // ordering was chosen experimentally.
+                  sTypoAscender: globals.ascender,
+                  sTypoDescender: globals.descender,
+                  sTypoLineGap: 0,
+                  usWinAscent: globals.yMax,
+                  usWinDescent: Math.abs(globals.yMin),
+                  ulCodePageRange1: 1, // FIXME: hard-code Latin 1 support for now
+                  sxHeight: metricsForChar(font, 'xyvw', {
+                    yMax: Math.round(globals.ascender / 2)
