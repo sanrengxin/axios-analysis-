@@ -34060,3 +34060,144 @@
                   ulCodePageRange1: 1, // FIXME: hard-code Latin 1 support for now
                   sxHeight: metricsForChar(font, 'xyvw', {
                     yMax: Math.round(globals.ascender / 2)
+                  }).yMax,
+                  sCapHeight: metricsForChar(font, 'HIKLEFJMNTZBDPRAGOQSUVWXY', globals)
+                    .yMax,
+                  usDefaultChar: font.hasChar(' ') ? 32 : 0, // Use space as the default character, if available.
+                  usBreakChar: font.hasChar(' ') ? 32 : 0 // Use space as the break character, if available.
+                });
+
+                var hmtxTable = hmtx.make(font.glyphs);
+                var cmapTable = cmap.make(font.glyphs);
+
+                var englishFamilyName = font.getEnglishName('fontFamily');
+                var englishStyleName = font.getEnglishName('fontSubfamily');
+                var englishFullName = englishFamilyName + ' ' + englishStyleName;
+                var postScriptName = font.getEnglishName('postScriptName');
+                if (!postScriptName) {
+                  postScriptName =
+                    englishFamilyName.replace(/\s/g, '') + '-' + englishStyleName;
+                }
+
+                var names = {};
+                for (var n in font.names) {
+                  names[n] = font.names[n];
+                }
+
+                if (!names.uniqueID) {
+                  names.uniqueID = {
+                    en: font.getEnglishName('manufacturer') + ':' + englishFullName
+                  };
+                }
+
+                if (!names.postScriptName) {
+                  names.postScriptName = { en: postScriptName };
+                }
+
+                if (!names.preferredFamily) {
+                  names.preferredFamily = font.names.fontFamily;
+                }
+
+                if (!names.preferredSubfamily) {
+                  names.preferredSubfamily = font.names.fontSubfamily;
+                }
+
+                var languageTags = [];
+                var nameTable = _name.make(names, languageTags);
+                var ltagTable =
+                  languageTags.length > 0 ? ltag.make(languageTags) : undefined;
+
+                var postTable = post.make();
+                var cffTable = cff.make(font.glyphs, {
+                  version: font.getEnglishName('version'),
+                  fullName: englishFullName,
+                  familyName: englishFamilyName,
+                  weightName: englishStyleName,
+                  postScriptName: postScriptName,
+                  unitsPerEm: font.unitsPerEm,
+                  fontBBox: [0, globals.yMin, globals.ascender, globals.advanceWidthMax]
+                });
+
+                var metaTable =
+                  font.metas && Object.keys(font.metas).length > 0
+                    ? meta.make(font.metas)
+                    : undefined;
+
+                // The order does not matter because makeSfntTable() will sort them.
+                var tables = [
+                  headTable,
+                  hheaTable,
+                  maxpTable,
+                  os2Table,
+                  nameTable,
+                  cmapTable,
+                  postTable,
+                  cffTable,
+                  hmtxTable
+                ];
+                if (ltagTable) {
+                  tables.push(ltagTable);
+                }
+                // Optional tables
+                if (font.tables.gsub) {
+                  tables.push(gsub.make(font.tables.gsub));
+                }
+                if (metaTable) {
+                  tables.push(metaTable);
+                }
+
+                var sfntTable = makeSfntTable(tables);
+
+                // Compute the font's checkSum and store it in head.checkSumAdjustment.
+                var bytes = sfntTable.encode();
+                var checkSum = computeCheckSum(bytes);
+                var tableFields = sfntTable.fields;
+                var checkSumAdjusted = false;
+                for (var i$1 = 0; i$1 < tableFields.length; i$1 += 1) {
+                  if (tableFields[i$1].name === 'head table') {
+                    tableFields[i$1].value.checkSumAdjustment = 0xb1b0afba - checkSum;
+                    checkSumAdjusted = true;
+                    break;
+                  }
+                }
+
+                if (!checkSumAdjusted) {
+                  throw new Error('Could not find head table with checkSum to adjust.');
+                }
+
+                return sfntTable;
+              }
+
+              var sfnt = {
+                make: makeSfntTable,
+                fontToTable: fontToSfntTable,
+                computeCheckSum: computeCheckSum
+              };
+
+              // The Layout object is the prototype of Substitution objects, and provides
+
+              function searchTag(arr, tag) {
+                /* jshint bitwise: false */
+                var imin = 0;
+                var imax = arr.length - 1;
+                while (imin <= imax) {
+                  var imid = (imin + imax) >>> 1;
+                  var val = arr[imid].tag;
+                  if (val === tag) {
+                    return imid;
+                  } else if (val < tag) {
+                    imin = imid + 1;
+                  } else {
+                    imax = imid - 1;
+                  }
+                }
+                // Not found: return -1-insertion point
+                return -imin - 1;
+              }
+
+              function binSearch(arr, value) {
+                /* jshint bitwise: false */
+                var imin = 0;
+                var imax = arr.length - 1;
+                while (imin <= imax) {
+                  var imid = (imin + imax) >>> 1;
