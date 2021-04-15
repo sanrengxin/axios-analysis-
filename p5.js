@@ -34201,3 +34201,149 @@
                 var imax = arr.length - 1;
                 while (imin <= imax) {
                   var imid = (imin + imax) >>> 1;
+                  var val = arr[imid];
+                  if (val === value) {
+                    return imid;
+                  } else if (val < value) {
+                    imin = imid + 1;
+                  } else {
+                    imax = imid - 1;
+                  }
+                }
+                // Not found: return -1-insertion point
+                return -imin - 1;
+              }
+
+              // binary search in a list of ranges (coverage, class definition)
+              function searchRange(ranges, value) {
+                // jshint bitwise: false
+                var range;
+                var imin = 0;
+                var imax = ranges.length - 1;
+                while (imin <= imax) {
+                  var imid = (imin + imax) >>> 1;
+                  range = ranges[imid];
+                  var start = range.start;
+                  if (start === value) {
+                    return range;
+                  } else if (start < value) {
+                    imin = imid + 1;
+                  } else {
+                    imax = imid - 1;
+                  }
+                }
+                if (imin > 0) {
+                  range = ranges[imin - 1];
+                  if (value > range.end) {
+                    return 0;
+                  }
+                  return range;
+                }
+              }
+
+              /**
+               * @exports opentype.Layout
+               * @class
+               */
+              function Layout(font, tableName) {
+                this.font = font;
+                this.tableName = tableName;
+              }
+
+              Layout.prototype = {
+                /**
+                 * Binary search an object by "tag" property
+                 * @instance
+                 * @function searchTag
+                 * @memberof opentype.Layout
+                 * @param  {Array} arr
+                 * @param  {string} tag
+                 * @return {number}
+                 */
+                searchTag: searchTag,
+
+                /**
+                 * Binary search in a list of numbers
+                 * @instance
+                 * @function binSearch
+                 * @memberof opentype.Layout
+                 * @param  {Array} arr
+                 * @param  {number} value
+                 * @return {number}
+                 */
+                binSearch: binSearch,
+
+                /**
+                 * Get or create the Layout table (GSUB, GPOS etc).
+                 * @param  {boolean} create - Whether to create a new one.
+                 * @return {Object} The GSUB or GPOS table.
+                 */
+                getTable: function(create) {
+                  var layout = this.font.tables[this.tableName];
+                  if (!layout && create) {
+                    layout = this.font.tables[this.tableName] = this.createDefaultTable();
+                  }
+                  return layout;
+                },
+
+                /**
+                 * Returns all scripts in the substitution table.
+                 * @instance
+                 * @return {Array}
+                 */
+                getScriptNames: function() {
+                  var layout = this.getTable();
+                  if (!layout) {
+                    return [];
+                  }
+                  return layout.scripts.map(function(script) {
+                    return script.tag;
+                  });
+                },
+
+                /**
+                 * Returns the best bet for a script name.
+                 * Returns 'DFLT' if it exists.
+                 * If not, returns 'latn' if it exists.
+                 * If neither exist, returns undefined.
+                 */
+                getDefaultScriptName: function() {
+                  var layout = this.getTable();
+                  if (!layout) {
+                    return;
+                  }
+                  var hasLatn = false;
+                  for (var i = 0; i < layout.scripts.length; i++) {
+                    var name = layout.scripts[i].tag;
+                    if (name === 'DFLT') {
+                      return name;
+                    }
+                    if (name === 'latn') {
+                      hasLatn = true;
+                    }
+                  }
+                  if (hasLatn) {
+                    return 'latn';
+                  }
+                },
+
+                /**
+                 * Returns all LangSysRecords in the given script.
+                 * @instance
+                 * @param {string} [script='DFLT']
+                 * @param {boolean} create - forces the creation of this script table if it doesn't exist.
+                 * @return {Object} An object with tag and script properties.
+                 */
+                getScriptTable: function(script, create) {
+                  var layout = this.getTable(create);
+                  if (layout) {
+                    script = script || 'DFLT';
+                    var scripts = layout.scripts;
+                    var pos = searchTag(layout.scripts, script);
+                    if (pos >= 0) {
+                      return scripts[pos].script;
+                    } else if (create) {
+                      var scr = {
+                        tag: script,
+                        script: {
+                          defaultLangSys: {
