@@ -34347,3 +34347,137 @@
                         tag: script,
                         script: {
                           defaultLangSys: {
+                            reserved: 0,
+                            reqFeatureIndex: 0xffff,
+                            featureIndexes: []
+                          },
+                          langSysRecords: []
+                        }
+                      };
+                      scripts.splice(-1 - pos, 0, scr);
+                      return scr.script;
+                    }
+                  }
+                },
+
+                /**
+                 * Returns a language system table
+                 * @instance
+                 * @param {string} [script='DFLT']
+                 * @param {string} [language='dlft']
+                 * @param {boolean} create - forces the creation of this langSysTable if it doesn't exist.
+                 * @return {Object}
+                 */
+                getLangSysTable: function(script, language, create) {
+                  var scriptTable = this.getScriptTable(script, create);
+                  if (scriptTable) {
+                    if (!language || language === 'dflt' || language === 'DFLT') {
+                      return scriptTable.defaultLangSys;
+                    }
+                    var pos = searchTag(scriptTable.langSysRecords, language);
+                    if (pos >= 0) {
+                      return scriptTable.langSysRecords[pos].langSys;
+                    } else if (create) {
+                      var langSysRecord = {
+                        tag: language,
+                        langSys: {
+                          reserved: 0,
+                          reqFeatureIndex: 0xffff,
+                          featureIndexes: []
+                        }
+                      };
+                      scriptTable.langSysRecords.splice(-1 - pos, 0, langSysRecord);
+                      return langSysRecord.langSys;
+                    }
+                  }
+                },
+
+                /**
+                 * Get a specific feature table.
+                 * @instance
+                 * @param {string} [script='DFLT']
+                 * @param {string} [language='dlft']
+                 * @param {string} feature - One of the codes listed at https://www.microsoft.com/typography/OTSPEC/featurelist.htm
+                 * @param {boolean} create - forces the creation of the feature table if it doesn't exist.
+                 * @return {Object}
+                 */
+                getFeatureTable: function(script, language, feature, create) {
+                  var langSysTable = this.getLangSysTable(script, language, create);
+                  if (langSysTable) {
+                    var featureRecord;
+                    var featIndexes = langSysTable.featureIndexes;
+                    var allFeatures = this.font.tables[this.tableName].features;
+                    // The FeatureIndex array of indices is in arbitrary order,
+                    // even if allFeatures is sorted alphabetically by feature tag.
+                    for (var i = 0; i < featIndexes.length; i++) {
+                      featureRecord = allFeatures[featIndexes[i]];
+                      if (featureRecord.tag === feature) {
+                        return featureRecord.feature;
+                      }
+                    }
+                    if (create) {
+                      var index = allFeatures.length;
+                      // Automatic ordering of features would require to shift feature indexes in the script list.
+                      check.assert(
+                        index === 0 || feature >= allFeatures[index - 1].tag,
+                        'Features must be added in alphabetical order.'
+                      );
+                      featureRecord = {
+                        tag: feature,
+                        feature: { params: 0, lookupListIndexes: [] }
+                      };
+                      allFeatures.push(featureRecord);
+                      featIndexes.push(index);
+                      return featureRecord.feature;
+                    }
+                  }
+                },
+
+                /**
+                 * Get the lookup tables of a given type for a script/language/feature.
+                 * @instance
+                 * @param {string} [script='DFLT']
+                 * @param {string} [language='dlft']
+                 * @param {string} feature - 4-letter feature code
+                 * @param {number} lookupType - 1 to 9
+                 * @param {boolean} create - forces the creation of the lookup table if it doesn't exist, with no subtables.
+                 * @return {Object[]}
+                 */
+                getLookupTables: function(script, language, feature, lookupType, create) {
+                  var featureTable = this.getFeatureTable(
+                    script,
+                    language,
+                    feature,
+                    create
+                  );
+                  var tables = [];
+                  if (featureTable) {
+                    var lookupTable;
+                    var lookupListIndexes = featureTable.lookupListIndexes;
+                    var allLookups = this.font.tables[this.tableName].lookups;
+                    // lookupListIndexes are in no particular order, so use naive search.
+                    for (var i = 0; i < lookupListIndexes.length; i++) {
+                      lookupTable = allLookups[lookupListIndexes[i]];
+                      if (lookupTable.lookupType === lookupType) {
+                        tables.push(lookupTable);
+                      }
+                    }
+                    if (tables.length === 0 && create) {
+                      lookupTable = {
+                        lookupType: lookupType,
+                        lookupFlag: 0,
+                        subtables: [],
+                        markFilteringSet: undefined
+                      };
+                      var index = allLookups.length;
+                      allLookups.push(lookupTable);
+                      lookupListIndexes.push(index);
+                      return [lookupTable];
+                    }
+                  }
+                  return tables;
+                },
+
+                /**
+                 * Find a glyph in a class definition table
+                 * https://docs.microsoft.com/en-us/typography/opentype/spec/chapter2#class-definition-table
