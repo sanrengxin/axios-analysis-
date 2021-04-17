@@ -34481,3 +34481,130 @@
                 /**
                  * Find a glyph in a class definition table
                  * https://docs.microsoft.com/en-us/typography/opentype/spec/chapter2#class-definition-table
+                 * @param {object} classDefTable - an OpenType Layout class definition table
+                 * @param {number} glyphIndex - the index of the glyph to find
+                 * @returns {number} -1 if not found
+                 */
+                getGlyphClass: function(classDefTable, glyphIndex) {
+                  switch (classDefTable.format) {
+                    case 1:
+                      if (
+                        classDefTable.startGlyph <= glyphIndex &&
+                        glyphIndex < classDefTable.startGlyph + classDefTable.classes.length
+                      ) {
+                        return classDefTable.classes[glyphIndex - classDefTable.startGlyph];
+                      }
+                      return 0;
+                    case 2:
+                      var range = searchRange(classDefTable.ranges, glyphIndex);
+                      return range ? range.classId : 0;
+                  }
+                },
+
+                /**
+                 * Find a glyph in a coverage table
+                 * https://docs.microsoft.com/en-us/typography/opentype/spec/chapter2#coverage-table
+                 * @param {object} coverageTable - an OpenType Layout coverage table
+                 * @param {number} glyphIndex - the index of the glyph to find
+                 * @returns {number} -1 if not found
+                 */
+                getCoverageIndex: function(coverageTable, glyphIndex) {
+                  switch (coverageTable.format) {
+                    case 1:
+                      var index = binSearch(coverageTable.glyphs, glyphIndex);
+                      return index >= 0 ? index : -1;
+                    case 2:
+                      var range = searchRange(coverageTable.ranges, glyphIndex);
+                      return range ? range.index + glyphIndex - range.start : -1;
+                  }
+                },
+
+                /**
+                 * Returns the list of glyph indexes of a coverage table.
+                 * Format 1: the list is stored raw
+                 * Format 2: compact list as range records.
+                 * @instance
+                 * @param  {Object} coverageTable
+                 * @return {Array}
+                 */
+                expandCoverage: function(coverageTable) {
+                  if (coverageTable.format === 1) {
+                    return coverageTable.glyphs;
+                  } else {
+                    var glyphs = [];
+                    var ranges = coverageTable.ranges;
+                    for (var i = 0; i < ranges.length; i++) {
+                      var range = ranges[i];
+                      var start = range.start;
+                      var end = range.end;
+                      for (var j = start; j <= end; j++) {
+                        glyphs.push(j);
+                      }
+                    }
+                    return glyphs;
+                  }
+                }
+              };
+
+              // The Position object provides utility methods to manipulate
+
+              /**
+               * @exports opentype.Position
+               * @class
+               * @extends opentype.Layout
+               * @param {opentype.Font}
+               * @constructor
+               */
+              function Position(font) {
+                Layout.call(this, font, 'gpos');
+              }
+
+              Position.prototype = Layout.prototype;
+
+              /**
+               * Init some data for faster and easier access later.
+               */
+              Position.prototype.init = function() {
+                var script = this.getDefaultScriptName();
+                this.defaultKerningTables = this.getKerningTables(script);
+              };
+
+              /**
+               * Find a glyph pair in a list of lookup tables of type 2 and retrieve the xAdvance kerning value.
+               *
+               * @param {integer} leftIndex - left glyph index
+               * @param {integer} rightIndex - right glyph index
+               * @returns {integer}
+               */
+              Position.prototype.getKerningValue = function(
+                kerningLookups,
+                leftIndex,
+                rightIndex
+              ) {
+                var this$1 = this;
+
+                for (var i = 0; i < kerningLookups.length; i++) {
+                  var subtables = kerningLookups[i].subtables;
+                  for (var j = 0; j < subtables.length; j++) {
+                    var subtable = subtables[j];
+                    var covIndex = this$1.getCoverageIndex(subtable.coverage, leftIndex);
+                    if (covIndex < 0) {
+                      continue;
+                    }
+                    switch (subtable.posFormat) {
+                      case 1:
+                        // Search Pair Adjustment Positioning Format 1
+                        var pairSet = subtable.pairSets[covIndex];
+                        for (var k = 0; k < pairSet.length; k++) {
+                          var pair = pairSet[k];
+                          if (pair.secondGlyph === rightIndex) {
+                            return (pair.value1 && pair.value1.xAdvance) || 0;
+                          }
+                        }
+                        break; // left glyph found, not right glyph - try next subtable
+                      case 2:
+                        // Search Pair Adjustment Positioning Format 2
+                        var class1 = this$1.getGlyphClass(subtable.classDef1, leftIndex);
+                        var class2 = this$1.getGlyphClass(subtable.classDef2, rightIndex);
+                        var pair$1 = subtable.classRecords[class1][class2];
+                        return (pair$1.value1 && pair$1.value1.xAdvance) || 0;
