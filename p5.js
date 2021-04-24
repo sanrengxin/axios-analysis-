@@ -34857,3 +34857,134 @@
                   true
                 )[0];
                 var subtable = getSubstFormat(lookupTable, 1, {
+                  // lookup type 3 subtable, format 1, coverage format 1
+                  substFormat: 1,
+                  coverage: { format: 1, glyphs: [] },
+                  alternateSets: []
+                });
+                check.assert(
+                  subtable.coverage.format === 1,
+                  'Ligature: unable to modify coverage table format ' +
+                    subtable.coverage.format
+                );
+                var coverageGlyph = substitution.sub;
+                var pos = this.binSearch(subtable.coverage.glyphs, coverageGlyph);
+                if (pos < 0) {
+                  pos = -1 - pos;
+                  subtable.coverage.glyphs.splice(pos, 0, coverageGlyph);
+                  subtable.alternateSets.splice(pos, 0, 0);
+                }
+                subtable.alternateSets[pos] = substitution.by;
+              };
+
+              /**
+               * Add a ligature (lookup type 4)
+               * Ligatures with more components must be stored ahead of those with fewer components in order to be found
+               * @param {string} feature - 4-letter feature name ('liga', 'rlig', 'dlig'...)
+               * @param {Object} ligature - { sub: [ids], by: id }
+               * @param {string} [script='DFLT']
+               * @param {string} [language='dflt']
+               */
+              Substitution.prototype.addLigature = function(
+                feature,
+                ligature,
+                script,
+                language
+              ) {
+                var lookupTable = this.getLookupTables(
+                  script,
+                  language,
+                  feature,
+                  4,
+                  true
+                )[0];
+                var subtable = lookupTable.subtables[0];
+                if (!subtable) {
+                  subtable = {
+                    // lookup type 4 subtable, format 1, coverage format 1
+                    substFormat: 1,
+                    coverage: { format: 1, glyphs: [] },
+                    ligatureSets: []
+                  };
+                  lookupTable.subtables[0] = subtable;
+                }
+                check.assert(
+                  subtable.coverage.format === 1,
+                  'Ligature: unable to modify coverage table format ' +
+                    subtable.coverage.format
+                );
+                var coverageGlyph = ligature.sub[0];
+                var ligComponents = ligature.sub.slice(1);
+                var ligatureTable = {
+                  ligGlyph: ligature.by,
+                  components: ligComponents
+                };
+                var pos = this.binSearch(subtable.coverage.glyphs, coverageGlyph);
+                if (pos >= 0) {
+                  // ligatureSet already exists
+                  var ligatureSet = subtable.ligatureSets[pos];
+                  for (var i = 0; i < ligatureSet.length; i++) {
+                    // If ligature already exists, return.
+                    if (arraysEqual(ligatureSet[i].components, ligComponents)) {
+                      return;
+                    }
+                  }
+                  // ligature does not exist: add it.
+                  ligatureSet.push(ligatureTable);
+                } else {
+                  // Create a new ligatureSet and add coverage for the first glyph.
+                  pos = -1 - pos;
+                  subtable.coverage.glyphs.splice(pos, 0, coverageGlyph);
+                  subtable.ligatureSets.splice(pos, 0, [ligatureTable]);
+                }
+              };
+
+              /**
+               * List all feature data for a given script and language.
+               * @param {string} feature - 4-letter feature name
+               * @param {string} [script='DFLT']
+               * @param {string} [language='dflt']
+               * @return {Array} substitutions - The list of substitutions.
+               */
+              Substitution.prototype.getFeature = function(feature, script, language) {
+                if (/ss\d\d/.test(feature)) {
+                  // ss01 - ss20
+                  return this.getSingle(feature, script, language);
+                }
+                switch (feature) {
+                  case 'aalt':
+                  case 'salt':
+                    return this.getSingle(feature, script, language).concat(
+                      this.getAlternates(feature, script, language)
+                    );
+                  case 'dlig':
+                  case 'liga':
+                  case 'rlig':
+                    return this.getLigatures(feature, script, language);
+                }
+                return undefined;
+              };
+
+              /**
+               * Add a substitution to a feature for a given script and language.
+               * @param {string} feature - 4-letter feature name
+               * @param {Object} sub - the substitution to add (an object like { sub: id or [ids], by: id or [ids] })
+               * @param {string} [script='DFLT']
+               * @param {string} [language='dflt']
+               */
+              Substitution.prototype.add = function(feature, sub, script, language) {
+                if (/ss\d\d/.test(feature)) {
+                  // ss01 - ss20
+                  return this.addSingle(feature, sub, script, language);
+                }
+                switch (feature) {
+                  case 'aalt':
+                  case 'salt':
+                    if (typeof sub.by === 'number') {
+                      return this.addSingle(feature, sub, script, language);
+                    }
+                    return this.addAlternate(feature, sub, script, language);
+                  case 'dlig':
+                  case 'liga':
+                  case 'rlig':
+                    return this.addLigature(feature, sub, script, language);
