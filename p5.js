@@ -34608,3 +34608,131 @@
                         var class2 = this$1.getGlyphClass(subtable.classDef2, rightIndex);
                         var pair$1 = subtable.classRecords[class1][class2];
                         return (pair$1.value1 && pair$1.value1.xAdvance) || 0;
+                    }
+                  }
+                }
+                return 0;
+              };
+
+              /**
+               * List all kerning lookup tables.
+               *
+               * @param {string} [script='DFLT'] - use font.position.getDefaultScriptName() for a better default value
+               * @param {string} [language='dflt']
+               * @return {object[]} The list of kerning lookup tables (may be empty), or undefined if there is no GPOS table (and we should use the kern table)
+               */
+              Position.prototype.getKerningTables = function(script, language) {
+                if (this.font.tables.gpos) {
+                  return this.getLookupTables(script, language, 'kern', 2);
+                }
+              };
+
+              // The Substitution object provides utility methods to manipulate
+
+              /**
+               * @exports opentype.Substitution
+               * @class
+               * @extends opentype.Layout
+               * @param {opentype.Font}
+               * @constructor
+               */
+              function Substitution(font) {
+                Layout.call(this, font, 'gsub');
+              }
+
+              // Check if 2 arrays of primitives are equal.
+              function arraysEqual(ar1, ar2) {
+                var n = ar1.length;
+                if (n !== ar2.length) {
+                  return false;
+                }
+                for (var i = 0; i < n; i++) {
+                  if (ar1[i] !== ar2[i]) {
+                    return false;
+                  }
+                }
+                return true;
+              }
+
+              // Find the first subtable of a lookup table in a particular format.
+              function getSubstFormat(lookupTable, format, defaultSubtable) {
+                var subtables = lookupTable.subtables;
+                for (var i = 0; i < subtables.length; i++) {
+                  var subtable = subtables[i];
+                  if (subtable.substFormat === format) {
+                    return subtable;
+                  }
+                }
+                if (defaultSubtable) {
+                  subtables.push(defaultSubtable);
+                  return defaultSubtable;
+                }
+                return undefined;
+              }
+
+              Substitution.prototype = Layout.prototype;
+
+              /**
+               * Create a default GSUB table.
+               * @return {Object} gsub - The GSUB table.
+               */
+              Substitution.prototype.createDefaultTable = function() {
+                // Generate a default empty GSUB table with just a DFLT script and dflt lang sys.
+                return {
+                  version: 1,
+                  scripts: [
+                    {
+                      tag: 'DFLT',
+                      script: {
+                        defaultLangSys: {
+                          reserved: 0,
+                          reqFeatureIndex: 0xffff,
+                          featureIndexes: []
+                        },
+                        langSysRecords: []
+                      }
+                    }
+                  ],
+                  features: [],
+                  lookups: []
+                };
+              };
+
+              /**
+               * List all single substitutions (lookup type 1) for a given script, language, and feature.
+               * @param {string} [script='DFLT']
+               * @param {string} [language='dflt']
+               * @param {string} feature - 4-character feature name ('aalt', 'salt', 'ss01'...)
+               * @return {Array} substitutions - The list of substitutions.
+               */
+              Substitution.prototype.getSingle = function(feature, script, language) {
+                var this$1 = this;
+
+                var substitutions = [];
+                var lookupTables = this.getLookupTables(script, language, feature, 1);
+                for (var idx = 0; idx < lookupTables.length; idx++) {
+                  var subtables = lookupTables[idx].subtables;
+                  for (var i = 0; i < subtables.length; i++) {
+                    var subtable = subtables[i];
+                    var glyphs = this$1.expandCoverage(subtable.coverage);
+                    var j = void 0;
+                    if (subtable.substFormat === 1) {
+                      var delta = subtable.deltaGlyphId;
+                      for (j = 0; j < glyphs.length; j++) {
+                        var glyph = glyphs[j];
+                        substitutions.push({ sub: glyph, by: glyph + delta });
+                      }
+                    } else {
+                      var substitute = subtable.substitute;
+                      for (j = 0; j < glyphs.length; j++) {
+                        substitutions.push({ sub: glyphs[j], by: substitute[j] });
+                      }
+                    }
+                  }
+                }
+                return substitutions;
+              };
+
+              /**
+               * List all alternates (lookup type 3) for a given script, language, and feature.
+               * @param {string} [script='DFLT']
