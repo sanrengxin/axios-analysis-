@@ -34988,3 +34988,152 @@
                   case 'liga':
                   case 'rlig':
                     return this.addLigature(feature, sub, script, language);
+                }
+                return undefined;
+              };
+
+              function isBrowser() {
+                return typeof window !== 'undefined';
+              }
+
+              function nodeBufferToArrayBuffer(buffer) {
+                var ab = new ArrayBuffer(buffer.length);
+                var view = new Uint8Array(ab);
+                for (var i = 0; i < buffer.length; ++i) {
+                  view[i] = buffer[i];
+                }
+
+                return ab;
+              }
+
+              function arrayBufferToNodeBuffer(ab) {
+                var buffer = new Buffer(ab.byteLength);
+                var view = new Uint8Array(ab);
+                for (var i = 0; i < buffer.length; ++i) {
+                  buffer[i] = view[i];
+                }
+
+                return buffer;
+              }
+
+              function checkArgument(expression, message) {
+                if (!expression) {
+                  throw message;
+                }
+              }
+
+              // The `glyf` table describes the glyphs in TrueType outline format.
+
+              // Parse the coordinate data for a glyph.
+              function parseGlyphCoordinate(
+                p,
+                flag,
+                previousValue,
+                shortVectorBitMask,
+                sameBitMask
+              ) {
+                var v;
+                if ((flag & shortVectorBitMask) > 0) {
+                  // The coordinate is 1 byte long.
+                  v = p.parseByte();
+                  // The `same` bit is re-used for short values to signify the sign of the value.
+                  if ((flag & sameBitMask) === 0) {
+                    v = -v;
+                  }
+
+                  v = previousValue + v;
+                } else {
+                  //  The coordinate is 2 bytes long.
+                  // If the `same` bit is set, the coordinate is the same as the previous coordinate.
+                  if ((flag & sameBitMask) > 0) {
+                    v = previousValue;
+                  } else {
+                    // Parse the coordinate as a signed 16-bit delta value.
+                    v = previousValue + p.parseShort();
+                  }
+                }
+
+                return v;
+              }
+
+              // Parse a TrueType glyph.
+              function parseGlyph(glyph, data, start) {
+                var p = new parse.Parser(data, start);
+                glyph.numberOfContours = p.parseShort();
+                glyph._xMin = p.parseShort();
+                glyph._yMin = p.parseShort();
+                glyph._xMax = p.parseShort();
+                glyph._yMax = p.parseShort();
+                var flags;
+                var flag;
+
+                if (glyph.numberOfContours > 0) {
+                  // This glyph is not a composite.
+                  var endPointIndices = (glyph.endPointIndices = []);
+                  for (var i = 0; i < glyph.numberOfContours; i += 1) {
+                    endPointIndices.push(p.parseUShort());
+                  }
+
+                  glyph.instructionLength = p.parseUShort();
+                  glyph.instructions = [];
+                  for (var i$1 = 0; i$1 < glyph.instructionLength; i$1 += 1) {
+                    glyph.instructions.push(p.parseByte());
+                  }
+
+                  var numberOfCoordinates = endPointIndices[endPointIndices.length - 1] + 1;
+                  flags = [];
+                  for (var i$2 = 0; i$2 < numberOfCoordinates; i$2 += 1) {
+                    flag = p.parseByte();
+                    flags.push(flag);
+                    // If bit 3 is set, we repeat this flag n times, where n is the next byte.
+                    if ((flag & 8) > 0) {
+                      var repeatCount = p.parseByte();
+                      for (var j = 0; j < repeatCount; j += 1) {
+                        flags.push(flag);
+                        i$2 += 1;
+                      }
+                    }
+                  }
+
+                  check.argument(flags.length === numberOfCoordinates, 'Bad flags.');
+
+                  if (endPointIndices.length > 0) {
+                    var points = [];
+                    var point;
+                    // X/Y coordinates are relative to the previous point, except for the first point which is relative to 0,0.
+                    if (numberOfCoordinates > 0) {
+                      for (var i$3 = 0; i$3 < numberOfCoordinates; i$3 += 1) {
+                        flag = flags[i$3];
+                        point = {};
+                        point.onCurve = !!(flag & 1);
+                        point.lastPointOfContour = endPointIndices.indexOf(i$3) >= 0;
+                        points.push(point);
+                      }
+
+                      var px = 0;
+                      for (var i$4 = 0; i$4 < numberOfCoordinates; i$4 += 1) {
+                        flag = flags[i$4];
+                        point = points[i$4];
+                        point.x = parseGlyphCoordinate(p, flag, px, 2, 16);
+                        px = point.x;
+                      }
+
+                      var py = 0;
+                      for (var i$5 = 0; i$5 < numberOfCoordinates; i$5 += 1) {
+                        flag = flags[i$5];
+                        point = points[i$5];
+                        point.y = parseGlyphCoordinate(p, flag, py, 4, 32);
+                        py = point.y;
+                      }
+                    }
+
+                    glyph.points = points;
+                  } else {
+                    glyph.points = [];
+                  }
+                } else if (glyph.numberOfContours === 0) {
+                  glyph.points = [];
+                } else {
+                  glyph.isComposite = true;
+                  glyph.points = [];
+                  glyph.components = [];
