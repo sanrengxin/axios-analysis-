@@ -34736,3 +34736,124 @@
               /**
                * List all alternates (lookup type 3) for a given script, language, and feature.
                * @param {string} [script='DFLT']
+               * @param {string} [language='dflt']
+               * @param {string} feature - 4-character feature name ('aalt', 'salt'...)
+               * @return {Array} alternates - The list of alternates
+               */
+              Substitution.prototype.getAlternates = function(feature, script, language) {
+                var this$1 = this;
+
+                var alternates = [];
+                var lookupTables = this.getLookupTables(script, language, feature, 3);
+                for (var idx = 0; idx < lookupTables.length; idx++) {
+                  var subtables = lookupTables[idx].subtables;
+                  for (var i = 0; i < subtables.length; i++) {
+                    var subtable = subtables[i];
+                    var glyphs = this$1.expandCoverage(subtable.coverage);
+                    var alternateSets = subtable.alternateSets;
+                    for (var j = 0; j < glyphs.length; j++) {
+                      alternates.push({ sub: glyphs[j], by: alternateSets[j] });
+                    }
+                  }
+                }
+                return alternates;
+              };
+
+              /**
+               * List all ligatures (lookup type 4) for a given script, language, and feature.
+               * The result is an array of ligature objects like { sub: [ids], by: id }
+               * @param {string} feature - 4-letter feature name ('liga', 'rlig', 'dlig'...)
+               * @param {string} [script='DFLT']
+               * @param {string} [language='dflt']
+               * @return {Array} ligatures - The list of ligatures.
+               */
+              Substitution.prototype.getLigatures = function(feature, script, language) {
+                var this$1 = this;
+
+                var ligatures = [];
+                var lookupTables = this.getLookupTables(script, language, feature, 4);
+                for (var idx = 0; idx < lookupTables.length; idx++) {
+                  var subtables = lookupTables[idx].subtables;
+                  for (var i = 0; i < subtables.length; i++) {
+                    var subtable = subtables[i];
+                    var glyphs = this$1.expandCoverage(subtable.coverage);
+                    var ligatureSets = subtable.ligatureSets;
+                    for (var j = 0; j < glyphs.length; j++) {
+                      var startGlyph = glyphs[j];
+                      var ligSet = ligatureSets[j];
+                      for (var k = 0; k < ligSet.length; k++) {
+                        var lig = ligSet[k];
+                        ligatures.push({
+                          sub: [startGlyph].concat(lig.components),
+                          by: lig.ligGlyph
+                        });
+                      }
+                    }
+                  }
+                }
+                return ligatures;
+              };
+
+              /**
+               * Add or modify a single substitution (lookup type 1)
+               * Format 2, more flexible, is always used.
+               * @param {string} feature - 4-letter feature name ('liga', 'rlig', 'dlig'...)
+               * @param {Object} substitution - { sub: id, delta: number } for format 1 or { sub: id, by: id } for format 2.
+               * @param {string} [script='DFLT']
+               * @param {string} [language='dflt']
+               */
+              Substitution.prototype.addSingle = function(
+                feature,
+                substitution,
+                script,
+                language
+              ) {
+                var lookupTable = this.getLookupTables(
+                  script,
+                  language,
+                  feature,
+                  1,
+                  true
+                )[0];
+                var subtable = getSubstFormat(lookupTable, 2, {
+                  // lookup type 1 subtable, format 2, coverage format 1
+                  substFormat: 2,
+                  coverage: { format: 1, glyphs: [] },
+                  substitute: []
+                });
+                check.assert(
+                  subtable.coverage.format === 1,
+                  'Ligature: unable to modify coverage table format ' +
+                    subtable.coverage.format
+                );
+                var coverageGlyph = substitution.sub;
+                var pos = this.binSearch(subtable.coverage.glyphs, coverageGlyph);
+                if (pos < 0) {
+                  pos = -1 - pos;
+                  subtable.coverage.glyphs.splice(pos, 0, coverageGlyph);
+                  subtable.substitute.splice(pos, 0, 0);
+                }
+                subtable.substitute[pos] = substitution.by;
+              };
+
+              /**
+               * Add or modify an alternate substitution (lookup type 1)
+               * @param {string} feature - 4-letter feature name ('liga', 'rlig', 'dlig'...)
+               * @param {Object} substitution - { sub: id, by: [ids] }
+               * @param {string} [script='DFLT']
+               * @param {string} [language='dflt']
+               */
+              Substitution.prototype.addAlternate = function(
+                feature,
+                substitution,
+                script,
+                language
+              ) {
+                var lookupTable = this.getLookupTables(
+                  script,
+                  language,
+                  feature,
+                  3,
+                  true
+                )[0];
+                var subtable = getSubstFormat(lookupTable, 1, {
