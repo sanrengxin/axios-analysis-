@@ -35137,3 +35137,165 @@
                   glyph.isComposite = true;
                   glyph.points = [];
                   glyph.components = [];
+                  var moreComponents = true;
+                  while (moreComponents) {
+                    flags = p.parseUShort();
+                    var component = {
+                      glyphIndex: p.parseUShort(),
+                      xScale: 1,
+                      scale01: 0,
+                      scale10: 0,
+                      yScale: 1,
+                      dx: 0,
+                      dy: 0
+                    };
+                    if ((flags & 1) > 0) {
+                      // The arguments are words
+                      if ((flags & 2) > 0) {
+                        // values are offset
+                        component.dx = p.parseShort();
+                        component.dy = p.parseShort();
+                      } else {
+                        // values are matched points
+                        component.matchedPoints = [p.parseUShort(), p.parseUShort()];
+                      }
+                    } else {
+                      // The arguments are bytes
+                      if ((flags & 2) > 0) {
+                        // values are offset
+                        component.dx = p.parseChar();
+                        component.dy = p.parseChar();
+                      } else {
+                        // values are matched points
+                        component.matchedPoints = [p.parseByte(), p.parseByte()];
+                      }
+                    }
+
+                    if ((flags & 8) > 0) {
+                      // We have a scale
+                      component.xScale = component.yScale = p.parseF2Dot14();
+                    } else if ((flags & 64) > 0) {
+                      // We have an X / Y scale
+                      component.xScale = p.parseF2Dot14();
+                      component.yScale = p.parseF2Dot14();
+                    } else if ((flags & 128) > 0) {
+                      // We have a 2x2 transformation
+                      component.xScale = p.parseF2Dot14();
+                      component.scale01 = p.parseF2Dot14();
+                      component.scale10 = p.parseF2Dot14();
+                      component.yScale = p.parseF2Dot14();
+                    }
+
+                    glyph.components.push(component);
+                    moreComponents = !!(flags & 32);
+                  }
+                  if (flags & 0x100) {
+                    // We have instructions
+                    glyph.instructionLength = p.parseUShort();
+                    glyph.instructions = [];
+                    for (var i$6 = 0; i$6 < glyph.instructionLength; i$6 += 1) {
+                      glyph.instructions.push(p.parseByte());
+                    }
+                  }
+                }
+              }
+
+              // Transform an array of points and return a new array.
+              function transformPoints(points, transform) {
+                var newPoints = [];
+                for (var i = 0; i < points.length; i += 1) {
+                  var pt = points[i];
+                  var newPt = {
+                    x: transform.xScale * pt.x + transform.scale01 * pt.y + transform.dx,
+                    y: transform.scale10 * pt.x + transform.yScale * pt.y + transform.dy,
+                    onCurve: pt.onCurve,
+                    lastPointOfContour: pt.lastPointOfContour
+                  };
+                  newPoints.push(newPt);
+                }
+
+                return newPoints;
+              }
+
+              function getContours(points) {
+                var contours = [];
+                var currentContour = [];
+                for (var i = 0; i < points.length; i += 1) {
+                  var pt = points[i];
+                  currentContour.push(pt);
+                  if (pt.lastPointOfContour) {
+                    contours.push(currentContour);
+                    currentContour = [];
+                  }
+                }
+
+                check.argument(
+                  currentContour.length === 0,
+                  'There are still points left in the current contour.'
+                );
+                return contours;
+              }
+
+              // Convert the TrueType glyph outline to a Path.
+              function getPath(points) {
+                var p = new Path();
+                if (!points) {
+                  return p;
+                }
+
+                var contours = getContours(points);
+
+                for (var contourIndex = 0; contourIndex < contours.length; ++contourIndex) {
+                  var contour = contours[contourIndex];
+
+                  var prev = null;
+                  var curr = contour[contour.length - 1];
+                  var next = contour[0];
+
+                  if (curr.onCurve) {
+                    p.moveTo(curr.x, curr.y);
+                  } else {
+                    if (next.onCurve) {
+                      p.moveTo(next.x, next.y);
+                    } else {
+                      // If both first and last points are off-curve, start at their middle.
+                      var start = {
+                        x: (curr.x + next.x) * 0.5,
+                        y: (curr.y + next.y) * 0.5
+                      };
+                      p.moveTo(start.x, start.y);
+                    }
+                  }
+
+                  for (var i = 0; i < contour.length; ++i) {
+                    prev = curr;
+                    curr = next;
+                    next = contour[(i + 1) % contour.length];
+
+                    if (curr.onCurve) {
+                      // This is a straight line.
+                      p.lineTo(curr.x, curr.y);
+                    } else {
+                      var prev2 = prev;
+                      var next2 = next;
+
+                      if (!prev.onCurve) {
+                        prev2 = { x: (curr.x + prev.x) * 0.5, y: (curr.y + prev.y) * 0.5 };
+                      }
+
+                      if (!next.onCurve) {
+                        next2 = { x: (curr.x + next.x) * 0.5, y: (curr.y + next.y) * 0.5 };
+                      }
+
+                      p.quadraticCurveTo(curr.x, curr.y, next2.x, next2.y);
+                    }
+                  }
+
+                  p.closePath();
+                }
+                return p;
+              }
+
+              function buildPath(glyphs, glyph) {
+                if (glyph.isComposite) {
+                  for (var j = 0; j < glyph.components.length; j += 1) {
