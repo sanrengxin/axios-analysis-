@@ -35299,3 +35299,125 @@
               function buildPath(glyphs, glyph) {
                 if (glyph.isComposite) {
                   for (var j = 0; j < glyph.components.length; j += 1) {
+                    var component = glyph.components[j];
+                    var componentGlyph = glyphs.get(component.glyphIndex);
+                    // Force the ttfGlyphLoader to parse the glyph.
+                    componentGlyph.getPath();
+                    if (componentGlyph.points) {
+                      var transformedPoints = void 0;
+                      if (component.matchedPoints === undefined) {
+                        // component positioned by offset
+                        transformedPoints = transformPoints(
+                          componentGlyph.points,
+                          component
+                        );
+                      } else {
+                        // component positioned by matched points
+                        if (
+                          component.matchedPoints[0] > glyph.points.length - 1 ||
+                          component.matchedPoints[1] > componentGlyph.points.length - 1
+                        ) {
+                          throw Error('Matched points out of range in ' + glyph.name);
+                        }
+                        var firstPt = glyph.points[component.matchedPoints[0]];
+                        var secondPt = componentGlyph.points[component.matchedPoints[1]];
+                        var transform = {
+                          xScale: component.xScale,
+                          scale01: component.scale01,
+                          scale10: component.scale10,
+                          yScale: component.yScale,
+                          dx: 0,
+                          dy: 0
+                        };
+                        secondPt = transformPoints([secondPt], transform)[0];
+                        transform.dx = firstPt.x - secondPt.x;
+                        transform.dy = firstPt.y - secondPt.y;
+                        transformedPoints = transformPoints(
+                          componentGlyph.points,
+                          transform
+                        );
+                      }
+                      glyph.points = glyph.points.concat(transformedPoints);
+                    }
+                  }
+                }
+
+                return getPath(glyph.points);
+              }
+
+              // Parse all the glyphs according to the offsets from the `loca` table.
+              function parseGlyfTable(data, start, loca, font) {
+                var glyphs = new glyphset.GlyphSet(font);
+
+                // The last element of the loca table is invalid.
+                for (var i = 0; i < loca.length - 1; i += 1) {
+                  var offset = loca[i];
+                  var nextOffset = loca[i + 1];
+                  if (offset !== nextOffset) {
+                    glyphs.push(
+                      i,
+                      glyphset.ttfGlyphLoader(
+                        font,
+                        i,
+                        parseGlyph,
+                        data,
+                        start + offset,
+                        buildPath
+                      )
+                    );
+                  } else {
+                    glyphs.push(i, glyphset.glyphLoader(font, i));
+                  }
+                }
+
+                return glyphs;
+              }
+
+              var glyf = { getPath: getPath, parse: parseGlyfTable };
+
+              /* A TrueType font hinting interpreter.
+	*
+	* (c) 2017 Axel Kittenberger
+	*
+	* This interpreter has been implemented according to this documentation:
+	* https://developer.apple.com/fonts/TrueType-Reference-Manual/RM05/Chap5.html
+	*
+	* According to the documentation F24DOT6 values are used for pixels.
+	* That means calculation is 1/64 pixel accurate and uses integer operations.
+	* However, Javascript has floating point operations by default and only
+	* those are available. One could make a case to simulate the 1/64 accuracy
+	* exactly by truncating after every division operation
+	* (for example with << 0) to get pixel exactly results as other TrueType
+	* implementations. It may make sense since some fonts are pixel optimized
+	* by hand using DELTAP instructions. The current implementation doesn't
+	* and rather uses full floating point precision.
+	*
+	* xScale, yScale and rotation is currently ignored.
+	*
+	* A few non-trivial instructions are missing as I didn't encounter yet
+	* a font that used them to test a possible implementation.
+	*
+	* Some fonts seem to use undocumented features regarding the twilight zone.
+	* Only some of them are implemented as they were encountered.
+	*
+	* The exports.DEBUG statements are removed on the minified distribution file.
+	*/
+
+              var instructionTable;
+              var exec;
+              var execGlyph;
+              var execComponent;
+
+              /*
+	* Creates a hinting object.
+	*
+	* There ought to be exactly one
+	* for each truetype font that is used for hinting.
+	*/
+              function Hinting(font) {
+                // the font this hinting object is for
+                this.font = font;
+
+                this.getCommands = function(hPoints) {
+                  return glyf.getPath(hPoints).commands;
+                };
