@@ -35421,3 +35421,131 @@
                 this.getCommands = function(hPoints) {
                   return glyf.getPath(hPoints).commands;
                 };
+
+                // cached states
+                this._fpgmState = this._prepState = undefined;
+
+                // errorState
+                // 0 ... all okay
+                // 1 ... had an error in a glyf,
+                //       continue working but stop spamming
+                //       the console
+                // 2 ... error at prep, stop hinting at this ppem
+                // 3 ... error at fpeg, stop hinting for this font at all
+                this._errorState = 0;
+              }
+
+              /*
+	* Not rounding.
+	*/
+              function roundOff(v) {
+                return v;
+              }
+
+              /*
+	* Rounding to grid.
+	*/
+              function roundToGrid(v) {
+                //Rounding in TT is supposed to "symmetrical around zero"
+                return Math.sign(v) * Math.round(Math.abs(v));
+              }
+
+              /*
+	* Rounding to double grid.
+	*/
+              function roundToDoubleGrid(v) {
+                return Math.sign(v) * Math.round(Math.abs(v * 2)) / 2;
+              }
+
+              /*
+	* Rounding to half grid.
+	*/
+              function roundToHalfGrid(v) {
+                return Math.sign(v) * (Math.round(Math.abs(v) + 0.5) - 0.5);
+              }
+
+              /*
+	* Rounding to up to grid.
+	*/
+              function roundUpToGrid(v) {
+                return Math.sign(v) * Math.ceil(Math.abs(v));
+              }
+
+              /*
+	* Rounding to down to grid.
+	*/
+              function roundDownToGrid(v) {
+                return Math.sign(v) * Math.floor(Math.abs(v));
+              }
+
+              /*
+	* Super rounding.
+	*/
+              var roundSuper = function(v) {
+                var period = this.srPeriod;
+                var phase = this.srPhase;
+                var threshold = this.srThreshold;
+                var sign = 1;
+
+                if (v < 0) {
+                  v = -v;
+                  sign = -1;
+                }
+
+                v += threshold - phase;
+
+                v = Math.trunc(v / period) * period;
+
+                v += phase;
+
+                // according to http://xgridfit.sourceforge.net/round.html
+                if (v < 0) {
+                  return phase * sign;
+                }
+
+                return v * sign;
+              };
+
+              /*
+	* Unit vector of x-axis.
+	*/
+              var xUnitVector = {
+                x: 1,
+
+                y: 0,
+
+                axis: 'x',
+
+                // Gets the projected distance between two points.
+                // o1/o2 ... if true, respective original position is used.
+                distance: function(p1, p2, o1, o2) {
+                  return (o1 ? p1.xo : p1.x) - (o2 ? p2.xo : p2.x);
+                },
+
+                // Moves point p so the moved position has the same relative
+                // position to the moved positions of rp1 and rp2 than the
+                // original positions had.
+                //
+                // See APPENDIX on INTERPOLATE at the bottom of this file.
+                interpolate: function(p, rp1, rp2, pv) {
+                  var do1;
+                  var do2;
+                  var doa1;
+                  var doa2;
+                  var dm1;
+                  var dm2;
+                  var dt;
+
+                  if (!pv || pv === this) {
+                    do1 = p.xo - rp1.xo;
+                    do2 = p.xo - rp2.xo;
+                    dm1 = rp1.x - rp1.xo;
+                    dm2 = rp2.x - rp2.xo;
+                    doa1 = Math.abs(do1);
+                    doa2 = Math.abs(do2);
+                    dt = doa1 + doa2;
+
+                    if (dt === 0) {
+                      p.x = p.xo + (dm1 + dm2) / 2;
+                      return;
+                    }
