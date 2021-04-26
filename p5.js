@@ -35549,3 +35549,168 @@
                       p.x = p.xo + (dm1 + dm2) / 2;
                       return;
                     }
+
+                    p.x = p.xo + (dm1 * doa2 + dm2 * doa1) / dt;
+                    return;
+                  }
+
+                  do1 = pv.distance(p, rp1, true, true);
+                  do2 = pv.distance(p, rp2, true, true);
+                  dm1 = pv.distance(rp1, rp1, false, true);
+                  dm2 = pv.distance(rp2, rp2, false, true);
+                  doa1 = Math.abs(do1);
+                  doa2 = Math.abs(do2);
+                  dt = doa1 + doa2;
+
+                  if (dt === 0) {
+                    xUnitVector.setRelative(p, p, (dm1 + dm2) / 2, pv, true);
+                    return;
+                  }
+
+                  xUnitVector.setRelative(p, p, (dm1 * doa2 + dm2 * doa1) / dt, pv, true);
+                },
+
+                // Slope of line normal to this
+                normalSlope: Number.NEGATIVE_INFINITY,
+
+                // Sets the point 'p' relative to point 'rp'
+                // by the distance 'd'.
+                //
+                // See APPENDIX on SETRELATIVE at the bottom of this file.
+                //
+                // p   ... point to set
+                // rp  ... reference point
+                // d   ... distance on projection vector
+                // pv  ... projection vector (undefined = this)
+                // org ... if true, uses the original position of rp as reference.
+                setRelative: function(p, rp, d, pv, org) {
+                  if (!pv || pv === this) {
+                    p.x = (org ? rp.xo : rp.x) + d;
+                    return;
+                  }
+
+                  var rpx = org ? rp.xo : rp.x;
+                  var rpy = org ? rp.yo : rp.y;
+                  var rpdx = rpx + d * pv.x;
+                  var rpdy = rpy + d * pv.y;
+
+                  p.x = rpdx + (p.y - rpdy) / pv.normalSlope;
+                },
+
+                // Slope of vector line.
+                slope: 0,
+
+                // Touches the point p.
+                touch: function(p) {
+                  p.xTouched = true;
+                },
+
+                // Tests if a point p is touched.
+                touched: function(p) {
+                  return p.xTouched;
+                },
+
+                // Untouches the point p.
+                untouch: function(p) {
+                  p.xTouched = false;
+                }
+              };
+
+              /*
+	* Unit vector of y-axis.
+	*/
+              var yUnitVector = {
+                x: 0,
+
+                y: 1,
+
+                axis: 'y',
+
+                // Gets the projected distance between two points.
+                // o1/o2 ... if true, respective original position is used.
+                distance: function(p1, p2, o1, o2) {
+                  return (o1 ? p1.yo : p1.y) - (o2 ? p2.yo : p2.y);
+                },
+
+                // Moves point p so the moved position has the same relative
+                // position to the moved positions of rp1 and rp2 than the
+                // original positions had.
+                //
+                // See APPENDIX on INTERPOLATE at the bottom of this file.
+                interpolate: function(p, rp1, rp2, pv) {
+                  var do1;
+                  var do2;
+                  var doa1;
+                  var doa2;
+                  var dm1;
+                  var dm2;
+                  var dt;
+
+                  if (!pv || pv === this) {
+                    do1 = p.yo - rp1.yo;
+                    do2 = p.yo - rp2.yo;
+                    dm1 = rp1.y - rp1.yo;
+                    dm2 = rp2.y - rp2.yo;
+                    doa1 = Math.abs(do1);
+                    doa2 = Math.abs(do2);
+                    dt = doa1 + doa2;
+
+                    if (dt === 0) {
+                      p.y = p.yo + (dm1 + dm2) / 2;
+                      return;
+                    }
+
+                    p.y = p.yo + (dm1 * doa2 + dm2 * doa1) / dt;
+                    return;
+                  }
+
+                  do1 = pv.distance(p, rp1, true, true);
+                  do2 = pv.distance(p, rp2, true, true);
+                  dm1 = pv.distance(rp1, rp1, false, true);
+                  dm2 = pv.distance(rp2, rp2, false, true);
+                  doa1 = Math.abs(do1);
+                  doa2 = Math.abs(do2);
+                  dt = doa1 + doa2;
+
+                  if (dt === 0) {
+                    yUnitVector.setRelative(p, p, (dm1 + dm2) / 2, pv, true);
+                    return;
+                  }
+
+                  yUnitVector.setRelative(p, p, (dm1 * doa2 + dm2 * doa1) / dt, pv, true);
+                },
+
+                // Slope of line normal to this.
+                normalSlope: 0,
+
+                // Sets the point 'p' relative to point 'rp'
+                // by the distance 'd'
+                //
+                // See APPENDIX on SETRELATIVE at the bottom of this file.
+                //
+                // p   ... point to set
+                // rp  ... reference point
+                // d   ... distance on projection vector
+                // pv  ... projection vector (undefined = this)
+                // org ... if true, uses the original position of rp as reference.
+                setRelative: function(p, rp, d, pv, org) {
+                  if (!pv || pv === this) {
+                    p.y = (org ? rp.yo : rp.y) + d;
+                    return;
+                  }
+
+                  var rpx = org ? rp.xo : rp.x;
+                  var rpy = org ? rp.yo : rp.y;
+                  var rpdx = rpx + d * pv.x;
+                  var rpdy = rpy + d * pv.y;
+
+                  p.y = rpdy + pv.normalSlope * (p.x - rpdx);
+                },
+
+                // Slope of vector line.
+                slope: Number.POSITIVE_INFINITY,
+
+                // Touches the point p.
+                touch: function(p) {
+                  p.yTouched = true;
+                },
