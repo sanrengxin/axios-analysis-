@@ -35714,3 +35714,151 @@
                 touch: function(p) {
                   p.yTouched = true;
                 },
+
+                // Tests if a point p is touched.
+                touched: function(p) {
+                  return p.yTouched;
+                },
+
+                // Untouches the point p.
+                untouch: function(p) {
+                  p.yTouched = false;
+                }
+              };
+
+              Object.freeze(xUnitVector);
+              Object.freeze(yUnitVector);
+
+              /*
+	* Creates a unit vector that is not x- or y-axis.
+	*/
+              function UnitVector(x, y) {
+                this.x = x;
+                this.y = y;
+                this.axis = undefined;
+                this.slope = y / x;
+                this.normalSlope = -x / y;
+                Object.freeze(this);
+              }
+
+              /*
+	* Gets the projected distance between two points.
+	* o1/o2 ... if true, respective original position is used.
+	*/
+              UnitVector.prototype.distance = function(p1, p2, o1, o2) {
+                return (
+                  this.x * xUnitVector.distance(p1, p2, o1, o2) +
+                  this.y * yUnitVector.distance(p1, p2, o1, o2)
+                );
+              };
+
+              /*
+	* Moves point p so the moved position has the same relative
+	* position to the moved positions of rp1 and rp2 than the
+	* original positions had.
+	*
+	* See APPENDIX on INTERPOLATE at the bottom of this file.
+	*/
+              UnitVector.prototype.interpolate = function(p, rp1, rp2, pv) {
+                var dm1;
+                var dm2;
+                var do1;
+                var do2;
+                var doa1;
+                var doa2;
+                var dt;
+
+                do1 = pv.distance(p, rp1, true, true);
+                do2 = pv.distance(p, rp2, true, true);
+                dm1 = pv.distance(rp1, rp1, false, true);
+                dm2 = pv.distance(rp2, rp2, false, true);
+                doa1 = Math.abs(do1);
+                doa2 = Math.abs(do2);
+                dt = doa1 + doa2;
+
+                if (dt === 0) {
+                  this.setRelative(p, p, (dm1 + dm2) / 2, pv, true);
+                  return;
+                }
+
+                this.setRelative(p, p, (dm1 * doa2 + dm2 * doa1) / dt, pv, true);
+              };
+
+              /*
+	* Sets the point 'p' relative to point 'rp'
+	* by the distance 'd'
+	*
+	* See APPENDIX on SETRELATIVE at the bottom of this file.
+	*
+	* p   ...  point to set
+	* rp  ... reference point
+	* d   ... distance on projection vector
+	* pv  ... projection vector (undefined = this)
+	* org ... if true, uses the original position of rp as reference.
+	*/
+              UnitVector.prototype.setRelative = function(p, rp, d, pv, org) {
+                pv = pv || this;
+
+                var rpx = org ? rp.xo : rp.x;
+                var rpy = org ? rp.yo : rp.y;
+                var rpdx = rpx + d * pv.x;
+                var rpdy = rpy + d * pv.y;
+
+                var pvns = pv.normalSlope;
+                var fvs = this.slope;
+
+                var px = p.x;
+                var py = p.y;
+
+                p.x = (fvs * px - pvns * rpdx + rpdy - py) / (fvs - pvns);
+                p.y = fvs * (p.x - px) + py;
+              };
+
+              /*
+	* Touches the point p.
+	*/
+              UnitVector.prototype.touch = function(p) {
+                p.xTouched = true;
+                p.yTouched = true;
+              };
+
+              /*
+	* Returns a unit vector with x/y coordinates.
+	*/
+              function getUnitVector(x, y) {
+                var d = Math.sqrt(x * x + y * y);
+
+                x /= d;
+                y /= d;
+
+                if (x === 1 && y === 0) {
+                  return xUnitVector;
+                } else if (x === 0 && y === 1) {
+                  return yUnitVector;
+                } else {
+                  return new UnitVector(x, y);
+                }
+              }
+
+              /*
+	* Creates a point in the hinting engine.
+	*/
+              function HPoint(x, y, lastPointOfContour, onCurve) {
+                this.x = this.xo = Math.round(x * 64) / 64; // hinted x value and original x-value
+                this.y = this.yo = Math.round(y * 64) / 64; // hinted y value and original y-value
+
+                this.lastPointOfContour = lastPointOfContour;
+                this.onCurve = onCurve;
+                this.prevPointOnContour = undefined;
+                this.nextPointOnContour = undefined;
+                this.xTouched = false;
+                this.yTouched = false;
+
+                Object.preventExtensions(this);
+              }
+
+              /*
+	* Returns the next touched point on the contour.
+	*
+	* v  ... unit vector to test touch axis.
+	*/
