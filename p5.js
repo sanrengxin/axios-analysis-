@@ -35862,3 +35862,125 @@
 	*
 	* v  ... unit vector to test touch axis.
 	*/
+              HPoint.prototype.nextTouched = function(v) {
+                var p = this.nextPointOnContour;
+
+                while (!v.touched(p) && p !== this) {
+                  p = p.nextPointOnContour;
+                }
+
+                return p;
+              };
+
+              /*
+	* Returns the previous touched point on the contour
+	*
+	* v  ... unit vector to test touch axis.
+	*/
+              HPoint.prototype.prevTouched = function(v) {
+                var p = this.prevPointOnContour;
+
+                while (!v.touched(p) && p !== this) {
+                  p = p.prevPointOnContour;
+                }
+
+                return p;
+              };
+
+              /*
+	* The zero point.
+	*/
+              var HPZero = Object.freeze(new HPoint(0, 0));
+
+              /*
+	* The default state of the interpreter.
+	*
+	* Note: Freezing the defaultState and then deriving from it
+	* makes the V8 Javascript engine going awkward,
+	* so this is avoided, albeit the defaultState shouldn't
+	* ever change.
+	*/
+              var defaultState = {
+                cvCutIn: 17 / 16, // control value cut in
+                deltaBase: 9,
+                deltaShift: 0.125,
+                loop: 1, // loops some instructions
+                minDis: 1, // minimum distance
+                autoFlip: true
+              };
+
+              /*
+	* The current state of the interpreter.
+	*
+	* env  ... 'fpgm' or 'prep' or 'glyf'
+	* prog ... the program
+	*/
+              function State(env, prog) {
+                this.env = env;
+                this.stack = [];
+                this.prog = prog;
+
+                switch (env) {
+                  case 'glyf':
+                    this.zp0 = this.zp1 = this.zp2 = 1;
+                    this.rp0 = this.rp1 = this.rp2 = 0;
+                  /* fall through */
+                  case 'prep':
+                    this.fv = this.pv = this.dpv = xUnitVector;
+                    this.round = roundToGrid;
+                }
+              }
+
+              /*
+	* Executes a glyph program.
+	*
+	* This does the hinting for each glyph.
+	*
+	* Returns an array of moved points.
+	*
+	* glyph: the glyph to hint
+	* ppem: the size the glyph is rendered for
+	*/
+              Hinting.prototype.exec = function(glyph, ppem) {
+                if (typeof ppem !== 'number') {
+                  throw new Error('Point size is not a number!');
+                }
+
+                // Received a fatal error, don't do any hinting anymore.
+                if (this._errorState > 2) {
+                  return;
+                }
+
+                var font = this.font;
+                var prepState = this._prepState;
+
+                if (!prepState || prepState.ppem !== ppem) {
+                  var fpgmState = this._fpgmState;
+
+                  if (!fpgmState) {
+                    // Executes the fpgm state.
+                    // This is used by fonts to define functions.
+                    State.prototype = defaultState;
+
+                    fpgmState = this._fpgmState = new State('fpgm', font.tables.fpgm);
+
+                    fpgmState.funcs = [];
+                    fpgmState.font = font;
+
+                    if (exports.DEBUG) {
+                      console.log('---EXEC FPGM---');
+                      fpgmState.step = -1;
+                    }
+
+                    try {
+                      exec(fpgmState);
+                    } catch (e) {
+                      console.log('Hinting error in FPGM:' + e);
+                      this._errorState = 3;
+                      return;
+                    }
+                  }
+
+                  // Executes the prep program for this ppem setting.
+                  // This is used by fonts to set cvt values
+                  // depending on to be rendered font size.
