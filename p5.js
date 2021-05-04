@@ -36259,3 +36259,133 @@
 	                    state.stack.length,
 	                    '...', state.stack.slice(state.stack.length - 10)
 	                );
+	            } else {
+	                console.log(state.stack.length, state.stack);
+	            }
+	        }
+	        */
+                }
+              };
+
+              /*
+	* Initializes the twilight zone.
+	*
+	* This is only done if a SZPx instruction
+	* refers to the twilight zone.
+	*/
+              function initTZone(state) {
+                var tZone = (state.tZone = new Array(state.gZone.length));
+
+                // no idea if this is actually correct...
+                for (var i = 0; i < tZone.length; i++) {
+                  tZone[i] = new HPoint(0, 0);
+                }
+              }
+
+              /*
+	* Skips the instruction pointer ahead over an IF/ELSE block.
+	* handleElse .. if true breaks on matching ELSE
+	*/
+              function skip(state, handleElse) {
+                var prog = state.prog;
+                var ip = state.ip;
+                var nesting = 1;
+                var ins;
+
+                do {
+                  ins = prog[++ip];
+                  if (ins === 0x58) {
+                    // IF
+                    nesting++;
+                  } else if (ins === 0x59) {
+                    // EIF
+                    nesting--;
+                  } else if (ins === 0x40) {
+                    // NPUSHB
+                    ip += prog[ip + 1] + 1;
+                  } else if (ins === 0x41) {
+                    // NPUSHW
+                    ip += 2 * prog[ip + 1] + 1;
+                  } else if (ins >= 0xb0 && ins <= 0xb7) {
+                    // PUSHB
+                    ip += ins - 0xb0 + 1;
+                  } else if (ins >= 0xb8 && ins <= 0xbf) {
+                    // PUSHW
+                    ip += (ins - 0xb8 + 1) * 2;
+                  } else if (handleElse && nesting === 1 && ins === 0x1b) {
+                    // ELSE
+                    break;
+                  }
+                } while (nesting > 0);
+
+                state.ip = ip;
+              }
+
+              /*----------------------------------------------------------*
+	*          And then a lot of instructions...                *
+	*----------------------------------------------------------*/
+
+              // SVTCA[a] Set freedom and projection Vectors To Coordinate Axis
+              // 0x00-0x01
+              function SVTCA(v, state) {
+                if (exports.DEBUG) {
+                  console.log(state.step, 'SVTCA[' + v.axis + ']');
+                }
+
+                state.fv = state.pv = state.dpv = v;
+              }
+
+              // SPVTCA[a] Set Projection Vector to Coordinate Axis
+              // 0x02-0x03
+              function SPVTCA(v, state) {
+                if (exports.DEBUG) {
+                  console.log(state.step, 'SPVTCA[' + v.axis + ']');
+                }
+
+                state.pv = state.dpv = v;
+              }
+
+              // SFVTCA[a] Set Freedom Vector to Coordinate Axis
+              // 0x04-0x05
+              function SFVTCA(v, state) {
+                if (exports.DEBUG) {
+                  console.log(state.step, 'SFVTCA[' + v.axis + ']');
+                }
+
+                state.fv = v;
+              }
+
+              // SPVTL[a] Set Projection Vector To Line
+              // 0x06-0x07
+              function SPVTL(a, state) {
+                var stack = state.stack;
+                var p2i = stack.pop();
+                var p1i = stack.pop();
+                var p2 = state.z2[p2i];
+                var p1 = state.z1[p1i];
+
+                if (exports.DEBUG) {
+                  console.log('SPVTL[' + a + ']', p2i, p1i);
+                }
+
+                var dx;
+                var dy;
+
+                if (!a) {
+                  dx = p1.x - p2.x;
+                  dy = p1.y - p2.y;
+                } else {
+                  dx = p2.y - p1.y;
+                  dy = p1.x - p2.x;
+                }
+
+                state.pv = state.dpv = getUnitVector(dx, dy);
+              }
+
+              // SFVTL[a] Set Freedom Vector To Line
+              // 0x08-0x09
+              function SFVTL(a, state) {
+                var stack = state.stack;
+                var p2i = stack.pop();
+                var p1i = stack.pop();
+                var p2 = state.z2[p2i];
