@@ -35984,3 +35984,156 @@
                   // Executes the prep program for this ppem setting.
                   // This is used by fonts to set cvt values
                   // depending on to be rendered font size.
+
+                  State.prototype = fpgmState;
+                  prepState = this._prepState = new State('prep', font.tables.prep);
+
+                  prepState.ppem = ppem;
+
+                  // Creates a copy of the cvt table
+                  // and scales it to the current ppem setting.
+                  var oCvt = font.tables.cvt;
+                  if (oCvt) {
+                    var cvt = (prepState.cvt = new Array(oCvt.length));
+                    var scale = ppem / font.unitsPerEm;
+                    for (var c = 0; c < oCvt.length; c++) {
+                      cvt[c] = oCvt[c] * scale;
+                    }
+                  } else {
+                    prepState.cvt = [];
+                  }
+
+                  if (exports.DEBUG) {
+                    console.log('---EXEC PREP---');
+                    prepState.step = -1;
+                  }
+
+                  try {
+                    exec(prepState);
+                  } catch (e) {
+                    if (this._errorState < 2) {
+                      console.log('Hinting error in PREP:' + e);
+                    }
+                    this._errorState = 2;
+                  }
+                }
+
+                if (this._errorState > 1) {
+                  return;
+                }
+
+                try {
+                  return execGlyph(glyph, prepState);
+                } catch (e) {
+                  if (this._errorState < 1) {
+                    console.log('Hinting error:' + e);
+                    console.log('Note: further hinting errors are silenced');
+                  }
+                  this._errorState = 1;
+                  return undefined;
+                }
+              };
+
+              /*
+	* Executes the hinting program for a glyph.
+	*/
+              execGlyph = function(glyph, prepState) {
+                // original point positions
+                var xScale = prepState.ppem / prepState.font.unitsPerEm;
+                var yScale = xScale;
+                var components = glyph.components;
+                var contours;
+                var gZone;
+                var state;
+
+                State.prototype = prepState;
+                if (!components) {
+                  state = new State('glyf', glyph.instructions);
+                  if (exports.DEBUG) {
+                    console.log('---EXEC GLYPH---');
+                    state.step = -1;
+                  }
+                  execComponent(glyph, state, xScale, yScale);
+                  gZone = state.gZone;
+                } else {
+                  var font = prepState.font;
+                  gZone = [];
+                  contours = [];
+                  for (var i = 0; i < components.length; i++) {
+                    var c = components[i];
+                    var cg = font.glyphs.get(c.glyphIndex);
+
+                    state = new State('glyf', cg.instructions);
+
+                    if (exports.DEBUG) {
+                      console.log('---EXEC COMP ' + i + '---');
+                      state.step = -1;
+                    }
+
+                    execComponent(cg, state, xScale, yScale);
+                    // appends the computed points to the result array
+                    // post processes the component points
+                    var dx = Math.round(c.dx * xScale);
+                    var dy = Math.round(c.dy * yScale);
+                    var gz = state.gZone;
+                    var cc = state.contours;
+                    for (var pi = 0; pi < gz.length; pi++) {
+                      var p = gz[pi];
+                      p.xTouched = p.yTouched = false;
+                      p.xo = p.x = p.x + dx;
+                      p.yo = p.y = p.y + dy;
+                    }
+
+                    var gLen = gZone.length;
+                    gZone.push.apply(gZone, gz);
+                    for (var j = 0; j < cc.length; j++) {
+                      contours.push(cc[j] + gLen);
+                    }
+                  }
+
+                  if (glyph.instructions && !state.inhibitGridFit) {
+                    // the composite has instructions on its own
+                    state = new State('glyf', glyph.instructions);
+
+                    state.gZone = state.z0 = state.z1 = state.z2 = gZone;
+
+                    state.contours = contours;
+
+                    // note: HPZero cannot be used here, since
+                    //       the point might be modified
+                    gZone.push(
+                      new HPoint(0, 0),
+                      new HPoint(Math.round(glyph.advanceWidth * xScale), 0)
+                    );
+
+                    if (exports.DEBUG) {
+                      console.log('---EXEC COMPOSITE---');
+                      state.step = -1;
+                    }
+
+                    exec(state);
+
+                    gZone.length -= 2;
+                  }
+                }
+
+                return gZone;
+              };
+
+              /*
+	* Executes the hinting program for a component of a multi-component glyph
+	* or of the glyph itself for a non-component glyph.
+	*/
+              execComponent = function(glyph, state, xScale, yScale) {
+                var points = glyph.points || [];
+                var pLen = points.length;
+                var gZone = (state.gZone = state.z0 = state.z1 = state.z2 = []);
+                var contours = (state.contours = []);
+
+                // Scales the original points and
+                // makes copies for the hinted points.
+                var cp; // current point
+                for (var i = 0; i < pLen; i++) {
+                  cp = points[i];
+
+                  gZone[i] = new HPoint(
