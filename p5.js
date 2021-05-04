@@ -36137,3 +36137,125 @@
                   cp = points[i];
 
                   gZone[i] = new HPoint(
+                    cp.x * xScale,
+                    cp.y * yScale,
+                    cp.lastPointOfContour,
+                    cp.onCurve
+                  );
+                }
+
+                // Chain links the contours.
+                var sp; // start point
+                var np; // next point
+
+                for (var i$1 = 0; i$1 < pLen; i$1++) {
+                  cp = gZone[i$1];
+
+                  if (!sp) {
+                    sp = cp;
+                    contours.push(i$1);
+                  }
+
+                  if (cp.lastPointOfContour) {
+                    cp.nextPointOnContour = sp;
+                    sp.prevPointOnContour = cp;
+                    sp = undefined;
+                  } else {
+                    np = gZone[i$1 + 1];
+                    cp.nextPointOnContour = np;
+                    np.prevPointOnContour = cp;
+                  }
+                }
+
+                if (state.inhibitGridFit) {
+                  return;
+                }
+
+                if (exports.DEBUG) {
+                  console.log('PROCESSING GLYPH', state.stack);
+                  for (var i$2 = 0; i$2 < pLen; i$2++) {
+                    console.log(i$2, gZone[i$2].x, gZone[i$2].y);
+                  }
+                }
+
+                gZone.push(
+                  new HPoint(0, 0),
+                  new HPoint(Math.round(glyph.advanceWidth * xScale), 0)
+                );
+
+                exec(state);
+
+                // Removes the extra points.
+                gZone.length -= 2;
+
+                if (exports.DEBUG) {
+                  console.log('FINISHED GLYPH', state.stack);
+                  for (var i$3 = 0; i$3 < pLen; i$3++) {
+                    console.log(i$3, gZone[i$3].x, gZone[i$3].y);
+                  }
+                }
+              };
+
+              /*
+	* Executes the program loaded in state.
+	*/
+              exec = function(state) {
+                var prog = state.prog;
+
+                if (!prog) {
+                  return;
+                }
+
+                var pLen = prog.length;
+                var ins;
+
+                for (state.ip = 0; state.ip < pLen; state.ip++) {
+                  if (exports.DEBUG) {
+                    state.step++;
+                  }
+                  ins = instructionTable[prog[state.ip]];
+
+                  if (!ins) {
+                    throw new Error(
+                      'unknown instruction: 0x' + Number(prog[state.ip]).toString(16)
+                    );
+                  }
+
+                  ins(state);
+
+                  // very extensive debugging for each step
+                  /*
+	        if (exports.DEBUG) {
+	            var da;
+	            if (state.gZone) {
+	                da = [];
+	                for (let i = 0; i < state.gZone.length; i++)
+	                {
+	                    da.push(i + ' ' +
+	                        state.gZone[i].x * 64 + ' ' +
+	                        state.gZone[i].y * 64 + ' ' +
+	                        (state.gZone[i].xTouched ? 'x' : '') +
+	                        (state.gZone[i].yTouched ? 'y' : '')
+	                    );
+	                }
+	                console.log('GZ', da);
+	            }
+
+	            if (state.tZone) {
+	                da = [];
+	                for (let i = 0; i < state.tZone.length; i++) {
+	                    da.push(i + ' ' +
+	                        state.tZone[i].x * 64 + ' ' +
+	                        state.tZone[i].y * 64 + ' ' +
+	                        (state.tZone[i].xTouched ? 'x' : '') +
+	                        (state.tZone[i].yTouched ? 'y' : '')
+	                    );
+	                }
+	                console.log('TZ', da);
+	            }
+
+	            if (state.stack.length > 10) {
+	                console.log(
+	                    state.stack.length,
+	                    '...', state.stack.slice(state.stack.length - 10)
+	                );
