@@ -36389,3 +36389,131 @@
                 var p2i = stack.pop();
                 var p1i = stack.pop();
                 var p2 = state.z2[p2i];
+                var p1 = state.z1[p1i];
+
+                if (exports.DEBUG) {
+                  console.log('SFVTL[' + a + ']', p2i, p1i);
+                }
+
+                var dx;
+                var dy;
+
+                if (!a) {
+                  dx = p1.x - p2.x;
+                  dy = p1.y - p2.y;
+                } else {
+                  dx = p2.y - p1.y;
+                  dy = p1.x - p2.x;
+                }
+
+                state.fv = getUnitVector(dx, dy);
+              }
+
+              // SPVFS[] Set Projection Vector From Stack
+              // 0x0A
+              function SPVFS(state) {
+                var stack = state.stack;
+                var y = stack.pop();
+                var x = stack.pop();
+
+                if (exports.DEBUG) {
+                  console.log(state.step, 'SPVFS[]', y, x);
+                }
+
+                state.pv = state.dpv = getUnitVector(x, y);
+              }
+
+              // SFVFS[] Set Freedom Vector From Stack
+              // 0x0B
+              function SFVFS(state) {
+                var stack = state.stack;
+                var y = stack.pop();
+                var x = stack.pop();
+
+                if (exports.DEBUG) {
+                  console.log(state.step, 'SPVFS[]', y, x);
+                }
+
+                state.fv = getUnitVector(x, y);
+              }
+
+              // GPV[] Get Projection Vector
+              // 0x0C
+              function GPV(state) {
+                var stack = state.stack;
+                var pv = state.pv;
+
+                if (exports.DEBUG) {
+                  console.log(state.step, 'GPV[]');
+                }
+
+                stack.push(pv.x * 0x4000);
+                stack.push(pv.y * 0x4000);
+              }
+
+              // GFV[] Get Freedom Vector
+              // 0x0C
+              function GFV(state) {
+                var stack = state.stack;
+                var fv = state.fv;
+
+                if (exports.DEBUG) {
+                  console.log(state.step, 'GFV[]');
+                }
+
+                stack.push(fv.x * 0x4000);
+                stack.push(fv.y * 0x4000);
+              }
+
+              // SFVTPV[] Set Freedom Vector To Projection Vector
+              // 0x0E
+              function SFVTPV(state) {
+                state.fv = state.pv;
+
+                if (exports.DEBUG) {
+                  console.log(state.step, 'SFVTPV[]');
+                }
+              }
+
+              // ISECT[] moves point p to the InterSECTion of two lines
+              // 0x0F
+              function ISECT(state) {
+                var stack = state.stack;
+                var pa0i = stack.pop();
+                var pa1i = stack.pop();
+                var pb0i = stack.pop();
+                var pb1i = stack.pop();
+                var pi = stack.pop();
+                var z0 = state.z0;
+                var z1 = state.z1;
+                var pa0 = z0[pa0i];
+                var pa1 = z0[pa1i];
+                var pb0 = z1[pb0i];
+                var pb1 = z1[pb1i];
+                var p = state.z2[pi];
+
+                if (exports.DEBUG) {
+                  console.log('ISECT[], ', pa0i, pa1i, pb0i, pb1i, pi);
+                }
+
+                // math from
+                // en.wikipedia.org/wiki/Line%E2%80%93line_intersection#Given_two_points_on_each_line
+
+                var x1 = pa0.x;
+                var y1 = pa0.y;
+                var x2 = pa1.x;
+                var y2 = pa1.y;
+                var x3 = pb0.x;
+                var y3 = pb0.y;
+                var x4 = pb1.x;
+                var y4 = pb1.y;
+
+                var div = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
+                var f1 = x1 * y2 - y1 * x2;
+                var f2 = x3 * y4 - y3 * x4;
+
+                p.x = (f1 * (x3 - x4) - f2 * (x1 - x2)) / div;
+                p.y = (f1 * (y3 - y4) - f2 * (y1 - y2)) / div;
+              }
+
+              // SRP0[] Set Reference Point 0
