@@ -36517,3 +36517,142 @@
               }
 
               // SRP0[] Set Reference Point 0
+              // 0x10
+              function SRP0(state) {
+                state.rp0 = state.stack.pop();
+
+                if (exports.DEBUG) {
+                  console.log(state.step, 'SRP0[]', state.rp0);
+                }
+              }
+
+              // SRP1[] Set Reference Point 1
+              // 0x11
+              function SRP1(state) {
+                state.rp1 = state.stack.pop();
+
+                if (exports.DEBUG) {
+                  console.log(state.step, 'SRP1[]', state.rp1);
+                }
+              }
+
+              // SRP1[] Set Reference Point 2
+              // 0x12
+              function SRP2(state) {
+                state.rp2 = state.stack.pop();
+
+                if (exports.DEBUG) {
+                  console.log(state.step, 'SRP2[]', state.rp2);
+                }
+              }
+
+              // SZP0[] Set Zone Pointer 0
+              // 0x13
+              function SZP0(state) {
+                var n = state.stack.pop();
+
+                if (exports.DEBUG) {
+                  console.log(state.step, 'SZP0[]', n);
+                }
+
+                state.zp0 = n;
+
+                switch (n) {
+                  case 0:
+                    if (!state.tZone) {
+                      initTZone(state);
+                    }
+                    state.z0 = state.tZone;
+                    break;
+                  case 1:
+                    state.z0 = state.gZone;
+                    break;
+                  default:
+                    throw new Error('Invalid zone pointer');
+                }
+              }
+
+              // SZP1[] Set Zone Pointer 1
+              // 0x14
+              function SZP1(state) {
+                var n = state.stack.pop();
+
+                if (exports.DEBUG) {
+                  console.log(state.step, 'SZP1[]', n);
+                }
+
+                state.zp1 = n;
+
+                switch (n) {
+                  case 0:
+                    if (!state.tZone) {
+                      initTZone(state);
+                    }
+                    state.z1 = state.tZone;
+                    break;
+                  case 1:
+                    state.z1 = state.gZone;
+                    break;
+                  default:
+                    throw new Error('Invalid zone pointer');
+                }
+              }
+
+              // SZP2[] Set Zone Pointer 2
+              // 0x15
+              function SZP2(state) {
+                var n = state.stack.pop();
+
+                if (exports.DEBUG) {
+                  console.log(state.step, 'SZP2[]', n);
+                }
+
+                state.zp2 = n;
+
+                switch (n) {
+                  case 0:
+                    if (!state.tZone) {
+                      initTZone(state);
+                    }
+                    state.z2 = state.tZone;
+                    break;
+                  case 1:
+                    state.z2 = state.gZone;
+                    break;
+                  default:
+                    throw new Error('Invalid zone pointer');
+                }
+              }
+
+              // SZPS[] Set Zone PointerS
+              // 0x16
+              function SZPS(state) {
+                var n = state.stack.pop();
+
+                if (exports.DEBUG) {
+                  console.log(state.step, 'SZPS[]', n);
+                }
+
+                state.zp0 = state.zp1 = state.zp2 = n;
+
+                switch (n) {
+                  case 0:
+                    if (!state.tZone) {
+                      initTZone(state);
+                    }
+                    state.z0 = state.z1 = state.z2 = state.tZone;
+                    break;
+                  case 1:
+                    state.z0 = state.z1 = state.z2 = state.gZone;
+                    break;
+                  default:
+                    throw new Error('Invalid zone pointer');
+                }
+              }
+
+              // SLOOP[] Set LOOP variable
+              // 0x17
+              function SLOOP(state) {
+                state.loop = state.stack.pop();
+
+                if (exports.DEBUG) {
