@@ -36792,3 +36792,134 @@
 
                 stack.push(stack.length);
               }
+
+              // LOOPCALL[] LOOPCALL function
+              // 0x2A
+              function LOOPCALL(state) {
+                var stack = state.stack;
+                var fn = stack.pop();
+                var c = stack.pop();
+
+                if (exports.DEBUG) {
+                  console.log(state.step, 'LOOPCALL[]', fn, c);
+                }
+
+                // saves callers program
+                var cip = state.ip;
+                var cprog = state.prog;
+
+                state.prog = state.funcs[fn];
+
+                // executes the function
+                for (var i = 0; i < c; i++) {
+                  exec(state);
+
+                  if (exports.DEBUG) {
+                    console.log(
+                      ++state.step,
+                      i + 1 < c ? 'next loopcall' : 'done loopcall',
+                      i
+                    );
+                  }
+                }
+
+                // restores the callers program
+                state.ip = cip;
+                state.prog = cprog;
+              }
+
+              // CALL[] CALL function
+              // 0x2B
+              function CALL(state) {
+                var fn = state.stack.pop();
+
+                if (exports.DEBUG) {
+                  console.log(state.step, 'CALL[]', fn);
+                }
+
+                // saves callers program
+                var cip = state.ip;
+                var cprog = state.prog;
+
+                state.prog = state.funcs[fn];
+
+                // executes the function
+                exec(state);
+
+                // restores the callers program
+                state.ip = cip;
+                state.prog = cprog;
+
+                if (exports.DEBUG) {
+                  console.log(++state.step, 'returning from', fn);
+                }
+              }
+
+              // CINDEX[] Copy the INDEXed element to the top of the stack
+              // 0x25
+              function CINDEX(state) {
+                var stack = state.stack;
+                var k = stack.pop();
+
+                if (exports.DEBUG) {
+                  console.log(state.step, 'CINDEX[]', k);
+                }
+
+                // In case of k == 1, it copies the last element after popping
+                // thus stack.length - k.
+                stack.push(stack[stack.length - k]);
+              }
+
+              // MINDEX[] Move the INDEXed element to the top of the stack
+              // 0x26
+              function MINDEX(state) {
+                var stack = state.stack;
+                var k = stack.pop();
+
+                if (exports.DEBUG) {
+                  console.log(state.step, 'MINDEX[]', k);
+                }
+
+                stack.push(stack.splice(stack.length - k, 1)[0]);
+              }
+
+              // FDEF[] Function DEFinition
+              // 0x2C
+              function FDEF(state) {
+                if (state.env !== 'fpgm') {
+                  throw new Error('FDEF not allowed here');
+                }
+                var stack = state.stack;
+                var prog = state.prog;
+                var ip = state.ip;
+
+                var fn = stack.pop();
+                var ipBegin = ip;
+
+                if (exports.DEBUG) {
+                  console.log(state.step, 'FDEF[]', fn);
+                }
+
+                while (prog[++ip] !== 0x2d) {}
+
+                state.ip = ip;
+                state.funcs[fn] = prog.slice(ipBegin + 1, ip);
+              }
+
+              // MDAP[a] Move Direct Absolute Point
+              // 0x2E-0x2F
+              function MDAP(round, state) {
+                var pi = state.stack.pop();
+                var p = state.z0[pi];
+                var fv = state.fv;
+                var pv = state.pv;
+
+                if (exports.DEBUG) {
+                  console.log(state.step, 'MDAP[' + round + ']', pi);
+                }
+
+                var d = pv.distance(p, HPZero);
+
+                if (round) {
+                  d = state.round(d);
+                }
