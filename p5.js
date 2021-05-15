@@ -36656,3 +36656,139 @@
                 state.loop = state.stack.pop();
 
                 if (exports.DEBUG) {
+                  console.log(state.step, 'SLOOP[]', state.loop);
+                }
+              }
+
+              // RTG[] Round To Grid
+              // 0x18
+              function RTG(state) {
+                if (exports.DEBUG) {
+                  console.log(state.step, 'RTG[]');
+                }
+
+                state.round = roundToGrid;
+              }
+
+              // RTHG[] Round To Half Grid
+              // 0x19
+              function RTHG(state) {
+                if (exports.DEBUG) {
+                  console.log(state.step, 'RTHG[]');
+                }
+
+                state.round = roundToHalfGrid;
+              }
+
+              // SMD[] Set Minimum Distance
+              // 0x1A
+              function SMD(state) {
+                var d = state.stack.pop();
+
+                if (exports.DEBUG) {
+                  console.log(state.step, 'SMD[]', d);
+                }
+
+                state.minDis = d / 0x40;
+              }
+
+              // ELSE[] ELSE clause
+              // 0x1B
+              function ELSE(state) {
+                // This instruction has been reached by executing a then branch
+                // so it just skips ahead until matching EIF.
+                //
+                // In case the IF was negative the IF[] instruction already
+                // skipped forward over the ELSE[]
+
+                if (exports.DEBUG) {
+                  console.log(state.step, 'ELSE[]');
+                }
+
+                skip(state, false);
+              }
+
+              // JMPR[] JuMP Relative
+              // 0x1C
+              function JMPR(state) {
+                var o = state.stack.pop();
+
+                if (exports.DEBUG) {
+                  console.log(state.step, 'JMPR[]', o);
+                }
+
+                // A jump by 1 would do nothing.
+                state.ip += o - 1;
+              }
+
+              // SCVTCI[] Set Control Value Table Cut-In
+              // 0x1D
+              function SCVTCI(state) {
+                var n = state.stack.pop();
+
+                if (exports.DEBUG) {
+                  console.log(state.step, 'SCVTCI[]', n);
+                }
+
+                state.cvCutIn = n / 0x40;
+              }
+
+              // DUP[] DUPlicate top stack element
+              // 0x20
+              function DUP(state) {
+                var stack = state.stack;
+
+                if (exports.DEBUG) {
+                  console.log(state.step, 'DUP[]');
+                }
+
+                stack.push(stack[stack.length - 1]);
+              }
+
+              // POP[] POP top stack element
+              // 0x21
+              function POP(state) {
+                if (exports.DEBUG) {
+                  console.log(state.step, 'POP[]');
+                }
+
+                state.stack.pop();
+              }
+
+              // CLEAR[] CLEAR the stack
+              // 0x22
+              function CLEAR(state) {
+                if (exports.DEBUG) {
+                  console.log(state.step, 'CLEAR[]');
+                }
+
+                state.stack.length = 0;
+              }
+
+              // SWAP[] SWAP the top two elements on the stack
+              // 0x23
+              function SWAP(state) {
+                var stack = state.stack;
+
+                var a = stack.pop();
+                var b = stack.pop();
+
+                if (exports.DEBUG) {
+                  console.log(state.step, 'SWAP[]');
+                }
+
+                stack.push(a);
+                stack.push(b);
+              }
+
+              // DEPTH[] DEPTH of the stack
+              // 0x24
+              function DEPTH(state) {
+                var stack = state.stack;
+
+                if (exports.DEBUG) {
+                  console.log(state.step, 'DEPTH[]');
+                }
+
+                stack.push(stack.length);
+              }
