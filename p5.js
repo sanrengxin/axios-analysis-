@@ -36923,3 +36923,131 @@
                 if (round) {
                   d = state.round(d);
                 }
+
+                fv.setRelative(p, HPZero, d, pv);
+                fv.touch(p);
+
+                state.rp0 = state.rp1 = pi;
+              }
+
+              // IUP[a] Interpolate Untouched Points through the outline
+              // 0x30
+              function IUP(v, state) {
+                var z2 = state.z2;
+                var pLen = z2.length - 2;
+                var cp;
+                var pp;
+                var np;
+
+                if (exports.DEBUG) {
+                  console.log(state.step, 'IUP[' + v.axis + ']');
+                }
+
+                for (var i = 0; i < pLen; i++) {
+                  cp = z2[i]; // current point
+
+                  // if this point has been touched go on
+                  if (v.touched(cp)) {
+                    continue;
+                  }
+
+                  pp = cp.prevTouched(v);
+
+                  // no point on the contour has been touched?
+                  if (pp === cp) {
+                    continue;
+                  }
+
+                  np = cp.nextTouched(v);
+
+                  if (pp === np) {
+                    // only one point on the contour has been touched
+                    // so simply moves the point like that
+
+                    v.setRelative(cp, cp, v.distance(pp, pp, false, true), v, true);
+                  }
+
+                  v.interpolate(cp, pp, np, v);
+                }
+              }
+
+              // SHP[] SHift Point using reference point
+              // 0x32-0x33
+              function SHP(a, state) {
+                var stack = state.stack;
+                var rpi = a ? state.rp1 : state.rp2;
+                var rp = (a ? state.z0 : state.z1)[rpi];
+                var fv = state.fv;
+                var pv = state.pv;
+                var loop = state.loop;
+                var z2 = state.z2;
+
+                while (loop--) {
+                  var pi = stack.pop();
+                  var p = z2[pi];
+
+                  var d = pv.distance(rp, rp, false, true);
+                  fv.setRelative(p, p, d, pv);
+                  fv.touch(p);
+
+                  if (exports.DEBUG) {
+                    console.log(
+                      state.step,
+                      (state.loop > 1 ? 'loop ' + (state.loop - loop) + ': ' : '') +
+                        'SHP[' +
+                        (a ? 'rp1' : 'rp2') +
+                        ']',
+                      pi
+                    );
+                  }
+                }
+
+                state.loop = 1;
+              }
+
+              // SHC[] SHift Contour using reference point
+              // 0x36-0x37
+              function SHC(a, state) {
+                var stack = state.stack;
+                var rpi = a ? state.rp1 : state.rp2;
+                var rp = (a ? state.z0 : state.z1)[rpi];
+                var fv = state.fv;
+                var pv = state.pv;
+                var ci = stack.pop();
+                var sp = state.z2[state.contours[ci]];
+                var p = sp;
+
+                if (exports.DEBUG) {
+                  console.log(state.step, 'SHC[' + a + ']', ci);
+                }
+
+                var d = pv.distance(rp, rp, false, true);
+
+                do {
+                  if (p !== rp) {
+                    fv.setRelative(p, p, d, pv);
+                  }
+                  p = p.nextPointOnContour;
+                } while (p !== sp);
+              }
+
+              // SHZ[] SHift Zone using reference point
+              // 0x36-0x37
+              function SHZ(a, state) {
+                var stack = state.stack;
+                var rpi = a ? state.rp1 : state.rp2;
+                var rp = (a ? state.z0 : state.z1)[rpi];
+                var fv = state.fv;
+                var pv = state.pv;
+
+                var e = stack.pop();
+
+                if (exports.DEBUG) {
+                  console.log(state.step, 'SHZ[' + a + ']', e);
+                }
+
+                var z;
+                switch (e) {
+                  case 0:
+                    z = state.tZone;
+                    break;
