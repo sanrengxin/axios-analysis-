@@ -37051,3 +37051,136 @@
                   case 0:
                     z = state.tZone;
                     break;
+                  case 1:
+                    z = state.gZone;
+                    break;
+                  default:
+                    throw new Error('Invalid zone');
+                }
+
+                var p;
+                var d = pv.distance(rp, rp, false, true);
+                var pLen = z.length - 2;
+                for (var i = 0; i < pLen; i++) {
+                  p = z[i];
+                  fv.setRelative(p, p, d, pv);
+                  //if (p !== rp) fv.setRelative(p, p, d, pv);
+                }
+              }
+
+              // SHPIX[] SHift point by a PIXel amount
+              // 0x38
+              function SHPIX(state) {
+                var stack = state.stack;
+                var loop = state.loop;
+                var fv = state.fv;
+                var d = stack.pop() / 0x40;
+                var z2 = state.z2;
+
+                while (loop--) {
+                  var pi = stack.pop();
+                  var p = z2[pi];
+
+                  if (exports.DEBUG) {
+                    console.log(
+                      state.step,
+                      (state.loop > 1 ? 'loop ' + (state.loop - loop) + ': ' : '') +
+                        'SHPIX[]',
+                      pi,
+                      d
+                    );
+                  }
+
+                  fv.setRelative(p, p, d);
+                  fv.touch(p);
+                }
+
+                state.loop = 1;
+              }
+
+              // IP[] Interpolate Point
+              // 0x39
+              function IP(state) {
+                var stack = state.stack;
+                var rp1i = state.rp1;
+                var rp2i = state.rp2;
+                var loop = state.loop;
+                var rp1 = state.z0[rp1i];
+                var rp2 = state.z1[rp2i];
+                var fv = state.fv;
+                var pv = state.dpv;
+                var z2 = state.z2;
+
+                while (loop--) {
+                  var pi = stack.pop();
+                  var p = z2[pi];
+
+                  if (exports.DEBUG) {
+                    console.log(
+                      state.step,
+                      (state.loop > 1 ? 'loop ' + (state.loop - loop) + ': ' : '') + 'IP[]',
+                      pi,
+                      rp1i,
+                      '<->',
+                      rp2i
+                    );
+                  }
+
+                  fv.interpolate(p, rp1, rp2, pv);
+
+                  fv.touch(p);
+                }
+
+                state.loop = 1;
+              }
+
+              // MSIRP[a] Move Stack Indirect Relative Point
+              // 0x3A-0x3B
+              function MSIRP(a, state) {
+                var stack = state.stack;
+                var d = stack.pop() / 64;
+                var pi = stack.pop();
+                var p = state.z1[pi];
+                var rp0 = state.z0[state.rp0];
+                var fv = state.fv;
+                var pv = state.pv;
+
+                fv.setRelative(p, rp0, d, pv);
+                fv.touch(p);
+
+                if (exports.DEBUG) {
+                  console.log(state.step, 'MSIRP[' + a + ']', d, pi);
+                }
+
+                state.rp1 = state.rp0;
+                state.rp2 = pi;
+                if (a) {
+                  state.rp0 = pi;
+                }
+              }
+
+              // ALIGNRP[] Align to reference point.
+              // 0x3C
+              function ALIGNRP(state) {
+                var stack = state.stack;
+                var rp0i = state.rp0;
+                var rp0 = state.z0[rp0i];
+                var loop = state.loop;
+                var fv = state.fv;
+                var pv = state.pv;
+                var z1 = state.z1;
+
+                while (loop--) {
+                  var pi = stack.pop();
+                  var p = z1[pi];
+
+                  if (exports.DEBUG) {
+                    console.log(
+                      state.step,
+                      (state.loop > 1 ? 'loop ' + (state.loop - loop) + ': ' : '') +
+                        'ALIGNRP[]',
+                      pi
+                    );
+                  }
+
+                  fv.setRelative(p, rp0, 0, pv);
