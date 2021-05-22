@@ -37184,3 +37184,140 @@
                   }
 
                   fv.setRelative(p, rp0, 0, pv);
+                  fv.touch(p);
+                }
+
+                state.loop = 1;
+              }
+
+              // RTG[] Round To Double Grid
+              // 0x3D
+              function RTDG(state) {
+                if (exports.DEBUG) {
+                  console.log(state.step, 'RTDG[]');
+                }
+
+                state.round = roundToDoubleGrid;
+              }
+
+              // MIAP[a] Move Indirect Absolute Point
+              // 0x3E-0x3F
+              function MIAP(round, state) {
+                var stack = state.stack;
+                var n = stack.pop();
+                var pi = stack.pop();
+                var p = state.z0[pi];
+                var fv = state.fv;
+                var pv = state.pv;
+                var cv = state.cvt[n];
+
+                if (exports.DEBUG) {
+                  console.log(state.step, 'MIAP[' + round + ']', n, '(', cv, ')', pi);
+                }
+
+                var d = pv.distance(p, HPZero);
+
+                if (round) {
+                  if (Math.abs(d - cv) < state.cvCutIn) {
+                    d = cv;
+                  }
+
+                  d = state.round(d);
+                }
+
+                fv.setRelative(p, HPZero, d, pv);
+
+                if (state.zp0 === 0) {
+                  p.xo = p.x;
+                  p.yo = p.y;
+                }
+
+                fv.touch(p);
+
+                state.rp0 = state.rp1 = pi;
+              }
+
+              // NPUSB[] PUSH N Bytes
+              // 0x40
+              function NPUSHB(state) {
+                var prog = state.prog;
+                var ip = state.ip;
+                var stack = state.stack;
+
+                var n = prog[++ip];
+
+                if (exports.DEBUG) {
+                  console.log(state.step, 'NPUSHB[]', n);
+                }
+
+                for (var i = 0; i < n; i++) {
+                  stack.push(prog[++ip]);
+                }
+
+                state.ip = ip;
+              }
+
+              // NPUSHW[] PUSH N Words
+              // 0x41
+              function NPUSHW(state) {
+                var ip = state.ip;
+                var prog = state.prog;
+                var stack = state.stack;
+                var n = prog[++ip];
+
+                if (exports.DEBUG) {
+                  console.log(state.step, 'NPUSHW[]', n);
+                }
+
+                for (var i = 0; i < n; i++) {
+                  var w = (prog[++ip] << 8) | prog[++ip];
+                  if (w & 0x8000) {
+                    w = -((w ^ 0xffff) + 1);
+                  }
+                  stack.push(w);
+                }
+
+                state.ip = ip;
+              }
+
+              // WS[] Write Store
+              // 0x42
+              function WS(state) {
+                var stack = state.stack;
+                var store = state.store;
+
+                if (!store) {
+                  store = state.store = [];
+                }
+
+                var v = stack.pop();
+                var l = stack.pop();
+
+                if (exports.DEBUG) {
+                  console.log(state.step, 'WS', v, l);
+                }
+
+                store[l] = v;
+              }
+
+              // RS[] Read Store
+              // 0x43
+              function RS(state) {
+                var stack = state.stack;
+                var store = state.store;
+
+                var l = stack.pop();
+
+                if (exports.DEBUG) {
+                  console.log(state.step, 'RS', l);
+                }
+
+                var v = (store && store[l]) || 0;
+
+                stack.push(v);
+              }
+
+              // WCVTP[] Write Control Value Table in Pixel units
+              // 0x44
+              function WCVTP(state) {
+                var stack = state.stack;
