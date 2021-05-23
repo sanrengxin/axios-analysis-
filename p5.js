@@ -37321,3 +37321,140 @@
               // 0x44
               function WCVTP(state) {
                 var stack = state.stack;
+
+                var v = stack.pop();
+                var l = stack.pop();
+
+                if (exports.DEBUG) {
+                  console.log(state.step, 'WCVTP', v, l);
+                }
+
+                state.cvt[l] = v / 0x40;
+              }
+
+              // RCVT[] Read Control Value Table entry
+              // 0x45
+              function RCVT(state) {
+                var stack = state.stack;
+                var cvte = stack.pop();
+
+                if (exports.DEBUG) {
+                  console.log(state.step, 'RCVT', cvte);
+                }
+
+                stack.push(state.cvt[cvte] * 0x40);
+              }
+
+              // GC[] Get Coordinate projected onto the projection vector
+              // 0x46-0x47
+              function GC(a, state) {
+                var stack = state.stack;
+                var pi = stack.pop();
+                var p = state.z2[pi];
+
+                if (exports.DEBUG) {
+                  console.log(state.step, 'GC[' + a + ']', pi);
+                }
+
+                stack.push(state.dpv.distance(p, HPZero, a, false) * 0x40);
+              }
+
+              // MD[a] Measure Distance
+              // 0x49-0x4A
+              function MD(a, state) {
+                var stack = state.stack;
+                var pi2 = stack.pop();
+                var pi1 = stack.pop();
+                var p2 = state.z1[pi2];
+                var p1 = state.z0[pi1];
+                var d = state.dpv.distance(p1, p2, a, a);
+
+                if (exports.DEBUG) {
+                  console.log(state.step, 'MD[' + a + ']', pi2, pi1, '->', d);
+                }
+
+                state.stack.push(Math.round(d * 64));
+              }
+
+              // MPPEM[] Measure Pixels Per EM
+              // 0x4B
+              function MPPEM(state) {
+                if (exports.DEBUG) {
+                  console.log(state.step, 'MPPEM[]');
+                }
+                state.stack.push(state.ppem);
+              }
+
+              // FLIPON[] set the auto FLIP Boolean to ON
+              // 0x4D
+              function FLIPON(state) {
+                if (exports.DEBUG) {
+                  console.log(state.step, 'FLIPON[]');
+                }
+                state.autoFlip = true;
+              }
+
+              // LT[] Less Than
+              // 0x50
+              function LT(state) {
+                var stack = state.stack;
+                var e2 = stack.pop();
+                var e1 = stack.pop();
+
+                if (exports.DEBUG) {
+                  console.log(state.step, 'LT[]', e2, e1);
+                }
+
+                stack.push(e1 < e2 ? 1 : 0);
+              }
+
+              // LTEQ[] Less Than or EQual
+              // 0x53
+              function LTEQ(state) {
+                var stack = state.stack;
+                var e2 = stack.pop();
+                var e1 = stack.pop();
+
+                if (exports.DEBUG) {
+                  console.log(state.step, 'LTEQ[]', e2, e1);
+                }
+
+                stack.push(e1 <= e2 ? 1 : 0);
+              }
+
+              // GTEQ[] Greater Than
+              // 0x52
+              function GT(state) {
+                var stack = state.stack;
+                var e2 = stack.pop();
+                var e1 = stack.pop();
+
+                if (exports.DEBUG) {
+                  console.log(state.step, 'GT[]', e2, e1);
+                }
+
+                stack.push(e1 > e2 ? 1 : 0);
+              }
+
+              // GTEQ[] Greater Than or EQual
+              // 0x53
+              function GTEQ(state) {
+                var stack = state.stack;
+                var e2 = stack.pop();
+                var e1 = stack.pop();
+
+                if (exports.DEBUG) {
+                  console.log(state.step, 'GTEQ[]', e2, e1);
+                }
+
+                stack.push(e1 >= e2 ? 1 : 0);
+              }
+
+              // EQ[] EQual
+              // 0x54
+              function EQ(state) {
+                var stack = state.stack;
+                var e2 = stack.pop();
+                var e1 = stack.pop();
+
+                if (exports.DEBUG) {
