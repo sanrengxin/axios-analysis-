@@ -37458,3 +37458,131 @@
                 var e1 = stack.pop();
 
                 if (exports.DEBUG) {
+                  console.log(state.step, 'EQ[]', e2, e1);
+                }
+
+                stack.push(e2 === e1 ? 1 : 0);
+              }
+
+              // NEQ[] Not EQual
+              // 0x55
+              function NEQ(state) {
+                var stack = state.stack;
+                var e2 = stack.pop();
+                var e1 = stack.pop();
+
+                if (exports.DEBUG) {
+                  console.log(state.step, 'NEQ[]', e2, e1);
+                }
+
+                stack.push(e2 !== e1 ? 1 : 0);
+              }
+
+              // ODD[] ODD
+              // 0x56
+              function ODD(state) {
+                var stack = state.stack;
+                var n = stack.pop();
+
+                if (exports.DEBUG) {
+                  console.log(state.step, 'ODD[]', n);
+                }
+
+                stack.push(Math.trunc(n) % 2 ? 1 : 0);
+              }
+
+              // EVEN[] EVEN
+              // 0x57
+              function EVEN(state) {
+                var stack = state.stack;
+                var n = stack.pop();
+
+                if (exports.DEBUG) {
+                  console.log(state.step, 'EVEN[]', n);
+                }
+
+                stack.push(Math.trunc(n) % 2 ? 0 : 1);
+              }
+
+              // IF[] IF test
+              // 0x58
+              function IF(state) {
+                var test = state.stack.pop();
+
+                if (exports.DEBUG) {
+                  console.log(state.step, 'IF[]', test);
+                }
+
+                // if test is true it just continues
+                // if not the ip is skipped until matching ELSE or EIF
+                if (!test) {
+                  skip(state, true);
+
+                  if (exports.DEBUG) {
+                    console.log(state.step, 'EIF[]');
+                  }
+                }
+              }
+
+              // EIF[] End IF
+              // 0x59
+              function EIF(state) {
+                // this can be reached normally when
+                // executing an else branch.
+                // -> just ignore it
+
+                if (exports.DEBUG) {
+                  console.log(state.step, 'EIF[]');
+                }
+              }
+
+              // AND[] logical AND
+              // 0x5A
+              function AND(state) {
+                var stack = state.stack;
+                var e2 = stack.pop();
+                var e1 = stack.pop();
+
+                if (exports.DEBUG) {
+                  console.log(state.step, 'AND[]', e2, e1);
+                }
+
+                stack.push(e2 && e1 ? 1 : 0);
+              }
+
+              // OR[] logical OR
+              // 0x5B
+              function OR(state) {
+                var stack = state.stack;
+                var e2 = stack.pop();
+                var e1 = stack.pop();
+
+                if (exports.DEBUG) {
+                  console.log(state.step, 'OR[]', e2, e1);
+                }
+
+                stack.push(e2 || e1 ? 1 : 0);
+              }
+
+              // NOT[] logical NOT
+              // 0x5C
+              function NOT(state) {
+                var stack = state.stack;
+                var e = stack.pop();
+
+                if (exports.DEBUG) {
+                  console.log(state.step, 'NOT[]', e);
+                }
+
+                stack.push(e ? 0 : 1);
+              }
+
+              // DELTAP1[] DELTA exception P1
+              // DELTAP2[] DELTA exception P2
+              // DELTAP3[] DELTA exception P3
+              // 0x5D, 0x71, 0x72
+              function DELTAP123(b, state) {
+                var stack = state.stack;
+                var n = stack.pop();
+                var fv = state.fv;
+                var pv = state.pv;
