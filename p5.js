@@ -37586,3 +37586,127 @@
                 var n = stack.pop();
                 var fv = state.fv;
                 var pv = state.pv;
+                var ppem = state.ppem;
+                var base = state.deltaBase + (b - 1) * 16;
+                var ds = state.deltaShift;
+                var z0 = state.z0;
+
+                if (exports.DEBUG) {
+                  console.log(state.step, 'DELTAP[' + b + ']', n, stack);
+                }
+
+                for (var i = 0; i < n; i++) {
+                  var pi = stack.pop();
+                  var arg = stack.pop();
+                  var appem = base + ((arg & 0xf0) >> 4);
+                  if (appem !== ppem) {
+                    continue;
+                  }
+
+                  var mag = (arg & 0x0f) - 8;
+                  if (mag >= 0) {
+                    mag++;
+                  }
+                  if (exports.DEBUG) {
+                    console.log(state.step, 'DELTAPFIX', pi, 'by', mag * ds);
+                  }
+
+                  var p = z0[pi];
+                  fv.setRelative(p, p, mag * ds, pv);
+                }
+              }
+
+              // SDB[] Set Delta Base in the graphics state
+              // 0x5E
+              function SDB(state) {
+                var stack = state.stack;
+                var n = stack.pop();
+
+                if (exports.DEBUG) {
+                  console.log(state.step, 'SDB[]', n);
+                }
+
+                state.deltaBase = n;
+              }
+
+              // SDS[] Set Delta Shift in the graphics state
+              // 0x5F
+              function SDS(state) {
+                var stack = state.stack;
+                var n = stack.pop();
+
+                if (exports.DEBUG) {
+                  console.log(state.step, 'SDS[]', n);
+                }
+
+                state.deltaShift = Math.pow(0.5, n);
+              }
+
+              // ADD[] ADD
+              // 0x60
+              function ADD(state) {
+                var stack = state.stack;
+                var n2 = stack.pop();
+                var n1 = stack.pop();
+
+                if (exports.DEBUG) {
+                  console.log(state.step, 'ADD[]', n2, n1);
+                }
+
+                stack.push(n1 + n2);
+              }
+
+              // SUB[] SUB
+              // 0x61
+              function SUB(state) {
+                var stack = state.stack;
+                var n2 = stack.pop();
+                var n1 = stack.pop();
+
+                if (exports.DEBUG) {
+                  console.log(state.step, 'SUB[]', n2, n1);
+                }
+
+                stack.push(n1 - n2);
+              }
+
+              // DIV[] DIV
+              // 0x62
+              function DIV(state) {
+                var stack = state.stack;
+                var n2 = stack.pop();
+                var n1 = stack.pop();
+
+                if (exports.DEBUG) {
+                  console.log(state.step, 'DIV[]', n2, n1);
+                }
+
+                stack.push(n1 * 64 / n2);
+              }
+
+              // MUL[] MUL
+              // 0x63
+              function MUL(state) {
+                var stack = state.stack;
+                var n2 = stack.pop();
+                var n1 = stack.pop();
+
+                if (exports.DEBUG) {
+                  console.log(state.step, 'MUL[]', n2, n1);
+                }
+
+                stack.push(n1 * n2 / 64);
+              }
+
+              // ABS[] ABSolute value
+              // 0x64
+              function ABS(state) {
+                var stack = state.stack;
+                var n = stack.pop();
+
+                if (exports.DEBUG) {
+                  console.log(state.step, 'ABS[]', n);
+                }
+
+                stack.push(Math.abs(n));
+              }
