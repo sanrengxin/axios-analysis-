@@ -37851,3 +37851,142 @@
                   case 0x10:
                     state.srPhase = 0.25 * period;
                     break;
+                  case 0x20:
+                    state.srPhase = 0.5 * period;
+                    break;
+                  case 0x30:
+                    state.srPhase = 0.75 * period;
+                    break;
+                  default:
+                    throw new Error('invalid SROUND value');
+                }
+
+                n &= 0x0f;
+
+                if (n === 0) {
+                  state.srThreshold = 0;
+                } else {
+                  state.srThreshold = (n / 8 - 0.5) * period;
+                }
+              }
+
+              // S45ROUND[] Super ROUND 45 degrees
+              // 0x77
+              function S45ROUND(state) {
+                var n = state.stack.pop();
+
+                if (exports.DEBUG) {
+                  console.log(state.step, 'S45ROUND[]', n);
+                }
+
+                state.round = roundSuper;
+
+                var period;
+
+                switch (n & 0xc0) {
+                  case 0x00:
+                    period = Math.sqrt(2) / 2;
+                    break;
+                  case 0x40:
+                    period = Math.sqrt(2);
+                    break;
+                  case 0x80:
+                    period = 2 * Math.sqrt(2);
+                    break;
+                  default:
+                    throw new Error('invalid S45ROUND value');
+                }
+
+                state.srPeriod = period;
+
+                switch (n & 0x30) {
+                  case 0x00:
+                    state.srPhase = 0;
+                    break;
+                  case 0x10:
+                    state.srPhase = 0.25 * period;
+                    break;
+                  case 0x20:
+                    state.srPhase = 0.5 * period;
+                    break;
+                  case 0x30:
+                    state.srPhase = 0.75 * period;
+                    break;
+                  default:
+                    throw new Error('invalid S45ROUND value');
+                }
+
+                n &= 0x0f;
+
+                if (n === 0) {
+                  state.srThreshold = 0;
+                } else {
+                  state.srThreshold = (n / 8 - 0.5) * period;
+                }
+              }
+
+              // ROFF[] Round Off
+              // 0x7A
+              function ROFF(state) {
+                if (exports.DEBUG) {
+                  console.log(state.step, 'ROFF[]');
+                }
+
+                state.round = roundOff;
+              }
+
+              // RUTG[] Round Up To Grid
+              // 0x7C
+              function RUTG(state) {
+                if (exports.DEBUG) {
+                  console.log(state.step, 'RUTG[]');
+                }
+
+                state.round = roundUpToGrid;
+              }
+
+              // RDTG[] Round Down To Grid
+              // 0x7D
+              function RDTG(state) {
+                if (exports.DEBUG) {
+                  console.log(state.step, 'RDTG[]');
+                }
+
+                state.round = roundDownToGrid;
+              }
+
+              // SCANCTRL[] SCAN conversion ConTRoL
+              // 0x85
+              function SCANCTRL(state) {
+                var n = state.stack.pop();
+
+                // ignored by opentype.js
+
+                if (exports.DEBUG) {
+                  console.log(state.step, 'SCANCTRL[]', n);
+                }
+              }
+
+              // SDPVTL[a] Set Dual Projection Vector To Line
+              // 0x86-0x87
+              function SDPVTL(a, state) {
+                var stack = state.stack;
+                var p2i = stack.pop();
+                var p1i = stack.pop();
+                var p2 = state.z2[p2i];
+                var p1 = state.z1[p1i];
+
+                if (exports.DEBUG) {
+                  console.log(state.step, 'SDPVTL[' + a + ']', p2i, p1i);
+                }
+
+                var dx;
+                var dy;
+
+                if (!a) {
+                  dx = p1.x - p2.x;
+                  dy = p1.y - p2.y;
+                } else {
+                  dx = p2.y - p1.y;
+                  dy = p1.x - p2.x;
+                }
