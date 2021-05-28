@@ -37710,3 +37710,144 @@
 
                 stack.push(Math.abs(n));
               }
+
+              // NEG[] NEGate
+              // 0x65
+              function NEG(state) {
+                var stack = state.stack;
+                var n = stack.pop();
+
+                if (exports.DEBUG) {
+                  console.log(state.step, 'NEG[]', n);
+                }
+
+                stack.push(-n);
+              }
+
+              // FLOOR[] FLOOR
+              // 0x66
+              function FLOOR(state) {
+                var stack = state.stack;
+                var n = stack.pop();
+
+                if (exports.DEBUG) {
+                  console.log(state.step, 'FLOOR[]', n);
+                }
+
+                stack.push(Math.floor(n / 0x40) * 0x40);
+              }
+
+              // CEILING[] CEILING
+              // 0x67
+              function CEILING(state) {
+                var stack = state.stack;
+                var n = stack.pop();
+
+                if (exports.DEBUG) {
+                  console.log(state.step, 'CEILING[]', n);
+                }
+
+                stack.push(Math.ceil(n / 0x40) * 0x40);
+              }
+
+              // ROUND[ab] ROUND value
+              // 0x68-0x6B
+              function ROUND(dt, state) {
+                var stack = state.stack;
+                var n = stack.pop();
+
+                if (exports.DEBUG) {
+                  console.log(state.step, 'ROUND[]');
+                }
+
+                stack.push(state.round(n / 0x40) * 0x40);
+              }
+
+              // WCVTF[] Write Control Value Table in Funits
+              // 0x70
+              function WCVTF(state) {
+                var stack = state.stack;
+                var v = stack.pop();
+                var l = stack.pop();
+
+                if (exports.DEBUG) {
+                  console.log(state.step, 'WCVTF[]', v, l);
+                }
+
+                state.cvt[l] = v * state.ppem / state.font.unitsPerEm;
+              }
+
+              // DELTAC1[] DELTA exception C1
+              // DELTAC2[] DELTA exception C2
+              // DELTAC3[] DELTA exception C3
+              // 0x73, 0x74, 0x75
+              function DELTAC123(b, state) {
+                var stack = state.stack;
+                var n = stack.pop();
+                var ppem = state.ppem;
+                var base = state.deltaBase + (b - 1) * 16;
+                var ds = state.deltaShift;
+
+                if (exports.DEBUG) {
+                  console.log(state.step, 'DELTAC[' + b + ']', n, stack);
+                }
+
+                for (var i = 0; i < n; i++) {
+                  var c = stack.pop();
+                  var arg = stack.pop();
+                  var appem = base + ((arg & 0xf0) >> 4);
+                  if (appem !== ppem) {
+                    continue;
+                  }
+
+                  var mag = (arg & 0x0f) - 8;
+                  if (mag >= 0) {
+                    mag++;
+                  }
+
+                  var delta = mag * ds;
+
+                  if (exports.DEBUG) {
+                    console.log(state.step, 'DELTACFIX', c, 'by', delta);
+                  }
+
+                  state.cvt[c] += delta;
+                }
+              }
+
+              // SROUND[] Super ROUND
+              // 0x76
+              function SROUND(state) {
+                var n = state.stack.pop();
+
+                if (exports.DEBUG) {
+                  console.log(state.step, 'SROUND[]', n);
+                }
+
+                state.round = roundSuper;
+
+                var period;
+
+                switch (n & 0xc0) {
+                  case 0x00:
+                    period = 0.5;
+                    break;
+                  case 0x40:
+                    period = 1;
+                    break;
+                  case 0x80:
+                    period = 2;
+                    break;
+                  default:
+                    throw new Error('invalid SROUND value');
+                }
+
+                state.srPeriod = period;
+
+                switch (n & 0x30) {
+                  case 0x00:
+                    state.srPhase = 0;
+                    break;
+                  case 0x10:
+                    state.srPhase = 0.25 * period;
+                    break;
