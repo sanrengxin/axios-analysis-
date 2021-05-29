@@ -37990,3 +37990,144 @@
                   dx = p2.y - p1.y;
                   dy = p1.x - p2.x;
                 }
+
+                state.dpv = getUnitVector(dx, dy);
+              }
+
+              // GETINFO[] GET INFOrmation
+              // 0x88
+              function GETINFO(state) {
+                var stack = state.stack;
+                var sel = stack.pop();
+                var r = 0;
+
+                if (exports.DEBUG) {
+                  console.log(state.step, 'GETINFO[]', sel);
+                }
+
+                // v35 as in no subpixel hinting
+                if (sel & 0x01) {
+                  r = 35;
+                }
+
+                // TODO rotation and stretch currently not supported
+                // and thus those GETINFO are always 0.
+
+                // opentype.js is always gray scaling
+                if (sel & 0x20) {
+                  r |= 0x1000;
+                }
+
+                stack.push(r);
+              }
+
+              // ROLL[] ROLL the top three stack elements
+              // 0x8A
+              function ROLL(state) {
+                var stack = state.stack;
+                var a = stack.pop();
+                var b = stack.pop();
+                var c = stack.pop();
+
+                if (exports.DEBUG) {
+                  console.log(state.step, 'ROLL[]');
+                }
+
+                stack.push(b);
+                stack.push(a);
+                stack.push(c);
+              }
+
+              // MAX[] MAXimum of top two stack elements
+              // 0x8B
+              function MAX(state) {
+                var stack = state.stack;
+                var e2 = stack.pop();
+                var e1 = stack.pop();
+
+                if (exports.DEBUG) {
+                  console.log(state.step, 'MAX[]', e2, e1);
+                }
+
+                stack.push(Math.max(e1, e2));
+              }
+
+              // MIN[] MINimum of top two stack elements
+              // 0x8C
+              function MIN(state) {
+                var stack = state.stack;
+                var e2 = stack.pop();
+                var e1 = stack.pop();
+
+                if (exports.DEBUG) {
+                  console.log(state.step, 'MIN[]', e2, e1);
+                }
+
+                stack.push(Math.min(e1, e2));
+              }
+
+              // SCANTYPE[] SCANTYPE
+              // 0x8D
+              function SCANTYPE(state) {
+                var n = state.stack.pop();
+                // ignored by opentype.js
+                if (exports.DEBUG) {
+                  console.log(state.step, 'SCANTYPE[]', n);
+                }
+              }
+
+              // INSTCTRL[] INSTCTRL
+              // 0x8D
+              function INSTCTRL(state) {
+                var s = state.stack.pop();
+                var v = state.stack.pop();
+
+                if (exports.DEBUG) {
+                  console.log(state.step, 'INSTCTRL[]', s, v);
+                }
+
+                switch (s) {
+                  case 1:
+                    state.inhibitGridFit = !!v;
+                    return;
+                  case 2:
+                    state.ignoreCvt = !!v;
+                    return;
+                  default:
+                    throw new Error('invalid INSTCTRL[] selector');
+                }
+              }
+
+              // PUSHB[abc] PUSH Bytes
+              // 0xB0-0xB7
+              function PUSHB(n, state) {
+                var stack = state.stack;
+                var prog = state.prog;
+                var ip = state.ip;
+
+                if (exports.DEBUG) {
+                  console.log(state.step, 'PUSHB[' + n + ']');
+                }
+
+                for (var i = 0; i < n; i++) {
+                  stack.push(prog[++ip]);
+                }
+
+                state.ip = ip;
+              }
+
+              // PUSHW[abc] PUSH Words
+              // 0xB8-0xBF
+              function PUSHW(n, state) {
+                var ip = state.ip;
+                var prog = state.prog;
+                var stack = state.stack;
+
+                if (exports.DEBUG) {
+                  console.log(state.ip, 'PUSHW[' + n + ']');
+                }
+
+                for (var i = 0; i < n; i++) {
+                  var w = (prog[++ip] << 8) | prog[++ip];
+                  if (w & 0x8000) {
+                    w = -((w ^ 0xffff) + 1);
