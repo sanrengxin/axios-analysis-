@@ -38131,3 +38131,134 @@
                   var w = (prog[++ip] << 8) | prog[++ip];
                   if (w & 0x8000) {
                     w = -((w ^ 0xffff) + 1);
+                  }
+                  stack.push(w);
+                }
+
+                state.ip = ip;
+              }
+
+              // MDRP[abcde] Move Direct Relative Point
+              // 0xD0-0xEF
+              // (if indirect is 0)
+              //
+              // and
+              //
+              // MIRP[abcde] Move Indirect Relative Point
+              // 0xE0-0xFF
+              // (if indirect is 1)
+
+              function MDRP_MIRP(indirect, setRp0, keepD, ro, dt, state) {
+                var stack = state.stack;
+                var cvte = indirect && stack.pop();
+                var pi = stack.pop();
+                var rp0i = state.rp0;
+                var rp = state.z0[rp0i];
+                var p = state.z1[pi];
+
+                var md = state.minDis;
+                var fv = state.fv;
+                var pv = state.dpv;
+                var od; // original distance
+                var d; // moving distance
+                var sign; // sign of distance
+                var cv;
+
+                d = od = pv.distance(p, rp, true, true);
+                sign = d >= 0 ? 1 : -1; // Math.sign would be 0 in case of 0
+
+                // TODO consider autoFlip
+                d = Math.abs(d);
+
+                if (indirect) {
+                  cv = state.cvt[cvte];
+
+                  if (ro && Math.abs(d - cv) < state.cvCutIn) {
+                    d = cv;
+                  }
+                }
+
+                if (keepD && d < md) {
+                  d = md;
+                }
+
+                if (ro) {
+                  d = state.round(d);
+                }
+
+                fv.setRelative(p, rp, sign * d, pv);
+                fv.touch(p);
+
+                if (exports.DEBUG) {
+                  console.log(
+                    state.step,
+                    (indirect ? 'MIRP[' : 'MDRP[') +
+                      (setRp0 ? 'M' : 'm') +
+                      (keepD ? '>' : '_') +
+                      (ro ? 'R' : '_') +
+                      (dt === 0 ? 'Gr' : dt === 1 ? 'Bl' : dt === 2 ? 'Wh' : '') +
+                      ']',
+                    indirect ? cvte + '(' + state.cvt[cvte] + ',' + cv + ')' : '',
+                    pi,
+                    '(d =',
+                    od,
+                    '->',
+                    sign * d,
+                    ')'
+                  );
+                }
+
+                state.rp1 = state.rp0;
+                state.rp2 = pi;
+                if (setRp0) {
+                  state.rp0 = pi;
+                }
+              }
+
+              /*
+	* The instruction table.
+	*/
+              instructionTable = [
+                /* 0x00 */ SVTCA.bind(undefined, yUnitVector),
+                /* 0x01 */ SVTCA.bind(undefined, xUnitVector),
+                /* 0x02 */ SPVTCA.bind(undefined, yUnitVector),
+                /* 0x03 */ SPVTCA.bind(undefined, xUnitVector),
+                /* 0x04 */ SFVTCA.bind(undefined, yUnitVector),
+                /* 0x05 */ SFVTCA.bind(undefined, xUnitVector),
+                /* 0x06 */ SPVTL.bind(undefined, 0),
+                /* 0x07 */ SPVTL.bind(undefined, 1),
+                /* 0x08 */ SFVTL.bind(undefined, 0),
+                /* 0x09 */ SFVTL.bind(undefined, 1),
+                /* 0x0A */ SPVFS,
+                /* 0x0B */ SFVFS,
+                /* 0x0C */ GPV,
+                /* 0x0D */ GFV,
+                /* 0x0E */ SFVTPV,
+                /* 0x0F */ ISECT,
+                /* 0x10 */ SRP0,
+                /* 0x11 */ SRP1,
+                /* 0x12 */ SRP2,
+                /* 0x13 */ SZP0,
+                /* 0x14 */ SZP1,
+                /* 0x15 */ SZP2,
+                /* 0x16 */ SZPS,
+                /* 0x17 */ SLOOP,
+                /* 0x18 */ RTG,
+                /* 0x19 */ RTHG,
+                /* 0x1A */ SMD,
+                /* 0x1B */ ELSE,
+                /* 0x1C */ JMPR,
+                /* 0x1D */ SCVTCI,
+                /* 0x1E */ undefined, // TODO SSWCI
+                /* 0x1F */ undefined, // TODO SSW
+                /* 0x20 */ DUP,
+                /* 0x21 */ POP,
+                /* 0x22 */ CLEAR,
+                /* 0x23 */ SWAP,
+                /* 0x24 */ DEPTH,
+                /* 0x25 */ CINDEX,
+                /* 0x26 */ MINDEX,
+                /* 0x27 */ undefined, // TODO ALIGNPTS
+                /* 0x28 */ undefined,
+                /* 0x29 */ undefined, // TODO UTP
+                /* 0x2A */ LOOPCALL,
