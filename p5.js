@@ -38403,3 +38403,136 @@
                 /* 0xB5 */ PUSHB.bind(undefined, 6),
                 /* 0xB6 */ PUSHB.bind(undefined, 7),
                 /* 0xB7 */ PUSHB.bind(undefined, 8),
+                /* 0xB8 */ PUSHW.bind(undefined, 1),
+                /* 0xB9 */ PUSHW.bind(undefined, 2),
+                /* 0xBA */ PUSHW.bind(undefined, 3),
+                /* 0xBB */ PUSHW.bind(undefined, 4),
+                /* 0xBC */ PUSHW.bind(undefined, 5),
+                /* 0xBD */ PUSHW.bind(undefined, 6),
+                /* 0xBE */ PUSHW.bind(undefined, 7),
+                /* 0xBF */ PUSHW.bind(undefined, 8),
+                /* 0xC0 */ MDRP_MIRP.bind(undefined, 0, 0, 0, 0, 0),
+                /* 0xC1 */ MDRP_MIRP.bind(undefined, 0, 0, 0, 0, 1),
+                /* 0xC2 */ MDRP_MIRP.bind(undefined, 0, 0, 0, 0, 2),
+                /* 0xC3 */ MDRP_MIRP.bind(undefined, 0, 0, 0, 0, 3),
+                /* 0xC4 */ MDRP_MIRP.bind(undefined, 0, 0, 0, 1, 0),
+                /* 0xC5 */ MDRP_MIRP.bind(undefined, 0, 0, 0, 1, 1),
+                /* 0xC6 */ MDRP_MIRP.bind(undefined, 0, 0, 0, 1, 2),
+                /* 0xC7 */ MDRP_MIRP.bind(undefined, 0, 0, 0, 1, 3),
+                /* 0xC8 */ MDRP_MIRP.bind(undefined, 0, 0, 1, 0, 0),
+                /* 0xC9 */ MDRP_MIRP.bind(undefined, 0, 0, 1, 0, 1),
+                /* 0xCA */ MDRP_MIRP.bind(undefined, 0, 0, 1, 0, 2),
+                /* 0xCB */ MDRP_MIRP.bind(undefined, 0, 0, 1, 0, 3),
+                /* 0xCC */ MDRP_MIRP.bind(undefined, 0, 0, 1, 1, 0),
+                /* 0xCD */ MDRP_MIRP.bind(undefined, 0, 0, 1, 1, 1),
+                /* 0xCE */ MDRP_MIRP.bind(undefined, 0, 0, 1, 1, 2),
+                /* 0xCF */ MDRP_MIRP.bind(undefined, 0, 0, 1, 1, 3),
+                /* 0xD0 */ MDRP_MIRP.bind(undefined, 0, 1, 0, 0, 0),
+                /* 0xD1 */ MDRP_MIRP.bind(undefined, 0, 1, 0, 0, 1),
+                /* 0xD2 */ MDRP_MIRP.bind(undefined, 0, 1, 0, 0, 2),
+                /* 0xD3 */ MDRP_MIRP.bind(undefined, 0, 1, 0, 0, 3),
+                /* 0xD4 */ MDRP_MIRP.bind(undefined, 0, 1, 0, 1, 0),
+                /* 0xD5 */ MDRP_MIRP.bind(undefined, 0, 1, 0, 1, 1),
+                /* 0xD6 */ MDRP_MIRP.bind(undefined, 0, 1, 0, 1, 2),
+                /* 0xD7 */ MDRP_MIRP.bind(undefined, 0, 1, 0, 1, 3),
+                /* 0xD8 */ MDRP_MIRP.bind(undefined, 0, 1, 1, 0, 0),
+                /* 0xD9 */ MDRP_MIRP.bind(undefined, 0, 1, 1, 0, 1),
+                /* 0xDA */ MDRP_MIRP.bind(undefined, 0, 1, 1, 0, 2),
+                /* 0xDB */ MDRP_MIRP.bind(undefined, 0, 1, 1, 0, 3),
+                /* 0xDC */ MDRP_MIRP.bind(undefined, 0, 1, 1, 1, 0),
+                /* 0xDD */ MDRP_MIRP.bind(undefined, 0, 1, 1, 1, 1),
+                /* 0xDE */ MDRP_MIRP.bind(undefined, 0, 1, 1, 1, 2),
+                /* 0xDF */ MDRP_MIRP.bind(undefined, 0, 1, 1, 1, 3),
+                /* 0xE0 */ MDRP_MIRP.bind(undefined, 1, 0, 0, 0, 0),
+                /* 0xE1 */ MDRP_MIRP.bind(undefined, 1, 0, 0, 0, 1),
+                /* 0xE2 */ MDRP_MIRP.bind(undefined, 1, 0, 0, 0, 2),
+                /* 0xE3 */ MDRP_MIRP.bind(undefined, 1, 0, 0, 0, 3),
+                /* 0xE4 */ MDRP_MIRP.bind(undefined, 1, 0, 0, 1, 0),
+                /* 0xE5 */ MDRP_MIRP.bind(undefined, 1, 0, 0, 1, 1),
+                /* 0xE6 */ MDRP_MIRP.bind(undefined, 1, 0, 0, 1, 2),
+                /* 0xE7 */ MDRP_MIRP.bind(undefined, 1, 0, 0, 1, 3),
+                /* 0xE8 */ MDRP_MIRP.bind(undefined, 1, 0, 1, 0, 0),
+                /* 0xE9 */ MDRP_MIRP.bind(undefined, 1, 0, 1, 0, 1),
+                /* 0xEA */ MDRP_MIRP.bind(undefined, 1, 0, 1, 0, 2),
+                /* 0xEB */ MDRP_MIRP.bind(undefined, 1, 0, 1, 0, 3),
+                /* 0xEC */ MDRP_MIRP.bind(undefined, 1, 0, 1, 1, 0),
+                /* 0xED */ MDRP_MIRP.bind(undefined, 1, 0, 1, 1, 1),
+                /* 0xEE */ MDRP_MIRP.bind(undefined, 1, 0, 1, 1, 2),
+                /* 0xEF */ MDRP_MIRP.bind(undefined, 1, 0, 1, 1, 3),
+                /* 0xF0 */ MDRP_MIRP.bind(undefined, 1, 1, 0, 0, 0),
+                /* 0xF1 */ MDRP_MIRP.bind(undefined, 1, 1, 0, 0, 1),
+                /* 0xF2 */ MDRP_MIRP.bind(undefined, 1, 1, 0, 0, 2),
+                /* 0xF3 */ MDRP_MIRP.bind(undefined, 1, 1, 0, 0, 3),
+                /* 0xF4 */ MDRP_MIRP.bind(undefined, 1, 1, 0, 1, 0),
+                /* 0xF5 */ MDRP_MIRP.bind(undefined, 1, 1, 0, 1, 1),
+                /* 0xF6 */ MDRP_MIRP.bind(undefined, 1, 1, 0, 1, 2),
+                /* 0xF7 */ MDRP_MIRP.bind(undefined, 1, 1, 0, 1, 3),
+                /* 0xF8 */ MDRP_MIRP.bind(undefined, 1, 1, 1, 0, 0),
+                /* 0xF9 */ MDRP_MIRP.bind(undefined, 1, 1, 1, 0, 1),
+                /* 0xFA */ MDRP_MIRP.bind(undefined, 1, 1, 1, 0, 2),
+                /* 0xFB */ MDRP_MIRP.bind(undefined, 1, 1, 1, 0, 3),
+                /* 0xFC */ MDRP_MIRP.bind(undefined, 1, 1, 1, 1, 0),
+                /* 0xFD */ MDRP_MIRP.bind(undefined, 1, 1, 1, 1, 1),
+                /* 0xFE */ MDRP_MIRP.bind(undefined, 1, 1, 1, 1, 2),
+                /* 0xFF */ MDRP_MIRP.bind(undefined, 1, 1, 1, 1, 3)
+              ];
+
+              /*****************************
+	  Mathematical Considerations
+	******************************
+
+	fv ... refers to freedom vector
+	pv ... refers to projection vector
+	rp ... refers to reference point
+	p  ... refers to to point being operated on
+	d  ... refers to distance
+
+	SETRELATIVE:
+	============
+
+	case freedom vector == x-axis:
+	------------------------------
+
+	                        (pv)
+	                     .-'
+	              rpd .-'
+	               .-*
+	          d .-'90°'
+	         .-'       '
+	      .-'           '
+	   *-'               ' b
+	  rp                  '
+	                       '
+	                        '
+	            p *----------*-------------- (fv)
+	                          pm
+
+	  rpdx = rpx + d * pv.x
+	  rpdy = rpy + d * pv.y
+
+	  equation of line b
+
+	   y - rpdy = pvns * (x- rpdx)
+
+	   y = p.y
+
+	   x = rpdx + ( p.y - rpdy ) / pvns
+
+
+	case freedom vector == y-axis:
+	------------------------------
+
+	    * pm
+	    |\
+	    | \
+	    |  \
+	    |   \
+	    |    \
+	    |     \
+	    |      \
+	    |       \
+	    |        \
+	    |         \ b
+	    |          \
+	    |           \
+	    |            \    .-' (pv)
