@@ -38536,3 +38536,124 @@
 	    |          \
 	    |           \
 	    |            \    .-' (pv)
+	    |         90° \.-'
+	    |           .-'* rpd
+	    |        .-'
+	    *     *-'  d
+	    p     rp
+
+	  rpdx = rpx + d * pv.x
+	  rpdy = rpy + d * pv.y
+
+	  equation of line b:
+	           pvns ... normal slope to pv
+
+	   y - rpdy = pvns * (x - rpdx)
+
+	   x = p.x
+
+	   y = rpdy +  pvns * (p.x - rpdx)
+
+
+
+	generic case:
+	-------------
+
+
+	                              .'(fv)
+	                            .'
+	                          .* pm
+	                        .' !
+	                      .'    .
+	                    .'      !
+	                  .'         . b
+	                .'           !
+	               *              .
+	              p               !
+	                         90°   .    ... (pv)
+	                           ...-*-'''
+	                  ...---'''    rpd
+	         ...---'''   d
+	   *--'''
+	  rp
+
+	    rpdx = rpx + d * pv.x
+	    rpdy = rpy + d * pv.y
+
+	 equation of line b:
+	    pvns... normal slope to pv
+
+	    y - rpdy = pvns * (x - rpdx)
+
+	 equation of freedom vector line:
+	    fvs ... slope of freedom vector (=fy/fx)
+
+	    y - py = fvs * (x - px)
+
+
+	  on pm both equations are true for same x/y
+
+	    y - rpdy = pvns * (x - rpdx)
+
+	    y - py = fvs * (x - px)
+
+	  form to y and set equal:
+
+	    pvns * (x - rpdx) + rpdy = fvs * (x - px) + py
+
+	  expand:
+
+	    pvns * x - pvns * rpdx + rpdy = fvs * x - fvs * px + py
+
+	  switch:
+
+	    fvs * x - fvs * px + py = pvns * x - pvns * rpdx + rpdy
+
+	  solve for x:
+
+	    fvs * x - pvns * x = fvs * px - pvns * rpdx - py + rpdy
+
+
+
+	          fvs * px - pvns * rpdx + rpdy - py
+	    x =  -----------------------------------
+	                 fvs - pvns
+
+	  and:
+
+	    y = fvs * (x - px) + py
+
+
+
+	INTERPOLATE:
+	============
+
+	Examples of point interpolation.
+
+	The weight of the movement of the reference point gets bigger
+	the further the other reference point is away, thus the safest
+	option (that is avoiding 0/0 divisions) is to weight the
+	original distance of the other point by the sum of both distances.
+
+	If the sum of both distances is 0, then move the point by the
+	arithmetic average of the movement of both reference points.
+
+
+
+
+	           (+6)
+	    rp1o *---->*rp1
+	         .     .                          (+12)
+	         .     .                  rp2o *---------->* rp2
+	         .     .                       .           .
+	         .     .                       .           .
+	         .    10          20           .           .
+	         |.........|...................|           .
+	               .   .                               .
+	               .   . (+8)                          .
+	                po *------>*p                      .
+	               .           .                       .
+	               .    12     .          24           .
+	               |...........|.......................|
+	                                  36
+
