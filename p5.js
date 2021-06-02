@@ -38657,3 +38657,134 @@
 	               |...........|.......................|
 	                                  36
 
+
+	-------
+
+
+
+	           (+10)
+	    rp1o *-------->*rp1
+	         .         .                      (-10)
+	         .         .              rp2 *<---------* rpo2
+	         .         .                   .         .
+	         .         .                   .         .
+	         .    10   .          30       .         .
+	         |.........|.............................|
+	                   .                   .
+	                   . (+5)              .
+	                po *--->* p            .
+	                   .    .              .
+	                   .    .   20         .
+	                   |....|..............|
+	                     5        15
+
+
+	-------
+
+
+	           (+10)
+	    rp1o *-------->*rp1
+	         .         .
+	         .         .
+	    rp2o *-------->*rp2
+
+
+	                               (+10)
+	                          po *-------->* p
+
+	-------
+
+
+	           (+10)
+	    rp1o *-------->*rp1
+	         .         .
+	         .         .(+30)
+	    rp2o *---------------------------->*rp2
+
+
+	                                        (+25)
+	                          po *----------------------->* p
+
+
+
+	vim: set ts=4 sw=4 expandtab:
+	*****/
+
+              // The Font object
+
+              // This code is based on Array.from implementation for strings in https://github.com/mathiasbynens/Array.from
+              var arrayFromString =
+                Array.from ||
+                function(s) {
+                  return (
+                    s.match(/[\uD800-\uDBFF][\uDC00-\uDFFF]?|[^\uD800-\uDFFF]|./g) || []
+                  );
+                };
+
+              /**
+               * @typedef FontOptions
+               * @type Object
+               * @property {Boolean} empty - whether to create a new empty font
+               * @property {string} familyName
+               * @property {string} styleName
+               * @property {string=} fullName
+               * @property {string=} postScriptName
+               * @property {string=} designer
+               * @property {string=} designerURL
+               * @property {string=} manufacturer
+               * @property {string=} manufacturerURL
+               * @property {string=} license
+               * @property {string=} licenseURL
+               * @property {string=} version
+               * @property {string=} description
+               * @property {string=} copyright
+               * @property {string=} trademark
+               * @property {Number} unitsPerEm
+               * @property {Number} ascender
+               * @property {Number} descender
+               * @property {Number} createdTimestamp
+               * @property {string=} weightClass
+               * @property {string=} widthClass
+               * @property {string=} fsSelection
+               */
+
+              /**
+               * A Font represents a loaded OpenType font file.
+               * It contains a set of glyphs and methods to draw text on a drawing context,
+               * or to get a path representing the text.
+               * @exports opentype.Font
+               * @class
+               * @param {FontOptions}
+               * @constructor
+               */
+              function Font(options) {
+                options = options || {};
+
+                if (!options.empty) {
+                  // Check that we've provided the minimum set of names.
+                  checkArgument(
+                    options.familyName,
+                    'When creating a new Font object, familyName is required.'
+                  );
+                  checkArgument(
+                    options.styleName,
+                    'When creating a new Font object, styleName is required.'
+                  );
+                  checkArgument(
+                    options.unitsPerEm,
+                    'When creating a new Font object, unitsPerEm is required.'
+                  );
+                  checkArgument(
+                    options.ascender,
+                    'When creating a new Font object, ascender is required.'
+                  );
+                  checkArgument(
+                    options.descender,
+                    'When creating a new Font object, descender is required.'
+                  );
+                  checkArgument(
+                    options.descender < 0,
+                    'Descender should be negative (e.g. -512).'
+                  );
+
+                  // OS X will complain if the names are empty, so we put a single space everywhere by default.
