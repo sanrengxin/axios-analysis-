@@ -38919,3 +38919,149 @@
                   }
                   for (var i$1 = 0; i$1 < length; i$1 += 1) {
                     for (var j = 0; j < manyToOne.length; j++) {
+                      var ligature = manyToOne[j];
+                      var components = ligature.sub;
+                      var compCount = components.length;
+                      var k = 0;
+                      while (k < compCount && components[k] === indexes[i$1 + k]) {
+                        k++;
+                      }
+                      if (k === compCount) {
+                        indexes.splice(i$1, compCount, ligature.by);
+                        length = length - compCount + 1;
+                      }
+                    }
+                  }
+                }
+
+                // convert glyph indexes to glyph objects
+                var glyphs = new Array(length);
+                var notdef = this.glyphs.get(0);
+                for (var i$2 = 0; i$2 < length; i$2 += 1) {
+                  glyphs[i$2] = this$1.glyphs.get(indexes[i$2]) || notdef;
+                }
+                return glyphs;
+              };
+
+              /**
+               * @param  {string}
+               * @return {Number}
+               */
+              Font.prototype.nameToGlyphIndex = function(name) {
+                return this.glyphNames.nameToGlyphIndex(name);
+              };
+
+              /**
+               * @param  {string}
+               * @return {opentype.Glyph}
+               */
+              Font.prototype.nameToGlyph = function(name) {
+                var glyphIndex = this.nameToGlyphIndex(name);
+                var glyph = this.glyphs.get(glyphIndex);
+                if (!glyph) {
+                  // .notdef
+                  glyph = this.glyphs.get(0);
+                }
+
+                return glyph;
+              };
+
+              /**
+               * @param  {Number}
+               * @return {String}
+               */
+              Font.prototype.glyphIndexToName = function(gid) {
+                if (!this.glyphNames.glyphIndexToName) {
+                  return '';
+                }
+
+                return this.glyphNames.glyphIndexToName(gid);
+              };
+
+              /**
+               * Retrieve the value of the kerning pair between the left glyph (or its index)
+               * and the right glyph (or its index). If no kerning pair is found, return 0.
+               * The kerning value gets added to the advance width when calculating the spacing
+               * between glyphs.
+               * For GPOS kerning, this method uses the default script and language, which covers
+               * most use cases. To have greater control, use font.position.getKerningValue .
+               * @param  {opentype.Glyph} leftGlyph
+               * @param  {opentype.Glyph} rightGlyph
+               * @return {Number}
+               */
+              Font.prototype.getKerningValue = function(leftGlyph, rightGlyph) {
+                leftGlyph = leftGlyph.index || leftGlyph;
+                rightGlyph = rightGlyph.index || rightGlyph;
+                var gposKerning = this.position.defaultKerningTables;
+                if (gposKerning) {
+                  return this.position.getKerningValue(gposKerning, leftGlyph, rightGlyph);
+                }
+                // "kern" table
+                return this.kerningPairs[leftGlyph + ',' + rightGlyph] || 0;
+              };
+
+              /**
+               * @typedef GlyphRenderOptions
+               * @type Object
+               * @property {string} [script] - script used to determine which features to apply. By default, 'DFLT' or 'latn' is used.
+               *                               See https://www.microsoft.com/typography/otspec/scripttags.htm
+               * @property {string} [language='dflt'] - language system used to determine which features to apply.
+               *                                        See https://www.microsoft.com/typography/developers/opentype/languagetags.aspx
+               * @property {boolean} [kerning=true] - whether to include kerning values
+               * @property {object} [features] - OpenType Layout feature tags. Used to enable or disable the features of the given script/language system.
+               *                                 See https://www.microsoft.com/typography/otspec/featuretags.htm
+               */
+              Font.prototype.defaultRenderOptions = {
+                kerning: true,
+                features: {
+                  liga: true,
+                  rlig: true
+                }
+              };
+
+              /**
+               * Helper function that invokes the given callback for each glyph in the given text.
+               * The callback gets `(glyph, x, y, fontSize, options)`.* @param  {string} text
+               * @param {string} text - The text to apply.
+               * @param  {number} [x=0] - Horizontal position of the beginning of the text.
+               * @param  {number} [y=0] - Vertical position of the *baseline* of the text.
+               * @param  {number} [fontSize=72] - Font size in pixels. We scale the glyph units by `1 / unitsPerEm * fontSize`.
+               * @param  {GlyphRenderOptions=} options
+               * @param  {Function} callback
+               */
+              Font.prototype.forEachGlyph = function(
+                text,
+                x,
+                y,
+                fontSize,
+                options,
+                callback
+              ) {
+                var this$1 = this;
+
+                x = x !== undefined ? x : 0;
+                y = y !== undefined ? y : 0;
+                fontSize = fontSize !== undefined ? fontSize : 72;
+                options = options || this.defaultRenderOptions;
+                var fontScale = 1 / this.unitsPerEm * fontSize;
+                var glyphs = this.stringToGlyphs(text, options);
+                var kerningLookups;
+                if (options.kerning) {
+                  var script = options.script || this.position.getDefaultScriptName();
+                  kerningLookups = this.position.getKerningTables(script, options.language);
+                }
+                for (var i = 0; i < glyphs.length; i += 1) {
+                  var glyph = glyphs[i];
+                  callback.call(this$1, glyph, x, y, fontSize, options);
+                  if (glyph.advanceWidth) {
+                    x += glyph.advanceWidth * fontScale;
+                  }
+
+                  if (options.kerning && i < glyphs.length - 1) {
+                    // We should apply position adjustment lookups in a more generic way.
+                    // Here we only use the xAdvance value.
+                    var kerningValue = kerningLookups
+                      ? this$1.position.getKerningValue(
+                          kerningLookups,
+                          glyph.index,
+                          glyphs[i + 1].index
