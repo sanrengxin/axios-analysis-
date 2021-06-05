@@ -38788,3 +38788,134 @@
                   );
 
                   // OS X will complain if the names are empty, so we put a single space everywhere by default.
+                  this.names = {
+                    fontFamily: { en: options.familyName || ' ' },
+                    fontSubfamily: { en: options.styleName || ' ' },
+                    fullName: {
+                      en: options.fullName || options.familyName + ' ' + options.styleName
+                    },
+                    // postScriptName may not contain any whitespace
+                    postScriptName: {
+                      en:
+                        options.postScriptName ||
+                        (options.familyName + options.styleName).replace(/\s/g, '')
+                    },
+                    designer: { en: options.designer || ' ' },
+                    designerURL: { en: options.designerURL || ' ' },
+                    manufacturer: { en: options.manufacturer || ' ' },
+                    manufacturerURL: { en: options.manufacturerURL || ' ' },
+                    license: { en: options.license || ' ' },
+                    licenseURL: { en: options.licenseURL || ' ' },
+                    version: { en: options.version || 'Version 0.1' },
+                    description: { en: options.description || ' ' },
+                    copyright: { en: options.copyright || ' ' },
+                    trademark: { en: options.trademark || ' ' }
+                  };
+                  this.unitsPerEm = options.unitsPerEm || 1000;
+                  this.ascender = options.ascender;
+                  this.descender = options.descender;
+                  this.createdTimestamp = options.createdTimestamp;
+                  this.tables = {
+                    os2: {
+                      usWeightClass: options.weightClass || this.usWeightClasses.MEDIUM,
+                      usWidthClass: options.widthClass || this.usWidthClasses.MEDIUM,
+                      fsSelection: options.fsSelection || this.fsSelectionValues.REGULAR
+                    }
+                  };
+                }
+
+                this.supported = true; // Deprecated: parseBuffer will throw an error if font is not supported.
+                this.glyphs = new glyphset.GlyphSet(this, options.glyphs || []);
+                this.encoding = new DefaultEncoding(this);
+                this.position = new Position(this);
+                this.substitution = new Substitution(this);
+                this.tables = this.tables || {};
+
+                Object.defineProperty(this, 'hinting', {
+                  get: function() {
+                    if (this._hinting) {
+                      return this._hinting;
+                    }
+                    if (this.outlinesFormat === 'truetype') {
+                      return (this._hinting = new Hinting(this));
+                    }
+                  }
+                });
+              }
+
+              /**
+               * Check if the font has a glyph for the given character.
+               * @param  {string}
+               * @return {Boolean}
+               */
+              Font.prototype.hasChar = function(c) {
+                return this.encoding.charToGlyphIndex(c) !== null;
+              };
+
+              /**
+               * Convert the given character to a single glyph index.
+               * Note that this function assumes that there is a one-to-one mapping between
+               * the given character and a glyph; for complex scripts this might not be the case.
+               * @param  {string}
+               * @return {Number}
+               */
+              Font.prototype.charToGlyphIndex = function(s) {
+                return this.encoding.charToGlyphIndex(s);
+              };
+
+              /**
+               * Convert the given character to a single Glyph object.
+               * Note that this function assumes that there is a one-to-one mapping between
+               * the given character and a glyph; for complex scripts this might not be the case.
+               * @param  {string}
+               * @return {opentype.Glyph}
+               */
+              Font.prototype.charToGlyph = function(c) {
+                var glyphIndex = this.charToGlyphIndex(c);
+                var glyph = this.glyphs.get(glyphIndex);
+                if (!glyph) {
+                  // .notdef
+                  glyph = this.glyphs.get(0);
+                }
+
+                return glyph;
+              };
+
+              /**
+               * Convert the given text to a list of Glyph objects.
+               * Note that there is no strict one-to-one mapping between characters and
+               * glyphs, so the list of returned glyphs can be larger or smaller than the
+               * length of the given string.
+               * @param  {string}
+               * @param  {GlyphRenderOptions} [options]
+               * @return {opentype.Glyph[]}
+               */
+              Font.prototype.stringToGlyphs = function(s, options) {
+                var this$1 = this;
+
+                options = options || this.defaultRenderOptions;
+                // Get glyph indexes
+                var chars = arrayFromString(s);
+                var indexes = [];
+                for (var i = 0; i < chars.length; i += 1) {
+                  var c = chars[i];
+                  indexes.push(this$1.charToGlyphIndex(c));
+                }
+                var length = indexes.length;
+
+                // Apply substitutions on glyph indexes
+                if (options.features) {
+                  var script = options.script || this.substitution.getDefaultScriptName();
+                  var manyToOne = [];
+                  if (options.features.liga) {
+                    manyToOne = manyToOne.concat(
+                      this.substitution.getFeature('liga', script, options.language)
+                    );
+                  }
+                  if (options.features.rlig) {
+                    manyToOne = manyToOne.concat(
+                      this.substitution.getFeature('rlig', script, options.language)
+                    );
+                  }
+                  for (var i$1 = 0; i$1 < length; i$1 += 1) {
+                    for (var j = 0; j < manyToOne.length; j++) {
