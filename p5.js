@@ -39065,3 +39065,134 @@
                           kerningLookups,
                           glyph.index,
                           glyphs[i + 1].index
+                        )
+                      : this$1.getKerningValue(glyph, glyphs[i + 1]);
+                    x += kerningValue * fontScale;
+                  }
+
+                  if (options.letterSpacing) {
+                    x += options.letterSpacing * fontSize;
+                  } else if (options.tracking) {
+                    x += options.tracking / 1000 * fontSize;
+                  }
+                }
+                return x;
+              };
+
+              /**
+               * Create a Path object that represents the given text.
+               * @param  {string} text - The text to create.
+               * @param  {number} [x=0] - Horizontal position of the beginning of the text.
+               * @param  {number} [y=0] - Vertical position of the *baseline* of the text.
+               * @param  {number} [fontSize=72] - Font size in pixels. We scale the glyph units by `1 / unitsPerEm * fontSize`.
+               * @param  {GlyphRenderOptions=} options
+               * @return {opentype.Path}
+               */
+              Font.prototype.getPath = function(text, x, y, fontSize, options) {
+                var fullPath = new Path();
+                this.forEachGlyph(text, x, y, fontSize, options, function(
+                  glyph,
+                  gX,
+                  gY,
+                  gFontSize
+                ) {
+                  var glyphPath = glyph.getPath(gX, gY, gFontSize, options, this);
+                  fullPath.extend(glyphPath);
+                });
+                return fullPath;
+              };
+
+              /**
+               * Create an array of Path objects that represent the glyphs of a given text.
+               * @param  {string} text - The text to create.
+               * @param  {number} [x=0] - Horizontal position of the beginning of the text.
+               * @param  {number} [y=0] - Vertical position of the *baseline* of the text.
+               * @param  {number} [fontSize=72] - Font size in pixels. We scale the glyph units by `1 / unitsPerEm * fontSize`.
+               * @param  {GlyphRenderOptions=} options
+               * @return {opentype.Path[]}
+               */
+              Font.prototype.getPaths = function(text, x, y, fontSize, options) {
+                var glyphPaths = [];
+                this.forEachGlyph(text, x, y, fontSize, options, function(
+                  glyph,
+                  gX,
+                  gY,
+                  gFontSize
+                ) {
+                  var glyphPath = glyph.getPath(gX, gY, gFontSize, options, this);
+                  glyphPaths.push(glyphPath);
+                });
+
+                return glyphPaths;
+              };
+
+              /**
+               * Returns the advance width of a text.
+               *
+               * This is something different than Path.getBoundingBox() as for example a
+               * suffixed whitespace increases the advanceWidth but not the bounding box
+               * or an overhanging letter like a calligraphic 'f' might have a quite larger
+               * bounding box than its advance width.
+               *
+               * This corresponds to canvas2dContext.measureText(text).width
+               *
+               * @param  {string} text - The text to create.
+               * @param  {number} [fontSize=72] - Font size in pixels. We scale the glyph units by `1 / unitsPerEm * fontSize`.
+               * @param  {GlyphRenderOptions=} options
+               * @return advance width
+               */
+              Font.prototype.getAdvanceWidth = function(text, fontSize, options) {
+                return this.forEachGlyph(text, 0, 0, fontSize, options, function() {});
+              };
+
+              /**
+               * Draw the text on the given drawing context.
+               * @param  {CanvasRenderingContext2D} ctx - A 2D drawing context, like Canvas.
+               * @param  {string} text - The text to create.
+               * @param  {number} [x=0] - Horizontal position of the beginning of the text.
+               * @param  {number} [y=0] - Vertical position of the *baseline* of the text.
+               * @param  {number} [fontSize=72] - Font size in pixels. We scale the glyph units by `1 / unitsPerEm * fontSize`.
+               * @param  {GlyphRenderOptions=} options
+               */
+              Font.prototype.draw = function(ctx, text, x, y, fontSize, options) {
+                this.getPath(text, x, y, fontSize, options).draw(ctx);
+              };
+
+              /**
+               * Draw the points of all glyphs in the text.
+               * On-curve points will be drawn in blue, off-curve points will be drawn in red.
+               * @param {CanvasRenderingContext2D} ctx - A 2D drawing context, like Canvas.
+               * @param {string} text - The text to create.
+               * @param {number} [x=0] - Horizontal position of the beginning of the text.
+               * @param {number} [y=0] - Vertical position of the *baseline* of the text.
+               * @param {number} [fontSize=72] - Font size in pixels. We scale the glyph units by `1 / unitsPerEm * fontSize`.
+               * @param {GlyphRenderOptions=} options
+               */
+              Font.prototype.drawPoints = function(ctx, text, x, y, fontSize, options) {
+                this.forEachGlyph(text, x, y, fontSize, options, function(
+                  glyph,
+                  gX,
+                  gY,
+                  gFontSize
+                ) {
+                  glyph.drawPoints(ctx, gX, gY, gFontSize);
+                });
+              };
+
+              /**
+               * Draw lines indicating important font measurements for all glyphs in the text.
+               * Black lines indicate the origin of the coordinate system (point 0,0).
+               * Blue lines indicate the glyph bounding box.
+               * Green line indicates the advance width of the glyph.
+               * @param {CanvasRenderingContext2D} ctx - A 2D drawing context, like Canvas.
+               * @param {string} text - The text to create.
+               * @param {number} [x=0] - Horizontal position of the beginning of the text.
+               * @param {number} [y=0] - Vertical position of the *baseline* of the text.
+               * @param {number} [fontSize=72] - Font size in pixels. We scale the glyph units by `1 / unitsPerEm * fontSize`.
+               * @param {GlyphRenderOptions=} options
+               */
+              Font.prototype.drawMetrics = function(ctx, text, x, y, fontSize, options) {
+                this.forEachGlyph(text, x, y, fontSize, options, function(
+                  glyph,
+                  gX,
+                  gY,
