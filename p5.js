@@ -39196,3 +39196,122 @@
                   glyph,
                   gX,
                   gY,
+                  gFontSize
+                ) {
+                  glyph.drawMetrics(ctx, gX, gY, gFontSize);
+                });
+              };
+
+              /**
+               * @param  {string}
+               * @return {string}
+               */
+              Font.prototype.getEnglishName = function(name) {
+                var translations = this.names[name];
+                if (translations) {
+                  return translations.en;
+                }
+              };
+
+              /**
+               * Validate
+               */
+              Font.prototype.validate = function() {
+                var _this = this;
+
+                function assert(predicate, message) {}
+
+                function assertNamePresent(name) {
+                  var englishName = _this.getEnglishName(name);
+                  assert(
+                    englishName && englishName.trim().length > 0,
+                    'No English ' + name + ' specified.'
+                  );
+                }
+
+                // Identification information
+                assertNamePresent('fontFamily');
+                assertNamePresent('weightName');
+                assertNamePresent('manufacturer');
+                assertNamePresent('copyright');
+                assertNamePresent('version');
+
+                // Dimension information
+                assert(this.unitsPerEm > 0, 'No unitsPerEm specified.');
+              };
+
+              /**
+               * Convert the font object to a SFNT data structure.
+               * This structure contains all the necessary tables and metadata to create a binary OTF file.
+               * @return {opentype.Table}
+               */
+              Font.prototype.toTables = function() {
+                return sfnt.fontToTable(this);
+              };
+              /**
+               * @deprecated Font.toBuffer is deprecated. Use Font.toArrayBuffer instead.
+               */
+              Font.prototype.toBuffer = function() {
+                console.warn(
+                  'Font.toBuffer is deprecated. Use Font.toArrayBuffer instead.'
+                );
+                return this.toArrayBuffer();
+              };
+              /**
+               * Converts a `opentype.Font` into an `ArrayBuffer`
+               * @return {ArrayBuffer}
+               */
+              Font.prototype.toArrayBuffer = function() {
+                var sfntTable = this.toTables();
+                var bytes = sfntTable.encode();
+                var buffer = new ArrayBuffer(bytes.length);
+                var intArray = new Uint8Array(buffer);
+                for (var i = 0; i < bytes.length; i++) {
+                  intArray[i] = bytes[i];
+                }
+
+                return buffer;
+              };
+
+              /**
+               * Initiate a download of the OpenType font.
+               */
+              Font.prototype.download = function(fileName) {
+                var familyName = this.getEnglishName('fontFamily');
+                var styleName = this.getEnglishName('fontSubfamily');
+                fileName =
+                  fileName || familyName.replace(/\s/g, '') + '-' + styleName + '.otf';
+                var arrayBuffer = this.toArrayBuffer();
+
+                if (isBrowser()) {
+                  window.requestFileSystem =
+                    window.requestFileSystem || window.webkitRequestFileSystem;
+                  window.requestFileSystem(
+                    window.TEMPORARY,
+                    arrayBuffer.byteLength,
+                    function(fs) {
+                      fs.root.getFile(fileName, { create: true }, function(fileEntry) {
+                        fileEntry.createWriter(function(writer) {
+                          var dataView = new DataView(arrayBuffer);
+                          var blob = new Blob([dataView], { type: 'font/opentype' });
+                          writer.write(blob);
+
+                          writer.addEventListener(
+                            'writeend',
+                            function() {
+                              // Navigating to the file will download it.
+                              location.href = fileEntry.toURL();
+                            },
+                            false
+                          );
+                        });
+                      });
+                    },
+                    function(err) {
+                      throw new Error(err.name + ': ' + err.message);
+                    }
+                  );
+                } else {
+                  var fs = _dereq_('fs');
+                  var buffer = arrayBufferToNodeBuffer(arrayBuffer);
+                  fs.writeFileSync(fileName, buffer);
