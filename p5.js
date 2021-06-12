@@ -39468,3 +39468,137 @@
 
                 for (var j = 0; j < fvar.instances.length; j++) {
                   result.fields = result.fields.concat(
+                    makeFvarInstance(j, fvar.instances[j], fvar.axes, names)
+                  );
+                }
+
+                return result;
+              }
+
+              function parseFvarTable(data, start, names) {
+                var p = new parse.Parser(data, start);
+                var tableVersion = p.parseULong();
+                check.argument(
+                  tableVersion === 0x00010000,
+                  'Unsupported fvar table version.'
+                );
+                var offsetToData = p.parseOffset16();
+                // Skip countSizePairs.
+                p.skip('uShort', 1);
+                var axisCount = p.parseUShort();
+                var axisSize = p.parseUShort();
+                var instanceCount = p.parseUShort();
+                var instanceSize = p.parseUShort();
+
+                var axes = [];
+                for (var i = 0; i < axisCount; i++) {
+                  axes.push(
+                    parseFvarAxis(data, start + offsetToData + i * axisSize, names)
+                  );
+                }
+
+                var instances = [];
+                var instanceStart = start + offsetToData + axisCount * axisSize;
+                for (var j = 0; j < instanceCount; j++) {
+                  instances.push(
+                    parseFvarInstance(data, instanceStart + j * instanceSize, axes, names)
+                  );
+                }
+
+                return { axes: axes, instances: instances };
+              }
+
+              var fvar = { make: makeFvarTable, parse: parseFvarTable };
+
+              // The `GPOS` table contains kerning pairs, among other things.
+
+              var subtableParsers$1 = new Array(10); // subtableParsers[0] is unused
+
+              // https://docs.microsoft.com/en-us/typography/opentype/spec/gpos#lookup-type-1-single-adjustment-positioning-subtable
+              // this = Parser instance
+              subtableParsers$1[1] = function parseLookup1() {
+                var start = this.offset + this.relativeOffset;
+                var posformat = this.parseUShort();
+                if (posformat === 1) {
+                  return {
+                    posFormat: 1,
+                    coverage: this.parsePointer(Parser.coverage),
+                    value: this.parseValueRecord()
+                  };
+                } else if (posformat === 2) {
+                  return {
+                    posFormat: 2,
+                    coverage: this.parsePointer(Parser.coverage),
+                    values: this.parseValueRecordList()
+                  };
+                }
+                check.assert(
+                  false,
+                  '0x' + start.toString(16) + ': GPOS lookup type 1 format must be 1 or 2.'
+                );
+              };
+
+              // https://docs.microsoft.com/en-us/typography/opentype/spec/gpos#lookup-type-2-pair-adjustment-positioning-subtable
+              subtableParsers$1[2] = function parseLookup2() {
+                var start = this.offset + this.relativeOffset;
+                var posFormat = this.parseUShort();
+                check.assert(
+                  posFormat === 1 || posFormat === 2,
+                  '0x' + start.toString(16) + ': GPOS lookup type 2 format must be 1 or 2.'
+                );
+                var coverage = this.parsePointer(Parser.coverage);
+                var valueFormat1 = this.parseUShort();
+                var valueFormat2 = this.parseUShort();
+                if (posFormat === 1) {
+                  // Adjustments for Glyph Pairs
+                  return {
+                    posFormat: posFormat,
+                    coverage: coverage,
+                    valueFormat1: valueFormat1,
+                    valueFormat2: valueFormat2,
+                    pairSets: this.parseList(
+                      Parser.pointer(
+                        Parser.list(function() {
+                          return {
+                            // pairValueRecord
+                            secondGlyph: this.parseUShort(),
+                            value1: this.parseValueRecord(valueFormat1),
+                            value2: this.parseValueRecord(valueFormat2)
+                          };
+                        })
+                      )
+                    )
+                  };
+                } else if (posFormat === 2) {
+                  var classDef1 = this.parsePointer(Parser.classDef);
+                  var classDef2 = this.parsePointer(Parser.classDef);
+                  var class1Count = this.parseUShort();
+                  var class2Count = this.parseUShort();
+                  return {
+                    // Class Pair Adjustment
+                    posFormat: posFormat,
+                    coverage: coverage,
+                    valueFormat1: valueFormat1,
+                    valueFormat2: valueFormat2,
+                    classDef1: classDef1,
+                    classDef2: classDef2,
+                    class1Count: class1Count,
+                    class2Count: class2Count,
+                    classRecords: this.parseList(
+                      class1Count,
+                      Parser.list(class2Count, function() {
+                        return {
+                          value1: this.parseValueRecord(valueFormat1),
+                          value2: this.parseValueRecord(valueFormat2)
+                        };
+                      })
+                    )
+                  };
+                }
+              };
+
+              subtableParsers$1[3] = function parseLookup3() {
+                return { error: 'GPOS Lookup 3 not supported' };
+              };
+              subtableParsers$1[4] = function parseLookup4() {
+                return { error: 'GPOS Lookup 4 not supported' };
