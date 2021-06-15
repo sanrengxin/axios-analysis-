@@ -39730,3 +39730,141 @@
               // Parse the `kern` table which contains kerning pairs.
               function parseKernTable(data, start) {
                 var p = new parse.Parser(data, start);
+                var tableVersion = p.parseUShort();
+                if (tableVersion === 0) {
+                  return parseWindowsKernTable(p);
+                } else if (tableVersion === 1) {
+                  return parseMacKernTable(p);
+                } else {
+                  throw new Error('Unsupported kern table version (' + tableVersion + ').');
+                }
+              }
+
+              var kern = { parse: parseKernTable };
+
+              // The `loca` table stores the offsets to the locations of the glyphs in the font.
+
+              // Parse the `loca` table. This table stores the offsets to the locations of the glyphs in the font,
+              // relative to the beginning of the glyphData table.
+              // The number of glyphs stored in the `loca` table is specified in the `maxp` table (under numGlyphs)
+              // The loca table has two versions: a short version where offsets are stored as uShorts, and a long
+              // version where offsets are stored as uLongs. The `head` table specifies which version to use
+              // (under indexToLocFormat).
+              function parseLocaTable(data, start, numGlyphs, shortVersion) {
+                var p = new parse.Parser(data, start);
+                var parseFn = shortVersion ? p.parseUShort : p.parseULong;
+                // There is an extra entry after the last index element to compute the length of the last glyph.
+                // That's why we use numGlyphs + 1.
+                var glyphOffsets = [];
+                for (var i = 0; i < numGlyphs + 1; i += 1) {
+                  var glyphOffset = parseFn.call(p);
+                  if (shortVersion) {
+                    // The short table version stores the actual offset divided by 2.
+                    glyphOffset *= 2;
+                  }
+
+                  glyphOffsets.push(glyphOffset);
+                }
+
+                return glyphOffsets;
+              }
+
+              var loca = { parse: parseLocaTable };
+
+              // opentype.js
+
+              /**
+               * The opentype library.
+               * @namespace opentype
+               */
+
+              // File loaders /////////////////////////////////////////////////////////
+              /**
+               * Loads a font from a file. The callback throws an error message as the first parameter if it fails
+               * and the font as an ArrayBuffer in the second parameter if it succeeds.
+               * @param  {string} path - The path of the file
+               * @param  {Function} callback - The function to call when the font load completes
+               */
+              function loadFromFile(path, callback) {
+                var fs = _dereq_('fs');
+                fs.readFile(path, function(err, buffer) {
+                  if (err) {
+                    return callback(err.message);
+                  }
+
+                  callback(null, nodeBufferToArrayBuffer(buffer));
+                });
+              }
+              /**
+               * Loads a font from a URL. The callback throws an error message as the first parameter if it fails
+               * and the font as an ArrayBuffer in the second parameter if it succeeds.
+               * @param  {string} url - The URL of the font file.
+               * @param  {Function} callback - The function to call when the font load completes
+               */
+              function loadFromUrl(url, callback) {
+                var request = new XMLHttpRequest();
+                request.open('get', url, true);
+                request.responseType = 'arraybuffer';
+                request.onload = function() {
+                  if (request.response) {
+                    return callback(null, request.response);
+                  } else {
+                    return callback('Font could not be loaded: ' + request.statusText);
+                  }
+                };
+
+                request.onerror = function() {
+                  callback('Font could not be loaded');
+                };
+
+                request.send();
+              }
+
+              // Table Directory Entries //////////////////////////////////////////////
+              /**
+               * Parses OpenType table entries.
+               * @param  {DataView}
+               * @param  {Number}
+               * @return {Object[]}
+               */
+              function parseOpenTypeTableEntries(data, numTables) {
+                var tableEntries = [];
+                var p = 12;
+                for (var i = 0; i < numTables; i += 1) {
+                  var tag = parse.getTag(data, p);
+                  var checksum = parse.getULong(data, p + 4);
+                  var offset = parse.getULong(data, p + 8);
+                  var length = parse.getULong(data, p + 12);
+                  tableEntries.push({
+                    tag: tag,
+                    checksum: checksum,
+                    offset: offset,
+                    length: length,
+                    compression: false
+                  });
+                  p += 16;
+                }
+
+                return tableEntries;
+              }
+
+              /**
+               * Parses WOFF table entries.
+               * @param  {DataView}
+               * @param  {Number}
+               * @return {Object[]}
+               */
+              function parseWOFFTableEntries(data, numTables) {
+                var tableEntries = [];
+                var p = 44; // offset to the first table directory entry.
+                for (var i = 0; i < numTables; i += 1) {
+                  var tag = parse.getTag(data, p);
+                  var offset = parse.getULong(data, p + 4);
+                  var compLength = parse.getULong(data, p + 8);
+                  var origLength = parse.getULong(data, p + 12);
+                  var compression = void 0;
+                  if (compLength < origLength) {
+                    compression = 'WOFF';
+                  } else {
+                    compression = false;
+                  }
