@@ -39602,3 +39602,131 @@
               };
               subtableParsers$1[4] = function parseLookup4() {
                 return { error: 'GPOS Lookup 4 not supported' };
+              };
+              subtableParsers$1[5] = function parseLookup5() {
+                return { error: 'GPOS Lookup 5 not supported' };
+              };
+              subtableParsers$1[6] = function parseLookup6() {
+                return { error: 'GPOS Lookup 6 not supported' };
+              };
+              subtableParsers$1[7] = function parseLookup7() {
+                return { error: 'GPOS Lookup 7 not supported' };
+              };
+              subtableParsers$1[8] = function parseLookup8() {
+                return { error: 'GPOS Lookup 8 not supported' };
+              };
+              subtableParsers$1[9] = function parseLookup9() {
+                return { error: 'GPOS Lookup 9 not supported' };
+              };
+
+              // https://docs.microsoft.com/en-us/typography/opentype/spec/gpos
+              function parseGposTable(data, start) {
+                start = start || 0;
+                var p = new Parser(data, start);
+                var tableVersion = p.parseVersion(1);
+                check.argument(
+                  tableVersion === 1 || tableVersion === 1.1,
+                  'Unsupported GPOS table version ' + tableVersion
+                );
+
+                if (tableVersion === 1) {
+                  return {
+                    version: tableVersion,
+                    scripts: p.parseScriptList(),
+                    features: p.parseFeatureList(),
+                    lookups: p.parseLookupList(subtableParsers$1)
+                  };
+                } else {
+                  return {
+                    version: tableVersion,
+                    scripts: p.parseScriptList(),
+                    features: p.parseFeatureList(),
+                    lookups: p.parseLookupList(subtableParsers$1),
+                    variations: p.parseFeatureVariationsList()
+                  };
+                }
+              }
+
+              // GPOS Writing //////////////////////////////////////////////
+              // NOT SUPPORTED
+              var subtableMakers$1 = new Array(10);
+
+              function makeGposTable(gpos) {
+                return new table.Table('GPOS', [
+                  { name: 'version', type: 'ULONG', value: 0x10000 },
+                  {
+                    name: 'scripts',
+                    type: 'TABLE',
+                    value: new table.ScriptList(gpos.scripts)
+                  },
+                  {
+                    name: 'features',
+                    type: 'TABLE',
+                    value: new table.FeatureList(gpos.features)
+                  },
+                  {
+                    name: 'lookups',
+                    type: 'TABLE',
+                    value: new table.LookupList(gpos.lookups, subtableMakers$1)
+                  }
+                ]);
+              }
+
+              var gpos = { parse: parseGposTable, make: makeGposTable };
+
+              // The `kern` table contains kerning pairs.
+
+              function parseWindowsKernTable(p) {
+                var pairs = {};
+                // Skip nTables.
+                p.skip('uShort');
+                var subtableVersion = p.parseUShort();
+                check.argument(
+                  subtableVersion === 0,
+                  'Unsupported kern sub-table version.'
+                );
+                // Skip subtableLength, subtableCoverage
+                p.skip('uShort', 2);
+                var nPairs = p.parseUShort();
+                // Skip searchRange, entrySelector, rangeShift.
+                p.skip('uShort', 3);
+                for (var i = 0; i < nPairs; i += 1) {
+                  var leftIndex = p.parseUShort();
+                  var rightIndex = p.parseUShort();
+                  var value = p.parseShort();
+                  pairs[leftIndex + ',' + rightIndex] = value;
+                }
+                return pairs;
+              }
+
+              function parseMacKernTable(p) {
+                var pairs = {};
+                // The Mac kern table stores the version as a fixed (32 bits) but we only loaded the first 16 bits.
+                // Skip the rest.
+                p.skip('uShort');
+                var nTables = p.parseULong();
+                //check.argument(nTables === 1, 'Only 1 subtable is supported (got ' + nTables + ').');
+                if (nTables > 1) {
+                  console.warn('Only the first kern subtable is supported.');
+                }
+                p.skip('uLong');
+                var coverage = p.parseUShort();
+                var subtableVersion = coverage & 0xff;
+                p.skip('uShort');
+                if (subtableVersion === 0) {
+                  var nPairs = p.parseUShort();
+                  // Skip searchRange, entrySelector, rangeShift.
+                  p.skip('uShort', 3);
+                  for (var i = 0; i < nPairs; i += 1) {
+                    var leftIndex = p.parseUShort();
+                    var rightIndex = p.parseUShort();
+                    var value = p.parseShort();
+                    pairs[leftIndex + ',' + rightIndex] = value;
+                  }
+                }
+                return pairs;
+              }
+
+              // Parse the `kern` table which contains kerning pairs.
+              function parseKernTable(data, start) {
+                var p = new parse.Parser(data, start);
