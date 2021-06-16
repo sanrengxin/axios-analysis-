@@ -39868,3 +39868,132 @@
                   } else {
                     compression = false;
                   }
+
+                  tableEntries.push({
+                    tag: tag,
+                    offset: offset,
+                    compression: compression,
+                    compressedLength: compLength,
+                    length: origLength
+                  });
+                  p += 20;
+                }
+
+                return tableEntries;
+              }
+
+              /**
+               * @typedef TableData
+               * @type Object
+               * @property {DataView} data - The DataView
+               * @property {number} offset - The data offset.
+               */
+
+              /**
+               * @param  {DataView}
+               * @param  {Object}
+               * @return {TableData}
+               */
+              function uncompressTable(data, tableEntry) {
+                if (tableEntry.compression === 'WOFF') {
+                  var inBuffer = new Uint8Array(
+                    data.buffer,
+                    tableEntry.offset + 2,
+                    tableEntry.compressedLength - 2
+                  );
+                  var outBuffer = new Uint8Array(tableEntry.length);
+                  tinyInflate(inBuffer, outBuffer);
+                  if (outBuffer.byteLength !== tableEntry.length) {
+                    throw new Error(
+                      'Decompression error: ' +
+                        tableEntry.tag +
+                        " decompressed length doesn't match recorded length"
+                    );
+                  }
+
+                  var view = new DataView(outBuffer.buffer, 0);
+                  return { data: view, offset: 0 };
+                } else {
+                  return { data: data, offset: tableEntry.offset };
+                }
+              }
+
+              // Public API ///////////////////////////////////////////////////////////
+
+              /**
+               * Parse the OpenType file data (as an ArrayBuffer) and return a Font object.
+               * Throws an error if the font could not be parsed.
+               * @param  {ArrayBuffer}
+               * @return {opentype.Font}
+               */
+              function parseBuffer(buffer) {
+                var indexToLocFormat;
+                var ltagTable;
+
+                // Since the constructor can also be called to create new fonts from scratch, we indicate this
+                // should be an empty font that we'll fill with our own data.
+                var font = new Font({ empty: true });
+
+                // OpenType fonts use big endian byte ordering.
+                // We can't rely on typed array view types, because they operate with the endianness of the host computer.
+                // Instead we use DataViews where we can specify endianness.
+                var data = new DataView(buffer, 0);
+                var numTables;
+                var tableEntries = [];
+                var signature = parse.getTag(data, 0);
+                if (
+                  signature === String.fromCharCode(0, 1, 0, 0) ||
+                  signature === 'true' ||
+                  signature === 'typ1'
+                ) {
+                  font.outlinesFormat = 'truetype';
+                  numTables = parse.getUShort(data, 4);
+                  tableEntries = parseOpenTypeTableEntries(data, numTables);
+                } else if (signature === 'OTTO') {
+                  font.outlinesFormat = 'cff';
+                  numTables = parse.getUShort(data, 4);
+                  tableEntries = parseOpenTypeTableEntries(data, numTables);
+                } else if (signature === 'wOFF') {
+                  var flavor = parse.getTag(data, 4);
+                  if (flavor === String.fromCharCode(0, 1, 0, 0)) {
+                    font.outlinesFormat = 'truetype';
+                  } else if (flavor === 'OTTO') {
+                    font.outlinesFormat = 'cff';
+                  } else {
+                    throw new Error('Unsupported OpenType flavor ' + signature);
+                  }
+
+                  numTables = parse.getUShort(data, 12);
+                  tableEntries = parseWOFFTableEntries(data, numTables);
+                } else {
+                  throw new Error('Unsupported OpenType signature ' + signature);
+                }
+
+                var cffTableEntry;
+                var fvarTableEntry;
+                var glyfTableEntry;
+                var gposTableEntry;
+                var gsubTableEntry;
+                var hmtxTableEntry;
+                var kernTableEntry;
+                var locaTableEntry;
+                var nameTableEntry;
+                var metaTableEntry;
+                var p;
+
+                for (var i = 0; i < numTables; i += 1) {
+                  var tableEntry = tableEntries[i];
+                  var table = void 0;
+                  switch (tableEntry.tag) {
+                    case 'cmap':
+                      table = uncompressTable(data, tableEntry);
+                      font.tables.cmap = cmap.parse(table.data, table.offset);
+                      font.encoding = new CmapEncoding(font.tables.cmap);
+                      break;
+                    case 'cvt ':
+                      table = uncompressTable(data, tableEntry);
+                      p = new parse.Parser(table.data, table.offset);
+                      font.tables.cvt = p.parseShortList(tableEntry.length / 2);
+                      break;
+                    case 'fvar':
+                      fvarTableEntry = tableEntry;
