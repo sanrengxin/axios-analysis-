@@ -40138,3 +40138,126 @@
                   font.tables.meta = meta.parse(metaTable.data, metaTable.offset);
                   font.metas = font.tables.meta;
                 }
+
+                return font;
+              }
+
+              /**
+               * Asynchronously load the font from a URL or a filesystem. When done, call the callback
+               * with two arguments `(err, font)`. The `err` will be null on success,
+               * the `font` is a Font object.
+               * We use the node.js callback convention so that
+               * opentype.js can integrate with frameworks like async.js.
+               * @alias opentype.load
+               * @param  {string} url - The URL of the font to load.
+               * @param  {Function} callback - The callback.
+               */
+              function load(url, callback) {
+                var isNode$$1 = typeof window === 'undefined';
+                var loadFn = isNode$$1 ? loadFromFile : loadFromUrl;
+                loadFn(url, function(err, arrayBuffer) {
+                  if (err) {
+                    return callback(err);
+                  }
+                  var font;
+                  try {
+                    font = parseBuffer(arrayBuffer);
+                  } catch (e) {
+                    return callback(e, null);
+                  }
+                  return callback(null, font);
+                });
+              }
+
+              /**
+               * Synchronously load the font from a URL or file.
+               * When done, returns the font object or throws an error.
+               * @alias opentype.loadSync
+               * @param  {string} url - The URL of the font to load.
+               * @return {opentype.Font}
+               */
+              function loadSync(url) {
+                var fs = _dereq_('fs');
+                var buffer = fs.readFileSync(url);
+                return parseBuffer(nodeBufferToArrayBuffer(buffer));
+              }
+
+              exports.Font = Font;
+              exports.Glyph = Glyph;
+              exports.Path = Path;
+              exports.BoundingBox = BoundingBox;
+              exports._parse = parse;
+              exports.parse = parseBuffer;
+              exports.load = load;
+              exports.loadSync = loadSync;
+
+              Object.defineProperty(exports, '__esModule', { value: true });
+            });
+          }.call(this, _dereq_('buffer').Buffer));
+        },
+        { buffer: 22, fs: 21 }
+      ],
+      35: [
+        function(_dereq_, module, exports) {
+          (function(process) {
+            // .dirname, .basename, and .extname methods are extracted from Node.js v8.11.1,
+            // backported and transplited with Babel, with backwards-compat fixes
+
+            // Copyright Joyent, Inc. and other Node contributors.
+            //
+            // Permission is hereby granted, free of charge, to any person obtaining a
+            // copy of this software and associated documentation files (the
+            // "Software"), to deal in the Software without restriction, including
+            // without limitation the rights to use, copy, modify, merge, publish,
+            // distribute, sublicense, and/or sell copies of the Software, and to permit
+            // persons to whom the Software is furnished to do so, subject to the
+            // following conditions:
+            //
+            // The above copyright notice and this permission notice shall be included
+            // in all copies or substantial portions of the Software.
+            //
+            // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+            // OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+            // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+            // NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+            // DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+            // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+            // USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+            // resolves . and .. elements in a path array with directory names there
+            // must be no slashes, empty elements, or device names (c:\) in the array
+            // (so also no leading and trailing slashes - it does not distinguish
+            // relative and absolute paths)
+            function normalizeArray(parts, allowAboveRoot) {
+              // if the path tries to go above the root, `up` ends up > 0
+              var up = 0;
+              for (var i = parts.length - 1; i >= 0; i--) {
+                var last = parts[i];
+                if (last === '.') {
+                  parts.splice(i, 1);
+                } else if (last === '..') {
+                  parts.splice(i, 1);
+                  up++;
+                } else if (up) {
+                  parts.splice(i, 1);
+                  up--;
+                }
+              }
+
+              // if the path is allowed to go above the root, restore leading ..s
+              if (allowAboveRoot) {
+                for (; up--; up) {
+                  parts.unshift('..');
+                }
+              }
+
+              return parts;
+            }
+
+            // path.resolve([from ...], to)
+            // posix version
+            exports.resolve = function() {
+              var resolvedPath = '',
+                resolvedAbsolute = false;
+
+              for (var i = arguments.length - 1; i >= -1 && !resolvedAbsolute; i--) {
