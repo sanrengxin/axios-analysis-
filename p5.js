@@ -40417,3 +40417,160 @@
                 if (path.charCodeAt(i) === 47 /*/*/) {
                   // If we reached a path separator that was not part of a set of path
                   // separators at the end of the string, stop now
+                  if (!matchedSlash) {
+                    start = i + 1;
+                    break;
+                  }
+                } else if (end === -1) {
+                  // We saw the first non-path separator, mark this as the end of our
+                  // path component
+                  matchedSlash = false;
+                  end = i + 1;
+                }
+              }
+
+              if (end === -1) return '';
+              return path.slice(start, end);
+            }
+
+            // Uses a mixed approach for backwards-compatibility, as ext behavior changed
+            // in new Node.js versions, so only basename() above is backported here
+            exports.basename = function(path, ext) {
+              var f = basename(path);
+              if (ext && f.substr(-1 * ext.length) === ext) {
+                f = f.substr(0, f.length - ext.length);
+              }
+              return f;
+            };
+
+            exports.extname = function(path) {
+              if (typeof path !== 'string') path = path + '';
+              var startDot = -1;
+              var startPart = 0;
+              var end = -1;
+              var matchedSlash = true;
+              // Track the state of characters (if any) we see before our first dot and
+              // after any path separator we find
+              var preDotState = 0;
+              for (var i = path.length - 1; i >= 0; --i) {
+                var code = path.charCodeAt(i);
+                if (code === 47 /*/*/) {
+                  // If we reached a path separator that was not part of a set of path
+                  // separators at the end of the string, stop now
+                  if (!matchedSlash) {
+                    startPart = i + 1;
+                    break;
+                  }
+                  continue;
+                }
+                if (end === -1) {
+                  // We saw the first non-path separator, mark this as the end of our
+                  // extension
+                  matchedSlash = false;
+                  end = i + 1;
+                }
+                if (code === 46 /*.*/) {
+                  // If this is our first dot, mark it as the start of our extension
+                  if (startDot === -1) startDot = i;
+                  else if (preDotState !== 1) preDotState = 1;
+                } else if (startDot !== -1) {
+                  // We saw a non-dot and non-path separator before our dot, so we should
+                  // have a good chance at having a non-empty extension
+                  preDotState = -1;
+                }
+              }
+
+              if (
+                startDot === -1 ||
+                end === -1 ||
+                // We saw a non-dot character immediately before the dot
+                preDotState === 0 ||
+                // The (right-most) trimmed path component is exactly '..'
+                (preDotState === 1 && startDot === end - 1 && startDot === startPart + 1)
+              ) {
+                return '';
+              }
+              return path.slice(startDot, end);
+            };
+
+            function filter(xs, f) {
+              if (xs.filter) return xs.filter(f);
+              var res = [];
+              for (var i = 0; i < xs.length; i++) {
+                if (f(xs[i], i, xs)) res.push(xs[i]);
+              }
+              return res;
+            }
+
+            // String.prototype.substr - negative index don't work in IE8
+            var substr =
+              'ab'.substr(-1) === 'b'
+                ? function(str, start, len) {
+                    return str.substr(start, len);
+                  }
+                : function(str, start, len) {
+                    if (start < 0) start = str.length + start;
+                    return str.substr(start, len);
+                  };
+          }.call(this, _dereq_('_process')));
+        },
+        { _process: 36 }
+      ],
+      36: [
+        function(_dereq_, module, exports) {
+          // shim for using process in browser
+          var process = (module.exports = {});
+
+          // cached from whatever global is present so that test runners that stub it
+          // don't break things.  But we need to wrap it in a try catch in case it is
+          // wrapped in strict mode code which doesn't define any globals.  It's inside a
+          // function because try/catches deoptimize in certain engines.
+
+          var cachedSetTimeout;
+          var cachedClearTimeout;
+
+          function defaultSetTimout() {
+            throw new Error('setTimeout has not been defined');
+          }
+          function defaultClearTimeout() {
+            throw new Error('clearTimeout has not been defined');
+          }
+          (function() {
+            try {
+              if (typeof setTimeout === 'function') {
+                cachedSetTimeout = setTimeout;
+              } else {
+                cachedSetTimeout = defaultSetTimout;
+              }
+            } catch (e) {
+              cachedSetTimeout = defaultSetTimout;
+            }
+            try {
+              if (typeof clearTimeout === 'function') {
+                cachedClearTimeout = clearTimeout;
+              } else {
+                cachedClearTimeout = defaultClearTimeout;
+              }
+            } catch (e) {
+              cachedClearTimeout = defaultClearTimeout;
+            }
+          })();
+          function runTimeout(fun) {
+            if (cachedSetTimeout === setTimeout) {
+              //normal enviroments in sane situations
+              return setTimeout(fun, 0);
+            }
+            // if setTimeout wasn't available but was latter defined
+            if (
+              (cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) &&
+              setTimeout
+            ) {
+              cachedSetTimeout = setTimeout;
+              return setTimeout(fun, 0);
+            }
+            try {
+              // when when somebody has screwed with setTimeout but no I.E. maddness
+              return cachedSetTimeout(fun, 0);
+            } catch (e) {
+              try {
+                // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
