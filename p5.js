@@ -40261,3 +40261,159 @@
                 resolvedAbsolute = false;
 
               for (var i = arguments.length - 1; i >= -1 && !resolvedAbsolute; i--) {
+                var path = i >= 0 ? arguments[i] : process.cwd();
+
+                // Skip empty and invalid entries
+                if (typeof path !== 'string') {
+                  throw new TypeError('Arguments to path.resolve must be strings');
+                } else if (!path) {
+                  continue;
+                }
+
+                resolvedPath = path + '/' + resolvedPath;
+                resolvedAbsolute = path.charAt(0) === '/';
+              }
+
+              // At this point the path should be resolved to a full absolute path, but
+              // handle relative paths to be safe (might happen when process.cwd() fails)
+
+              // Normalize the path
+              resolvedPath = normalizeArray(
+                filter(resolvedPath.split('/'), function(p) {
+                  return !!p;
+                }),
+                !resolvedAbsolute
+              ).join('/');
+
+              return (resolvedAbsolute ? '/' : '') + resolvedPath || '.';
+            };
+
+            // path.normalize(path)
+            // posix version
+            exports.normalize = function(path) {
+              var isAbsolute = exports.isAbsolute(path),
+                trailingSlash = substr(path, -1) === '/';
+
+              // Normalize the path
+              path = normalizeArray(
+                filter(path.split('/'), function(p) {
+                  return !!p;
+                }),
+                !isAbsolute
+              ).join('/');
+
+              if (!path && !isAbsolute) {
+                path = '.';
+              }
+              if (path && trailingSlash) {
+                path += '/';
+              }
+
+              return (isAbsolute ? '/' : '') + path;
+            };
+
+            // posix version
+            exports.isAbsolute = function(path) {
+              return path.charAt(0) === '/';
+            };
+
+            // posix version
+            exports.join = function() {
+              var paths = Array.prototype.slice.call(arguments, 0);
+              return exports.normalize(
+                filter(paths, function(p, index) {
+                  if (typeof p !== 'string') {
+                    throw new TypeError('Arguments to path.join must be strings');
+                  }
+                  return p;
+                }).join('/')
+              );
+            };
+
+            // path.relative(from, to)
+            // posix version
+            exports.relative = function(from, to) {
+              from = exports.resolve(from).substr(1);
+              to = exports.resolve(to).substr(1);
+
+              function trim(arr) {
+                var start = 0;
+                for (; start < arr.length; start++) {
+                  if (arr[start] !== '') break;
+                }
+
+                var end = arr.length - 1;
+                for (; end >= 0; end--) {
+                  if (arr[end] !== '') break;
+                }
+
+                if (start > end) return [];
+                return arr.slice(start, end - start + 1);
+              }
+
+              var fromParts = trim(from.split('/'));
+              var toParts = trim(to.split('/'));
+
+              var length = Math.min(fromParts.length, toParts.length);
+              var samePartsLength = length;
+              for (var i = 0; i < length; i++) {
+                if (fromParts[i] !== toParts[i]) {
+                  samePartsLength = i;
+                  break;
+                }
+              }
+
+              var outputParts = [];
+              for (var i = samePartsLength; i < fromParts.length; i++) {
+                outputParts.push('..');
+              }
+
+              outputParts = outputParts.concat(toParts.slice(samePartsLength));
+
+              return outputParts.join('/');
+            };
+
+            exports.sep = '/';
+            exports.delimiter = ':';
+
+            exports.dirname = function(path) {
+              if (typeof path !== 'string') path = path + '';
+              if (path.length === 0) return '.';
+              var code = path.charCodeAt(0);
+              var hasRoot = code === 47 /*/*/;
+              var end = -1;
+              var matchedSlash = true;
+              for (var i = path.length - 1; i >= 1; --i) {
+                code = path.charCodeAt(i);
+                if (code === 47 /*/*/) {
+                  if (!matchedSlash) {
+                    end = i;
+                    break;
+                  }
+                } else {
+                  // We saw the first non-path separator
+                  matchedSlash = false;
+                }
+              }
+
+              if (end === -1) return hasRoot ? '/' : '.';
+              if (hasRoot && end === 1) {
+                // return '//';
+                // Backwards-compat fix:
+                return '/';
+              }
+              return path.slice(0, end);
+            };
+
+            function basename(path) {
+              if (typeof path !== 'string') path = path + '';
+
+              var start = 0;
+              var end = -1;
+              var matchedSlash = true;
+              var i;
+
+              for (i = path.length - 1; i >= 0; --i) {
+                if (path.charCodeAt(i) === 47 /*/*/) {
+                  // If we reached a path separator that was not part of a set of path
+                  // separators at the end of the string, stop now
