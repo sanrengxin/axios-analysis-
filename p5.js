@@ -40840,3 +40840,158 @@
 
             Headers.prototype.set = function(name, value) {
               this.map[normalizeName(name)] = normalizeValue(value);
+            };
+
+            Headers.prototype.forEach = function(callback, thisArg) {
+              for (var name in this.map) {
+                if (this.map.hasOwnProperty(name)) {
+                  callback.call(thisArg, this.map[name], name, this);
+                }
+              }
+            };
+
+            Headers.prototype.keys = function() {
+              var items = [];
+              this.forEach(function(value, name) {
+                items.push(name);
+              });
+              return iteratorFor(items);
+            };
+
+            Headers.prototype.values = function() {
+              var items = [];
+              this.forEach(function(value) {
+                items.push(value);
+              });
+              return iteratorFor(items);
+            };
+
+            Headers.prototype.entries = function() {
+              var items = [];
+              this.forEach(function(value, name) {
+                items.push([name, value]);
+              });
+              return iteratorFor(items);
+            };
+
+            if (support.iterable) {
+              Headers.prototype[Symbol.iterator] = Headers.prototype.entries;
+            }
+
+            function consumed(body) {
+              if (body.bodyUsed) {
+                return Promise.reject(new TypeError('Already read'));
+              }
+              body.bodyUsed = true;
+            }
+
+            function fileReaderReady(reader) {
+              return new Promise(function(resolve, reject) {
+                reader.onload = function() {
+                  resolve(reader.result);
+                };
+                reader.onerror = function() {
+                  reject(reader.error);
+                };
+              });
+            }
+
+            function readBlobAsArrayBuffer(blob) {
+              var reader = new FileReader();
+              var promise = fileReaderReady(reader);
+              reader.readAsArrayBuffer(blob);
+              return promise;
+            }
+
+            function readBlobAsText(blob) {
+              var reader = new FileReader();
+              var promise = fileReaderReady(reader);
+              reader.readAsText(blob);
+              return promise;
+            }
+
+            function readArrayBufferAsText(buf) {
+              var view = new Uint8Array(buf);
+              var chars = new Array(view.length);
+
+              for (var i = 0; i < view.length; i++) {
+                chars[i] = String.fromCharCode(view[i]);
+              }
+              return chars.join('');
+            }
+
+            function bufferClone(buf) {
+              if (buf.slice) {
+                return buf.slice(0);
+              } else {
+                var view = new Uint8Array(buf.byteLength);
+                view.set(new Uint8Array(buf));
+                return view.buffer;
+              }
+            }
+
+            function Body() {
+              this.bodyUsed = false;
+
+              this._initBody = function(body) {
+                this._bodyInit = body;
+                if (!body) {
+                  this._bodyText = '';
+                } else if (typeof body === 'string') {
+                  this._bodyText = body;
+                } else if (support.blob && Blob.prototype.isPrototypeOf(body)) {
+                  this._bodyBlob = body;
+                } else if (support.formData && FormData.prototype.isPrototypeOf(body)) {
+                  this._bodyFormData = body;
+                } else if (
+                  support.searchParams &&
+                  URLSearchParams.prototype.isPrototypeOf(body)
+                ) {
+                  this._bodyText = body.toString();
+                } else if (support.arrayBuffer && support.blob && isDataView(body)) {
+                  this._bodyArrayBuffer = bufferClone(body.buffer);
+                  // IE 10-11 can't handle a DataView body.
+                  this._bodyInit = new Blob([this._bodyArrayBuffer]);
+                } else if (
+                  support.arrayBuffer &&
+                  (ArrayBuffer.prototype.isPrototypeOf(body) || isArrayBufferView(body))
+                ) {
+                  this._bodyArrayBuffer = bufferClone(body);
+                } else {
+                  throw new Error('unsupported BodyInit type');
+                }
+
+                if (!this.headers.get('content-type')) {
+                  if (typeof body === 'string') {
+                    this.headers.set('content-type', 'text/plain;charset=UTF-8');
+                  } else if (this._bodyBlob && this._bodyBlob.type) {
+                    this.headers.set('content-type', this._bodyBlob.type);
+                  } else if (
+                    support.searchParams &&
+                    URLSearchParams.prototype.isPrototypeOf(body)
+                  ) {
+                    this.headers.set(
+                      'content-type',
+                      'application/x-www-form-urlencoded;charset=UTF-8'
+                    );
+                  }
+                }
+              };
+
+              if (support.blob) {
+                this.blob = function() {
+                  var rejected = consumed(this);
+                  if (rejected) {
+                    return rejected;
+                  }
+
+                  if (this._bodyBlob) {
+                    return Promise.resolve(this._bodyBlob);
+                  } else if (this._bodyArrayBuffer) {
+                    return Promise.resolve(new Blob([this._bodyArrayBuffer]));
+                  } else if (this._bodyFormData) {
+                    throw new Error('could not read FormData body as blob');
+                  } else {
+                    return Promise.resolve(new Blob([this._bodyText]));
+                  }
+                };
