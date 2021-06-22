@@ -40995,3 +40995,141 @@
                     return Promise.resolve(new Blob([this._bodyText]));
                   }
                 };
+
+                this.arrayBuffer = function() {
+                  if (this._bodyArrayBuffer) {
+                    return consumed(this) || Promise.resolve(this._bodyArrayBuffer);
+                  } else {
+                    return this.blob().then(readBlobAsArrayBuffer);
+                  }
+                };
+              }
+
+              this.text = function() {
+                var rejected = consumed(this);
+                if (rejected) {
+                  return rejected;
+                }
+
+                if (this._bodyBlob) {
+                  return readBlobAsText(this._bodyBlob);
+                } else if (this._bodyArrayBuffer) {
+                  return Promise.resolve(readArrayBufferAsText(this._bodyArrayBuffer));
+                } else if (this._bodyFormData) {
+                  throw new Error('could not read FormData body as text');
+                } else {
+                  return Promise.resolve(this._bodyText);
+                }
+              };
+
+              if (support.formData) {
+                this.formData = function() {
+                  return this.text().then(decode);
+                };
+              }
+
+              this.json = function() {
+                return this.text().then(JSON.parse);
+              };
+
+              return this;
+            }
+
+            // HTTP methods whose capitalization should be normalized
+            var methods = ['DELETE', 'GET', 'HEAD', 'OPTIONS', 'POST', 'PUT'];
+
+            function normalizeMethod(method) {
+              var upcased = method.toUpperCase();
+              return methods.indexOf(upcased) > -1 ? upcased : method;
+            }
+
+            function Request(input, options) {
+              options = options || {};
+              var body = options.body;
+
+              if (input instanceof Request) {
+                if (input.bodyUsed) {
+                  throw new TypeError('Already read');
+                }
+                this.url = input.url;
+                this.credentials = input.credentials;
+                if (!options.headers) {
+                  this.headers = new Headers(input.headers);
+                }
+                this.method = input.method;
+                this.mode = input.mode;
+                if (!body && input._bodyInit != null) {
+                  body = input._bodyInit;
+                  input.bodyUsed = true;
+                }
+              } else {
+                this.url = String(input);
+              }
+
+              this.credentials = options.credentials || this.credentials || 'omit';
+              if (options.headers || !this.headers) {
+                this.headers = new Headers(options.headers);
+              }
+              this.method = normalizeMethod(options.method || this.method || 'GET');
+              this.mode = options.mode || this.mode || null;
+              this.referrer = null;
+
+              if ((this.method === 'GET' || this.method === 'HEAD') && body) {
+                throw new TypeError('Body not allowed for GET or HEAD requests');
+              }
+              this._initBody(body);
+            }
+
+            Request.prototype.clone = function() {
+              return new Request(this, { body: this._bodyInit });
+            };
+
+            function decode(body) {
+              var form = new FormData();
+              body
+                .trim()
+                .split('&')
+                .forEach(function(bytes) {
+                  if (bytes) {
+                    var split = bytes.split('=');
+                    var name = split.shift().replace(/\+/g, ' ');
+                    var value = split.join('=').replace(/\+/g, ' ');
+                    form.append(decodeURIComponent(name), decodeURIComponent(value));
+                  }
+                });
+              return form;
+            }
+
+            function parseHeaders(rawHeaders) {
+              var headers = new Headers();
+              // Replace instances of \r\n and \n followed by at least one space or horizontal tab with a space
+              // https://tools.ietf.org/html/rfc7230#section-3.2
+              var preProcessedHeaders = rawHeaders.replace(/\r?\n[\t ]+/g, ' ');
+              preProcessedHeaders.split(/\r?\n/).forEach(function(line) {
+                var parts = line.split(':');
+                var key = parts.shift().trim();
+                if (key) {
+                  var value = parts.join(':').trim();
+                  headers.append(key, value);
+                }
+              });
+              return headers;
+            }
+
+            Body.call(Request.prototype);
+
+            function Response(bodyInit, options) {
+              if (!options) {
+                options = {};
+              }
+
+              this.type = 'default';
+              this.status = options.status === undefined ? 200 : options.status;
+              this.ok = this.status >= 200 && this.status < 300;
+              this.statusText = 'statusText' in options ? options.statusText : 'OK';
+              this.headers = new Headers(options.headers);
+              this.url = options.url || '';
+              this._initBody(bodyInit);
+            }
+
+            Body.call(Response.prototype);
