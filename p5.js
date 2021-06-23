@@ -41133,3 +41133,142 @@
             }
 
             Body.call(Response.prototype);
+
+            Response.prototype.clone = function() {
+              return new Response(this._bodyInit, {
+                status: this.status,
+                statusText: this.statusText,
+                headers: new Headers(this.headers),
+                url: this.url
+              });
+            };
+
+            Response.error = function() {
+              var response = new Response(null, { status: 0, statusText: '' });
+              response.type = 'error';
+              return response;
+            };
+
+            var redirectStatuses = [301, 302, 303, 307, 308];
+
+            Response.redirect = function(url, status) {
+              if (redirectStatuses.indexOf(status) === -1) {
+                throw new RangeError('Invalid status code');
+              }
+
+              return new Response(null, { status: status, headers: { location: url } });
+            };
+
+            self.Headers = Headers;
+            self.Request = Request;
+            self.Response = Response;
+
+            self.fetch = function(input, init) {
+              return new Promise(function(resolve, reject) {
+                var request = new Request(input, init);
+                var xhr = new XMLHttpRequest();
+
+                xhr.onload = function() {
+                  var options = {
+                    status: xhr.status,
+                    statusText: xhr.statusText,
+                    headers: parseHeaders(xhr.getAllResponseHeaders() || '')
+                  };
+                  options.url =
+                    'responseURL' in xhr
+                      ? xhr.responseURL
+                      : options.headers.get('X-Request-URL');
+                  var body = 'response' in xhr ? xhr.response : xhr.responseText;
+                  resolve(new Response(body, options));
+                };
+
+                xhr.onerror = function() {
+                  reject(new TypeError('Network request failed'));
+                };
+
+                xhr.ontimeout = function() {
+                  reject(new TypeError('Network request failed'));
+                };
+
+                xhr.open(request.method, request.url, true);
+
+                if (request.credentials === 'include') {
+                  xhr.withCredentials = true;
+                } else if (request.credentials === 'omit') {
+                  xhr.withCredentials = false;
+                }
+
+                if ('responseType' in xhr && support.blob) {
+                  xhr.responseType = 'blob';
+                }
+
+                request.headers.forEach(function(value, name) {
+                  xhr.setRequestHeader(name, value);
+                });
+
+                xhr.send(
+                  typeof request._bodyInit === 'undefined' ? null : request._bodyInit
+                );
+              });
+            };
+            self.fetch.polyfill = true;
+          })(typeof self !== 'undefined' ? self : this);
+        },
+        {}
+      ],
+      38: [
+        function(_dereq_, module, exports) {
+          'use strict';
+          Object.defineProperty(exports, '__esModule', { value: true });
+          exports.default = void 0;
+
+          var _main = _interopRequireDefault(_dereq_('../core/main'));
+          var _color_conversion = _interopRequireDefault(
+            _dereq_('../color/color_conversion')
+          );
+          function _interopRequireDefault(obj) {
+            return obj && obj.__esModule ? obj : { default: obj };
+          } /** //stores the original hsb values
+           * @module Environment
+           * @submodule Environment
+           * @for p5
+           * @requires core
+           */
+          var originalHSB; //stores values for color name exceptions
+          var colorExceptions = [
+            {
+              h: 0,
+              s: 0,
+              b: 0.8275,
+              name: 'gray'
+            },
+
+            {
+              h: 0,
+              s: 0,
+              b: 0.8627,
+              name: 'gray'
+            },
+
+            {
+              h: 0,
+              s: 0,
+              b: 0.7529,
+              name: 'gray'
+            },
+
+            {
+              h: 0.0167,
+              s: 0.1176,
+              b: 1,
+              name: 'light pink'
+            }
+          ];
+
+          //stores values for color names
+          var colorLookUp = [
+            {
+              h: 0,
+              s: 0,
+              b: 0,
+              name: 'black'
