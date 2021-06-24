@@ -41272,3 +41272,150 @@
               s: 0,
               b: 0,
               name: 'black'
+            },
+
+            {
+              h: 0,
+              s: 0,
+              b: 0.5,
+              name: 'gray'
+            },
+
+            {
+              h: 0,
+              s: 0,
+              b: 1,
+              name: 'white'
+            },
+
+            {
+              h: 0,
+              s: 0.5,
+              b: 0.5,
+              name: 'dark maroon'
+            },
+
+            {
+              h: 0,
+              s: 0.5,
+              b: 1,
+              name: 'salmon pink'
+            },
+
+            {
+              h: 0,
+              s: 1,
+              b: 0,
+              name: 'black'
+            },
+
+            {
+              h: 0,
+              s: 1,
+              b: 0.5,
+              name: 'dark red'
+            },
+
+            {
+              h: 0,
+              s: 1,
+              b: 1,
+              name: 'red'
+            },
+
+            {
+              h: 5,
+              s: 0,
+              b: 1,
+              name: 'very light peach'
+            },
+
+            {
+              h: 5,
+              s: 0.5,
+              b: 0.5,
+              name: 'brown'
+            },
+
+            {
+              h: 5,
+              s: 0.5,
+              b: 1,
+              name: 'peach'
+            },
+
+            {
+              h: 5,
+              s: 1,
+              b: 0.5,
+              name: 'brick red'
+            },
+
+            {
+              h: 5,
+              s: 1,
+              b: 1,
+              name: 'crimson'
+            },
+
+            {
+              h: 10,
+              s: 0,
+              b: 1,
+              name: 'light peach'
+            },
+
+            {
+              h: 10,
+              s: 0.5,
+              b: 0.5,
+              name: 'brown'
+            },
+
+            {
+              h: 10,
+              s: 0.5,
+              b: 1,
+              name: 'light orange'
+            },
+
+            {
+              h: 10,
+              s: 1,
+              b: 0.5,
+              name: 'brown'
+            },
+
+            {
+              h: 10,
+              s: 1,
+              b: 1,
+              name: 'orange'
+            },
+
+            {
+              h: 15,
+              s: 0,
+              b: 1,
+              name: 'very light yellow'
+            },
+
+            {
+              h: 15,
+              s: 0.5,
+              b: 0.5,
+              name: 'olive green'
+            },
+
+            {
+              h: 15,
+              s: 0.5,
+              b: 1,
+              name: 'light yellow'
+            },
+
+            {
+              h: 15,
+              s: 1,
+              b: 0,
+              name: 'dark olive green'
