@@ -41419,3 +41419,144 @@
               s: 1,
               b: 0,
               name: 'dark olive green'
+            },
+
+            {
+              h: 15,
+              s: 1,
+              b: 0.5,
+              name: 'olive green'
+            },
+
+            {
+              h: 15,
+              s: 1,
+              b: 1,
+              name: 'yellow'
+            },
+
+            {
+              h: 20,
+              s: 0,
+              b: 1,
+              name: 'very light yellow'
+            },
+
+            {
+              h: 20,
+              s: 0.5,
+              b: 0.5,
+              name: 'olive green'
+            },
+
+            {
+              h: 20,
+              s: 0.5,
+              b: 1,
+              name: 'light yellow green'
+            },
+
+            {
+              h: 20,
+              s: 1,
+              b: 0,
+              name: 'dark olive green'
+            },
+
+            {
+              h: 20,
+              s: 1,
+              b: 0.5,
+              name: 'dark yellow green'
+            },
+
+            {
+              h: 20,
+              s: 1,
+              b: 1,
+              name: 'yellow green'
+            },
+
+            {
+              h: 25,
+              s: 0.5,
+              b: 0.5,
+              name: 'dark yellow green'
+            },
+
+            {
+              h: 25,
+              s: 0.5,
+              b: 1,
+              name: 'light green'
+            },
+
+            {
+              h: 25,
+              s: 1,
+              b: 0.5,
+              name: 'dark green'
+            },
+
+            {
+              h: 25,
+              s: 1,
+              b: 1,
+              name: 'green'
+            },
+
+            {
+              h: 30,
+              s: 0.5,
+              b: 1,
+              name: 'light green'
+            },
+
+            {
+              h: 30,
+              s: 1,
+              b: 0.5,
+              name: 'dark green'
+            },
+
+            {
+              h: 30,
+              s: 1,
+              b: 1,
+              name: 'green'
+            },
+
+            {
+              h: 35,
+              s: 0,
+              b: 0.5,
+              name: 'light green'
+            },
+
+            {
+              h: 35,
+              s: 0,
+              b: 1,
+              name: 'very light green'
+            },
+
+            {
+              h: 35,
+              s: 0.5,
+              b: 0.5,
+              name: 'dark green'
+            },
+
+            {
+              h: 35,
+              s: 0.5,
+              b: 1,
+              name: 'light green'
+            },
+
+            {
+              h: 35,
+              s: 1,
+              b: 0,
+              name: 'very dark green'
+            },
