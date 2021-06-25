@@ -41560,3 +41560,139 @@
               b: 0,
               name: 'very dark green'
             },
+
+            {
+              h: 35,
+              s: 1,
+              b: 0.5,
+              name: 'dark green'
+            },
+
+            {
+              h: 35,
+              s: 1,
+              b: 1,
+              name: 'green'
+            },
+
+            {
+              h: 40,
+              s: 0,
+              b: 1,
+              name: 'very light green'
+            },
+
+            {
+              h: 40,
+              s: 0.5,
+              b: 0.5,
+              name: 'dark green'
+            },
+
+            {
+              h: 40,
+              s: 0.5,
+              b: 1,
+              name: 'light green'
+            },
+
+            {
+              h: 40,
+              s: 1,
+              b: 0.5,
+              name: 'dark green'
+            },
+
+            {
+              h: 40,
+              s: 1,
+              b: 1,
+              name: 'green'
+            },
+
+            {
+              h: 45,
+              s: 0.5,
+              b: 1,
+              name: 'light turquoise'
+            },
+
+            {
+              h: 45,
+              s: 1,
+              b: 0.5,
+              name: 'dark turquoise'
+            },
+
+            {
+              h: 45,
+              s: 1,
+              b: 1,
+              name: 'turquoise'
+            },
+
+            {
+              h: 50,
+              s: 0,
+              b: 1,
+              name: 'light sky blue'
+            },
+
+            {
+              h: 50,
+              s: 0.5,
+              b: 0.5,
+              name: 'dark cyan'
+            },
+
+            {
+              h: 50,
+              s: 0.5,
+              b: 1,
+              name: 'light cyan'
+            },
+
+            {
+              h: 50,
+              s: 1,
+              b: 0.5,
+              name: 'dark cyan'
+            },
+
+            {
+              h: 50,
+              s: 1,
+              b: 1,
+              name: 'cyan'
+            },
+
+            {
+              h: 55,
+              s: 0,
+              b: 1,
+              name: 'light sky blue'
+            },
+
+            {
+              h: 55,
+              s: 0.5,
+              b: 1,
+              name: 'light sky blue'
+            },
+
+            {
+              h: 55,
+              s: 1,
+              b: 0.5,
+              name: 'dark blue'
+            },
+
+            {
+              h: 55,
+              s: 1,
+              b: 1,
+              name: 'sky blue'
+            },
+
+            {
+              h: 60,
