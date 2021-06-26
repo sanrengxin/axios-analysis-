@@ -41696,3 +41696,135 @@
 
             {
               h: 60,
+              s: 0,
+              b: 0.5,
+              name: 'gray'
+            },
+
+            {
+              h: 60,
+              s: 0,
+              b: 1,
+              name: 'very light blue'
+            },
+
+            {
+              h: 60,
+              s: 0.5,
+              b: 0.5,
+              name: 'blue'
+            },
+
+            {
+              h: 60,
+              s: 0.5,
+              b: 1,
+              name: 'light blue'
+            },
+
+            {
+              h: 60,
+              s: 1,
+              b: 0.5,
+              name: 'navy blue'
+            },
+
+            {
+              h: 60,
+              s: 1,
+              b: 1,
+              name: 'blue'
+            },
+
+            {
+              h: 65,
+              s: 0,
+              b: 1,
+              name: 'lavender'
+            },
+
+            {
+              h: 65,
+              s: 0.5,
+              b: 0.5,
+              name: 'navy blue'
+            },
+
+            {
+              h: 65,
+              s: 0.5,
+              b: 1,
+              name: 'light purple'
+            },
+
+            {
+              h: 65,
+              s: 1,
+              b: 0.5,
+              name: 'dark navy blue'
+            },
+
+            {
+              h: 65,
+              s: 1,
+              b: 1,
+              name: 'blue'
+            },
+
+            {
+              h: 70,
+              s: 0,
+              b: 1,
+              name: 'lavender'
+            },
+
+            {
+              h: 70,
+              s: 0.5,
+              b: 0.5,
+              name: 'navy blue'
+            },
+
+            {
+              h: 70,
+              s: 0.5,
+              b: 1,
+              name: 'lavender blue'
+            },
+
+            {
+              h: 70,
+              s: 1,
+              b: 0.5,
+              name: 'dark navy blue'
+            },
+
+            {
+              h: 70,
+              s: 1,
+              b: 1,
+              name: 'blue'
+            },
+
+            {
+              h: 75,
+              s: 0.5,
+              b: 1,
+              name: 'lavender'
+            },
+
+            {
+              h: 75,
+              s: 1,
+              b: 0.5,
+              name: 'dark purple'
+            },
+
+            {
+              h: 75,
+              s: 1,
+              b: 1,
+              name: 'purple'
+            },
+
+            {
