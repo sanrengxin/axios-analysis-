@@ -41828,3 +41828,134 @@
             },
 
             {
+              h: 80,
+              s: 0.5,
+              b: 1,
+              name: 'pinkish purple'
+            },
+
+            {
+              h: 80,
+              s: 1,
+              b: 0.5,
+              name: 'dark purple'
+            },
+
+            {
+              h: 80,
+              s: 1,
+              b: 1,
+              name: 'purple'
+            },
+
+            {
+              h: 85,
+              s: 0,
+              b: 1,
+              name: 'light pink'
+            },
+
+            {
+              h: 85,
+              s: 0.5,
+              b: 0.5,
+              name: 'purple'
+            },
+
+            {
+              h: 85,
+              s: 0.5,
+              b: 1,
+              name: 'light fuchsia'
+            },
+
+            {
+              h: 85,
+              s: 1,
+              b: 0.5,
+              name: 'dark fuchsia'
+            },
+
+            {
+              h: 85,
+              s: 1,
+              b: 1,
+              name: 'fuchsia'
+            },
+
+            {
+              h: 90,
+              s: 0.5,
+              b: 0.5,
+              name: 'dark fuchsia'
+            },
+
+            {
+              h: 90,
+              s: 0.5,
+              b: 1,
+              name: 'hot pink'
+            },
+
+            {
+              h: 90,
+              s: 1,
+              b: 0.5,
+              name: 'dark fuchsia'
+            },
+
+            {
+              h: 90,
+              s: 1,
+              b: 1,
+              name: 'fuchsia'
+            },
+
+            {
+              h: 95,
+              s: 0,
+              b: 1,
+              name: 'pink'
+            },
+
+            {
+              h: 95,
+              s: 0.5,
+              b: 1,
+              name: 'light pink'
+            },
+
+            {
+              h: 95,
+              s: 1,
+              b: 0.5,
+              name: 'dark magenta'
+            },
+
+            {
+              h: 95,
+              s: 1,
+              b: 1,
+              name: 'magenta'
+            }
+          ];
+
+          //returns text with color name
+          function _calculateColor(hsb) {
+            var colortext;
+            //round hue
+            if (hsb[0] !== 0) {
+              hsb[0] = Math.round(hsb[0] * 100);
+              var hue = hsb[0].toString().split('');
+              var last = hue.length - 1;
+              hue[last] = parseInt(hue[last]);
+              //if last digit of hue is < 2.5 make it 0
+              if (hue[last] < 2.5) {
+                hue[last] = 0;
+                //if last digit of hue is >= 2.5 and less than 7.5 make it 5
+              } else if (hue[last] >= 2.5 && hue[last] < 7.5) {
+                hue[last] = 5;
+              }
+              //if hue only has two digits
+              if (hue.length === 2) {
+                hue[0] = parseInt(hue[0]);
