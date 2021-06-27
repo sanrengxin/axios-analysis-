@@ -41959,3 +41959,138 @@
               //if hue only has two digits
               if (hue.length === 2) {
                 hue[0] = parseInt(hue[0]);
+                //if last is greater than 7.5
+                if (hue[last] >= 7.5) {
+                  //add one to the tens
+                  hue[last] = 0;
+                  hue[0] = hue[0] + 1;
+                }
+                hsb[0] = hue[0] * 10 + hue[1];
+              } else {
+                if (hue[last] >= 7.5) {
+                  hsb[0] = 10;
+                } else {
+                  hsb[0] = hue[last];
+                }
+              }
+            }
+            //map brightness from 0 to 1
+            hsb[2] = hsb[2] / 255;
+            //round saturation and brightness
+            for (var i = hsb.length - 1; i >= 1; i--) {
+              if (hsb[i] <= 0.25) {
+                hsb[i] = 0;
+              } else if (hsb[i] > 0.25 && hsb[i] < 0.75) {
+                hsb[i] = 0.5;
+              } else {
+                hsb[i] = 1;
+              }
+            }
+            //after rounding, if the values are hue 0, saturation 0 and brightness 1
+            //look at color exceptions which includes several tones from white to gray
+            if (hsb[0] === 0 && hsb[1] === 0 && hsb[2] === 1) {
+              //round original hsb values
+              for (var _i = 2; _i >= 0; _i--) {
+                originalHSB[_i] = Math.round(originalHSB[_i] * 10000) / 10000;
+              }
+              //compare with the values in the colorExceptions array
+              for (var e = 0; e < colorExceptions.length; e++) {
+                if (
+                  colorExceptions[e].h === originalHSB[0] &&
+                  colorExceptions[e].s === originalHSB[1] &&
+                  colorExceptions[e].b === originalHSB[2]
+                ) {
+                  colortext = colorExceptions[e].name;
+                  break;
+                } else {
+                  //if there is no match return white
+                  colortext = 'white';
+                }
+              }
+            } else {
+              //otherwise, compare with values in colorLookUp
+              for (var _i2 = 0; _i2 < colorLookUp.length; _i2++) {
+                if (
+                  colorLookUp[_i2].h === hsb[0] &&
+                  colorLookUp[_i2].s === hsb[1] &&
+                  colorLookUp[_i2].b === hsb[2]
+                ) {
+                  colortext = colorLookUp[_i2].name;
+                  break;
+                }
+              }
+            }
+            return colortext;
+          }
+
+          //gets rgba and returs a color name
+          _main.default.prototype._rgbColorName = function(arg) {
+            //conversts rgba to hsb
+            var hsb = _color_conversion.default._rgbaToHSBA(arg);
+            //stores hsb in global variable
+            originalHSB = hsb;
+            //calculate color name
+            return _calculateColor([hsb[0], hsb[1], hsb[2]]);
+          };
+          var _default = _main.default;
+          exports.default = _default;
+        },
+        { '../color/color_conversion': 44, '../core/main': 59 }
+      ],
+      39: [
+        function(_dereq_, module, exports) {
+          'use strict';
+          Object.defineProperty(exports, '__esModule', { value: true });
+          exports.default = void 0;
+
+          var _main = _interopRequireDefault(_dereq_('../core/main'));
+          function _interopRequireDefault(obj) {
+            return obj && obj.__esModule ? obj : { default: obj };
+          }
+          /**
+           * @module Environment
+           * @submodule Environment
+           * @for p5
+           * @requires core
+           */ var descContainer = '_Description'; //Fallback container
+          var fallbackDescId = '_fallbackDesc'; //Fallback description
+          var fallbackTableId = '_fallbackTable'; //Fallback Table
+          var fallbackTableElId = '_fte_'; //Fallback Table Element
+          var labelContainer = '_Label'; //Label container
+          var labelDescId = '_labelDesc'; //Label description
+          var labelTableId = '_labelTable'; //Label Table
+          var labelTableElId = '_lte_'; //Label Table Element
+          /**
+           * Creates a screen reader accessible description for the canvas.
+           * The first parameter should be a string with a description of the canvas.
+           * The second parameter is optional. If specified, it determines how the
+           * description is displayed.
+           *
+           * <code class="language-javascript">describe(text, LABEL)</code> displays
+           * the description to all users as a <a
+           * href="https://en.wikipedia.org/wiki/Museum_label" target="_blank">
+           * tombstone or exhibit label/caption</a> in a
+           * <code class="language-javascript">&lt;div class="p5Label"&gt;&lt;/div&gt;</code>
+           * adjacent to the canvas. You can style it as you wish in your CSS.
+           *
+           * <code class="language-javascript">describe(text, FALLBACK)</code> makes the
+           * description accessible to screen-reader users only, in
+           * <a href="https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Hit_regions_and_accessibility" target="_blank">
+           * a sub DOM inside the canvas element</a>. If a second parameter is not
+           * specified, by default, the description will only be available to
+           * screen-reader users.
+           *
+           * @method describe
+           * @param  {String} text      description of the canvas
+           * @param  {Constant} [display] either LABEL or FALLBACK (Optional)
+           *
+           * @example
+           * <div>
+           * <code>
+           * describe('pink square with red heart in the bottom right corner', LABEL);
+           * background('pink');
+           * fill('red');
+           * noStroke();
+           * ellipse(67, 67, 20, 20);
+           * ellipse(83, 67, 20, 20);
+           * triangle(91, 73, 75, 95, 59, 73);
