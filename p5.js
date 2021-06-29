@@ -42242,3 +42242,153 @@
                 this.descriptions.labelElements = {};
               }
               //if html structure for label element description is ready
+              if (this.descriptions.labelElements[name]) {
+                //if label element description is different
+                if (this.descriptions.labelElements[name].innerHTML !== inner) {
+                  //update label element description
+                  this.descriptions.labelElements[name].innerHTML = inner;
+                }
+              } else {
+                //create label element html structure
+                this._describeElementHTML('label', name, inner);
+              }
+            }
+          };
+
+          /*
+    *
+    * Helper functions for describe() and describeElement().
+    *
+    */
+
+          // check that text is not LABEL or FALLBACK and ensure text ends with punctuation mark
+          function _descriptionText(text) {
+            if (text === 'label' || text === 'fallback') {
+              throw new Error('description should not be LABEL or FALLBACK');
+            }
+            //if string does not end with '.'
+            if (
+              !text.endsWith('.') &&
+              !text.endsWith(';') &&
+              !text.endsWith(',') &&
+              !text.endsWith('?') &&
+              !text.endsWith('!')
+            ) {
+              //add '.' to the end of string
+              text = text + '.';
+            }
+            return text;
+          }
+
+          /*
+   * Helper functions for describe()
+   */
+
+          //creates HTML structure for canvas descriptions
+          _main.default.prototype._describeHTML = function(type, text) {
+            var cnvId = this.canvas.id;
+            if (type === 'fallback') {
+              //if there is no description container
+              if (!this.dummyDOM.querySelector('#'.concat(cnvId + descContainer))) {
+                //if there are no accessible outputs (see textOutput() and gridOutput())
+                var html = '<div id="'
+                  .concat(cnvId)
+                  .concat(
+                    descContainer,
+                    '" role="region" aria-label="Canvas Description"><p id="'
+                  )
+                  .concat(cnvId)
+                  .concat(fallbackDescId, '"></p></div>');
+                if (!this.dummyDOM.querySelector('#'.concat(cnvId, 'accessibleOutput'))) {
+                  //create description container + <p> for fallback description
+                  this.dummyDOM.querySelector('#'.concat(cnvId)).innerHTML = html;
+                } else {
+                  //create description container + <p> for fallback description before outputs
+                  this.dummyDOM
+                    .querySelector('#'.concat(cnvId, 'accessibleOutput'))
+                    .insertAdjacentHTML('beforebegin', html);
+                }
+              } else {
+                //if describeElement() has already created the container and added a table of elements
+                //create fallback description <p> before the table
+                this.dummyDOM
+                  .querySelector('#' + cnvId + fallbackTableId)
+                  .insertAdjacentHTML(
+                    'beforebegin',
+                    '<p id="'.concat(cnvId + fallbackDescId, '"></p>')
+                  );
+              }
+              //if the container for the description exists
+              this.descriptions.fallback = this.dummyDOM.querySelector(
+                '#'.concat(cnvId).concat(fallbackDescId)
+              );
+
+              this.descriptions.fallback.innerHTML = text;
+              return;
+            } else if (type === 'label') {
+              //if there is no label container
+              if (!this.dummyDOM.querySelector('#'.concat(cnvId + labelContainer))) {
+                var _html = '<div id="'
+                  .concat(cnvId)
+                  .concat(labelContainer, '" class="p5Label"><p id="')
+                  .concat(cnvId)
+                  .concat(labelDescId, '"></p></div>');
+                //if there are no accessible outputs (see textOutput() and gridOutput())
+                if (
+                  !this.dummyDOM.querySelector('#'.concat(cnvId, 'accessibleOutputLabel'))
+                ) {
+                  //create label container + <p> for label description
+                  this.dummyDOM
+                    .querySelector('#' + cnvId)
+                    .insertAdjacentHTML('afterend', _html);
+                } else {
+                  //create label container + <p> for label description before outputs
+                  this.dummyDOM
+                    .querySelector('#'.concat(cnvId, 'accessibleOutputLabel'))
+                    .insertAdjacentHTML('beforebegin', _html);
+                }
+              } else if (this.dummyDOM.querySelector('#'.concat(cnvId + labelTableId))) {
+                //if describeElement() has already created the container and added a table of elements
+                //create label description <p> before the table
+                this.dummyDOM
+                  .querySelector('#'.concat(cnvId + labelTableId))
+                  .insertAdjacentHTML(
+                    'beforebegin',
+                    '<p id="'.concat(cnvId).concat(labelDescId, '"></p>')
+                  );
+              }
+              this.descriptions.label = this.dummyDOM.querySelector(
+                '#' + cnvId + labelDescId
+              );
+
+              this.descriptions.label.innerHTML = text;
+              return;
+            }
+          };
+
+          /*
+    * Helper functions for describeElement().
+    */
+
+          //check that name is not LABEL or FALLBACK and ensure text ends with colon
+          function _elementName(name) {
+            if (name === 'label' || name === 'fallback') {
+              throw new Error('element name should not be LABEL or FALLBACK');
+            }
+            //check if last character of string n is '.', ';', or ','
+            if (name.endsWith('.') || name.endsWith(';') || name.endsWith(',')) {
+              //replace last character with ':'
+              name = name.replace(/.$/, ':');
+            } else if (!name.endsWith(':')) {
+              //if string n does not end with ':'
+              //add ':'' at the end of string
+              name = name + ':';
+            }
+            return name;
+          }
+
+          //creates HTML structure for element descriptions
+          _main.default.prototype._describeElementHTML = function(type, name, text) {
+            var cnvId = this.canvas.id;
+            if (type === 'fallback') {
+              //if there is no description container
