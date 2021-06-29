@@ -42094,3 +42094,151 @@
            * ellipse(67, 67, 20, 20);
            * ellipse(83, 67, 20, 20);
            * triangle(91, 73, 75, 95, 59, 73);
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * let x = 0;
+           * function draw() {
+           *   if (x > 100) {
+           *     x = 0;
+           *   }
+           *   background(220);
+           *   fill(0, 255, 0);
+           *   ellipse(x, 50, 40, 40);
+           *   x = x + 0.1;
+           *   describe('green circle at x pos ' + round(x) + ' moving to the right');
+           * }
+           * </code>
+           * </div>
+           *
+           */ _main.default.prototype.describe = function(text, display) {
+            _main.default._validateParameters('describe', arguments);
+            if (typeof text !== 'string') {
+              return;
+            }
+            var cnvId = this.canvas.id;
+            //calls function that adds punctuation for better screen reading
+            text = _descriptionText(text);
+            //if there is no dummyDOM
+            if (!this.dummyDOM) {
+              this.dummyDOM = document.getElementById(cnvId).parentNode;
+            }
+            if (!this.descriptions) {
+              this.descriptions = {};
+            }
+            //check if html structure for description is ready
+            if (this.descriptions.fallback) {
+              //check if text is different from current description
+              if (this.descriptions.fallback.innerHTML !== text) {
+                //update description
+                this.descriptions.fallback.innerHTML = text;
+              }
+            } else {
+              //create fallback html structure
+              this._describeHTML('fallback', text);
+            }
+            //if display is LABEL
+            if (display === this.LABEL) {
+              //check if html structure for label is ready
+              if (this.descriptions.label) {
+                //check if text is different from current label
+                if (this.descriptions.label.innerHTML !== text) {
+                  //update label description
+                  this.descriptions.label.innerHTML = text;
+                }
+              } else {
+                //create label html structure
+                this._describeHTML('label', text);
+              }
+            }
+          };
+
+          /**
+           * This function creates a screen-reader accessible
+           * description for elements —shapes or groups of shapes that create
+           * meaning together— in the canvas. The first paramater should
+           * be the name of the element. The second parameter should be a string
+           * with a description of the element. The third parameter is optional.
+           * If specified, it determines how the element description is displayed.
+           *
+           * <code class="language-javascript">describeElement(name, text, LABEL)</code>
+           * displays the element description to all users as a
+           * <a href="https://en.wikipedia.org/wiki/Museum_label" target="_blank">
+           * tombstone or exhibit label/caption</a> in a
+           * <code class="language-javascript">&lt;div class="p5Label"&gt;&lt;/div&gt;</code>
+           * adjacent to the canvas. You can style it as you wish in your CSS.
+           *
+           * <code class="language-javascript">describeElement(name, text, FALLBACK)</code>
+           * makes the element description accessible to screen-reader users
+           * only, in <a href="https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Hit_regions_and_accessibility" target="_blank">
+           * a sub DOM inside the canvas element</a>. If a second parameter is not
+           * specified, by default, the element description will only be available
+           * to screen-reader users.
+           *
+           * @method describeElement
+           * @param  {String} name      name of the element
+           * @param  {String} text      description of the element
+           * @param  {Constant} [display] either LABEL or FALLBACK (Optional)
+           *
+           * @example
+           * <div>
+           * <code>
+           * describe('Heart and yellow circle over pink background', LABEL);
+           * noStroke();
+           * background('pink');
+           * describeElement('Circle', 'Yellow circle in the top left corner', LABEL);
+           * fill('yellow');
+           * ellipse(25, 25, 40, 40);
+           * describeElement('Heart', 'red heart in the bottom right corner', LABEL);
+           * fill('red');
+           * ellipse(66.6, 66.6, 20, 20);
+           * ellipse(83.2, 66.6, 20, 20);
+           * triangle(91.2, 72.6, 75, 95, 58.6, 72.6);
+           * </code>
+           * </div>
+           */
+
+          _main.default.prototype.describeElement = function(name, text, display) {
+            _main.default._validateParameters('describeElement', arguments);
+            if (typeof text !== 'string' || typeof name !== 'string') {
+              return;
+            }
+            var cnvId = this.canvas.id;
+            //calls function that adds punctuation for better screen reading
+            text = _descriptionText(text);
+            //calls function that adds punctuation for better screen reading
+            var elementName = _elementName(name);
+            //remove any special characters from name to use it as html id
+            name = name.replace(/[^a-zA-Z0-9 ]/g, '');
+            //store element description
+            var inner = '<th scope="row">'
+              .concat(elementName, '</th><td>')
+              .concat(text, '</td>');
+            //if there is no dummyDOM
+            if (!this.dummyDOM) {
+              this.dummyDOM = document.getElementById(cnvId).parentNode;
+            }
+            if (!this.descriptions) {
+              this.descriptions = { fallbackElements: {} };
+            } else if (!this.descriptions.fallbackElements) {
+              this.descriptions.fallbackElements = {};
+            }
+            //check if html structure for element description is ready
+            if (this.descriptions.fallbackElements[name]) {
+              //if current element description is not the same as inner
+              if (this.descriptions.fallbackElements[name].innerHTML !== inner) {
+                //update element description
+                this.descriptions.fallbackElements[name].innerHTML = inner;
+              }
+            } else {
+              //create fallback html structure
+              this._describeElementHTML('fallback', name, inner);
+            }
+            //if display is LABEL
+            if (display === this.LABEL) {
+              if (!this.descriptions.labelElements) {
+                this.descriptions.labelElements = {};
+              }
+              //if html structure for label element description is ready
