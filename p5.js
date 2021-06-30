@@ -42392,3 +42392,146 @@
             var cnvId = this.canvas.id;
             if (type === 'fallback') {
               //if there is no description container
+              if (!this.dummyDOM.querySelector('#'.concat(cnvId + descContainer))) {
+                //if there are no accessible outputs (see textOutput() and gridOutput())
+                var html = '<div id="'
+                  .concat(cnvId)
+                  .concat(
+                    descContainer,
+                    '" role="region" aria-label="Canvas Description"><table id="'
+                  )
+                  .concat(cnvId)
+                  .concat(
+                    fallbackTableId,
+                    '"><caption>Canvas elements and their descriptions</caption></table></div>'
+                  );
+                if (!this.dummyDOM.querySelector('#'.concat(cnvId, 'accessibleOutput'))) {
+                  //create container + table for element descriptions
+                  this.dummyDOM.querySelector('#' + cnvId).innerHTML = html;
+                } else {
+                  //create container + table for element descriptions before outputs
+                  this.dummyDOM
+                    .querySelector('#'.concat(cnvId, 'accessibleOutput'))
+                    .insertAdjacentHTML('beforebegin', html);
+                }
+              } else if (!this.dummyDOM.querySelector('#' + cnvId + fallbackTableId)) {
+                //if describe() has already created the container and added a description
+                //and there is no table create fallback table for element description after
+                //fallback description
+                this.dummyDOM
+                  .querySelector('#' + cnvId + fallbackDescId)
+                  .insertAdjacentHTML(
+                    'afterend',
+                    '<table id="'
+                      .concat(cnvId)
+                      .concat(
+                        fallbackTableId,
+                        '"><caption>Canvas elements and their descriptions</caption></table>'
+                      )
+                  );
+              }
+              //create a table row for the element
+              var tableRow = document.createElement('tr');
+              tableRow.id = cnvId + fallbackTableElId + name;
+              this.dummyDOM
+                .querySelector('#' + cnvId + fallbackTableId)
+                .appendChild(tableRow);
+              //update element description
+              this.descriptions.fallbackElements[name] = this.dummyDOM.querySelector(
+                '#'
+                  .concat(cnvId)
+                  .concat(fallbackTableElId)
+                  .concat(name)
+              );
+
+              this.descriptions.fallbackElements[name].innerHTML = text;
+              return;
+            } else if (type === 'label') {
+              //If display is LABEL creates a div adjacent to the canvas element with
+              //a table, a row header cell with the name of the elements,
+              //and adds the description of the element in adjecent cell.
+              //if there is no label description container
+              if (!this.dummyDOM.querySelector('#'.concat(cnvId + labelContainer))) {
+                //if there are no accessible outputs (see textOutput() and gridOutput())
+                var _html2 = '<div id="'
+                  .concat(cnvId)
+                  .concat(labelContainer, '" class="p5Label"><table id="')
+                  .concat(cnvId)
+                  .concat(labelTableId, '"></table></div>');
+                if (
+                  !this.dummyDOM.querySelector('#'.concat(cnvId, 'accessibleOutputLabel'))
+                ) {
+                  //create container + table for element descriptions
+                  this.dummyDOM
+                    .querySelector('#' + cnvId)
+                    .insertAdjacentHTML('afterend', _html2);
+                } else {
+                  //create container + table for element descriptions before outputs
+                  this.dummyDOM
+                    .querySelector('#'.concat(cnvId, 'accessibleOutputLabel'))
+                    .insertAdjacentHTML('beforebegin', _html2);
+                }
+              } else if (!this.dummyDOM.querySelector('#'.concat(cnvId + labelTableId))) {
+                //if describe() has already created the label container and added a description
+                //and there is no table create label table for element description after
+                //label description
+                this.dummyDOM
+                  .querySelector('#' + cnvId + labelDescId)
+                  .insertAdjacentHTML(
+                    'afterend',
+                    '<table id="'.concat(cnvId + labelTableId, '"></table>')
+                  );
+              }
+              //create a table row for the element label description
+              var _tableRow = document.createElement('tr');
+              _tableRow.id = cnvId + labelTableElId + name;
+              this.dummyDOM
+                .querySelector('#' + cnvId + labelTableId)
+                .appendChild(_tableRow);
+              //update element label description
+              this.descriptions.labelElements[name] = this.dummyDOM.querySelector(
+                '#'
+                  .concat(cnvId)
+                  .concat(labelTableElId)
+                  .concat(name)
+              );
+
+              this.descriptions.labelElements[name].innerHTML = text;
+            }
+          };
+          var _default = _main.default;
+          exports.default = _default;
+        },
+        { '../core/main': 59 }
+      ],
+      40: [
+        function(_dereq_, module, exports) {
+          'use strict';
+          Object.defineProperty(exports, '__esModule', { value: true });
+          exports.default = void 0;
+
+          var _main = _interopRequireDefault(_dereq_('../core/main'));
+          function _interopRequireDefault(obj) {
+            return obj && obj.__esModule ? obj : { default: obj };
+          } /** //the functions in this file support updating the grid output
+           * @module Environment
+           * @submodule Environment
+           * @for p5
+           * @requires core
+           */
+          //updates gridOutput
+          _main.default.prototype._updateGridOutput = function(idT) {
+            //if html structure is not there yet
+            if (!this.dummyDOM.querySelector('#'.concat(idT, '_summary'))) {
+              return;
+            }
+            var current = this._accessibleOutputs[idT];
+            //create shape details list
+            var innerShapeDetails = _gridShapeDetails(idT, this.ingredients.shapes);
+            //create summary
+            var innerSummary = _gridSummary(
+              innerShapeDetails.numShapes,
+              this.ingredients.colors.background,
+              this.width,
+              this.height
+            );
