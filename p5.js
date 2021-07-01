@@ -42535,3 +42535,127 @@
               this.width,
               this.height
             );
+
+            //create grid map
+            var innerMap = _gridMap(idT, this.ingredients.shapes);
+            //if it is different from current summary
+            if (innerSummary !== current.summary.innerHTML) {
+              //update
+              current.summary.innerHTML = innerSummary;
+            }
+            //if it is different from current map
+            if (innerMap !== current.map.innerHTML) {
+              //update
+              current.map.innerHTML = innerMap;
+            }
+            //if it is different from current shape details
+            if (innerShapeDetails.details !== current.shapeDetails.innerHTML) {
+              //update
+              current.shapeDetails.innerHTML = innerShapeDetails.details;
+            }
+            this._accessibleOutputs[idT] = current;
+          };
+
+          //creates spatial grid that maps the location of shapes
+          function _gridMap(idT, ingredients) {
+            var shapeNumber = 0;
+            var table = '';
+            //create an array of arrays 10*10 of empty cells
+            var cells = Array.apply(null, Array(10)).map(function() {});
+            for (var r in cells) {
+              cells[r] = Array.apply(null, Array(10)).map(function() {});
+            }
+            for (var x in ingredients) {
+              for (var y in ingredients[x]) {
+                var fill = void 0;
+                if (x !== 'line') {
+                  fill = '<a href="#'
+                    .concat(idT, 'shape')
+                    .concat(shapeNumber, '">')
+                    .concat(ingredients[x][y].color, ' ')
+                    .concat(x, '</a>');
+                } else {
+                  fill = '<a href="#'
+                    .concat(idT, 'shape')
+                    .concat(shapeNumber, '">')
+                    .concat(ingredients[x][y].color, ' ')
+                    .concat(x, ' midpoint</a>');
+                }
+                //if empty cell of location of shape is undefined
+                if (!cells[ingredients[x][y].loc.locY][ingredients[x][y].loc.locX]) {
+                  //fill it with shape info
+                  cells[ingredients[x][y].loc.locY][ingredients[x][y].loc.locX] = fill;
+                  //if a shape is already in that location
+                } else {
+                  //add it
+                  cells[ingredients[x][y].loc.locY][ingredients[x][y].loc.locX] =
+                    cells[ingredients[x][y].loc.locY][ingredients[x][y].loc.locX] +
+                    '  ' +
+                    fill;
+                }
+                shapeNumber++;
+              }
+            }
+            //make table based on array
+            for (var _r in cells) {
+              var row = '<tr>';
+              for (var c in cells[_r]) {
+                row = row + '<td>';
+                if (cells[_r][c] !== undefined) {
+                  row = row + cells[_r][c];
+                }
+                row = row + '</td>';
+              }
+              table = table + row + '</tr>';
+            }
+            return table;
+          }
+
+          //creates grid summary
+          function _gridSummary(numShapes, background, width, height) {
+            var text = ''
+              .concat(background, ' canvas, ')
+              .concat(width, ' by ')
+              .concat(height, ' pixels, contains ')
+              .concat(numShapes[0]);
+
+            if (numShapes[0] === 1) {
+              text = ''.concat(text, ' shape: ').concat(numShapes[1]);
+            } else {
+              text = ''.concat(text, ' shapes: ').concat(numShapes[1]);
+            }
+            return text;
+          }
+
+          //creates list of shapes
+          function _gridShapeDetails(idT, ingredients) {
+            var shapeDetails = '';
+            var shapes = '';
+            var totalShapes = 0;
+            //goes trhough every shape type in ingredients
+            for (var x in ingredients) {
+              var shapeNum = 0;
+              for (var y in ingredients[x]) {
+                //it creates a line in a list
+                var line = '<li id="'
+                  .concat(idT, 'shape')
+                  .concat(totalShapes, '">')
+                  .concat(ingredients[x][y].color, ' ')
+                  .concat(x, ',');
+                if (x === 'line') {
+                  line =
+                    line +
+                    ' location = '
+                      .concat(ingredients[x][y].pos, ', length = ')
+                      .concat(ingredients[x][y].length, ' pixels');
+                } else {
+                  line = line + ' location = '.concat(ingredients[x][y].pos);
+                  if (x !== 'point') {
+                    line = line + ', area = '.concat(ingredients[x][y].area, ' %');
+                  }
+                  line = line + '</li>';
+                }
+                shapeDetails = shapeDetails + line;
+                shapeNum++;
+                totalShapes++;
+              }
