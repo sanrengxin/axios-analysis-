@@ -42659,3 +42659,122 @@
                 shapeNum++;
                 totalShapes++;
               }
+              if (shapeNum > 1) {
+                shapes = ''
+                  .concat(shapes, ' ')
+                  .concat(shapeNum, ' ')
+                  .concat(x, 's');
+              } else {
+                shapes = ''
+                  .concat(shapes, ' ')
+                  .concat(shapeNum, ' ')
+                  .concat(x);
+              }
+            }
+            return { numShapes: [totalShapes, shapes], details: shapeDetails };
+          }
+          var _default = _main.default;
+          exports.default = _default;
+        },
+        { '../core/main': 59 }
+      ],
+      41: [
+        function(_dereq_, module, exports) {
+          'use strict';
+          Object.defineProperty(exports, '__esModule', { value: true });
+          exports.default = void 0;
+
+          var _main = _interopRequireDefault(_dereq_('../core/main'));
+          function _interopRequireDefault(obj) {
+            return obj && obj.__esModule ? obj : { default: obj };
+          }
+          /**
+           * @module Environment
+           * @submodule Environment
+           * @for p5
+           * @requires core
+           */ /**
+           * <code class="language-javascript">textOutput()</code> creates a screenreader
+           * accessible output that describes the shapes present on the canvas.
+           * The general description of the canvas includes canvas size,
+           * canvas color, and number of elements in the canvas
+           * (example: 'Your output is a, 400 by 400 pixels, lavender blue
+           * canvas containing the following 4 shapes:'). This description
+           * is followed by a list of shapes where the color, position, and area
+           * of each shape are described (example: "orange ellipse at top left
+           * covering 1% of the canvas"). Each element can be selected to get
+           * more details. A table of elements is also provided. In this table,
+           * shape, color, location, coordinates and area are described
+           * (example: "orange ellipse location=top left area=2").
+           *
+           * <code class="language-javascript">textOutput()</code> and <code class="language-javascript">texOutput(FALLBACK)</code>
+           * make the output available in <a href="https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Hit_regions_and_accessibility" target="_blank">
+           * a sub DOM inside the canvas element</a> which is accessible to screen readers.
+           * <code class="language-javascript">textOutput(LABEL)</code> creates an
+           * additional div with the output adjacent to the canvas, this is useful
+           * for non-screen reader users that might want to display the output outside
+           * of the canvas' sub DOM as they code. However, using LABEL will create
+           * unnecessary redundancy for screen reader users. We recommend using LABEL
+           * only as part of the development process of a sketch and removing it before
+           * publishing or sharing with screen reader users.
+           *
+           * @method textOutput
+           * @param  {Constant} [display] either FALLBACK or LABEL (Optional)
+           *
+           * @example
+           * <div>
+           * <code>
+           * textOutput();
+           * background(148, 196, 0);
+           * fill(255, 0, 0);
+           * ellipse(20, 20, 20, 20);
+           * fill(0, 0, 255);
+           * rect(50, 50, 50, 50);
+           * </code>
+           * </div>
+           *
+           *
+           * <div>
+           * <code>
+           * let x = 0;
+           * function draw() {
+           *   textOutput();
+           *   background(148, 196, 0);
+           *   fill(255, 0, 0);
+           *   ellipse(x, 20, 20, 20);
+           *   fill(0, 0, 255);
+           *   rect(50, 50, 50, 50);
+           *   ellipse(20, 20, 20, 20);
+           *   x += 0.1;
+           * }
+           * </code>
+           * </div>
+           *
+           */ _main.default.prototype.textOutput = function(display) {
+            _main.default._validateParameters('textOutput', arguments);
+            //if textOutput is already true
+            if (this._accessibleOutputs.text) {
+              return;
+            } else {
+              //make textOutput true
+              this._accessibleOutputs.text = true;
+              //create output for fallback
+              this._createOutput('textOutput', 'Fallback');
+              if (display === this.LABEL) {
+                //make textOutput label true
+                this._accessibleOutputs.textLabel = true;
+                //create output for label
+                this._createOutput('textOutput', 'Label');
+              }
+            }
+          };
+
+          /**
+           * <code class="language-javascript">gridOutput()</code> lays out the
+           * content of the canvas in the form of a grid (html table) based
+           * on the spatial location of each shape. A brief
+           * description of the canvas is available before the table output.
+           * This description includes: color of the background, size of the canvas,
+           * number of objects, and object types (example: "lavender blue canvas is
+           * 200 by 200 and contains 4 objects - 3 ellipses 1 rectangle"). The grid
+           * describes the content spatially, each element is placed on a cell of the
