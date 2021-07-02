@@ -42778,3 +42778,135 @@
            * number of objects, and object types (example: "lavender blue canvas is
            * 200 by 200 and contains 4 objects - 3 ellipses 1 rectangle"). The grid
            * describes the content spatially, each element is placed on a cell of the
+           * table depending on its position. Within each cell an element the color
+           * and type of shape of that element are available (example: "orange ellipse").
+           * These descriptions can be selected individually to get more details.
+           * A list of elements where shape, color, location, and area are described
+           * (example: "orange ellipse location=top left area=1%") is also available.
+           *
+           * <code class="language-javascript">gridOutput()</code> and <code class="language-javascript">gridOutput(FALLBACK)</code>
+           * make the output available in <a href="https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Hit_regions_and_accessibility" target="_blank">
+           * a sub DOM inside the canvas element</a> which is accessible to screen readers.
+           * <code class="language-javascript">gridOutput(LABEL)</code> creates an
+           * additional div with the output adjacent to the canvas, this is useful
+           * for non-screen reader users that might want to display the output outside
+           * of the canvas' sub DOM as they code. However, using LABEL will create
+           * unnecessary redundancy for screen reader users. We recommend using LABEL
+           * only as part of the development process of a sketch and removing it before
+           * publishing or sharing with screen reader users.
+           *
+           * @method gridOutput
+           * @param  {Constant} [display] either FALLBACK or LABEL (Optional)
+           *
+           * @example
+           * <div>
+           * <code>
+           * gridOutput();
+           * background(148, 196, 0);
+           * fill(255, 0, 0);
+           * ellipse(20, 20, 20, 20);
+           * fill(0, 0, 255);
+           * rect(50, 50, 50, 50);
+           * </code>
+           * </div>
+           *
+           *
+           * <div>
+           * <code>
+           * let x = 0;
+           * function draw() {
+           *   gridOutput();
+           *   background(148, 196, 0);
+           *   fill(255, 0, 0);
+           *   ellipse(x, 20, 20, 20);
+           *   fill(0, 0, 255);
+           *   rect(50, 50, 50, 50);
+           *   ellipse(20, 20, 20, 20);
+           *   x += 0.1;
+           * }
+           * </code>
+           * </div>
+           *
+           */
+
+          _main.default.prototype.gridOutput = function(display) {
+            _main.default._validateParameters('gridOutput', arguments);
+            //if gridOutput is already true
+            if (this._accessibleOutputs.grid) {
+              return;
+            } else {
+              //make gridOutput true
+              this._accessibleOutputs.grid = true;
+              //create output for fallback
+              this._createOutput('gridOutput', 'Fallback');
+              if (display === this.LABEL) {
+                //make gridOutput label true
+                this._accessibleOutputs.gridLabel = true;
+                //create output for label
+                this._createOutput('gridOutput', 'Label');
+              }
+            }
+          };
+
+          //helper function returns true when accessible outputs are true
+          _main.default.prototype._addAccsOutput = function() {
+            //if there are no accessible outputs create object with all false
+            if (!this._accessibleOutputs) {
+              this._accessibleOutputs = {
+                text: false,
+                grid: false,
+                textLabel: false,
+                gridLabel: false
+              };
+            }
+            return this._accessibleOutputs.grid || this._accessibleOutputs.text;
+          };
+
+          //helper function that creates html structure for accessible outputs
+          _main.default.prototype._createOutput = function(type, display) {
+            var cnvId = this.canvas.id;
+            //if there are no ingredients create object. this object stores data for the outputs
+            if (!this.ingredients) {
+              this.ingredients = {
+                shapes: {},
+                colors: { background: 'white', fill: 'white', stroke: 'black' },
+                pShapes: ''
+              };
+            }
+            //if there is no dummyDOM create it
+            if (!this.dummyDOM) {
+              this.dummyDOM = document.getElementById(cnvId).parentNode;
+            }
+            var cIdT, container, inner;
+            var query = '';
+            if (display === 'Fallback') {
+              cIdT = cnvId + type;
+              container = cnvId + 'accessibleOutput';
+              if (!this.dummyDOM.querySelector('#'.concat(container))) {
+                //if there is no canvas description (see describe() and describeElement())
+                if (!this.dummyDOM.querySelector('#'.concat(cnvId, '_Description'))) {
+                  //create html structure inside of canvas
+                  this.dummyDOM.querySelector(
+                    '#'.concat(cnvId)
+                  ).innerHTML = '<div id="'.concat(
+                    container,
+                    '" role="region" aria-label="Canvas Outputs"></div>'
+                  );
+                } else {
+                  //create html structure after canvas description container
+                  this.dummyDOM
+                    .querySelector('#'.concat(cnvId, '_Description'))
+                    .insertAdjacentHTML(
+                      'afterend',
+                      '<div id="'.concat(
+                        container,
+                        '" role="region" aria-label="Canvas Outputs"></div>'
+                      )
+                    );
+                }
+              }
+            } else if (display === 'Label') {
+              query = display;
+              cIdT = cnvId + type + display;
+              container = cnvId + 'accessibleOutput' + display;
+              if (!this.dummyDOM.querySelector('#'.concat(container))) {
