@@ -42910,3 +42910,146 @@
               cIdT = cnvId + type + display;
               container = cnvId + 'accessibleOutput' + display;
               if (!this.dummyDOM.querySelector('#'.concat(container))) {
+                //if there is no canvas description label (see describe() and describeElement())
+                if (!this.dummyDOM.querySelector('#'.concat(cnvId, '_Label'))) {
+                  //create html structure adjacent to canvas
+                  this.dummyDOM
+                    .querySelector('#'.concat(cnvId))
+                    .insertAdjacentHTML(
+                      'afterend',
+                      '<div id="'.concat(container, '"></div>')
+                    );
+                } else {
+                  //create html structure after canvas label
+                  this.dummyDOM
+                    .querySelector('#'.concat(cnvId, '_Label'))
+                    .insertAdjacentHTML(
+                      'afterend',
+                      '<div id="'.concat(container, '"></div>')
+                    );
+                }
+              }
+            }
+            //create an object to store the latest output. this object is used in _updateTextOutput() and _updateGridOutput()
+            this._accessibleOutputs[cIdT] = {};
+            if (type === 'textOutput') {
+              query = '#'.concat(cnvId, 'gridOutput').concat(query); //query is used to check if gridOutput already exists
+              inner = '<div id="'
+                .concat(cIdT, '">Text Output<div id="')
+                .concat(cIdT, 'Summary" aria-label="text output summary"><p id="')
+                .concat(cIdT, '_summary"></p><ul id="')
+                .concat(cIdT, '_list"></ul></div><table id="')
+                .concat(
+                  cIdT,
+                  '_shapeDetails" summary="text output shape details"></table></div>'
+                );
+              //if gridOutput already exists
+              if (this.dummyDOM.querySelector(query)) {
+                //create textOutput before gridOutput
+                this.dummyDOM.querySelector(query).insertAdjacentHTML('beforebegin', inner);
+              } else {
+                //create output inside of container
+                this.dummyDOM.querySelector('#'.concat(container)).innerHTML = inner;
+              }
+              //store output html elements
+              this._accessibleOutputs[cIdT].list = this.dummyDOM.querySelector(
+                '#'.concat(cIdT, '_list')
+              );
+            } else if (type === 'gridOutput') {
+              query = '#'.concat(cnvId, 'textOutput').concat(query); //query is used to check if textOutput already exists
+              inner = '<div id="'
+                .concat(cIdT, '">Grid Output<p id="')
+                .concat(cIdT, '_summary" aria-label="grid output summary"><table id="')
+                .concat(cIdT, '_map" summary="grid output content"></table><ul id="')
+                .concat(
+                  cIdT,
+                  '_shapeDetails" aria-label="grid output shape details"></ul></div>'
+                );
+              //if textOutput already exists
+              if (this.dummyDOM.querySelector(query)) {
+                //create gridOutput after textOutput
+                this.dummyDOM.querySelector(query).insertAdjacentHTML('afterend', inner);
+              } else {
+                //create output inside of container
+                this.dummyDOM.querySelector('#'.concat(container)).innerHTML = inner;
+              }
+              //store output html elements
+              this._accessibleOutputs[cIdT].map = this.dummyDOM.querySelector(
+                '#'.concat(cIdT, '_map')
+              );
+            }
+            this._accessibleOutputs[cIdT].shapeDetails = this.dummyDOM.querySelector(
+              '#'.concat(cIdT, '_shapeDetails')
+            );
+
+            this._accessibleOutputs[cIdT].summary = this.dummyDOM.querySelector(
+              '#'.concat(cIdT, '_summary')
+            );
+          };
+
+          //this function is called at the end of setup and draw if using
+          //accessibleOutputs and calls update functions of outputs
+          _main.default.prototype._updateAccsOutput = function() {
+            var cnvId = this.canvas.id;
+            //if the shapes are not the same as before
+            if (JSON.stringify(this.ingredients.shapes) !== this.ingredients.pShapes) {
+              //save current shapes as string in pShapes
+              this.ingredients.pShapes = JSON.stringify(this.ingredients.shapes);
+              if (this._accessibleOutputs.text) {
+                this._updateTextOutput(cnvId + 'textOutput');
+              }
+              if (this._accessibleOutputs.grid) {
+                this._updateGridOutput(cnvId + 'gridOutput');
+              }
+              if (this._accessibleOutputs.textLabel) {
+                this._updateTextOutput(cnvId + 'textOutputLabel');
+              }
+              if (this._accessibleOutputs.gridLabel) {
+                this._updateGridOutput(cnvId + 'gridOutputLabel');
+              }
+            }
+          };
+
+          //helper function that resets all ingredients when background is called
+          //and saves background color name
+          _main.default.prototype._accsBackground = function(args) {
+            //save current shapes as string in pShapes
+            this.ingredients.pShapes = JSON.stringify(this.ingredients.shapes);
+            //empty shapes JSON
+            this.ingredients.shapes = {};
+            //update background different
+            if (this.ingredients.colors.backgroundRGBA !== args) {
+              this.ingredients.colors.backgroundRGBA = args;
+              this.ingredients.colors.background = this._rgbColorName(args);
+            }
+          };
+
+          //helper function that gets fill and stroke of shapes
+          _main.default.prototype._accsCanvasColors = function(f, args) {
+            if (f === 'fill') {
+              //update fill different
+              if (this.ingredients.colors.fillRGBA !== args) {
+                this.ingredients.colors.fillRGBA = args;
+                this.ingredients.colors.fill = this._rgbColorName(args);
+              }
+            } else if (f === 'stroke') {
+              //update stroke if different
+              if (this.ingredients.colors.strokeRGBA !== args) {
+                this.ingredients.colors.strokeRGBA = args;
+                this.ingredients.colors.stroke = this._rgbColorName(args);
+              }
+            }
+          };
+
+          //builds ingredients.shapes used for building outputs
+          _main.default.prototype._accsOutput = function(f, args) {
+            if (f === 'ellipse' && args[2] === args[3]) {
+              f = 'circle';
+            } else if (f === 'rectangle' && args[2] === args[3]) {
+              f = 'square';
+            }
+            var include = {};
+            var add = true;
+            var middle = _getMiddle(f, args);
+            if (f === 'line') {
+              //make color stroke
