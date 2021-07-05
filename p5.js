@@ -43053,3 +43053,139 @@
             var middle = _getMiddle(f, args);
             if (f === 'line') {
               //make color stroke
+              include.color = this.ingredients.colors.stroke;
+              //get lenght
+              include.length = Math.round(this.dist(args[0], args[1], args[2], args[3]));
+              //get position of end points
+              var p1 = _getPos([args[0], [1]], this.width, this.height);
+              var p2 = _getPos([args[2], [3]], this.width, this.height);
+              include.loc = _canvasLocator(middle, this.width, this.height);
+              if (p1 === p2) {
+                include.pos = 'at '.concat(p1);
+              } else {
+                include.pos = 'from '.concat(p1, ' to ').concat(p2);
+              }
+            } else {
+              if (f === 'point') {
+                //make color stroke
+                include.color = this.ingredients.colors.stroke;
+              } else {
+                //make color fill
+                include.color = this.ingredients.colors.fill;
+                //get area of shape
+                include.area = _getArea(f, args, this.width, this.height);
+              }
+              //get middle of shapes
+              //calculate position using middle of shape
+              include.pos = _getPos(middle, this.width, this.height);
+              //calculate location using middle of shape
+              include.loc = _canvasLocator(middle, this.width, this.height);
+            }
+            //if it is the first time this shape is created
+            if (!this.ingredients.shapes[f]) {
+              this.ingredients.shapes[f] = [include];
+              //if other shapes of this type have been created
+            } else if (this.ingredients.shapes[f] !== [include]) {
+              //for every shape of this type
+              for (var y in this.ingredients.shapes[f]) {
+                //compare it with current shape and if it already exists make add false
+                if (
+                  JSON.stringify(this.ingredients.shapes[f][y]) === JSON.stringify(include)
+                ) {
+                  add = false;
+                }
+              }
+              //add shape by pushing it to the end
+              if (add === true) {
+                this.ingredients.shapes[f].push(include);
+              }
+            }
+          };
+
+          //gets middle point / centroid of shape
+          function _getMiddle(f, args) {
+            var x, y;
+            if (
+              f === 'rectangle' ||
+              f === 'ellipse' ||
+              f === 'arc' ||
+              f === 'circle' ||
+              f === 'square'
+            ) {
+              x = Math.round(args[0] + args[2] / 2);
+              y = Math.round(args[1] + args[3] / 2);
+            } else if (f === 'triangle') {
+              x = (args[0] + args[2] + args[4]) / 3;
+              y = (args[1] + args[3] + args[5]) / 3;
+            } else if (f === 'quadrilateral') {
+              x = (args[0] + args[2] + args[4] + args[6]) / 4;
+              y = (args[1] + args[3] + args[5] + args[7]) / 4;
+            } else if (f === 'line') {
+              x = (args[0] + args[2]) / 2;
+              y = (args[1] + args[3]) / 2;
+            } else {
+              x = args[0];
+              y = args[1];
+            }
+            return [x, y];
+          }
+
+          //gets position of shape in the canvas
+          function _getPos(args, canvasWidth, canvasHeight) {
+            if (args[0] < 0.4 * canvasWidth) {
+              if (args[1] < 0.4 * canvasHeight) {
+                return 'top left';
+              } else if (args[1] > 0.6 * canvasHeight) {
+                return 'bottom left';
+              } else {
+                return 'mid left';
+              }
+            } else if (args[0] > 0.6 * canvasWidth) {
+              if (args[1] < 0.4 * canvasHeight) {
+                return 'top right';
+              } else if (args[1] > 0.6 * canvasHeight) {
+                return 'bottom right';
+              } else {
+                return 'mid right';
+              }
+            } else {
+              if (args[1] < 0.4 * canvasHeight) {
+                return 'top middle';
+              } else if (args[1] > 0.6 * canvasHeight) {
+                return 'bottom middle';
+              } else {
+                return 'middle';
+              }
+            }
+          }
+
+          //locates shape in a 10*10 grid
+          function _canvasLocator(args, canvasWidth, canvasHeight) {
+            var noRows = 10;
+            var noCols = 10;
+            var locX = Math.floor(args[0] / canvasWidth * noRows);
+            var locY = Math.floor(args[1] / canvasHeight * noCols);
+            if (locX === noRows) {
+              locX = locX - 1;
+            }
+            if (locY === noCols) {
+              locY = locY - 1;
+            }
+            return {
+              locX: locX,
+              locY: locY
+            };
+          }
+
+          //calculates area of shape
+          function _getArea(objectType, shapeArgs, canvasWidth, canvasHeight) {
+            var objectArea = 0;
+            if (objectType === 'arc') {
+              // area of full ellipse = PI * horizontal radius * vertical radius.
+              // therefore, area of arc = difference bet. arc's start and end radians * horizontal radius * vertical radius.
+              // the below expression is adjusted for negative values and differences in arc's start and end radians over PI*2
+              var arcSizeInRadians =
+                ((shapeArgs[5] - shapeArgs[4]) % (Math.PI * 2) + Math.PI * 2) %
+                (Math.PI * 2);
+              objectArea = arcSizeInRadians * shapeArgs[2] * shapeArgs[3] / 8;
+              if (shapeArgs[6] === 'open' || shapeArgs[6] === 'chord') {
