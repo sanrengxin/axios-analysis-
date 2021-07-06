@@ -43189,3 +43189,148 @@
                 (Math.PI * 2);
               objectArea = arcSizeInRadians * shapeArgs[2] * shapeArgs[3] / 8;
               if (shapeArgs[6] === 'open' || shapeArgs[6] === 'chord') {
+                // when the arc's mode is OPEN or CHORD, we need to account for the area of the triangle that is formed to close the arc
+                // (Ax( By −  Cy) + Bx(Cy − Ay) + Cx(Ay − By ) )/2
+                var Ax = shapeArgs[0];
+                var Ay = shapeArgs[1];
+                var Bx =
+                  shapeArgs[0] + shapeArgs[2] / 2 * Math.cos(shapeArgs[4]).toFixed(2);
+                var By =
+                  shapeArgs[1] + shapeArgs[3] / 2 * Math.sin(shapeArgs[4]).toFixed(2);
+                var Cx =
+                  shapeArgs[0] + shapeArgs[2] / 2 * Math.cos(shapeArgs[5]).toFixed(2);
+                var Cy =
+                  shapeArgs[1] + shapeArgs[3] / 2 * Math.sin(shapeArgs[5]).toFixed(2);
+                var areaOfExtraTriangle =
+                  Math.abs(Ax * (By - Cy) + Bx * (Cy - Ay) + Cx * (Ay - By)) / 2;
+                if (arcSizeInRadians > Math.PI) {
+                  objectArea = objectArea + areaOfExtraTriangle;
+                } else {
+                  objectArea = objectArea - areaOfExtraTriangle;
+                }
+              }
+            } else if (objectType === 'ellipse' || objectType === 'circle') {
+              objectArea = 3.14 * shapeArgs[2] / 2 * shapeArgs[3] / 2;
+            } else if (objectType === 'line') {
+              objectArea = 0;
+            } else if (objectType === 'point') {
+              objectArea = 0;
+            } else if (objectType === 'quadrilateral') {
+              // ((x4+x1)*(y4-y1)+(x1+x2)*(y1-y2)+(x2+x3)*(y2-y3)+(x3+x4)*(y3-y4))/2
+              objectArea =
+                Math.abs(
+                  (shapeArgs[6] + shapeArgs[0]) * (shapeArgs[7] - shapeArgs[1]) +
+                    (shapeArgs[0] + shapeArgs[2]) * (shapeArgs[1] - shapeArgs[3]) +
+                    (shapeArgs[2] + shapeArgs[4]) * (shapeArgs[3] - shapeArgs[5]) +
+                    (shapeArgs[4] + shapeArgs[6]) * (shapeArgs[5] - shapeArgs[7])
+                ) / 2;
+            } else if (objectType === 'rectangle' || objectType === 'square') {
+              objectArea = shapeArgs[2] * shapeArgs[3];
+            } else if (objectType === 'triangle') {
+              objectArea =
+                Math.abs(
+                  shapeArgs[0] * (shapeArgs[3] - shapeArgs[5]) +
+                    shapeArgs[2] * (shapeArgs[5] - shapeArgs[1]) +
+                    shapeArgs[4] * (shapeArgs[1] - shapeArgs[3])
+                ) / 2;
+              // (Ax( By −  Cy) + Bx(Cy − Ay) + Cx(Ay − By ))/2
+            }
+
+            return Math.round(objectArea * 100 / (canvasWidth * canvasHeight));
+          }
+          var _default = _main.default;
+          exports.default = _default;
+        },
+        { '../core/main': 59 }
+      ],
+      42: [
+        function(_dereq_, module, exports) {
+          'use strict';
+          Object.defineProperty(exports, '__esModule', { value: true });
+          exports.default = void 0;
+
+          var _main = _interopRequireDefault(_dereq_('../core/main'));
+          function _interopRequireDefault(obj) {
+            return obj && obj.__esModule ? obj : { default: obj };
+          } /** //the functions in this file support updating the text output
+           * @module Environment
+           * @submodule Environment
+           * @for p5
+           * @requires core
+           */
+          //updates textOutput
+          _main.default.prototype._updateTextOutput = function(idT) {
+            //if html structure is not there yet
+            if (!this.dummyDOM.querySelector('#'.concat(idT, '_summary'))) {
+              return;
+            }
+            var current = this._accessibleOutputs[idT];
+            //create shape list
+            var innerList = _shapeList(idT, this.ingredients.shapes);
+            //create output summary
+            var innerSummary = _textSummary(
+              innerList.numShapes,
+              this.ingredients.colors.background,
+              this.width,
+              this.height
+            );
+
+            //create shape details
+            var innerShapeDetails = _shapeDetails(idT, this.ingredients.shapes);
+            //if it is different from current summary
+            if (innerSummary !== current.summary.innerHTML) {
+              //update
+              current.summary.innerHTML = innerSummary;
+            }
+            //if it is different from current shape list
+            if (innerList.listShapes !== current.list.innerHTML) {
+              //update
+              current.list.innerHTML = innerList.listShapes;
+            }
+            //if it is different from current shape details
+            if (innerShapeDetails !== current.shapeDetails.innerHTML) {
+              //update
+              current.shapeDetails.innerHTML = innerShapeDetails;
+            }
+            this._accessibleOutputs[idT] = current;
+          };
+
+          //Builds textOutput summary
+          function _textSummary(numShapes, background, width, height) {
+            var text = 'Your output is a, '
+              .concat(width, ' by ')
+              .concat(height, ' pixels, ')
+              .concat(background, ' canvas containing the following');
+            if (numShapes === 1) {
+              text = ''.concat(text, ' shape:');
+            } else {
+              text = ''.concat(text, ' ').concat(numShapes, ' shapes:');
+            }
+            return text;
+          }
+
+          //Builds textOutput table with shape details
+          function _shapeDetails(idT, ingredients) {
+            var shapeDetails = '';
+            var shapeNumber = 0;
+            //goes trhough every shape type in ingredients
+            for (var x in ingredients) {
+              //and for every shape
+              for (var y in ingredients[x]) {
+                //it creates a table row
+                var row = '<tr id="'
+                  .concat(idT, 'shape')
+                  .concat(shapeNumber, '"><th>')
+                  .concat(ingredients[x][y].color, ' ')
+                  .concat(x, '</th>');
+                if (x === 'line') {
+                  row =
+                    row +
+                    '<td>location = '
+                      .concat(ingredients[x][y].pos, '</td><td>length = ')
+                      .concat(ingredients[x][y].length, ' pixels</td></tr>');
+                } else {
+                  row = row + '<td>location = '.concat(ingredients[x][y].pos, '</td>');
+                  if (x !== 'point') {
+                    row = row + '<td> area = '.concat(ingredients[x][y].area, '%</td>');
+                  }
