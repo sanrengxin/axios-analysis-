@@ -43334,3 +43334,130 @@
                   if (x !== 'point') {
                     row = row + '<td> area = '.concat(ingredients[x][y].area, '%</td>');
                   }
+                  row = row + '</tr>';
+                }
+                shapeDetails = shapeDetails + row;
+                shapeNumber++;
+              }
+            }
+            return shapeDetails;
+          }
+
+          //Builds textOutput shape list
+          function _shapeList(idT, ingredients) {
+            var shapeList = '';
+            var shapeNumber = 0;
+            //goes trhough every shape type in ingredients
+            for (var x in ingredients) {
+              for (var y in ingredients[x]) {
+                //it creates a line in a list
+                var _line = '<li><a href="#'
+                  .concat(idT, 'shape')
+                  .concat(shapeNumber, '">')
+                  .concat(ingredients[x][y].color, ' ')
+                  .concat(x, '</a>');
+                if (x === 'line') {
+                  _line =
+                    _line +
+                    ', '
+                      .concat(ingredients[x][y].pos, ', ')
+                      .concat(ingredients[x][y].length, ' pixels long.</li>');
+                } else {
+                  _line = _line + ', at '.concat(ingredients[x][y].pos);
+                  if (x !== 'point') {
+                    _line =
+                      _line +
+                      ', covering '.concat(ingredients[x][y].area, '% of the canvas');
+                  }
+                  _line = _line + '.</li>';
+                }
+                shapeList = shapeList + _line;
+                shapeNumber++;
+              }
+            }
+            return { numShapes: shapeNumber, listShapes: shapeList };
+          }
+          var _default = _main.default;
+          exports.default = _default;
+        },
+        { '../core/main': 59 }
+      ],
+      43: [
+        function(_dereq_, module, exports) {
+          'use strict';
+          var _main = _interopRequireDefault(_dereq_('./core/main'));
+          _dereq_('./core/constants');
+          _dereq_('./core/environment');
+          _dereq_('./core/friendly_errors/stacktrace');
+          _dereq_('./core/friendly_errors/validate_params');
+          _dereq_('./core/friendly_errors/file_errors');
+          _dereq_('./core/friendly_errors/fes_core');
+          _dereq_('./core/helpers');
+          _dereq_('./core/legacy');
+          _dereq_('./core/preload');
+          _dereq_('./core/p5.Element');
+          _dereq_('./core/p5.Graphics');
+          _dereq_('./core/p5.Renderer');
+          _dereq_('./core/p5.Renderer2D');
+          _dereq_('./core/rendering');
+          _dereq_('./core/shim');
+          _dereq_('./core/structure');
+          _dereq_('./core/transform');
+          _dereq_('./core/shape/2d_primitives');
+          _dereq_('./core/shape/attributes');
+          _dereq_('./core/shape/curves');
+          _dereq_('./core/shape/vertex');
+
+          _dereq_('./accessibility/outputs');
+          _dereq_('./accessibility/textOutput');
+          _dereq_('./accessibility/gridOutput');
+          _dereq_('./accessibility/color_namer');
+
+          _dereq_('./color/color_conversion');
+          _dereq_('./color/creating_reading');
+          _dereq_('./color/p5.Color');
+          _dereq_('./color/setting');
+
+          _dereq_('./data/p5.TypedDict');
+          _dereq_('./data/local_storage.js');
+
+          _dereq_('./dom/dom');
+
+          _dereq_('./accessibility/describe');
+
+          _dereq_('./events/acceleration');
+          _dereq_('./events/keyboard');
+          _dereq_('./events/mouse');
+          _dereq_('./events/touch');
+
+          _dereq_('./image/filters');
+          _dereq_('./image/image');
+          _dereq_('./image/loading_displaying');
+          _dereq_('./image/p5.Image');
+          _dereq_('./image/pixels');
+
+          _dereq_('./io/files');
+          _dereq_('./io/p5.Table');
+          _dereq_('./io/p5.TableRow');
+          _dereq_('./io/p5.XML');
+
+          _dereq_('./math/calculation');
+          _dereq_('./math/math');
+          _dereq_('./math/noise');
+          _dereq_('./math/p5.Vector');
+          _dereq_('./math/random');
+          _dereq_('./math/trigonometry');
+
+          _dereq_('./typography/attributes');
+          _dereq_('./typography/loading_displaying');
+          _dereq_('./typography/p5.Font');
+
+          _dereq_('./utilities/array_functions');
+          _dereq_('./utilities/conversion');
+          _dereq_('./utilities/string_functions');
+          _dereq_('./utilities/time_date');
+
+          _dereq_('./webgl/3d_primitives');
+          _dereq_('./webgl/interaction');
+          _dereq_('./webgl/light');
+          _dereq_('./webgl/loading');
