@@ -43461,3 +43461,133 @@
           _dereq_('./webgl/interaction');
           _dereq_('./webgl/light');
           _dereq_('./webgl/loading');
+          _dereq_('./webgl/material');
+          _dereq_('./webgl/p5.Camera');
+          _dereq_('./webgl/p5.Geometry');
+          _dereq_('./webgl/p5.Matrix');
+          _dereq_('./webgl/p5.RendererGL.Immediate');
+          _dereq_('./webgl/p5.RendererGL');
+          _dereq_('./webgl/p5.RendererGL.Retained');
+          _dereq_('./webgl/p5.Shader');
+          _dereq_('./webgl/p5.RenderBuffer');
+          _dereq_('./webgl/p5.Texture');
+          _dereq_('./webgl/text');
+
+          _dereq_('./core/init');
+          function _interopRequireDefault(obj) {
+            return obj && obj.__esModule ? obj : { default: obj };
+          } // core
+          //accessibility
+          // color
+          // data
+          // DOM
+          // accessibility
+          // events
+          // image
+          // io
+          // math
+          // typography
+          // utilities
+          // webgl
+          module.exports = _main.default;
+        },
+        {
+          './accessibility/color_namer': 38,
+          './accessibility/describe': 39,
+          './accessibility/gridOutput': 40,
+          './accessibility/outputs': 41,
+          './accessibility/textOutput': 42,
+          './color/color_conversion': 44,
+          './color/creating_reading': 45,
+          './color/p5.Color': 46,
+          './color/setting': 47,
+          './core/constants': 48,
+          './core/environment': 49,
+          './core/friendly_errors/fes_core': 51,
+          './core/friendly_errors/file_errors': 52,
+          './core/friendly_errors/stacktrace': 53,
+          './core/friendly_errors/validate_params': 54,
+          './core/helpers': 55,
+          './core/init': 56,
+          './core/legacy': 58,
+          './core/main': 59,
+          './core/p5.Element': 60,
+          './core/p5.Graphics': 61,
+          './core/p5.Renderer': 62,
+          './core/p5.Renderer2D': 63,
+          './core/preload': 64,
+          './core/rendering': 65,
+          './core/shape/2d_primitives': 66,
+          './core/shape/attributes': 67,
+          './core/shape/curves': 68,
+          './core/shape/vertex': 69,
+          './core/shim': 70,
+          './core/structure': 71,
+          './core/transform': 72,
+          './data/local_storage.js': 73,
+          './data/p5.TypedDict': 74,
+          './dom/dom': 75,
+          './events/acceleration': 76,
+          './events/keyboard': 77,
+          './events/mouse': 78,
+          './events/touch': 79,
+          './image/filters': 80,
+          './image/image': 81,
+          './image/loading_displaying': 82,
+          './image/p5.Image': 83,
+          './image/pixels': 84,
+          './io/files': 85,
+          './io/p5.Table': 86,
+          './io/p5.TableRow': 87,
+          './io/p5.XML': 88,
+          './math/calculation': 89,
+          './math/math': 90,
+          './math/noise': 91,
+          './math/p5.Vector': 92,
+          './math/random': 93,
+          './math/trigonometry': 94,
+          './typography/attributes': 95,
+          './typography/loading_displaying': 96,
+          './typography/p5.Font': 97,
+          './utilities/array_functions': 98,
+          './utilities/conversion': 99,
+          './utilities/string_functions': 100,
+          './utilities/time_date': 101,
+          './webgl/3d_primitives': 102,
+          './webgl/interaction': 103,
+          './webgl/light': 104,
+          './webgl/loading': 105,
+          './webgl/material': 106,
+          './webgl/p5.Camera': 107,
+          './webgl/p5.Geometry': 108,
+          './webgl/p5.Matrix': 109,
+          './webgl/p5.RenderBuffer': 110,
+          './webgl/p5.RendererGL': 113,
+          './webgl/p5.RendererGL.Immediate': 111,
+          './webgl/p5.RendererGL.Retained': 112,
+          './webgl/p5.Shader': 114,
+          './webgl/p5.Texture': 115,
+          './webgl/text': 116
+        }
+      ],
+      44: [
+        function(_dereq_, module, exports) {
+          'use strict';
+          Object.defineProperty(exports, '__esModule', { value: true });
+          exports.default = void 0;
+
+          var _main = _interopRequireDefault(_dereq_('../core/main'));
+          function _interopRequireDefault(obj) {
+            return obj && obj.__esModule ? obj : { default: obj };
+          }
+          /**
+           * @module Color
+           * @submodule Color Conversion
+           * @for p5
+           * @requires core
+           */ /**
+           * Conversions adapted from <http://www.easyrgb.com/en/math.php>.
+           *
+           * In these functions, hue is always in the range [0, 1], just like all other
+           * components are in the range [0, 1]. 'Brightness' and 'value' are used
+           * interchangeably.
