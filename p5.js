@@ -43865,3 +43865,125 @@
           }
           Object.defineProperty(exports, '__esModule', { value: true });
           exports.default = void 0;
+
+          var _main = _interopRequireDefault(_dereq_('../core/main'));
+          var constants = _interopRequireWildcard(_dereq_('../core/constants'));
+          _dereq_('./p5.Color');
+          _dereq_('../core/friendly_errors/validate_params');
+          _dereq_('../core/friendly_errors/file_errors');
+          _dereq_('../core/friendly_errors/fes_core');
+          function _getRequireWildcardCache() {
+            if (typeof WeakMap !== 'function') return null;
+            var cache = new WeakMap();
+            _getRequireWildcardCache = function _getRequireWildcardCache() {
+              return cache;
+            };
+            return cache;
+          }
+          function _interopRequireWildcard(obj) {
+            if (obj && obj.__esModule) {
+              return obj;
+            }
+            if (obj === null || (_typeof(obj) !== 'object' && typeof obj !== 'function')) {
+              return { default: obj };
+            }
+            var cache = _getRequireWildcardCache();
+            if (cache && cache.has(obj)) {
+              return cache.get(obj);
+            }
+            var newObj = {};
+            var hasPropertyDescriptor =
+              Object.defineProperty && Object.getOwnPropertyDescriptor;
+            for (var key in obj) {
+              if (Object.prototype.hasOwnProperty.call(obj, key)) {
+                var desc = hasPropertyDescriptor
+                  ? Object.getOwnPropertyDescriptor(obj, key)
+                  : null;
+                if (desc && (desc.get || desc.set)) {
+                  Object.defineProperty(newObj, key, desc);
+                } else {
+                  newObj[key] = obj[key];
+                }
+              }
+            }
+            newObj.default = obj;
+            if (cache) {
+              cache.set(obj, newObj);
+            }
+            return newObj;
+          }
+          function _interopRequireDefault(obj) {
+            return obj && obj.__esModule ? obj : { default: obj };
+          }
+          /**
+           * @module Color
+           * @submodule Creating & Reading
+           * @for p5
+           * @requires core
+           * @requires constants
+           */ /**
+           * Extracts the alpha value from a color or pixel array.
+           *
+           * @method alpha
+           * @param {p5.Color|Number[]|String} color <a href="#/p5.Color">p5.Color</a> object, color components,
+           *                                         or CSS color
+           * @return {Number} the alpha value
+           *
+           * @example
+           * <div>
+           * <code>
+           * noStroke();
+           * let c = color(0, 126, 255, 102);
+           * fill(c);
+           * rect(15, 15, 35, 70);
+           * let value = alpha(c); // Sets 'value' to 102
+           * fill(value);
+           * rect(50, 15, 35, 70);
+           * </code>
+           * </div>
+           *
+           * @alt
+           * Left half of canvas light blue and right half light charcoal grey.
+           */ _main.default.prototype.alpha = function(c) {
+            _main.default._validateParameters('alpha', arguments);
+            return this.color(c)._getAlpha();
+          };
+
+          /**
+           * Extracts the blue value from a color or pixel array.
+           *
+           * @method blue
+           * @param {p5.Color|Number[]|String} color <a href="#/p5.Color">p5.Color</a> object, color components,
+           *                                         or CSS color
+           * @return {Number} the blue value
+           * @example
+           * <div>
+           * <code>
+           * let c = color(175, 100, 220);
+           * fill(c);
+           * rect(15, 20, 35, 60); // Draw left rectangle
+           * let blueValue = blue(c);
+           * fill(0, 0, blueValue);
+           * rect(50, 20, 35, 60); // Draw right rectangle
+           * </code>
+           * </div>
+           *
+           * @alt
+           * Left half of canvas light purple and right half a royal blue.
+           */
+          _main.default.prototype.blue = function(c) {
+            _main.default._validateParameters('blue', arguments);
+            return this.color(c)._getBlue();
+          };
+
+          /**
+           * Extracts the HSB brightness value from a color or pixel array.
+           *
+           * @method brightness
+           * @param {p5.Color|Number[]|String} color <a href="#/p5.Color">p5.Color</a> object, color components,
+           *                                         or CSS color
+           * @return {Number} the brightness value
+           *
+           * @example
+           * <div>
+           * <code>
