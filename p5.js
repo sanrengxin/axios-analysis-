@@ -43987,3 +43987,149 @@
            * @example
            * <div>
            * <code>
+           * noStroke();
+           * colorMode(HSB, 255);
+           * let c = color(0, 126, 255);
+           * fill(c);
+           * rect(15, 20, 35, 60);
+           * let value = brightness(c); // Sets 'value' to 255
+           * fill(value);
+           * rect(50, 20, 35, 60);
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * noStroke();
+           * colorMode(HSB, 255);
+           * let c = color('hsb(60, 100%, 50%)');
+           * fill(c);
+           * rect(15, 20, 35, 60);
+           * let value = brightness(c); // A 'value' of 50% is 127.5
+           * fill(value);
+           * rect(50, 20, 35, 60);
+           * </code>
+           * </div>
+           *
+           * @alt
+           * Left half of canvas salmon pink and the right half with it's brightness colored white.
+           * Left half of canvas olive colored and the right half with it's brightness color gray.
+           */
+          _main.default.prototype.brightness = function(c) {
+            _main.default._validateParameters('brightness', arguments);
+            return this.color(c)._getBrightness();
+          };
+
+          /**
+           * Creates colors for storing in variables of the color datatype. The
+           * parameters are interpreted as RGB or HSB values depending on the
+           * current <a href="#/p5/colorMode">colorMode()</a>. The default mode is RGB values from 0 to 255
+           * and, therefore, the function call color(255, 204, 0) will return a
+           * bright yellow color.
+           *
+           * Note that if only one value is provided to <a href="#/p5/color">color()</a>, it will be interpreted
+           * as a grayscale value. Add a second value, and it will be used for alpha
+           * transparency. When three values are specified, they are interpreted as
+           * either RGB or HSB values. Adding a fourth value applies alpha
+           * transparency.
+           *
+           * If a single string argument is provided, RGB, RGBA and Hex CSS color
+           * strings and all named color strings are supported. In this case, an alpha
+           * number value as a second argument is not supported, the RGBA form should be
+           * used.
+           *
+           * @method color
+           * @param  {Number} gray number specifying value between white and black.
+           * @param  {Number} [alpha] alpha value relative to current color range
+           *                                 (default is 0-255)
+           * @return {p5.Color} resulting color
+           *
+           * @example
+           * <div>
+           * <code>
+           * let c = color(255, 204, 0);
+           * fill(c);
+           * noStroke();
+           * rect(30, 20, 55, 55);
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * let c = color(255, 204, 0);
+           * fill(c);
+           * noStroke();
+           * ellipse(25, 25, 80, 80); // Draw left circle
+           * // Using only one value generates a grayscale value.
+           * c = color(65);
+           * fill(c);
+           * ellipse(75, 75, 80, 80);
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * // You can use named SVG & CSS colors
+           * let c = color('magenta');
+           * fill(c);
+           * noStroke();
+           * rect(20, 20, 60, 60);
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * // Example of hex color codes
+           * noStroke();
+           * let c = color('#0f0');
+           * fill(c);
+           * rect(0, 10, 45, 80);
+           * c = color('#00ff00');
+           * fill(c);
+           * rect(55, 10, 45, 80);
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * // RGB and RGBA color strings are also supported
+           * // these all set to the same color (solid blue)
+           * let c;
+           * noStroke();
+           * c = color('rgb(0,0,255)');
+           * fill(c);
+           * rect(10, 10, 35, 35); // Draw rectangle
+           * c = color('rgb(0%, 0%, 100%)');
+           * fill(c);
+           * rect(55, 10, 35, 35); // Draw rectangle
+           * c = color('rgba(0, 0, 255, 1)');
+           * fill(c);
+           * rect(10, 55, 35, 35); // Draw rectangle
+           * c = color('rgba(0%, 0%, 100%, 1)');
+           * fill(c);
+           * rect(55, 55, 35, 35); // Draw rectangle
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * // HSL color can also be specified by value
+           * let c = color('hsl(160, 100%, 50%)');
+           * noStroke();
+           * fill(c);
+           * rect(0, 10, 45, 80); // Draw rectangle
+           * c = color('hsla(160, 100%, 50%, 0.5)');
+           * fill(c);
+           * rect(55, 10, 45, 80); // Draw rectangle
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * // HSB color can also be specified
+           * let c = color('hsb(160, 100%, 50%)');
+           * noStroke();
+           * fill(c);
+           * rect(0, 10, 45, 80); // Draw rectangle
+           * c = color('hsba(160, 100%, 50%, 0.5)');
+           * fill(c);
