@@ -44133,3 +44133,142 @@
            * rect(0, 10, 45, 80); // Draw rectangle
            * c = color('hsba(160, 100%, 50%, 0.5)');
            * fill(c);
+           * rect(55, 10, 45, 80); // Draw rectangle
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * noStroke();
+           * let c = color(50, 55, 100);
+           * fill(c);
+           * rect(0, 10, 45, 80); // Draw left rect
+           * colorMode(HSB, 100);
+           * c = color(50, 55, 100);
+           * fill(c);
+           * rect(55, 10, 45, 80);
+           * </code>
+           * </div>
+           *
+           * @alt
+           * Yellow rect in middle right of canvas, with 55 pixel width and height.
+           * Yellow ellipse in top left of canvas, black ellipse in bottom right,both 80x80.
+           * Bright fuchsia rect in middle of canvas, 60 pixel width and height.
+           * Two bright green rects on opposite sides of the canvas, both 45x80.
+           * Four blue rects in each corner of the canvas, each are 35x35.
+           * Bright sea green rect on left and darker rect on right of canvas, both 45x80.
+           * Dark green rect on left and lighter green rect on right of canvas, both 45x80.
+           * Dark blue rect on left and light teal rect on right of canvas, both 45x80.
+           */
+
+          /**
+           * @method color
+           * @param  {Number}        v1      red or hue value relative to
+           *                                 the current color range
+           * @param  {Number}        v2      green or saturation value
+           *                                 relative to the current color range
+           * @param  {Number}        v3      blue or brightness value
+           *                                 relative to the current color range
+           * @param  {Number}        [alpha]
+           * @return {p5.Color}
+           */
+
+          /**
+           * @method color
+           * @param  {String}        value   a color string
+           * @return {p5.Color}
+           */
+
+          /**
+           * @method color
+           * @param  {Number[]}      values  an array containing the red,green,blue &
+           *                                 and alpha components of the color
+           * @return {p5.Color}
+           */
+
+          /**
+           * @method color
+           * @param  {p5.Color}     color
+           * @return {p5.Color}
+           */
+          _main.default.prototype.color = function() {
+            _main.default._validateParameters('color', arguments);
+            if (arguments[0] instanceof _main.default.Color) {
+              return arguments[0]; // Do nothing if argument is already a color object.
+            }
+
+            var args = arguments[0] instanceof Array ? arguments[0] : arguments;
+            return new _main.default.Color(this, args);
+          };
+
+          /**
+           * Extracts the green value from a color or pixel array.
+           *
+           * @method green
+           * @param {p5.Color|Number[]|String} color <a href="#/p5.Color">p5.Color</a> object, color components,
+           *                                         or CSS color
+           * @return {Number} the green value
+           * @example
+           * <div>
+           * <code>
+           * let c = color(20, 75, 200); // Define color 'c'
+           * fill(c); // Use color variable 'c' as fill color
+           * rect(15, 20, 35, 60); // Draw left rectangle
+           *
+           * let greenValue = green(c); // Get green in 'c'
+           * print(greenValue); // Print "75.0"
+           * fill(0, greenValue, 0); // Use 'greenValue' in new fill
+           * rect(50, 20, 35, 60); // Draw right rectangle
+           * </code>
+           * </div>
+           *
+           * @alt
+           * blue rect on left and green on right, both with black outlines & 35x60.
+           */
+          _main.default.prototype.green = function(c) {
+            _main.default._validateParameters('green', arguments);
+            return this.color(c)._getGreen();
+          };
+
+          /**
+           * Extracts the hue value from a color or pixel array.
+           *
+           * Hue exists in both HSB and HSL. This function will return the
+           * HSB-normalized hue when supplied with an HSB color object (or when supplied
+           * with a pixel array while the color mode is HSB), but will default to the
+           * HSL-normalized hue otherwise. (The values will only be different if the
+           * maximum hue setting for each system is different.)
+           *
+           * @method hue
+           * @param {p5.Color|Number[]|String} color <a href="#/p5.Color">p5.Color</a> object, color components,
+           *                                         or CSS color
+           * @return {Number} the hue
+           * @example
+           * <div>
+           * <code>
+           * noStroke();
+           * colorMode(HSB, 255);
+           * let c = color(0, 126, 255);
+           * fill(c);
+           * rect(15, 20, 35, 60);
+           * let value = hue(c); // Sets 'value' to "0"
+           * fill(value);
+           * rect(50, 20, 35, 60);
+           * </code>
+           * </div>
+           *
+           * @alt
+           * salmon pink rect on left and black on right, both 35x60.
+           */
+          _main.default.prototype.hue = function(c) {
+            _main.default._validateParameters('hue', arguments);
+            return this.color(c)._getHue();
+          };
+
+          /**
+           * Blends two colors to find a third color somewhere between them. The amt
+           * parameter is the amount to interpolate between the two values where 0.0
+           * equal to the first color, 0.1 is very near the first color, 0.5 is halfway
+           * in between, etc. An amount below 0 will be treated as 0. Likewise, amounts
+           * above 1 will be capped at 1. This is different from the behavior of <a href="#/p5/lerp">lerp()</a>,
+           * but necessary because otherwise numbers outside the range will produce
