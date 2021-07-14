@@ -44407,3 +44407,130 @@
            * rect(15, 20, 35, 60); // Draw left rectangle
            *
            * let redValue = red(c); // Get red in 'c'
+           * print(redValue); // Print "255.0"
+           * fill(redValue, 0, 0); // Use 'redValue' in new fill
+           * rect(50, 20, 35, 60); // Draw right rectangle
+           * </code>
+           * </div>
+           *
+           * <div class="norender">
+           * <code>
+           * colorMode(RGB, 255); // Sets the range for red, green, and blue to 255
+           * let c = color(127, 255, 0);
+           * colorMode(RGB, 1); // Sets the range for red, green, and blue to 1
+           * let myColor = red(c);
+           * print(myColor); // 0.4980392156862745
+           * </code>
+           * </div>
+           *
+           * @alt
+           * yellow rect on left and red rect on right, both with black outlines and 35x60.
+           * grey canvas
+           */
+          _main.default.prototype.red = function(c) {
+            _main.default._validateParameters('red', arguments);
+            return this.color(c)._getRed();
+          };
+
+          /**
+           * Extracts the saturation value from a color or pixel array.
+           *
+           * Saturation is scaled differently in HSB and HSL. This function will return
+           * the HSB saturation when supplied with an HSB color object (or when supplied
+           * with a pixel array while the color mode is HSB), but will default to the
+           * HSL saturation otherwise.
+           *
+           * @method saturation
+           * @param {p5.Color|Number[]|String} color <a href="#/p5.Color">p5.Color</a> object, color components,
+           *                                         or CSS color
+           * @return {Number} the saturation value
+           * @example
+           * <div>
+           * <code>
+           * noStroke();
+           * colorMode(HSB, 255);
+           * let c = color(0, 126, 255);
+           * fill(c);
+           * rect(15, 20, 35, 60);
+           * let value = saturation(c); // Sets 'value' to 126
+           * fill(value);
+           * rect(50, 20, 35, 60);
+           * </code>
+           * </div>
+           *
+           * @alt
+           *deep pink rect on left and grey rect on right, both 35x60.
+           */
+          _main.default.prototype.saturation = function(c) {
+            _main.default._validateParameters('saturation', arguments);
+            return this.color(c)._getSaturation();
+          };
+          var _default = _main.default;
+          exports.default = _default;
+        },
+        {
+          '../core/constants': 48,
+          '../core/friendly_errors/fes_core': 51,
+          '../core/friendly_errors/file_errors': 52,
+          '../core/friendly_errors/validate_params': 54,
+          '../core/main': 59,
+          './p5.Color': 46
+        }
+      ],
+      46: [
+        function(_dereq_, module, exports) {
+          'use strict';
+          function _typeof(obj) {
+            if (typeof Symbol === 'function' && typeof Symbol.iterator === 'symbol') {
+              _typeof = function _typeof(obj) {
+                return typeof obj;
+              };
+            } else {
+              _typeof = function _typeof(obj) {
+                return obj &&
+                  typeof Symbol === 'function' &&
+                  obj.constructor === Symbol &&
+                  obj !== Symbol.prototype
+                  ? 'symbol'
+                  : typeof obj;
+              };
+            }
+            return _typeof(obj);
+          }
+          Object.defineProperty(exports, '__esModule', { value: true });
+          exports.default = void 0;
+
+          var _main = _interopRequireDefault(_dereq_('../core/main'));
+          var constants = _interopRequireWildcard(_dereq_('../core/constants'));
+          var _color_conversion = _interopRequireDefault(_dereq_('./color_conversion'));
+          function _getRequireWildcardCache() {
+            if (typeof WeakMap !== 'function') return null;
+            var cache = new WeakMap();
+            _getRequireWildcardCache = function _getRequireWildcardCache() {
+              return cache;
+            };
+            return cache;
+          }
+          function _interopRequireWildcard(obj) {
+            if (obj && obj.__esModule) {
+              return obj;
+            }
+            if (obj === null || (_typeof(obj) !== 'object' && typeof obj !== 'function')) {
+              return { default: obj };
+            }
+            var cache = _getRequireWildcardCache();
+            if (cache && cache.has(obj)) {
+              return cache.get(obj);
+            }
+            var newObj = {};
+            var hasPropertyDescriptor =
+              Object.defineProperty && Object.getOwnPropertyDescriptor;
+            for (var key in obj) {
+              if (Object.prototype.hasOwnProperty.call(obj, key)) {
+                var desc = hasPropertyDescriptor
+                  ? Object.getOwnPropertyDescriptor(obj, key)
+                  : null;
+                if (desc && (desc.get || desc.set)) {
+                  Object.defineProperty(newObj, key, desc);
+                } else {
+                  newObj[key] = obj[key];
