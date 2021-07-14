@@ -44272,3 +44272,138 @@
            * in between, etc. An amount below 0 will be treated as 0. Likewise, amounts
            * above 1 will be capped at 1. This is different from the behavior of <a href="#/p5/lerp">lerp()</a>,
            * but necessary because otherwise numbers outside the range will produce
+           * strange and unexpected colors.
+           *
+           * The way that colors are interpolated depends on the current color mode.
+           *
+           * @method lerpColor
+           * @param  {p5.Color} c1  interpolate from this color
+           * @param  {p5.Color} c2  interpolate to this color
+           * @param  {Number}       amt number between 0 and 1
+           * @return {p5.Color}     interpolated color
+           *
+           * @example
+           * <div>
+           * <code>
+           * colorMode(RGB);
+           * stroke(255);
+           * background(51);
+           * let from = color(218, 165, 32);
+           * let to = color(72, 61, 139);
+           * colorMode(RGB); // Try changing to HSB.
+           * let interA = lerpColor(from, to, 0.33);
+           * let interB = lerpColor(from, to, 0.66);
+           * fill(from);
+           * rect(10, 20, 20, 60);
+           * fill(interA);
+           * rect(30, 20, 20, 60);
+           * fill(interB);
+           * rect(50, 20, 20, 60);
+           * fill(to);
+           * rect(70, 20, 20, 60);
+           * </code>
+           * </div>
+           *
+           * @alt
+           * 4 rects one tan, brown, brownish purple, purple, with white outlines & 20x60
+           */
+
+          _main.default.prototype.lerpColor = function(c1, c2, amt) {
+            _main.default._validateParameters('lerpColor', arguments);
+            var mode = this._colorMode;
+            var maxes = this._colorMaxes;
+            var l0, l1, l2, l3;
+            var fromArray, toArray;
+
+            if (mode === constants.RGB) {
+              fromArray = c1.levels.map(function(level) {
+                return level / 255;
+              });
+              toArray = c2.levels.map(function(level) {
+                return level / 255;
+              });
+            } else if (mode === constants.HSB) {
+              c1._getBrightness(); // Cache hsba so it definitely exists.
+              c2._getBrightness();
+              fromArray = c1.hsba;
+              toArray = c2.hsba;
+            } else if (mode === constants.HSL) {
+              c1._getLightness(); // Cache hsla so it definitely exists.
+              c2._getLightness();
+              fromArray = c1.hsla;
+              toArray = c2.hsla;
+            } else {
+              throw new Error(''.concat(mode, 'cannot be used for interpolation.'));
+            }
+
+            // Prevent extrapolation.
+            amt = Math.max(Math.min(amt, 1), 0);
+
+            // Define lerp here itself if user isn't using math module.
+            // Maintains the definition as found in math/calculation.js
+            if (typeof this.lerp === 'undefined') {
+              this.lerp = function(start, stop, amt) {
+                return amt * (stop - start) + start;
+              };
+            }
+
+            // Perform interpolation.
+            l0 = this.lerp(fromArray[0], toArray[0], amt);
+            l1 = this.lerp(fromArray[1], toArray[1], amt);
+            l2 = this.lerp(fromArray[2], toArray[2], amt);
+            l3 = this.lerp(fromArray[3], toArray[3], amt);
+
+            // Scale components.
+            l0 *= maxes[mode][0];
+            l1 *= maxes[mode][1];
+            l2 *= maxes[mode][2];
+            l3 *= maxes[mode][3];
+
+            return this.color(l0, l1, l2, l3);
+          };
+
+          /**
+           * Extracts the HSL lightness value from a color or pixel array.
+           *
+           * @method lightness
+           * @param {p5.Color|Number[]|String} color <a href="#/p5.Color">p5.Color</a> object, color components,
+           *                                         or CSS color
+           * @return {Number} the lightness
+           *
+           * @example
+           * <div>
+           * <code>
+           * noStroke();
+           * colorMode(HSL);
+           * let c = color(156, 100, 50, 1);
+           * fill(c);
+           * rect(15, 20, 35, 60);
+           * let value = lightness(c); // Sets 'value' to 50
+           * fill(value);
+           * rect(50, 20, 35, 60);
+           * </code>
+           * </div>
+           *
+           * @alt
+           * light pastel green rect on left and dark grey rect on right, both 35x60.
+           */
+          _main.default.prototype.lightness = function(c) {
+            _main.default._validateParameters('lightness', arguments);
+            return this.color(c)._getLightness();
+          };
+
+          /**
+           * Extracts the red value from a color or pixel array.
+           *
+           * @method red
+           * @param {p5.Color|Number[]|String} color <a href="#/p5.Color">p5.Color</a> object, color components,
+           *                                         or CSS color
+           * @return {Number} the red value
+           * @example
+           * <div>
+           * <code>
+           * let c = color(255, 204, 0); // Define color 'c'
+           * fill(c); // Use color variable 'c' as fill color
+           * rect(15, 20, 35, 60); // Draw left rectangle
+           *
+           * let redValue = red(c); // Get red in 'c'
