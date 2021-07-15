@@ -44534,3 +44534,137 @@
                   Object.defineProperty(newObj, key, desc);
                 } else {
                   newObj[key] = obj[key];
+                }
+              }
+            }
+            newObj.default = obj;
+            if (cache) {
+              cache.set(obj, newObj);
+            }
+            return newObj;
+          }
+          function _interopRequireDefault(obj) {
+            return obj && obj.__esModule ? obj : { default: obj };
+          }
+          /**
+           * @module Color
+           * @submodule Creating & Reading
+           * @for p5
+           * @requires core
+           * @requires constants
+           * @requires color_conversion
+           */ /**
+           * Each color stores the color mode and level maxes that was applied at the
+           * time of its construction. These are used to interpret the input arguments
+           * (at construction and later for that instance of color) and to format the
+           * output e.g. when <a href="#/p5/saturation">saturation()</a> is requested.
+           *
+           * Internally, we store an array representing the ideal RGBA values in floating
+           * point form, normalized from 0 to 1. From this we calculate the closest
+           * screen color (RGBA levels from 0 to 255) and expose this to the renderer.
+           *
+           * We also cache normalized, floating point components of the color in various
+           * representations as they are calculated. This is done to prevent repeating a
+           * conversion that has already been performed.
+           *
+           * @class p5.Color
+           * @constructor
+           */ _main.default.Color = function(pInst, vals) {
+            // Record color mode and maxes at time of construction.
+            this._storeModeAndMaxes(pInst._colorMode, pInst._colorMaxes); // Calculate normalized RGBA values.
+            if (
+              this.mode !== constants.RGB &&
+              this.mode !== constants.HSL &&
+              this.mode !== constants.HSB
+            ) {
+              throw new Error(''.concat(this.mode, ' is an invalid colorMode.'));
+            } else {
+              this._array = _main.default.Color._parseInputs.apply(this, vals);
+            }
+
+            // Expose closest screen color.
+            this._calculateLevels();
+            return this;
+          };
+
+          /**
+           * This function returns the color formatted as a string. This can be useful
+           * for debugging, or for using p5.js with other libraries.
+           *
+           * @method toString
+           * @param {String} [format] How the color string will be formatted.
+           * Leaving this empty formats the string as rgba(r, g, b, a).
+           * '#rgb' '#rgba' '#rrggbb' and '#rrggbbaa' format as hexadecimal color codes.
+           * 'rgb' 'hsb' and 'hsl' return the color formatted in the specified color mode.
+           * 'rgba' 'hsba' and 'hsla' are the same as above but with alpha channels.
+           * 'rgb%' 'hsb%' 'hsl%' 'rgba%' 'hsba%' and 'hsla%' format as percentages.
+           * @return {String} the formatted string
+           *
+           * @example
+           * <div>
+           * <code>
+           * createCanvas(200, 100);
+           * let myColor;
+           * stroke(255);
+           * myColor = color(100, 100, 250);
+           * fill(myColor);
+           * rotate(HALF_PI);
+           * text(myColor.toString(), 0, -5);
+           * text(myColor.toString('#rrggbb'), 0, -30);
+           * text(myColor.toString('rgba%'), 0, -55);
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * let myColor = color(100, 130, 250);
+           * text(myColor.toString('#rrggbb'), 25, 25);
+           * </code>
+           * </div>
+           *
+           * @alt
+           * A canvas with 3 text representation of their color.
+           */
+          _main.default.Color.prototype.toString = function(format) {
+            var a = this.levels;
+            var f = this._array;
+            var alpha = f[3]; // String representation uses normalized alpha
+
+            switch (format) {
+              case '#rrggbb':
+                return '#'.concat(
+                  a[0] < 16 ? '0'.concat(a[0].toString(16)) : a[0].toString(16),
+                  a[1] < 16 ? '0'.concat(a[1].toString(16)) : a[1].toString(16),
+                  a[2] < 16 ? '0'.concat(a[2].toString(16)) : a[2].toString(16)
+                );
+
+              case '#rrggbbaa':
+                return '#'.concat(
+                  a[0] < 16 ? '0'.concat(a[0].toString(16)) : a[0].toString(16),
+                  a[1] < 16 ? '0'.concat(a[1].toString(16)) : a[1].toString(16),
+                  a[2] < 16 ? '0'.concat(a[2].toString(16)) : a[2].toString(16),
+                  a[3] < 16 ? '0'.concat(a[2].toString(16)) : a[3].toString(16)
+                );
+
+              case '#rgb':
+                return '#'.concat(
+                  Math.round(f[0] * 15).toString(16),
+                  Math.round(f[1] * 15).toString(16),
+                  Math.round(f[2] * 15).toString(16)
+                );
+
+              case '#rgba':
+                return '#'.concat(
+                  Math.round(f[0] * 15).toString(16),
+                  Math.round(f[1] * 15).toString(16),
+                  Math.round(f[2] * 15).toString(16),
+                  Math.round(f[3] * 15).toString(16)
+                );
+
+              case 'rgb':
+                return 'rgb('.concat(a[0], ', ', a[1], ', ', a[2], ')');
+
+              case 'rgb%':
+                return 'rgb('.concat(
+                  (100 * f[0]).toPrecision(3),
+                  '%, ',
