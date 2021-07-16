@@ -44801,3 +44801,129 @@
           };
 
           /**
+           * The setRed function sets the red component of a color.
+           * The range depends on your color mode, in the default RGB mode it's between 0 and 255.
+           * @method setRed
+           * @param {Number} red the new red value
+           * @example
+           * <div>
+           * <code>
+           * let backgroundColor;
+           *
+           * function setup() {
+           *   backgroundColor = color(100, 50, 150);
+           * }
+           *
+           * function draw() {
+           *   backgroundColor.setRed(128 + 128 * sin(millis() / 1000));
+           *   background(backgroundColor);
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * canvas with gradually changing background color
+           */
+          _main.default.Color.prototype.setRed = function(new_red) {
+            this._array[0] = new_red / this.maxes[constants.RGB][0];
+            this._calculateLevels();
+          };
+
+          /**
+           * The setGreen function sets the green component of a color.
+           * The range depends on your color mode, in the default RGB mode it's between 0 and 255.
+           * @method setGreen
+           * @param {Number} green the new green value
+           * @example
+           * <div>
+           * <code>
+           * let backgroundColor = color(100, 50, 150);
+           * function draw() {
+           *   backgroundColor.setGreen(128 + 128 * sin(millis() / 1000));
+           *   background(backgroundColor);
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * canvas with gradually changing background color
+           **/
+          _main.default.Color.prototype.setGreen = function(new_green) {
+            this._array[1] = new_green / this.maxes[constants.RGB][1];
+            this._calculateLevels();
+          };
+
+          /**
+           * The setBlue function sets the blue component of a color.
+           * The range depends on your color mode, in the default RGB mode it's between 0 and 255.
+           * @method setBlue
+           * @param {Number} blue the new blue value
+           * @example
+           * <div>
+           * <code>
+           * let backgroundColor = color(100, 50, 150);
+           * function draw() {
+           *   backgroundColor.setBlue(128 + 128 * sin(millis() / 1000));
+           *   background(backgroundColor);
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * canvas with gradually changing background color
+           **/
+          _main.default.Color.prototype.setBlue = function(new_blue) {
+            this._array[2] = new_blue / this.maxes[constants.RGB][2];
+            this._calculateLevels();
+          };
+
+          /**
+           * The setAlpha function sets the transparency (alpha) value of a color.
+           * The range depends on your color mode, in the default RGB mode it's between 0 and 255.
+           * @method setAlpha
+           * @param {Number} alpha the new alpha value
+           * @example
+           * <div>
+           * <code>
+           * function draw() {
+           *   clear();
+           *   background(200);
+           *   squareColor = color(100, 50, 100);
+           *   squareColor.setAlpha(128 + 128 * sin(millis() / 1000));
+           *   fill(squareColor);
+           *   rect(13, 13, width - 26, height - 26);
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * a square with gradually changing opacity on a gray background
+           **/
+          _main.default.Color.prototype.setAlpha = function(new_alpha) {
+            this._array[3] = new_alpha / this.maxes[this.mode][3];
+            this._calculateLevels();
+          };
+
+          // calculates and stores the closest screen levels
+          _main.default.Color.prototype._calculateLevels = function() {
+            var array = this._array;
+            // (loop backwards for performance)
+            var levels = (this.levels = new Array(array.length));
+            for (var i = array.length - 1; i >= 0; --i) {
+              levels[i] = Math.round(array[i] * 255);
+            }
+          };
+
+          _main.default.Color.prototype._getAlpha = function() {
+            return this._array[3] * this.maxes[this.mode][3];
+          };
+
+          // stores the color mode and maxes in this instance of Color
+          // for later use (by _parseInputs())
+          _main.default.Color.prototype._storeModeAndMaxes = function(new_mode, new_maxes) {
+            this.mode = new_mode;
+            this.maxes = new_maxes;
+          };
+
+          _main.default.Color.prototype._getMode = function() {
+            return this.mode;
