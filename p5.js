@@ -44927,3 +44927,126 @@
 
           _main.default.Color.prototype._getMode = function() {
             return this.mode;
+          };
+
+          _main.default.Color.prototype._getMaxes = function() {
+            return this.maxes;
+          };
+
+          _main.default.Color.prototype._getBlue = function() {
+            return this._array[2] * this.maxes[constants.RGB][2];
+          };
+
+          _main.default.Color.prototype._getBrightness = function() {
+            if (!this.hsba) {
+              this.hsba = _color_conversion.default._rgbaToHSBA(this._array);
+            }
+            return this.hsba[2] * this.maxes[constants.HSB][2];
+          };
+
+          _main.default.Color.prototype._getGreen = function() {
+            return this._array[1] * this.maxes[constants.RGB][1];
+          };
+
+          /**
+           * Hue is the same in HSB and HSL, but the maximum value may be different.
+           * This function will return the HSB-normalized saturation when supplied with
+           * an HSB color object, but will default to the HSL-normalized saturation
+           * otherwise.
+           */
+          _main.default.Color.prototype._getHue = function() {
+            if (this.mode === constants.HSB) {
+              if (!this.hsba) {
+                this.hsba = _color_conversion.default._rgbaToHSBA(this._array);
+              }
+              return this.hsba[0] * this.maxes[constants.HSB][0];
+            } else {
+              if (!this.hsla) {
+                this.hsla = _color_conversion.default._rgbaToHSLA(this._array);
+              }
+              return this.hsla[0] * this.maxes[constants.HSL][0];
+            }
+          };
+
+          _main.default.Color.prototype._getLightness = function() {
+            if (!this.hsla) {
+              this.hsla = _color_conversion.default._rgbaToHSLA(this._array);
+            }
+            return this.hsla[2] * this.maxes[constants.HSL][2];
+          };
+
+          _main.default.Color.prototype._getRed = function() {
+            return this._array[0] * this.maxes[constants.RGB][0];
+          };
+
+          /**
+           * Saturation is scaled differently in HSB and HSL. This function will return
+           * the HSB saturation when supplied with an HSB color object, but will default
+           * to the HSL saturation otherwise.
+           */
+          _main.default.Color.prototype._getSaturation = function() {
+            if (this.mode === constants.HSB) {
+              if (!this.hsba) {
+                this.hsba = _color_conversion.default._rgbaToHSBA(this._array);
+              }
+              return this.hsba[1] * this.maxes[constants.HSB][1];
+            } else {
+              if (!this.hsla) {
+                this.hsla = _color_conversion.default._rgbaToHSLA(this._array);
+              }
+              return this.hsla[1] * this.maxes[constants.HSL][1];
+            }
+          };
+
+          /**
+           * CSS named colors.
+           */
+          var namedColors = {
+            aliceblue: '#f0f8ff',
+            antiquewhite: '#faebd7',
+            aqua: '#00ffff',
+            aquamarine: '#7fffd4',
+            azure: '#f0ffff',
+            beige: '#f5f5dc',
+            bisque: '#ffe4c4',
+            black: '#000000',
+            blanchedalmond: '#ffebcd',
+            blue: '#0000ff',
+            blueviolet: '#8a2be2',
+            brown: '#a52a2a',
+            burlywood: '#deb887',
+            cadetblue: '#5f9ea0',
+            chartreuse: '#7fff00',
+            chocolate: '#d2691e',
+            coral: '#ff7f50',
+            cornflowerblue: '#6495ed',
+            cornsilk: '#fff8dc',
+            crimson: '#dc143c',
+            cyan: '#00ffff',
+            darkblue: '#00008b',
+            darkcyan: '#008b8b',
+            darkgoldenrod: '#b8860b',
+            darkgray: '#a9a9a9',
+            darkgreen: '#006400',
+            darkgrey: '#a9a9a9',
+            darkkhaki: '#bdb76b',
+            darkmagenta: '#8b008b',
+            darkolivegreen: '#556b2f',
+            darkorange: '#ff8c00',
+            darkorchid: '#9932cc',
+            darkred: '#8b0000',
+            darksalmon: '#e9967a',
+            darkseagreen: '#8fbc8f',
+            darkslateblue: '#483d8b',
+            darkslategray: '#2f4f4f',
+            darkslategrey: '#2f4f4f',
+            darkturquoise: '#00ced1',
+            darkviolet: '#9400d3',
+            deeppink: '#ff1493',
+            deepskyblue: '#00bfff',
+            dimgray: '#696969',
+            dimgrey: '#696969',
+            dodgerblue: '#1e90ff',
+            firebrick: '#b22222',
+            floralwhite: '#fffaf0',
+            forestgreen: '#228b22',
