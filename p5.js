@@ -45184,3 +45184,145 @@
             // Match colors in format rgb(R, G, B), e.g. rgb(255, 0, 128).
             RGB: new RegExp(
               [
+                '^rgb\\(',
+                INTEGER.source,
+                ',',
+                INTEGER.source,
+                ',',
+                INTEGER.source,
+                '\\)$'
+              ].join(WHITESPACE.source),
+              'i'
+            ),
+
+            // Match colors in format rgb(R%, G%, B%), e.g. rgb(100%, 0%, 28.9%).
+            RGB_PERCENT: new RegExp(
+              [
+                '^rgb\\(',
+                PERCENT.source,
+                ',',
+                PERCENT.source,
+                ',',
+                PERCENT.source,
+                '\\)$'
+              ].join(WHITESPACE.source),
+              'i'
+            ),
+
+            // Match colors in format rgb(R, G, B, A), e.g. rgb(255, 0, 128, 0.25).
+            RGBA: new RegExp(
+              [
+                '^rgba\\(',
+                INTEGER.source,
+                ',',
+                INTEGER.source,
+                ',',
+                INTEGER.source,
+                ',',
+                DECIMAL.source,
+                '\\)$'
+              ].join(WHITESPACE.source),
+              'i'
+            ),
+
+            // Match colors in format rgb(R%, G%, B%, A), e.g. rgb(100%, 0%, 28.9%, 0.5).
+            RGBA_PERCENT: new RegExp(
+              [
+                '^rgba\\(',
+                PERCENT.source,
+                ',',
+                PERCENT.source,
+                ',',
+                PERCENT.source,
+                ',',
+                DECIMAL.source,
+                '\\)$'
+              ].join(WHITESPACE.source),
+              'i'
+            ),
+
+            // Match colors in format hsla(H, S%, L%), e.g. hsl(100, 40%, 28.9%).
+            HSL: new RegExp(
+              [
+                '^hsl\\(',
+                INTEGER.source,
+                ',',
+                PERCENT.source,
+                ',',
+                PERCENT.source,
+                '\\)$'
+              ].join(WHITESPACE.source),
+              'i'
+            ),
+
+            // Match colors in format hsla(H, S%, L%, A), e.g. hsla(100, 40%, 28.9%, 0.5).
+            HSLA: new RegExp(
+              [
+                '^hsla\\(',
+                INTEGER.source,
+                ',',
+                PERCENT.source,
+                ',',
+                PERCENT.source,
+                ',',
+                DECIMAL.source,
+                '\\)$'
+              ].join(WHITESPACE.source),
+              'i'
+            ),
+
+            // Match colors in format hsb(H, S%, B%), e.g. hsb(100, 40%, 28.9%).
+            HSB: new RegExp(
+              [
+                '^hsb\\(',
+                INTEGER.source,
+                ',',
+                PERCENT.source,
+                ',',
+                PERCENT.source,
+                '\\)$'
+              ].join(WHITESPACE.source),
+              'i'
+            ),
+
+            // Match colors in format hsba(H, S%, B%, A), e.g. hsba(100, 40%, 28.9%, 0.5).
+            HSBA: new RegExp(
+              [
+                '^hsba\\(',
+                INTEGER.source,
+                ',',
+                PERCENT.source,
+                ',',
+                PERCENT.source,
+                ',',
+                DECIMAL.source,
+                '\\)$'
+              ].join(WHITESPACE.source),
+              'i'
+            )
+          };
+
+          /**
+           * For a number of different inputs, returns a color formatted as [r, g, b, a]
+           * arrays, with each component normalized between 0 and 1.
+           *
+           * @private
+           * @param {Array} [...args] An 'array-like' object that represents a list of
+           *                          arguments
+           * @return {Number[]}       a color formatted as [r, g, b, a]
+           *                          Example:
+           *                          input        ==> output
+           *                          g            ==> [g, g, g, 255]
+           *                          g,a          ==> [g, g, g, a]
+           *                          r, g, b      ==> [r, g, b, 255]
+           *                          r, g, b, a   ==> [r, g, b, a]
+           *                          [g]          ==> [g, g, g, 255]
+           *                          [g, a]       ==> [g, g, g, a]
+           *                          [r, g, b]    ==> [r, g, b, 255]
+           *                          [r, g, b, a] ==> [r, g, b, a]
+           * @example
+           * <div>
+           * <code>
+           * // todo
+           * </code>
+           * </div>
