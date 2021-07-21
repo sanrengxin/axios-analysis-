@@ -45472,3 +45472,148 @@
                 results = colorPatterns.HSLA.exec(str)
                   .slice(1)
                   .map(function(color, idx) {
+                    if (idx === 0) {
+                      return parseInt(color, 10) / 360;
+                    } else if (idx === 3) {
+                      return parseFloat(color);
+                    }
+                    return parseInt(color, 10) / 100;
+                  });
+              }
+              results = results.map(function(value) {
+                return Math.max(Math.min(value, 1), 0);
+              });
+              if (results.length) {
+                return _color_conversion.default._hslaToRGBA(results);
+              }
+
+              // Try HSBA pattern matching.
+              if (colorPatterns.HSB.test(str)) {
+                // hsb(H,S,B)
+                results = colorPatterns.HSB.exec(str)
+                  .slice(1)
+                  .map(function(color, idx) {
+                    if (idx === 0) {
+                      return parseInt(color, 10) / 360;
+                    }
+                    return parseInt(color, 10) / 100;
+                  });
+                results[3] = 1;
+              } else if (colorPatterns.HSBA.test(str)) {
+                // hsba(H,S,B,A)
+                results = colorPatterns.HSBA.exec(str)
+                  .slice(1)
+                  .map(function(color, idx) {
+                    if (idx === 0) {
+                      return parseInt(color, 10) / 360;
+                    } else if (idx === 3) {
+                      return parseFloat(color);
+                    }
+                    return parseInt(color, 10) / 100;
+                  });
+              }
+
+              if (results.length) {
+                // (loop backwards for performance)
+                for (i = results.length - 1; i >= 0; --i) {
+                  results[i] = Math.max(Math.min(results[i], 1), 0);
+                }
+
+                return _color_conversion.default._hsbaToRGBA(results);
+              }
+
+              // Input did not match any CSS color pattern: default to white.
+              results = [1, 1, 1, 1];
+            } else if ((numArgs === 1 || numArgs === 2) && typeof r === 'number') {
+              // 'Grayscale' mode.
+
+              /**
+               * For HSB and HSL, interpret the gray level as a brightness/lightness
+               * value (they are equivalent when chroma is zero). For RGB, normalize the
+               * gray level according to the blue maximum.
+               */
+              results[0] = r / maxes[2];
+              results[1] = r / maxes[2];
+              results[2] = r / maxes[2];
+
+              // Alpha may be undefined, so default it to 100%.
+              if (typeof g === 'number') {
+                results[3] = g / maxes[3];
+              } else {
+                results[3] = 1;
+              }
+
+              // Constrain components to the range [0,1].
+              results = results.map(function(value) {
+                return Math.max(Math.min(value, 1), 0);
+              });
+            } else {
+              throw new Error(''.concat(arguments, 'is not a valid color representation.'));
+            }
+
+            return results;
+          };
+          var _default = _main.default.Color;
+          exports.default = _default;
+        },
+        { '../core/constants': 48, '../core/main': 59, './color_conversion': 44 }
+      ],
+      47: [
+        function(_dereq_, module, exports) {
+          'use strict';
+          function _typeof(obj) {
+            if (typeof Symbol === 'function' && typeof Symbol.iterator === 'symbol') {
+              _typeof = function _typeof(obj) {
+                return typeof obj;
+              };
+            } else {
+              _typeof = function _typeof(obj) {
+                return obj &&
+                  typeof Symbol === 'function' &&
+                  obj.constructor === Symbol &&
+                  obj !== Symbol.prototype
+                  ? 'symbol'
+                  : typeof obj;
+              };
+            }
+            return _typeof(obj);
+          }
+          Object.defineProperty(exports, '__esModule', { value: true });
+          exports.default = void 0;
+
+          var _main = _interopRequireDefault(_dereq_('../core/main'));
+          var constants = _interopRequireWildcard(_dereq_('../core/constants'));
+          _dereq_('./p5.Color');
+          function _getRequireWildcardCache() {
+            if (typeof WeakMap !== 'function') return null;
+            var cache = new WeakMap();
+            _getRequireWildcardCache = function _getRequireWildcardCache() {
+              return cache;
+            };
+            return cache;
+          }
+          function _interopRequireWildcard(obj) {
+            if (obj && obj.__esModule) {
+              return obj;
+            }
+            if (obj === null || (_typeof(obj) !== 'object' && typeof obj !== 'function')) {
+              return { default: obj };
+            }
+            var cache = _getRequireWildcardCache();
+            if (cache && cache.has(obj)) {
+              return cache.get(obj);
+            }
+            var newObj = {};
+            var hasPropertyDescriptor =
+              Object.defineProperty && Object.getOwnPropertyDescriptor;
+            for (var key in obj) {
+              if (Object.prototype.hasOwnProperty.call(obj, key)) {
+                var desc = hasPropertyDescriptor
+                  ? Object.getOwnPropertyDescriptor(obj, key)
+                  : null;
+                if (desc && (desc.get || desc.set)) {
+                  Object.defineProperty(newObj, key, desc);
+                } else {
+                  newObj[key] = obj[key];
+                }
+              }
