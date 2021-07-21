@@ -45617,3 +45617,145 @@
                   newObj[key] = obj[key];
                 }
               }
+            }
+            newObj.default = obj;
+            if (cache) {
+              cache.set(obj, newObj);
+            }
+            return newObj;
+          }
+          function _interopRequireDefault(obj) {
+            return obj && obj.__esModule ? obj : { default: obj };
+          } /**
+           * @method background
+           * @param {Number} gray   specifies a value between white and black
+           * @param {Number} [a]
+           * @chainable
+           */ /**
+           * @module Color
+           * @submodule Setting
+           * @for p5
+           * @requires core
+           * @requires constants
+           */ /**
+           * The <a href="#/p5/background">background()</a> function sets the color used
+           * for the background of the p5.js canvas. The default background is transparent.
+           * This function is typically used within <a href="#/p5/draw">draw()</a> to clear
+           * the display window at the beginning of each frame, but it can be used inside
+           * <a href="#/p5/setup">setup()</a> to set the background on the first frame of
+           * animation or if the background need only be set once.
+           *
+           * The color is either specified in terms of the RGB, HSB, or HSL color depending
+           * on the current <a href="#/p5/colorMode">colorMode</a>. (The default color space
+           * is RGB, with each value in the range from 0 to 255). The alpha range by default
+           * is also 0 to 255.<br><br>
+           *
+           * If a single string argument is provided, RGB, RGBA and Hex CSS color strings
+           * and all named color strings are supported. In this case, an alpha number
+           * value as a second argument is not supported, the RGBA form should be used.
+           *
+           * A <a href="#/p5.Color">p5.Color</a> object can also be provided to set the background color.
+           *
+           * A <a href="#/p5.Image">p5.Image</a> can also be provided to set the background image.
+           *
+           * @method background
+           * @param {p5.Color} color  any value created by the <a href="#/p5/color">color()</a> function
+           * @chainable
+           *
+           * @example
+           * <div>
+           * <code>
+           * // Grayscale integer value
+           * background(51);
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * // R, G & B integer values
+           * background(255, 204, 0);
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * // H, S & B integer values
+           * colorMode(HSB);
+           * background(255, 204, 100);
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * // Named SVG/CSS color string
+           * background('red');
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * // three-digit hexadecimal RGB notation
+           * background('#fae');
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * // six-digit hexadecimal RGB notation
+           * background('#222222');
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * // integer RGB notation
+           * background('rgb(0,255,0)');
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * // integer RGBA notation
+           * background('rgba(0,255,0, 0.25)');
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * // percentage RGB notation
+           * background('rgb(100%,0%,10%)');
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * // percentage RGBA notation
+           * background('rgba(100%,0%,100%,0.5)');
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * // p5 Color object
+           * background(color(0, 0, 255));
+           * </code>
+           * </div>
+           *
+           * @alt
+           * canvas with darkest charcoal grey background.
+           * canvas with yellow background.
+           * canvas with royal blue background.
+           * canvas with red background.
+           * canvas with pink background.
+           * canvas with black background.
+           * canvas with bright green background.
+           * canvas with soft green background.
+           * canvas with red background.
+           * canvas with light purple background.
+           * canvas with blue background.
+           */ /**
+           * @method background
+           * @param {String} colorstring color string, possible formats include: integer
+           *                         rgb() or rgba(), percentage rgb() or rgba(),
+           *                         3-digit hex, 6-digit hex
+           * @param {Number} [a]         opacity of the background relative to current
