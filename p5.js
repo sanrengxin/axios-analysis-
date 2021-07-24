@@ -45759,3 +45759,117 @@
            *                         rgb() or rgba(), percentage rgb() or rgba(),
            *                         3-digit hex, 6-digit hex
            * @param {Number} [a]         opacity of the background relative to current
+           *                             color range (default is 0-255)
+           * @chainable
+           */
+
+          /**
+           * @method background
+           * @param {Number} v1     red or hue value (depending on the current color
+           *                        mode)
+           * @param {Number} v2     green or saturation value (depending on the current
+           *                        color mode)
+           * @param {Number} v3     blue or brightness value (depending on the current
+           *                        color mode)
+           * @param  {Number} [a]
+           * @chainable
+           */
+
+          /**
+           * @method background
+           * @param  {Number[]}      values  an array containing the red, green, blue
+           *                                 and alpha components of the color
+           * @chainable
+           */
+
+          /**
+           * @method background
+           * @param {p5.Image} image     image created with <a href="#/p5/loadImage">loadImage()</a> or <a href="#/p5/createImage">createImage()</a>,
+           *                             to set as background
+           *                             (must be same size as the sketch window)
+           * @param  {Number}  [a]
+           * @chainable
+           */
+          _main.default.prototype.background = function() {
+            var _this$_renderer;
+            (_this$_renderer = this._renderer).background.apply(_this$_renderer, arguments);
+            return this;
+          };
+
+          /**
+           * Clears the pixels within a buffer. This function only clears the canvas.
+           * It will not clear objects created by createX() methods such as
+           * <a href="#/p5/createVideo">createVideo()</a> or <a href="#/p5/createDiv">createDiv()</a>.
+           * Unlike the main graphics context, pixels in additional graphics areas created
+           * with <a href="#/p5/createGraphics">createGraphics()</a> can be entirely
+           * or partially transparent. This function clears everything to make all of
+           * the pixels 100% transparent.
+           *
+           * @method clear
+           * @chainable
+           * @example
+           * <div>
+           * <code>
+           * // Clear the screen on mouse press.
+           * function draw() {
+           *   ellipse(mouseX, mouseY, 20, 20);
+           * }
+           * function mousePressed() {
+           *   clear();
+           *   background(128);
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * small white ellipses are continually drawn at mouse's x and y coordinates.
+           */
+
+          _main.default.prototype.clear = function() {
+            this._renderer.clear();
+            return this;
+          };
+
+          /**
+           * <a href="#/p5/colorMode">colorMode()</a> changes the way p5.js interprets
+           * color data. By default, the parameters for <a href="#/p5/fill">fill()</a>,
+           * <a href="#/p5/stroke">stroke()</a>, <a href="#/p5/background">background()</a>,
+           * and <a href="#/p5/color">color()</a> are defined by values between 0 and 255
+           * using the RGB color model. This is equivalent to setting colorMode(RGB, 255).
+           * Setting colorMode(HSB) lets you use the HSB system instead. By default, this
+           * is colorMode(HSB, 360, 100, 100, 1). You can also use HSL.
+           *
+           * Note: existing color objects remember the mode that they were created in,
+           * so you can change modes as you like without affecting their appearance.
+           *
+           * @method colorMode
+           * @param {Constant} mode   either RGB, HSB or HSL, corresponding to
+           *                          Red/Green/Blue and Hue/Saturation/Brightness
+           *                          (or Lightness)
+           * @param {Number}  [max]  range for all values
+           * @chainable
+           *
+           * @example
+           * <div>
+           * <code>
+           * noStroke();
+           * colorMode(RGB, 100);
+           * for (let i = 0; i < 100; i++) {
+           *   for (let j = 0; j < 100; j++) {
+           *     stroke(i, j, 0);
+           *     point(i, j);
+           *   }
+           * }
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * noStroke();
+           * colorMode(HSB, 100);
+           * for (let i = 0; i < 100; i++) {
+           *   for (let j = 0; j < 100; j++) {
+           *     stroke(i, j, 100);
+           *     point(i, j);
+           *   }
+           * }
