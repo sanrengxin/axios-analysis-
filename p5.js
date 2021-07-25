@@ -45995,3 +45995,149 @@
            * colorMode(HSB);
            * fill(255, 204, 100);
            * rect(20, 20, 60, 60);
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * // Named SVG/CSS color string
+           * fill('red');
+           * rect(20, 20, 60, 60);
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * // three-digit hexadecimal RGB notation
+           * fill('#fae');
+           * rect(20, 20, 60, 60);
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * // six-digit hexadecimal RGB notation
+           * fill('#222222');
+           * rect(20, 20, 60, 60);
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * // integer RGB notation
+           * fill('rgb(0,255,0)');
+           * rect(20, 20, 60, 60);
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * // integer RGBA notation
+           * fill('rgba(0,255,0, 0.25)');
+           * rect(20, 20, 60, 60);
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * // percentage RGB notation
+           * fill('rgb(100%,0%,10%)');
+           * rect(20, 20, 60, 60);
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * // percentage RGBA notation
+           * fill('rgba(100%,0%,100%,0.5)');
+           * rect(20, 20, 60, 60);
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * // p5 Color object
+           * fill(color(0, 0, 255));
+           * rect(20, 20, 60, 60);
+           * </code>
+           * </div>
+           *
+           * @alt
+           * 60x60 dark charcoal grey rect with black outline in center of canvas.
+           * 60x60 yellow rect with black outline in center of canvas.
+           * 60x60 royal blue rect with black outline in center of canvas.
+           * 60x60 red rect with black outline in center of canvas.
+           * 60x60 pink rect with black outline in center of canvas.
+           * 60x60 black rect with black outline in center of canvas.
+           * 60x60 light green rect with black outline in center of canvas.
+           * 60x60 soft green rect with black outline in center of canvas.
+           * 60x60 red rect with black outline in center of canvas.
+           * 60x60 dark fuchsia rect with black outline in center of canvas.
+           * 60x60 blue rect with black outline in center of canvas.
+           */
+
+          /**
+           * @method fill
+           * @param  {String}        value   a color string
+           * @chainable
+           */
+
+          /**
+           * @method fill
+           * @param  {Number}        gray   a gray value
+           * @param  {Number}        [alpha]
+           * @chainable
+           */
+
+          /**
+           * @method fill
+           * @param  {Number[]}      values  an array containing the red,green,blue &
+           *                                 and alpha components of the color
+           * @chainable
+           */
+
+          /**
+           * @method fill
+           * @param  {p5.Color}      color   the fill color
+           * @chainable
+           */
+          _main.default.prototype.fill = function() {
+            var _this$_renderer2;
+            this._renderer._setProperty('_fillSet', true);
+            this._renderer._setProperty('_doFill', true);
+            (_this$_renderer2 = this._renderer).fill.apply(_this$_renderer2, arguments);
+            return this;
+          };
+
+          /**
+           * Disables filling geometry. If both <a href="#/p5/noStroke">noStroke()</a> and <a href="#/p5/noFill">noFill()</a> are called,
+           * nothing will be drawn to the screen.
+           *
+           * @method noFill
+           * @chainable
+           * @example
+           * <div>
+           * <code>
+           * rect(15, 10, 55, 55);
+           * noFill();
+           * rect(20, 20, 60, 60);
+           * </code>
+           * </div>
+           *
+           * <div modernizr='webgl'>
+           * <code>
+           * function setup() {
+           *   createCanvas(100, 100, WEBGL);
+           * }
+           *
+           * function draw() {
+           *   background(0);
+           *   noFill();
+           *   stroke(100, 100, 240);
+           *   rotateX(frameCount * 0.01);
+           *   rotateY(frameCount * 0.01);
+           *   box(45, 45, 45);
+           * }
+           * </code>
+           * </div>
+           *
