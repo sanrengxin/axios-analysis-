@@ -45873,3 +45873,125 @@
            *     point(i, j);
            *   }
            * }
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * colorMode(RGB, 255);
+           * let c = color(127, 255, 0);
+           * colorMode(RGB, 1);
+           * let myColor = c._getRed();
+           * text(myColor, 10, 10, 80, 80);
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * noFill();
+           * colorMode(RGB, 255, 255, 255, 1);
+           * background(255);
+           * strokeWeight(4);
+           * stroke(255, 0, 10, 0.3);
+           * ellipse(40, 40, 50, 50);
+           * ellipse(50, 50, 40, 40);
+           * </code>
+           * </div>
+           *
+           * @alt
+           *Green to red gradient from bottom L to top R. shading originates from top left.
+           *Rainbow gradient from left to right. Brightness increasing to white at top.
+           *unknown image.
+           *50x50 ellipse at middle L & 40x40 ellipse at center. Translucent pink outlines.
+           */
+
+          /**
+           * @method colorMode
+           * @param {Constant} mode
+           * @param {Number} max1     range for the red or hue depending on the
+           *                              current color mode
+           * @param {Number} max2     range for the green or saturation depending
+           *                              on the current color mode
+           * @param {Number} max3     range for the blue or brightness/lightness
+           *                              depending on the current color mode
+           * @param {Number} [maxA]   range for the alpha
+           * @chainable
+           */
+          _main.default.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
+            _main.default._validateParameters('colorMode', arguments);
+            if (
+              mode === constants.RGB ||
+              mode === constants.HSB ||
+              mode === constants.HSL
+            ) {
+              // Set color mode.
+              this._colorMode = mode;
+
+              // Set color maxes.
+              var maxes = this._colorMaxes[mode];
+              if (arguments.length === 2) {
+                maxes[0] = max1; // Red
+                maxes[1] = max1; // Green
+                maxes[2] = max1; // Blue
+                maxes[3] = max1; // Alpha
+              } else if (arguments.length === 4) {
+                maxes[0] = max1; // Red
+                maxes[1] = max2; // Green
+                maxes[2] = max3; // Blue
+              } else if (arguments.length === 5) {
+                maxes[0] = max1; // Red
+                maxes[1] = max2; // Green
+                maxes[2] = max3; // Blue
+                maxes[3] = maxA; // Alpha
+              }
+            }
+
+            return this;
+          };
+
+          /**
+           * Sets the color used to fill shapes. For example, if you run fill(204, 102, 0),
+           * all shapes drawn after the fill command will be filled with the color orange.
+           * This color is either specified in terms of the RGB or HSB color depending on
+           * the current <a href="#/p5/colorMode">colorMode()</a>. (The default color space
+           * is RGB, with each value in the range from 0 to 255). The alpha range by default
+           * is also 0 to 255.
+           *
+           * If a single string argument is provided, RGB, RGBA and Hex CSS color strings
+           * and all named color strings are supported. In this case, an alpha number
+           * value as a second argument is not supported, the RGBA form should be used.
+           *
+           * A p5 <a href="#/p5.Color">Color</a> object can also be provided to set the fill color.
+           *
+           * @method fill
+           * @param  {Number}        v1      red or hue value relative to
+           *                                 the current color range
+           * @param  {Number}        v2      green or saturation value
+           *                                 relative to the current color range
+           * @param  {Number}        v3      blue or brightness value
+           *                                 relative to the current color range
+           * @param  {Number}        [alpha]
+           * @chainable
+           * @example
+           * <div>
+           * <code>
+           * // Grayscale integer value
+           * fill(51);
+           * rect(20, 20, 60, 60);
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * // R, G & B integer values
+           * fill(255, 204, 0);
+           * rect(20, 20, 60, 60);
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * // H, S & B integer values
+           * colorMode(HSB);
+           * fill(255, 204, 100);
+           * rect(20, 20, 60, 60);
