@@ -46278,3 +46278,145 @@
            * rect(20, 20, 60, 60);
            * </code>
            * </div>
+           *
+           * <div>
+           * <code>
+           * // integer RGBA notation
+           * stroke('rgba(0,255,0,0.25)');
+           * strokeWeight(4);
+           * rect(20, 20, 60, 60);
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * // percentage RGB notation
+           * stroke('rgb(100%,0%,10%)');
+           * strokeWeight(4);
+           * rect(20, 20, 60, 60);
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * // percentage RGBA notation
+           * stroke('rgba(100%,0%,100%,0.5)');
+           * strokeWeight(4);
+           * rect(20, 20, 60, 60);
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * // p5 Color object
+           * stroke(color(0, 0, 255));
+           * strokeWeight(4);
+           * rect(20, 20, 60, 60);
+           * </code>
+           * </div>
+           *
+           * @alt
+           * 60x60 white rect at center. Dark charcoal grey outline.
+           * 60x60 white rect at center. Yellow outline.
+           * 60x60 white rect at center. Royal blue outline.
+           * 60x60 white rect at center. Red outline.
+           * 60x60 white rect at center. Pink outline.
+           * 60x60 white rect at center. Black outline.
+           * 60x60 white rect at center. Bright green outline.
+           * 60x60 white rect at center. Soft green outline.
+           * 60x60 white rect at center. Red outline.
+           * 60x60 white rect at center. Dark fuchsia outline.
+           * 60x60 white rect at center. Blue outline.
+           */
+
+          /**
+           * @method stroke
+           * @param  {String}        value   a color string
+           * @chainable
+           */
+
+          /**
+           * @method stroke
+           * @param  {Number}        gray   a gray value
+           * @param  {Number}        [alpha]
+           * @chainable
+           */
+
+          /**
+           * @method stroke
+           * @param  {Number[]}      values  an array containing the red,green,blue &
+           *                                 and alpha components of the color
+           * @chainable
+           */
+
+          /**
+           * @method stroke
+           * @param  {p5.Color}      color   the stroke color
+           * @chainable
+           */
+
+          _main.default.prototype.stroke = function() {
+            var _this$_renderer3;
+            this._renderer._setProperty('_strokeSet', true);
+            this._renderer._setProperty('_doStroke', true);
+            (_this$_renderer3 = this._renderer).stroke.apply(_this$_renderer3, arguments);
+            return this;
+          };
+
+          /**
+           * All drawing that follows <a href="#/p5/erase">erase()</a> will subtract from
+           * the canvas.Erased areas will reveal the web page underneath the canvas.Erasing
+           * can be canceled with <a href="#/p5/noErase">noErase()</a>.
+           *
+           * Drawing done with <a href="#/p5/image">image()</a> and <a href="#/p5/background">
+           * background()</a> in between <a href="#/p5/erase">erase()</a> and
+           * <a href="#/p5/noErase">noErase()</a> will not erase the canvas but works as usual.
+           *
+           * @method erase
+           * @param  {Number}   [strengthFill]      A number (0-255) for the strength of erasing for a shape's fill.
+           *                                        This will default to 255 when no argument is given, which
+           *                                        is full strength.
+           * @param  {Number}   [strengthStroke]    A number (0-255) for the strength of erasing for a shape's stroke.
+           *                                        This will default to 255 when no argument is given, which
+           *                                        is full strength.
+           *
+           * @chainable
+           * @example
+           * <div>
+           * <code>
+           * background(100, 100, 250);
+           * fill(250, 100, 100);
+           * rect(20, 20, 60, 60);
+           * erase();
+           * ellipse(25, 30, 30);
+           * noErase();
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * background(150, 250, 150);
+           * fill(100, 100, 250);
+           * rect(20, 20, 60, 60);
+           * strokeWeight(5);
+           * erase(150, 255);
+           * triangle(50, 10, 70, 50, 90, 10);
+           * noErase();
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * function setup() {
+           *   smooth();
+           *   createCanvas(100, 100, WEBGL);
+           *   // Make a &lt;p&gt; element and put it behind the canvas
+           *   let p = createP('I am a dom element');
+           *   p.center();
+           *   p.style('font-size', '20px');
+           *   p.style('text-align', 'center');
+           *   p.style('z-index', '-9999');
+           * }
+           *
+           * function draw() {
+           *   background(250, 250, 150);
