@@ -46141,3 +46141,140 @@
            * </code>
            * </div>
            *
+           * @alt
+           * white rect top middle and noFill rect center. Both 60x60 with black outlines.
+           * black canvas with purple cube wireframe spinning
+           */
+          _main.default.prototype.noFill = function() {
+            this._renderer._setProperty('_doFill', false);
+            return this;
+          };
+
+          /**
+           * Disables drawing the stroke (outline). If both <a href="#/p5/noStroke">noStroke()</a> and <a href="#/p5/noFill">noFill()</a>
+           * are called, nothing will be drawn to the screen.
+           *
+           * @method noStroke
+           * @chainable
+           * @example
+           * <div>
+           * <code>
+           * noStroke();
+           * rect(20, 20, 60, 60);
+           * </code>
+           * </div>
+           *
+           * <div modernizr='webgl'>
+           * <code>
+           * function setup() {
+           *   createCanvas(100, 100, WEBGL);
+           * }
+           *
+           * function draw() {
+           *   background(0);
+           *   noStroke();
+           *   fill(240, 150, 150);
+           *   rotateX(frameCount * 0.01);
+           *   rotateY(frameCount * 0.01);
+           *   box(45, 45, 45);
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * 60x60 white rect at center. no outline.
+           * black canvas with pink cube spinning
+           */
+          _main.default.prototype.noStroke = function() {
+            this._renderer._setProperty('_doStroke', false);
+            return this;
+          };
+
+          /**
+           * Sets the color used to draw lines and borders around shapes. This color
+           * is either specified in terms of the RGB or HSB color depending on the
+           * current <a href="#/p5/colorMode">colorMode()</a> (the default color space
+           * is RGB, with each value in the range from 0 to 255). The alpha range by
+           * default is also 0 to 255.
+           *
+           * If a single string argument is provided, RGB, RGBA and Hex CSS color
+           * strings and all named color strings are supported. In this case, an alpha
+           * number value as a second argument is not supported, the RGBA form should be
+           * used.
+           *
+           * A p5 <a href="#/p5.Color">Color</a> object can also be provided to set the stroke color.
+           *
+           * @method stroke
+           * @param  {Number}        v1      red or hue value relative to
+           *                                 the current color range
+           * @param  {Number}        v2      green or saturation value
+           *                                 relative to the current color range
+           * @param  {Number}        v3      blue or brightness value
+           *                                 relative to the current color range
+           * @param  {Number}        [alpha]
+           * @chainable
+           *
+           * @example
+           * <div>
+           * <code>
+           * // Grayscale integer value
+           * strokeWeight(4);
+           * stroke(51);
+           * rect(20, 20, 60, 60);
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * // R, G & B integer values
+           * stroke(255, 204, 0);
+           * strokeWeight(4);
+           * rect(20, 20, 60, 60);
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * // H, S & B integer values
+           * colorMode(HSB);
+           * strokeWeight(4);
+           * stroke(255, 204, 100);
+           * rect(20, 20, 60, 60);
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * // Named SVG/CSS color string
+           * stroke('red');
+           * strokeWeight(4);
+           * rect(20, 20, 60, 60);
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * // three-digit hexadecimal RGB notation
+           * stroke('#fae');
+           * strokeWeight(4);
+           * rect(20, 20, 60, 60);
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * // six-digit hexadecimal RGB notation
+           * stroke('#222222');
+           * strokeWeight(4);
+           * rect(20, 20, 60, 60);
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * // integer RGB notation
+           * stroke('rgb(0,255,0)');
+           * strokeWeight(4);
+           * rect(20, 20, 60, 60);
+           * </code>
+           * </div>
