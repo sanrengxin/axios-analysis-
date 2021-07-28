@@ -46420,3 +46420,138 @@
            *
            * function draw() {
            *   background(250, 250, 150);
+           *   fill(15, 195, 185);
+           *   noStroke();
+           *   sphere(30);
+           *   erase();
+           *   rotateY(frameCount * 0.02);
+           *   translate(0, 0, 40);
+           *   torus(15, 5);
+           *   noErase();
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * 60x60 centered pink rect, purple background. Elliptical area in top-left of rect is erased white.
+           * 60x60 centered purple rect, mint green background. Triangle in top-right is partially erased with fully erased outline.
+           * 60x60 centered teal sphere, yellow background. Torus rotating around sphere erases to reveal black text underneath.
+           */
+          _main.default.prototype.erase = function() {
+            var opacityFill =
+              arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 255;
+            var opacityStroke =
+              arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 255;
+            this._renderer.erase(opacityFill, opacityStroke);
+
+            return this;
+          };
+
+          /**
+           * Ends erasing that was started with <a href="#/p5/erase">erase()</a>.
+           * The <a href="#/p5/fill">fill()</a>, <a href="#/p5/stroke">stroke()</a>, and
+           * <a href="#/p5/blendMode">blendMode()</a> settings will return to what they were
+           * prior to calling <a href="#/p5/erase">erase()</a>.
+           *
+           * @method noErase
+           * @chainable
+           * @example
+           * <div>
+           * <code>
+           * background(235, 145, 15);
+           * noStroke();
+           * fill(30, 45, 220);
+           * rect(30, 10, 10, 80);
+           * erase();
+           * ellipse(50, 50, 60);
+           * noErase();
+           * rect(70, 10, 10, 80);
+           * </code>
+           * </div>
+           *
+           * @alt
+           * Orange background, with two tall blue rectangles. A centered ellipse erased the first blue rect but not the second.
+           */
+
+          _main.default.prototype.noErase = function() {
+            this._renderer.noErase();
+            return this;
+          };
+          var _default = _main.default;
+          exports.default = _default;
+        },
+        { '../core/constants': 48, '../core/main': 59, './p5.Color': 46 }
+      ],
+      48: [
+        function(_dereq_, module, exports) {
+          'use strict';
+          Object.defineProperty(exports, '__esModule', { value: true });
+          exports.FILL = exports.STROKE = exports.CURVE = exports.BEZIER = exports.QUADRATIC = exports.LINEAR = exports._CTX_MIDDLE = exports._DEFAULT_LEADMULT = exports._DEFAULT_TEXT_FILL = exports.BOLDITALIC = exports.BOLD = exports.ITALIC = exports.NORMAL = exports.BLUR = exports.ERODE = exports.DILATE = exports.POSTERIZE = exports.INVERT = exports.OPAQUE = exports.GRAY = exports.THRESHOLD = exports.BURN = exports.DODGE = exports.SOFT_LIGHT = exports.HARD_LIGHT = exports.OVERLAY = exports.REPLACE = exports.SCREEN = exports.MULTIPLY = exports.EXCLUSION = exports.SUBTRACT = exports.DIFFERENCE = exports.LIGHTEST = exports.DARKEST = exports.ADD = exports.REMOVE = exports.BLEND = exports.UP_ARROW = exports.TAB = exports.SHIFT = exports.RIGHT_ARROW = exports.RETURN = exports.OPTION = exports.LEFT_ARROW = exports.ESCAPE = exports.ENTER = exports.DOWN_ARROW = exports.DELETE = exports.CONTROL = exports.BACKSPACE = exports.ALT = exports.AUTO = exports.HSL = exports.HSB = exports.RGB = exports.MITER = exports.BEVEL = exports.ROUND = exports.SQUARE = exports.PROJECT = exports.PIE = exports.CHORD = exports.OPEN = exports.CLOSE = exports.TESS = exports.QUAD_STRIP = exports.QUADS = exports.TRIANGLE_STRIP = exports.TRIANGLE_FAN = exports.TRIANGLES = exports.LINE_LOOP = exports.LINE_STRIP = exports.LINES = exports.POINTS = exports.BASELINE = exports.BOTTOM = exports.TOP = exports.CENTER = exports.LEFT = exports.RIGHT = exports.RADIUS = exports.CORNERS = exports.CORNER = exports.RAD_TO_DEG = exports.DEG_TO_RAD = exports.RADIANS = exports.DEGREES = exports.TWO_PI = exports.TAU = exports.QUARTER_PI = exports.PI = exports.HALF_PI = exports.WAIT = exports.TEXT = exports.MOVE = exports.HAND = exports.CROSS = exports.ARROW = exports.WEBGL = exports.P2D = void 0;
+          exports.FALLBACK = exports.LABEL = exports.AXES = exports.GRID = exports._DEFAULT_FILL = exports._DEFAULT_STROKE = exports.PORTRAIT = exports.LANDSCAPE = exports.MIRROR = exports.CLAMP = exports.REPEAT = exports.NEAREST = exports.IMAGE = exports.IMMEDIATE = exports.TEXTURE = void 0; /**
+           * @module Constants
+           * @submodule Constants
+           * @for p5
+           */
+
+          var _PI = Math.PI;
+
+          // GRAPHICS RENDERER
+          /**
+           * The default, two-dimensional renderer.
+           * @property {String} P2D
+           * @final
+           */
+          var P2D = 'p2d';
+          /**
+           * One of the two render modes in p5.js: P2D (default renderer) and WEBGL
+           * Enables 3D render by introducing the third dimension: Z
+           * @property {String} WEBGL
+           * @final
+           */ exports.P2D = P2D;
+          var WEBGL = 'webgl';
+
+          // ENVIRONMENT
+          /**
+           * @property {String} ARROW
+           * @final
+           */ exports.WEBGL = WEBGL;
+          var ARROW = 'default';
+          /**
+           * @property {String} CROSS
+           * @final
+           */ exports.ARROW = ARROW;
+          var CROSS = 'crosshair';
+          /**
+           * @property {String} HAND
+           * @final
+           */ exports.CROSS = CROSS;
+          var HAND = 'pointer';
+          /**
+           * @property {String} MOVE
+           * @final
+           */ exports.HAND = HAND;
+          var MOVE = 'move';
+          /**
+           * @property {String} TEXT
+           * @final
+           */ exports.MOVE = MOVE;
+          var TEXT = 'text';
+          /**
+           * @property {String} WAIT
+           * @final
+           */ exports.TEXT = TEXT;
+          var WAIT = 'wait';
+
+          // TRIGONOMETRY
+
+          /**
+           * HALF_PI is a mathematical constant with the value
+           * 1.57079632679489661923. It is half the ratio of the
+           * circumference of a circle to its diameter. It is useful in
+           * combination with the trigonometric functions <a href="#/p5/sin">sin()</a> and <a href="#/p5/cos">cos()</a>.
+           *
+           * @property {Number} HALF_PI
+           * @final
+           *
+           * @example
+           * <div><code>
