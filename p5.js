@@ -46555,3 +46555,136 @@
            *
            * @example
            * <div><code>
+           * arc(50, 50, 80, 80, 0, HALF_PI);
+           * </code></div>
+           *
+           * @alt
+           * 80x80 white quarter-circle with curve toward bottom right of canvas.
+           */ exports.WAIT = WAIT;
+          var HALF_PI = _PI / 2;
+          /**
+           * PI is a mathematical constant with the value
+           * 3.14159265358979323846. It is the ratio of the circumference
+           * of a circle to its diameter. It is useful in combination with
+           * the trigonometric functions <a href="#/p5/sin">sin()</a> and <a href="#/p5/cos">cos()</a>.
+           *
+           * @property {Number} PI
+           * @final
+           *
+           * @example
+           * <div><code>
+           * arc(50, 50, 80, 80, 0, PI);
+           * </code></div>
+           *
+           * @alt
+           * white half-circle with curve toward bottom of canvas.
+           */ exports.HALF_PI = HALF_PI;
+          var PI = _PI;
+          /**
+           * QUARTER_PI is a mathematical constant with the value 0.7853982.
+           * It is one quarter the ratio of the circumference of a circle to
+           * its diameter. It is useful in combination with the trigonometric
+           * functions <a href="#/p5/sin">sin()</a> and <a href="#/p5/cos">cos()</a>.
+           *
+           * @property {Number} QUARTER_PI
+           * @final
+           *
+           * @example
+           * <div><code>
+           * arc(50, 50, 80, 80, 0, QUARTER_PI);
+           * </code></div>
+           *
+           * @alt
+           * white eighth-circle rotated about 40 degrees with curve bottom right canvas.
+           */ exports.PI = PI;
+          var QUARTER_PI = _PI / 4;
+          /**
+           * TAU is an alias for TWO_PI, a mathematical constant with the
+           * value 6.28318530717958647693. It is twice the ratio of the
+           * circumference of a circle to its diameter. It is useful in
+           * combination with the trigonometric functions <a href="#/p5/sin">sin()</a> and <a href="#/p5/cos">cos()</a>.
+           *
+           * @property {Number} TAU
+           * @final
+           *
+           * @example
+           * <div><code>
+           * arc(50, 50, 80, 80, 0, TAU);
+           * </code></div>
+           *
+           * @alt
+           * 80x80 white ellipse shape in center of canvas.
+           */ exports.QUARTER_PI = QUARTER_PI;
+          var TAU = _PI * 2;
+          /**
+           * TWO_PI is a mathematical constant with the value
+           * 6.28318530717958647693. It is twice the ratio of the
+           * circumference of a circle to its diameter. It is useful in
+           * combination with the trigonometric functions <a href="#/p5/sin">sin()</a> and <a href="#/p5/cos">cos()</a>.
+           *
+           * @property {Number} TWO_PI
+           * @final
+           *
+           * @example
+           * <div><code>
+           * arc(50, 50, 80, 80, 0, TWO_PI);
+           * </code></div>
+           *
+           * @alt
+           * 80x80 white ellipse shape in center of canvas.
+           */ exports.TAU = TAU;
+          var TWO_PI = _PI * 2;
+          /**
+           * Constant to be used with <a href="#/p5/angleMode">angleMode()</a> function, to set the mode which
+           * p5.js interprates and calculates angles (either DEGREES or RADIANS).
+           * @property {String} DEGREES
+           * @final
+           *
+           * @example
+           * <div class='norender'><code>
+           * function setup() {
+           *   angleMode(DEGREES);
+           * }
+           * </code></div>
+           */ exports.TWO_PI = TWO_PI;
+          var DEGREES = 'degrees';
+          /**
+           * Constant to be used with <a href="#/p5/angleMode">angleMode()</a> function, to set the mode which
+           * p5.js interprates and calculates angles (either RADIANS or DEGREES).
+           * @property {String} RADIANS
+           * @final
+           *
+           * @example
+           * <div class='norender'><code>
+           * function setup() {
+           *   angleMode(RADIANS);
+           * }
+           * </code></div>
+           */ exports.DEGREES = DEGREES;
+          var RADIANS = 'radians';
+          exports.RADIANS = RADIANS;
+          var DEG_TO_RAD = _PI / 180.0;
+          exports.DEG_TO_RAD = DEG_TO_RAD;
+          var RAD_TO_DEG = 180.0 / _PI;
+
+          // SHAPE
+          /**
+           * @property {String} CORNER
+           * @final
+           */ exports.RAD_TO_DEG = RAD_TO_DEG;
+          var CORNER = 'corner';
+          /**
+           * @property {String} CORNERS
+           * @final
+           */ exports.CORNER = CORNER;
+          var CORNERS = 'corners';
+          /**
+           * @property {String} RADIUS
+           * @final
+           */ exports.CORNERS = CORNERS;
+          var RADIUS = 'radius';
+          /**
+           * @property {String} RIGHT
+           * @final
+           */ exports.RADIUS = RADIUS;
+          var RIGHT = 'right';
