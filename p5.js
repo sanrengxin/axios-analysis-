@@ -46688,3 +46688,139 @@
            * @final
            */ exports.RADIUS = RADIUS;
           var RIGHT = 'right';
+          /**
+           * @property {String} LEFT
+           * @final
+           */ exports.RIGHT = RIGHT;
+          var LEFT = 'left';
+          /**
+           * @property {String} CENTER
+           * @final
+           */ exports.LEFT = LEFT;
+          var CENTER = 'center';
+          /**
+           * @property {String} TOP
+           * @final
+           */ exports.CENTER = CENTER;
+          var TOP = 'top';
+          /**
+           * @property {String} BOTTOM
+           * @final
+           */ exports.TOP = TOP;
+          var BOTTOM = 'bottom';
+          /**
+           * @property {String} BASELINE
+           * @final
+           * @default alphabetic
+           */ exports.BOTTOM = BOTTOM;
+          var BASELINE = 'alphabetic';
+          /**
+           * @property {Number} POINTS
+           * @final
+           * @default 0x0000
+           */ exports.BASELINE = BASELINE;
+          var POINTS = 0x0000;
+          /**
+           * @property {Number} LINES
+           * @final
+           * @default 0x0001
+           */ exports.POINTS = POINTS;
+          var LINES = 0x0001;
+          /**
+           * @property {Number} LINE_STRIP
+           * @final
+           * @default 0x0003
+           */ exports.LINES = LINES;
+          var LINE_STRIP = 0x0003;
+          /**
+           * @property {Number} LINE_LOOP
+           * @final
+           * @default 0x0002
+           */ exports.LINE_STRIP = LINE_STRIP;
+          var LINE_LOOP = 0x0002;
+          /**
+           * @property {Number} TRIANGLES
+           * @final
+           * @default 0x0004
+           */ exports.LINE_LOOP = LINE_LOOP;
+          var TRIANGLES = 0x0004;
+          /**
+           * @property {Number} TRIANGLE_FAN
+           * @final
+           * @default 0x0006
+           */ exports.TRIANGLES = TRIANGLES;
+          var TRIANGLE_FAN = 0x0006;
+          /**
+           * @property {Number} TRIANGLE_STRIP
+           * @final
+           * @default 0x0005
+           */ exports.TRIANGLE_FAN = TRIANGLE_FAN;
+          var TRIANGLE_STRIP = 0x0005;
+          /**
+           * @property {String} QUADS
+           * @final
+           */ exports.TRIANGLE_STRIP = TRIANGLE_STRIP;
+          var QUADS = 'quads';
+          /**
+           * @property {String} QUAD_STRIP
+           * @final
+           * @default quad_strip
+           */ exports.QUADS = QUADS;
+          var QUAD_STRIP = 'quad_strip';
+          /**
+           * @property {String} TESS
+           * @final
+           * @default tess
+           */ exports.QUAD_STRIP = QUAD_STRIP;
+          var TESS = 'tess';
+          /**
+           * @property {String} CLOSE
+           * @final
+           */ exports.TESS = TESS;
+          var CLOSE = 'close';
+          /**
+           * @property {String} OPEN
+           * @final
+           */ exports.CLOSE = CLOSE;
+          var OPEN = 'open';
+          /**
+           * @property {String} CHORD
+           * @final
+           */ exports.OPEN = OPEN;
+          var CHORD = 'chord';
+          /**
+           * @property {String} PIE
+           * @final
+           */ exports.CHORD = CHORD;
+          var PIE = 'pie';
+          /**
+           * @property {String} PROJECT
+           * @final
+           * @default square
+           */ exports.PIE = PIE;
+          var PROJECT = 'square'; // PEND: careful this is counterintuitive
+          /**
+           * @property {String} SQUARE
+           * @final
+           * @default butt
+           */ exports.PROJECT = PROJECT;
+          var SQUARE = 'butt';
+          /**
+           * @property {String} ROUND
+           * @final
+           */ exports.SQUARE = SQUARE;
+          var ROUND = 'round';
+          /**
+           * @property {String} BEVEL
+           * @final
+           */ exports.ROUND = ROUND;
+          var BEVEL = 'bevel';
+          /**
+           * @property {String} MITER
+           * @final
+           */ exports.BEVEL = BEVEL;
+          var MITER = 'miter';
+
+          // COLOR
+          /**
+           * @property {String} RGB
