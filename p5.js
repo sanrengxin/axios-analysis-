@@ -46824,3 +46824,138 @@
           // COLOR
           /**
            * @property {String} RGB
+           * @final
+           */ exports.MITER = MITER;
+          var RGB = 'rgb';
+          /**
+           * HSB (hue, saturation, brightness) is a type of color model.
+           * You can learn more about it at
+           * <a href="https://learnui.design/blog/the-hsb-color-system-practicioners-primer.html">HSB</a>.
+           *
+           * @property {String} HSB
+           * @final
+           */ exports.RGB = RGB;
+          var HSB = 'hsb';
+          /**
+           * @property {String} HSL
+           * @final
+           */ exports.HSB = HSB;
+          var HSL = 'hsl';
+
+          // DOM EXTENSION
+          /**
+           * AUTO allows us to automatically set the width or height of an element (but not both),
+           * based on the current height and width of the element. Only one parameter can
+           * be passed to the <a href="/#/p5.Element/size">size</a> function as AUTO, at a time.
+           *
+           * @property {String} AUTO
+           * @final
+           */ exports.HSL = HSL;
+          var AUTO = 'auto';
+
+          /**
+           * @property {Number} ALT
+           * @final
+           */
+          // INPUT
+          exports.AUTO = AUTO;
+          var ALT = 18;
+          /**
+           * @property {Number} BACKSPACE
+           * @final
+           */ exports.ALT = ALT;
+          var BACKSPACE = 8;
+          /**
+           * @property {Number} CONTROL
+           * @final
+           */ exports.BACKSPACE = BACKSPACE;
+          var CONTROL = 17;
+          /**
+           * @property {Number} DELETE
+           * @final
+           */ exports.CONTROL = CONTROL;
+          var DELETE = 46;
+          /**
+           * @property {Number} DOWN_ARROW
+           * @final
+           */ exports.DELETE = DELETE;
+          var DOWN_ARROW = 40;
+          /**
+           * @property {Number} ENTER
+           * @final
+           */ exports.DOWN_ARROW = DOWN_ARROW;
+          var ENTER = 13;
+          /**
+           * @property {Number} ESCAPE
+           * @final
+           */ exports.ENTER = ENTER;
+          var ESCAPE = 27;
+          /**
+           * @property {Number} LEFT_ARROW
+           * @final
+           */ exports.ESCAPE = ESCAPE;
+          var LEFT_ARROW = 37;
+          /**
+           * @property {Number} OPTION
+           * @final
+           */ exports.LEFT_ARROW = LEFT_ARROW;
+          var OPTION = 18;
+          /**
+           * @property {Number} RETURN
+           * @final
+           */ exports.OPTION = OPTION;
+          var RETURN = 13;
+          /**
+           * @property {Number} RIGHT_ARROW
+           * @final
+           */ exports.RETURN = RETURN;
+          var RIGHT_ARROW = 39;
+          /**
+           * @property {Number} SHIFT
+           * @final
+           */ exports.RIGHT_ARROW = RIGHT_ARROW;
+          var SHIFT = 16;
+          /**
+           * @property {Number} TAB
+           * @final
+           */ exports.SHIFT = SHIFT;
+          var TAB = 9;
+          /**
+           * @property {Number} UP_ARROW
+           * @final
+           */ exports.TAB = TAB;
+          var UP_ARROW = 38;
+
+          // RENDERING
+          /**
+           * @property {String} BLEND
+           * @final
+           * @default source-over
+           */ exports.UP_ARROW = UP_ARROW;
+          var BLEND = 'source-over';
+          /**
+           * @property {String} REMOVE
+           * @final
+           * @default destination-out
+           */ exports.BLEND = BLEND;
+          var REMOVE = 'destination-out';
+          /**
+           * @property {String} ADD
+           * @final
+           * @default lighter
+           */ exports.REMOVE = REMOVE;
+          var ADD = 'lighter';
+          //ADD: 'add', //
+          //SUBTRACT: 'subtract', //
+          /**
+           * @property {String} DARKEST
+           * @final
+           */ exports.ADD = ADD;
+          var DARKEST = 'darken';
+          /**
+           * @property {String} LIGHTEST
+           * @final
+           * @default lighten
+           */ exports.DARKEST = DARKEST;
+          var LIGHTEST = 'lighten';
+          /**
