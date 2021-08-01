@@ -46959,3 +46959,136 @@
            */ exports.DARKEST = DARKEST;
           var LIGHTEST = 'lighten';
           /**
+           * @property {String} DIFFERENCE
+           * @final
+           */ exports.LIGHTEST = LIGHTEST;
+          var DIFFERENCE = 'difference';
+          /**
+           * @property {String} SUBTRACT
+           * @final
+           */ exports.DIFFERENCE = DIFFERENCE;
+          var SUBTRACT = 'subtract';
+          /**
+           * @property {String} EXCLUSION
+           * @final
+           */ exports.SUBTRACT = SUBTRACT;
+          var EXCLUSION = 'exclusion';
+          /**
+           * @property {String} MULTIPLY
+           * @final
+           */ exports.EXCLUSION = EXCLUSION;
+          var MULTIPLY = 'multiply';
+          /**
+           * @property {String} SCREEN
+           * @final
+           */ exports.MULTIPLY = MULTIPLY;
+          var SCREEN = 'screen';
+          /**
+           * @property {String} REPLACE
+           * @final
+           * @default copy
+           */ exports.SCREEN = SCREEN;
+          var REPLACE = 'copy';
+          /**
+           * @property {String} OVERLAY
+           * @final
+           */ exports.REPLACE = REPLACE;
+          var OVERLAY = 'overlay';
+          /**
+           * @property {String} HARD_LIGHT
+           * @final
+           */ exports.OVERLAY = OVERLAY;
+          var HARD_LIGHT = 'hard-light';
+          /**
+           * @property {String} SOFT_LIGHT
+           * @final
+           */ exports.HARD_LIGHT = HARD_LIGHT;
+          var SOFT_LIGHT = 'soft-light';
+          /**
+           * @property {String} DODGE
+           * @final
+           * @default color-dodge
+           */ exports.SOFT_LIGHT = SOFT_LIGHT;
+          var DODGE = 'color-dodge';
+          /**
+           * @property {String} BURN
+           * @final
+           * @default color-burn
+           */ exports.DODGE = DODGE;
+          var BURN = 'color-burn';
+
+          // FILTERS
+          /**
+           * @property {String} THRESHOLD
+           * @final
+           */ exports.BURN = BURN;
+          var THRESHOLD = 'threshold';
+          /**
+           * @property {String} GRAY
+           * @final
+           */ exports.THRESHOLD = THRESHOLD;
+          var GRAY = 'gray';
+          /**
+           * @property {String} OPAQUE
+           * @final
+           */ exports.GRAY = GRAY;
+          var OPAQUE = 'opaque';
+          /**
+           * @property {String} INVERT
+           * @final
+           */ exports.OPAQUE = OPAQUE;
+          var INVERT = 'invert';
+          /**
+           * @property {String} POSTERIZE
+           * @final
+           */ exports.INVERT = INVERT;
+          var POSTERIZE = 'posterize';
+          /**
+           * @property {String} DILATE
+           * @final
+           */ exports.POSTERIZE = POSTERIZE;
+          var DILATE = 'dilate';
+          /**
+           * @property {String} ERODE
+           * @final
+           */ exports.DILATE = DILATE;
+          var ERODE = 'erode';
+          /**
+           * @property {String} BLUR
+           * @final
+           */ exports.ERODE = ERODE;
+          var BLUR = 'blur';
+
+          // TYPOGRAPHY
+          /**
+           * @property {String} NORMAL
+           * @final
+           */ exports.BLUR = BLUR;
+          var NORMAL = 'normal';
+          /**
+           * @property {String} ITALIC
+           * @final
+           */ exports.NORMAL = NORMAL;
+          var ITALIC = 'italic';
+          /**
+           * @property {String} BOLD
+           * @final
+           */ exports.ITALIC = ITALIC;
+          var BOLD = 'bold';
+          /**
+           * @property {String} BOLDITALIC
+           * @final
+           */ exports.BOLD = BOLD;
+          var BOLDITALIC = 'bold italic';
+
+          // TYPOGRAPHY-INTERNAL
+          exports.BOLDITALIC = BOLDITALIC;
+          var _DEFAULT_TEXT_FILL = '#000000';
+          exports._DEFAULT_TEXT_FILL = _DEFAULT_TEXT_FILL;
+          var _DEFAULT_LEADMULT = 1.25;
+          exports._DEFAULT_LEADMULT = _DEFAULT_LEADMULT;
+          var _CTX_MIDDLE = 'middle';
+
+          // VERTICES
+          /**
+           * @property {String} LINEAR
