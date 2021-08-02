@@ -47232,3 +47232,134 @@
           exports.default = void 0;
 
           var _main = _interopRequireDefault(_dereq_('./main'));
+          var C = _interopRequireWildcard(_dereq_('./constants'));
+          function _getRequireWildcardCache() {
+            if (typeof WeakMap !== 'function') return null;
+            var cache = new WeakMap();
+            _getRequireWildcardCache = function _getRequireWildcardCache() {
+              return cache;
+            };
+            return cache;
+          }
+          function _interopRequireWildcard(obj) {
+            if (obj && obj.__esModule) {
+              return obj;
+            }
+            if (obj === null || (_typeof(obj) !== 'object' && typeof obj !== 'function')) {
+              return { default: obj };
+            }
+            var cache = _getRequireWildcardCache();
+            if (cache && cache.has(obj)) {
+              return cache.get(obj);
+            }
+            var newObj = {};
+            var hasPropertyDescriptor =
+              Object.defineProperty && Object.getOwnPropertyDescriptor;
+            for (var key in obj) {
+              if (Object.prototype.hasOwnProperty.call(obj, key)) {
+                var desc = hasPropertyDescriptor
+                  ? Object.getOwnPropertyDescriptor(obj, key)
+                  : null;
+                if (desc && (desc.get || desc.set)) {
+                  Object.defineProperty(newObj, key, desc);
+                } else {
+                  newObj[key] = obj[key];
+                }
+              }
+            }
+            newObj.default = obj;
+            if (cache) {
+              cache.set(obj, newObj);
+            }
+            return newObj;
+          }
+          function _interopRequireDefault(obj) {
+            return obj && obj.__esModule ? obj : { default: obj };
+          }
+          /**
+           * @module Environment
+           * @submodule Environment
+           * @for p5
+           * @requires core
+           * @requires constants
+           */ var standardCursors = [C.ARROW, C.CROSS, C.HAND, C.MOVE, C.TEXT, C.WAIT];
+          _main.default.prototype._frameRate = 0;
+          _main.default.prototype._lastFrameTime = window.performance.now();
+          _main.default.prototype._targetFrameRate = 60;
+
+          var _windowPrint = window.print;
+
+          /**
+           * The <a href="#/p5/print">print()</a> function writes to the console area of
+           * your browser. This function is often helpful for looking at the data a program
+           * is producing. This function creates a new line of text for each call to
+           * the function. Individual elements can be separated with quotes ("") and joined
+           * with the addition operator (+).
+           *
+           * Note that calling print() without any arguments invokes the window.print()
+           * function which opens the browser's print dialog. To print a blank line
+           * to console you can write print('\n').
+           *
+           * @method print
+           * @param {Any} contents any combination of Number, String, Object, Boolean,
+           *                       Array to print
+           * @example
+           * <div><code class='norender'>
+           * let x = 10;
+           * print('The value of x is ' + x);
+           * // prints "The value of x is 10"
+           * </code></div>
+           *
+           * @alt
+           * default grey canvas
+           */
+          _main.default.prototype.print = function() {
+            if (!arguments.length) {
+              _windowPrint();
+            } else {
+              var _console;
+              (_console = console).log.apply(_console, arguments);
+            }
+          };
+
+          /**
+           * The system variable <a href="#/p5/frameCount">frameCount</a> contains the
+           * number of frames that have been displayed since the program started. Inside
+           * <a href="#/p5/setup">setup()</a> the value is 0, after the first iteration
+           * of draw it is 1, etc.
+           *
+           * @property {Integer} frameCount
+           * @readOnly
+           * @example
+           * <div><code>
+           * function setup() {
+           *   frameRate(30);
+           *   textSize(30);
+           *   textAlign(CENTER);
+           * }
+           *
+           * function draw() {
+           *   background(200);
+           *   text(frameCount, width / 2, height / 2);
+           * }
+           * </code></div>
+           *
+           * @alt
+           * numbers rapidly counting upward with frame count set to 30.
+           */
+          _main.default.prototype.frameCount = 0;
+
+          /**
+           * The system variable <a href="#/p5/deltaTime">deltaTime</a> contains the time
+           * difference between the beginning of the previous frame and the beginning
+           * of the current frame in milliseconds.
+           *
+           * This variable is useful for creating time sensitive animation or physics
+           * calculation that should stay constant regardless of frame rate.
+           *
+           * @property {Integer} deltaTime
+           * @readOnly
+           * @example
+           * <div><code>
+           * let rectX = 0;
+           * let fr = 30; //starting FPS
