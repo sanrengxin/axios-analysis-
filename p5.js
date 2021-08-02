@@ -47092,3 +47092,143 @@
           // VERTICES
           /**
            * @property {String} LINEAR
+           * @final
+           */ exports._CTX_MIDDLE = _CTX_MIDDLE;
+          var LINEAR = 'linear';
+          /**
+           * @property {String} QUADRATIC
+           * @final
+           */ exports.LINEAR = LINEAR;
+          var QUADRATIC = 'quadratic';
+          /**
+           * @property {String} BEZIER
+           * @final
+           */ exports.QUADRATIC = QUADRATIC;
+          var BEZIER = 'bezier';
+          /**
+           * @property {String} CURVE
+           * @final
+           */ exports.BEZIER = BEZIER;
+          var CURVE = 'curve';
+
+          // WEBGL DRAWMODES
+          /**
+           * @property {String} STROKE
+           * @final
+           */ exports.CURVE = CURVE;
+          var STROKE = 'stroke';
+          /**
+           * @property {String} FILL
+           * @final
+           */ exports.STROKE = STROKE;
+          var FILL = 'fill';
+          /**
+           * @property {String} TEXTURE
+           * @final
+           */ exports.FILL = FILL;
+          var TEXTURE = 'texture';
+          /**
+           * @property {String} IMMEDIATE
+           * @final
+           */ exports.TEXTURE = TEXTURE;
+          var IMMEDIATE = 'immediate';
+
+          // WEBGL TEXTURE MODE
+          // NORMAL already exists for typography
+          /**
+           * @property {String} IMAGE
+           * @final
+           */ exports.IMMEDIATE = IMMEDIATE;
+          var IMAGE = 'image';
+
+          // WEBGL TEXTURE WRAP AND FILTERING
+          // LINEAR already exists above
+          /**
+           * @property {String} NEAREST
+           * @final
+           */ exports.IMAGE = IMAGE;
+          var NEAREST = 'nearest';
+          /**
+           * @property {String} REPEAT
+           * @final
+           */ exports.NEAREST = NEAREST;
+          var REPEAT = 'repeat';
+          /**
+           * @property {String} CLAMP
+           * @final
+           */ exports.REPEAT = REPEAT;
+          var CLAMP = 'clamp';
+          /**
+           * @property {String} MIRROR
+           * @final
+           */ exports.CLAMP = CLAMP;
+          var MIRROR = 'mirror';
+
+          // DEVICE-ORIENTATION
+          /**
+           * @property {String} LANDSCAPE
+           * @final
+           */ exports.MIRROR = MIRROR;
+          var LANDSCAPE = 'landscape';
+          /**
+           * @property {String} PORTRAIT
+           * @final
+           */ exports.LANDSCAPE = LANDSCAPE;
+          var PORTRAIT = 'portrait';
+
+          // DEFAULTS
+          exports.PORTRAIT = PORTRAIT;
+          var _DEFAULT_STROKE = '#000000';
+          exports._DEFAULT_STROKE = _DEFAULT_STROKE;
+          var _DEFAULT_FILL = '#FFFFFF';
+
+          /**
+           * @property {String} GRID
+           * @final
+           */ exports._DEFAULT_FILL = _DEFAULT_FILL;
+          var GRID = 'grid';
+
+          /**
+           * @property {String} AXES
+           * @final
+           */ exports.GRID = GRID;
+          var AXES = 'axes';
+
+          /**
+           * @property {String} LABEL
+           * @final
+           */ exports.AXES = AXES;
+          var LABEL = 'label';
+          /**
+           * @property {String} FALLBACK
+           * @final
+           */ exports.LABEL = LABEL;
+          var FALLBACK = 'fallback';
+          exports.FALLBACK = FALLBACK;
+        },
+        {}
+      ],
+      49: [
+        function(_dereq_, module, exports) {
+          'use strict';
+          function _typeof(obj) {
+            if (typeof Symbol === 'function' && typeof Symbol.iterator === 'symbol') {
+              _typeof = function _typeof(obj) {
+                return typeof obj;
+              };
+            } else {
+              _typeof = function _typeof(obj) {
+                return obj &&
+                  typeof Symbol === 'function' &&
+                  obj.constructor === Symbol &&
+                  obj !== Symbol.prototype
+                  ? 'symbol'
+                  : typeof obj;
+              };
+            }
+            return _typeof(obj);
+          }
+          Object.defineProperty(exports, '__esModule', { value: true });
+          exports.default = void 0;
+
+          var _main = _interopRequireDefault(_dereq_('./main'));
