@@ -47512,3 +47512,141 @@
     * Calling <a href="#/p5/frameRate">frameRate()</a> with no arguments returns
     * the current framerate. The draw function must run at least once before it will
     * return a value. This is the same as <a href="#/p5/getFrameRate">getFrameRate()</a>.
+    *
+    * Calling <a href="#/p5/frameRate">frameRate()</a> with arguments that are not
+    * of the type numbers or are non positive also returns current framerate.
+    *
+    * @method frameRate
+    * @param  {Number} fps number of frames to be displayed every second
+    * @chainable
+    *
+    * @example
+    *
+    * <div><code>
+    * let rectX = 0;
+    * let fr = 30; //starting FPS
+    * let clr;
+    *
+    * function setup() {
+    *   background(200);
+    *   frameRate(fr); // Attempt to refresh at starting FPS
+    *   clr = color(255, 0, 0);
+    * }
+    *
+    * function draw() {
+    *   background(200);
+    *   rectX = rectX += 1; // Move Rectangle
+    *
+    *   if (rectX >= width) {
+       // If you go off screen.
+    *     if (fr === 30) {
+    *       clr = color(0, 0, 255);
+    *       fr = 10;
+    *       frameRate(fr); // make frameRate 10 FPS
+    *     } else {
+    *       clr = color(255, 0, 0);
+    *       fr = 30;
+    *       frameRate(fr); // make frameRate 30 FPS
+    *     }
+    *     rectX = 0;
+    *   }
+    *   fill(clr);
+    *   rect(rectX, 40, 20, 20);
+    * }
+    * </code></div>
+    *
+    * @alt
+    * blue rect moves left to right, followed by red rect moving faster. Loops.
+    */
+          /**
+           * @method frameRate
+           * @return {Number}       current frameRate
+           */
+          _main.default.prototype.frameRate = function(fps) {
+            _main.default._validateParameters('frameRate', arguments);
+            if (typeof fps !== 'number' || fps < 0) {
+              return this._frameRate;
+            } else {
+              this._setProperty('_targetFrameRate', fps);
+              if (fps === 0) {
+                this._setProperty('_frameRate', fps);
+              }
+              return this;
+            }
+          };
+
+          /**
+           * Returns the current framerate.
+           *
+           * @private
+           * @return {Number} current frameRate
+           */
+          _main.default.prototype.getFrameRate = function() {
+            return this.frameRate();
+          };
+
+          /**
+           * Specifies the number of frames to be displayed every second. For example,
+           * the function call frameRate(30) will attempt to refresh 30 times a second.
+           * If the processor is not fast enough to maintain the specified rate, the
+           * frame rate will not be achieved. Setting the frame rate within <a href="#/p5/setup">setup()</a> is
+           * recommended. The default rate is 60 frames per second.
+           *
+           * Calling <a href="#/p5/frameRate">frameRate()</a> with no arguments returns the current framerate.
+           *
+           * @private
+           * @param {Number} [fps] number of frames to be displayed every second
+           */
+          _main.default.prototype.setFrameRate = function(fps) {
+            return this.frameRate(fps);
+          };
+
+          /**
+           * Hides the cursor from view.
+           *
+           * @method noCursor
+           * @example
+           * <div><code>
+           * function setup() {
+           *   noCursor();
+           * }
+           *
+           * function draw() {
+           *   background(200);
+           *   ellipse(mouseX, mouseY, 10, 10);
+           * }
+           * </code></div>
+           *
+           * @alt
+           * cursor becomes 10x 10 white ellipse the moves with mouse x and y.
+           */
+          _main.default.prototype.noCursor = function() {
+            this._curElement.elt.style.cursor = 'none';
+          };
+
+          /**
+           * System variable that stores the width of the screen display according to The
+           * default <a href="#/p5/pixelDensity">pixelDensity</a>. This is used to run a
+           * full-screen program on any display size. To return actual screen size,
+           * multiply this by pixelDensity.
+           *
+           * @property {Number} displayWidth
+           * @readOnly
+           * @example
+           * <div class="norender"><code>
+           * createCanvas(displayWidth, displayHeight);
+           * </code></div>
+           *
+           * @alt
+           * This example does not render anything.
+           */
+          _main.default.prototype.displayWidth = screen.width;
+
+          /**
+           * System variable that stores the height of the screen display according to The
+           * default <a href="#/p5/pixelDensity">pixelDensity</a>. This is used to run a
+           * full-screen program on any display size. To return actual screen size,
+           * multiply this by pixelDensity.
+           *
+           * @property {Number} displayHeight
+           * @readOnly
