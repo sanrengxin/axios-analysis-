@@ -47650,3 +47650,145 @@
            *
            * @property {Number} displayHeight
            * @readOnly
+           * @example
+           * <div class="norender"><code>
+           * createCanvas(displayWidth, displayHeight);
+           * </code></div>
+           *
+           * @alt
+           * This example does not render anything.
+           */
+          _main.default.prototype.displayHeight = screen.height;
+
+          /**
+           * System variable that stores the width of the inner window, it maps to
+           * window.innerWidth.
+           *
+           * @property {Number} windowWidth
+           * @readOnly
+           * @example
+           * <div class="norender"><code>
+           * createCanvas(windowWidth, windowHeight);
+           * </code></div>
+           *
+           * @alt
+           * This example does not render anything.
+           */
+          _main.default.prototype.windowWidth = getWindowWidth();
+          /**
+           * System variable that stores the height of the inner window, it maps to
+           * window.innerHeight.
+           *
+           * @property {Number} windowHeight
+           * @readOnly
+           * @example
+           * <div class="norender"><code>
+           * createCanvas(windowWidth, windowHeight);
+           * </code></div>
+           *
+           * @alt
+           * This example does not render anything.
+           */
+          _main.default.prototype.windowHeight = getWindowHeight();
+
+          /**
+           * The <a href="#/p5/windowResized">windowResized()</a> function is called once
+           * every time the browser window is resized. This is a good place to resize the
+           * canvas or do any other adjustments to accommodate the new window size.
+           *
+           * @method windowResized
+           * @example
+           * <div class="norender"><code>
+           * function setup() {
+           *   createCanvas(windowWidth, windowHeight);
+           * }
+           *
+           * function draw() {
+           *   background(0, 100, 200);
+           * }
+           *
+           * function windowResized() {
+           *   resizeCanvas(windowWidth, windowHeight);
+           * }
+           * </code></div>
+           * @alt
+           * This example does not render anything.
+           */
+          _main.default.prototype._onresize = function(e) {
+            this._setProperty('windowWidth', getWindowWidth());
+            this._setProperty('windowHeight', getWindowHeight());
+            var context = this._isGlobal ? window : this;
+            var executeDefault;
+            if (typeof context.windowResized === 'function') {
+              executeDefault = context.windowResized(e);
+              if (executeDefault !== undefined && !executeDefault) {
+                e.preventDefault();
+              }
+            }
+          };
+
+          function getWindowWidth() {
+            return (
+              window.innerWidth ||
+              (document.documentElement && document.documentElement.clientWidth) ||
+              (document.body && document.body.clientWidth) ||
+              0
+            );
+          }
+
+          function getWindowHeight() {
+            return (
+              window.innerHeight ||
+              (document.documentElement && document.documentElement.clientHeight) ||
+              (document.body && document.body.clientHeight) ||
+              0
+            );
+          }
+
+          /**
+           * System variable that stores the width of the drawing canvas. This value
+           * is set by the first parameter of the <a href="#/p5/createCanvas">createCanvas()</a> function.
+           * For example, the function call createCanvas(320, 240) sets the width
+           * variable to the value 320. The value of width defaults to 100 if
+           * <a href="#/p5/createCanvas">createCanvas()</a> is not used in a program.
+           *
+           * @property {Number} width
+           * @readOnly
+           */
+          _main.default.prototype.width = 0;
+
+          /**
+           * System variable that stores the height of the drawing canvas. This value
+           * is set by the second parameter of the <a href="#/p5/createCanvas">createCanvas()</a> function. For
+           * example, the function call createCanvas(320, 240) sets the height
+           * variable to the value 240. The value of height defaults to 100 if
+           * <a href="#/p5/createCanvas">createCanvas()</a> is not used in a program.
+           *
+           * @property {Number} height
+           * @readOnly
+           */
+          _main.default.prototype.height = 0;
+
+          /**
+           * If argument is given, sets the sketch to fullscreen or not based on the
+           * value of the argument. If no argument is given, returns the current
+           * fullscreen state. Note that due to browser restrictions this can only
+           * be called on user input, for example, on mouse press like the example
+           * below.
+           *
+           * @method fullscreen
+           * @param  {Boolean} [val] whether the sketch should be in fullscreen mode
+           * or not
+           * @return {Boolean} current fullscreen state
+           * @example
+           * <div>
+           * <code>
+           * // Clicking in the box toggles fullscreen on and off.
+           * function setup() {
+           *   background(200);
+           * }
+           * function mousePressed() {
+           *   if (mouseX > 0 && mouseX < 100 && mouseY > 0 && mouseY < 100) {
+           *     let fs = fullscreen();
+           *     fullscreen(!fs);
+           *   }
