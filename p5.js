@@ -47792,3 +47792,134 @@
            *     let fs = fullscreen();
            *     fullscreen(!fs);
            *   }
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * This example does not render anything.
+           */
+          _main.default.prototype.fullscreen = function(val) {
+            _main.default._validateParameters('fullscreen', arguments);
+            // no arguments, return fullscreen or not
+            if (typeof val === 'undefined') {
+              return (
+                document.fullscreenElement ||
+                document.webkitFullscreenElement ||
+                document.mozFullScreenElement ||
+                document.msFullscreenElement
+              );
+            } else {
+              // otherwise set to fullscreen or not
+              if (val) {
+                launchFullscreen(document.documentElement);
+              } else {
+                exitFullscreen();
+              }
+            }
+          };
+
+          /**
+           * Sets the pixel scaling for high pixel density displays. By default
+           * pixel density is set to match display density, call pixelDensity(1)
+           * to turn this off. Calling <a href="#/p5/pixelDensity">pixelDensity()</a> with no arguments returns
+           * the current pixel density of the sketch.
+           *
+           * @method pixelDensity
+           * @param  {Number} val whether or how much the sketch should scale
+           * @chainable
+           * @example
+           * <div>
+           * <code>
+           * function setup() {
+           *   pixelDensity(1);
+           *   createCanvas(100, 100);
+           *   background(200);
+           *   ellipse(width / 2, height / 2, 50, 50);
+           * }
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * function setup() {
+           *   pixelDensity(3.0);
+           *   createCanvas(100, 100);
+           *   background(200);
+           *   ellipse(width / 2, height / 2, 50, 50);
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * fuzzy 50x50 white ellipse with black outline in center of canvas.
+           * sharp 50x50 white ellipse with black outline in center of canvas.
+           */
+          /**
+           * @method pixelDensity
+           * @returns {Number} current pixel density of the sketch
+           */
+          _main.default.prototype.pixelDensity = function(val) {
+            _main.default._validateParameters('pixelDensity', arguments);
+            var returnValue;
+            if (typeof val === 'number') {
+              if (val !== this._pixelDensity) {
+                this._pixelDensity = val;
+              }
+              returnValue = this;
+              this.resizeCanvas(this.width, this.height, true); // as a side effect, it will clear the canvas
+            } else {
+              returnValue = this._pixelDensity;
+            }
+            return returnValue;
+          };
+
+          /**
+           * Returns the pixel density of the current display the sketch is running on.
+           *
+           * @method displayDensity
+           * @returns {Number} current pixel density of the display
+           * @example
+           * <div>
+           * <code>
+           * function setup() {
+           *   let density = displayDensity();
+           *   pixelDensity(density);
+           *   createCanvas(100, 100);
+           *   background(200);
+           *   ellipse(width / 2, height / 2, 50, 50);
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * 50x50 white ellipse with black outline in center of canvas.
+           */
+          _main.default.prototype.displayDensity = function() {
+            return window.devicePixelRatio;
+          };
+
+          function launchFullscreen(element) {
+            var enabled =
+              document.fullscreenEnabled ||
+              document.webkitFullscreenEnabled ||
+              document.mozFullScreenEnabled ||
+              document.msFullscreenEnabled;
+            if (!enabled) {
+              throw new Error('Fullscreen not enabled in this browser.');
+            }
+            if (element.requestFullscreen) {
+              element.requestFullscreen();
+            } else if (element.mozRequestFullScreen) {
+              element.mozRequestFullScreen();
+            } else if (element.webkitRequestFullscreen) {
+              element.webkitRequestFullscreen();
+            } else if (element.msRequestFullscreen) {
+              element.msRequestFullscreen();
+            }
+          }
+
+          function exitFullscreen() {
+            if (document.exitFullscreen) {
+              document.exitFullscreen();
+            } else if (document.mozCancelFullScreen) {
