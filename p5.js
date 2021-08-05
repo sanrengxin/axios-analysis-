@@ -47923,3 +47923,144 @@
             if (document.exitFullscreen) {
               document.exitFullscreen();
             } else if (document.mozCancelFullScreen) {
+              document.mozCancelFullScreen();
+            } else if (document.webkitExitFullscreen) {
+              document.webkitExitFullscreen();
+            } else if (document.msExitFullscreen) {
+              document.msExitFullscreen();
+            }
+          }
+
+          /**
+           * Gets the current URL.
+           * @method getURL
+           * @return {String} url
+           * @example
+           * <div>
+           * <code>
+           * let url;
+           * let x = 100;
+           *
+           * function setup() {
+           *   fill(0);
+           *   noStroke();
+           *   url = getURL();
+           * }
+           *
+           * function draw() {
+           *   background(200);
+           *   text(url, x, height / 2);
+           *   x--;
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * current url (http://p5js.org/reference/#/p5/getURL) moves right to left.
+           */
+          _main.default.prototype.getURL = function() {
+            return location.href;
+          };
+          /**
+           * Gets the current URL path as an array.
+           * @method getURLPath
+           * @return {String[]} path components
+           * @example
+           * <div class='norender'><code>
+           * function setup() {
+           *   let urlPath = getURLPath();
+           *   for (let i = 0; i < urlPath.length; i++) {
+           *     text(urlPath[i], 10, i * 20 + 20);
+           *   }
+           * }
+           * </code></div>
+           *
+           * @alt
+           * This example does not render anything.
+           */
+          _main.default.prototype.getURLPath = function() {
+            return location.pathname.split('/').filter(function(v) {
+              return v !== '';
+            });
+          };
+          /**
+           * Gets the current URL params as an Object.
+           * @method getURLParams
+           * @return {Object} URL params
+           * @example
+           * <div class='norender notest'>
+           * <code>
+           * // Example: http://p5js.org?year=2014&month=May&day=15
+           *
+           * function setup() {
+           *   let params = getURLParams();
+           *   text(params.day, 10, 20);
+           *   text(params.month, 10, 40);
+           *   text(params.year, 10, 60);
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * This example does not render anything.
+           */
+          _main.default.prototype.getURLParams = function() {
+            var re = /[?&]([^&=]+)(?:[&=])([^&=]+)/gim;
+            var m;
+            var v = {};
+            while ((m = re.exec(location.search)) != null) {
+              if (m.index === re.lastIndex) {
+                re.lastIndex++;
+              }
+              v[m[1]] = m[2];
+            }
+            return v;
+          };
+          var _default = _main.default;
+          exports.default = _default;
+        },
+        { './constants': 48, './main': 59 }
+      ],
+      50: [
+        function(_dereq_, module, exports) {
+          'use strict';
+          Object.defineProperty(exports, '__esModule', { value: true });
+          exports.default = void 0; // Different browsers may use different error strings for the same error.
+          // Extracting info from them is much easier and cleaner if we have a predefined
+          // lookup against which we try and match the errors obtained from the browser,
+          // classify them into types and extract the required information. The contents
+          // of this file serve as that lookup. The FES can use this to give a simplified
+          // explanation for all kinds of errors.
+          var strings = {
+            ReferenceError: [
+              {
+                msg: '{{}} is not defined',
+                type: 'NOTDEFINED',
+                browser: 'all'
+              },
+
+              {
+                msg: "Can't find variable: {{}}",
+                type: 'NOTDEFINED',
+                browser: 'Safari'
+              }
+            ],
+
+            SyntaxError: [
+              {
+                msg: 'illegal character',
+                type: 'INVALIDTOKEN',
+                browser: 'Firefox'
+              },
+
+              {
+                msg: 'Invalid character',
+                type: 'INVALIDTOKEN',
+                browser: 'Safari'
+              },
+
+              {
+                msg: 'Invalid or unexpected token',
+                type: 'INVALIDTOKEN',
+                browser: 'Chrome'
+              },
