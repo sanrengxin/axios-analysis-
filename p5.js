@@ -48199,3 +48199,147 @@
               'Object',
               'Error'
             ];
+
+            for (var n = 0; n < names.length; n++) {
+              class2type['[object '.concat(names[n], ']')] = names[n].toLowerCase();
+            }
+            var getType = function getType(obj) {
+              if (obj == null) {
+                return ''.concat(obj);
+              }
+              return _typeof(obj) === 'object' || typeof obj === 'function'
+                ? class2type[_toString.call(obj)] || 'object'
+                : _typeof(obj);
+            };
+
+            // -- End borrow --
+
+            // entry points into user-defined code
+            var entryPoints = [
+              'setup',
+              'draw',
+              'preload',
+              'deviceMoved',
+              'deviceTurned',
+              'deviceShaken',
+              'doubleClicked',
+              'mousePressed',
+              'mouseReleased',
+              'mouseMoved',
+              'mouseDragged',
+              'mouseClicked',
+              'mouseWheel',
+              'touchStarted',
+              'touchMoved',
+              'touchEnded',
+              'keyPressed',
+              'keyReleased',
+              'keyTyped',
+              'windowResized'
+            ];
+
+            var friendlyWelcome = function friendlyWelcome() {
+              // p5.js brand - magenta: #ED225D
+              //const astrixBgColor = 'transparent';
+              //const astrixTxtColor = '#ED225D';
+              //const welcomeBgColor = '#ED225D';
+              //const welcomeTextColor = 'white';
+              var welcomeMessage = (0, _internationalization.translator)('fes.pre', {
+                message: (0, _internationalization.translator)('fes.welcome')
+              });
+
+              console.log(
+                '    _ \n' +
+                  ' /\\| |/\\ \n' +
+                  " \\ ` ' /  \n" +
+                  ' / , . \\  \n' +
+                  ' \\/|_|\\/ ' +
+                  '\n\n' +
+                  welcomeMessage
+              );
+            };
+
+            /**
+             * Takes a message and a p5 function func, and adds a link pointing to
+             * the reference documentation of func at the end of the message
+             *
+             * @method mapToReference
+             * @private
+             * @param {String} message the words to be said
+             * @param {String} [func]    the name of the function to link
+             *
+             * @returns {String}
+             */
+            var mapToReference = function mapToReference(message, func) {
+              var msgWithReference = '';
+              if (func == null || func.substring(0, 4) === 'load') {
+                msgWithReference = message;
+              } else {
+                var methodParts = func.split('.');
+                var referenceSection =
+                  methodParts.length > 1
+                    ? ''.concat(methodParts[0], '.').concat(methodParts[1])
+                    : 'p5';
+
+                var funcName =
+                  methodParts.length === 1 ? func : methodParts.slice(2).join('/');
+                msgWithReference = ''
+                  .concat(message, ' (http://p5js.org/reference/#/')
+                  .concat(referenceSection, '/')
+                  .concat(funcName, ')');
+              }
+              return msgWithReference;
+            };
+
+            /**
+             * Prints out a fancy, colorful message to the console log
+             *
+             * @method report
+             * @private
+             * @param  {String}               message the words to be said
+             * @param  {String}               [func]  the name of the function to link
+             * @param  {Number|String} [color]   CSS color string or error type
+             *
+             * @return console logs
+             */
+            var report = function report(message, func, color) {
+              // if p5._fesLogger is set ( i.e we are running tests ), use that
+              // instead of console.log
+              var log =
+                _main.default._fesLogger == null
+                  ? console.log.bind(console)
+                  : _main.default._fesLogger;
+
+              if (doFriendlyWelcome) {
+                friendlyWelcome();
+                doFriendlyWelcome = false;
+              }
+              if ('undefined' === getType(color)) {
+                color = '#B40033'; // dark magenta
+              } else if (getType(color) === 'number') {
+                // Type to color
+                color = typeColors[color];
+              }
+
+              // Add a link to the reference docs of func at the end of the message
+              message = mapToReference(message, func);
+              var style = [
+                'color: '.concat(color),
+                'font-family: Arial',
+                'font-size: larger'
+              ];
+              var prefixedMsg = (0, _internationalization.translator)('fes.pre', {
+                message: message
+              });
+
+              if (ENABLE_FES_STYLING) {
+                log('%c' + prefixedMsg, style.join(';'));
+              } else {
+                log(prefixedMsg);
+              }
+            };
+            /**
+             * This is a generic method that can be called from anywhere in the p5
+             * library to alert users to a common error.
+             *
+             * @method _friendlyError
