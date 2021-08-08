@@ -48343,3 +48343,133 @@
              * library to alert users to a common error.
              *
              * @method _friendlyError
+             * @private
+             * @param  {Number} message message to be printed
+             * @param  {String} [method] name of method
+             * @param  {Number|String} [color]   CSS color string or error type (Optional)
+             */
+            _main.default._friendlyError = function(message, method, color) {
+              report(message, method, color);
+            };
+
+            /**
+             * This is called internally if there is a error with autoplay.
+             *
+             * @method _friendlyAutoplayError
+             * @private
+             */
+            _main.default._friendlyAutoplayError = function(src) {
+              var message = (0, _internationalization.translator)('fes.autoplay', {
+                src: src,
+                link: 'https://developer.mozilla.org/docs/Web/Media/Autoplay_guide'
+              });
+
+              console.log(
+                (0, _internationalization.translator)('fes.pre', { message: message })
+              );
+            };
+
+            /**
+             * An implementation of
+             * https://en.wikipedia.org/wiki/Wagner%E2%80%93Fischer_algorithm to
+             * compute the Levenshtein distance. It gives a measure of how dissimilar
+             * two strings are. If the "distance" between them is small enough, it is
+             * reasonable to think that one is the misspelled version of the other.
+             * @method computeEditDistance
+             * @private
+             * @param {String} w1 the first word
+             * @param {String} w2 the second word
+             *
+             * @returns {Number} the "distance" between the two words, a smaller value
+             *                   indicates that the words are similar
+             */
+            var computeEditDistance = function computeEditDistance(w1, w2) {
+              var l1 = w1.length,
+                l2 = w2.length;
+              if (l1 === 0) return w2;
+              if (l2 === 0) return w1;
+
+              var prev = [];
+              var cur = [];
+
+              for (var j = 0; j < l2 + 1; j++) {
+                cur[j] = j;
+              }
+
+              prev = cur;
+
+              for (var i = 1; i < l1 + 1; i++) {
+                cur = [];
+                for (var _j = 0; _j < l2 + 1; _j++) {
+                  if (_j === 0) {
+                    cur[_j] = i;
+                  } else {
+                    var a1 = w1[i - 1],
+                      a2 = w2[_j - 1];
+                    var temp = 999999;
+                    var cost = a1.toLowerCase() === a2.toLowerCase() ? 0 : 1;
+                    temp = temp > cost + prev[_j - 1] ? cost + prev[_j - 1] : temp;
+                    temp = temp > 1 + cur[_j - 1] ? 1 + cur[_j - 1] : temp;
+                    temp = temp > 1 + prev[_j] ? 1 + prev[_j] : temp;
+                    cur[_j] = temp;
+                  }
+                }
+                prev = cur;
+              }
+
+              return cur[l2];
+            };
+
+            /**
+             * checks if the various functions such as setup, draw, preload have been
+             * defined with capitalization mistakes
+             * @method checkForUserDefinedFunctions
+             * @private
+             * @param {*} context The current default context. It's set to window in
+             * "global mode" and to a p5 instance in "instance mode"
+             */
+            var checkForUserDefinedFunctions = function checkForUserDefinedFunctions(
+              context
+            ) {
+              if (_main.default.disableFriendlyErrors) return;
+
+              // if using instance mode, this function would be called with the current
+              // instance as context
+              var instanceMode = context instanceof _main.default;
+              context = instanceMode ? context : window;
+              var fnNames = entryPoints;
+
+              var fxns = {};
+              // lowercasename -> actualName mapping
+              fnNames.forEach(function(symbol) {
+                fxns[symbol.toLowerCase()] = symbol;
+              });
+
+              for (
+                var _i = 0, _Object$keys = Object.keys(context);
+                _i < _Object$keys.length;
+                _i++
+              ) {
+                var prop = _Object$keys[_i];
+                var lowercase = prop.toLowerCase();
+
+                // check if the lowercase property name has an entry in fxns, if the
+                // actual name with correct capitalization doesnt exist in context,
+                // and if the user-defined symbol is of the type function
+                if (
+                  fxns[lowercase] &&
+                  !context[fxns[lowercase]] &&
+                  typeof context[prop] === 'function'
+                ) {
+                  var msg = (0, _internationalization.translator)(
+                    'fes.checkUserDefinedFns',
+                    {
+                      name: prop,
+                      actualName: fxns[lowercase]
+                    }
+                  );
+
+                  report(msg, fxns[lowercase]);
+                }
+              }
+            };
