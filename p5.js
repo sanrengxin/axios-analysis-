@@ -48473,3 +48473,135 @@
                 }
               }
             };
+
+            /**
+             * compares the the symbol caught in the ReferenceErrror to everything
+             * in misusedAtTopLevel ( all public p5 properties ). The use of
+             * misusedAtTopLevel here is for convenience as it was an array that was
+             * already defined when spelling check was implemented. For this particular
+             * use-case, it's a misnomer.
+             *
+             * @method handleMisspelling
+             * @private
+             * @param {String} errSym the symbol to whose spelling to check
+             * @param {Error} error the ReferenceError object
+             *
+             * @returns {Boolean} a boolean value indicating if this error was likely due
+             * to a mis-spelling
+             */
+            var handleMisspelling = function handleMisspelling(errSym, error) {
+              if (!misusedAtTopLevelCode) {
+                defineMisusedAtTopLevelCode();
+              }
+
+              var distanceMap = {};
+              var min = 999999;
+              // compute the levenshtein distance for the symbol against all known
+              // public p5 properties. Find the property with the minimum distance
+              misusedAtTopLevelCode.forEach(function(symbol) {
+                var dist = computeEditDistance(errSym, symbol.name);
+                if (distanceMap[dist]) distanceMap[dist].push(symbol);
+                else distanceMap[dist] = [symbol];
+
+                if (dist < min) min = dist;
+              });
+
+              // if the closest match has more "distance" than the max allowed threshold
+              if (min > Math.min(EDIT_DIST_THRESHOLD, errSym.length)) return false;
+
+              // Show a message only if the caught symbol and the matched property name
+              // differ in their name ( either letter difference or difference of case )
+              var matchedSymbols = distanceMap[min].filter(function(symbol) {
+                return symbol.name !== errSym;
+              });
+
+              if (matchedSymbols.length !== 0) {
+                var parsed = _main.default._getErrorStackParser().parse(error);
+                var locationObj;
+                if (
+                  parsed &&
+                  parsed[0] &&
+                  parsed[0].fileName &&
+                  parsed[0].lineNumber &&
+                  parsed[0].columnNumber
+                ) {
+                  locationObj = {
+                    location: ''
+                      .concat(parsed[0].fileName, ':')
+                      .concat(parsed[0].lineNumber, ':')
+                      .concat(parsed[0].columnNumber),
+
+                    file: parsed[0].fileName.split('/').slice(-1),
+                    line: parsed[0].lineNumber
+                  };
+                }
+
+                var msg;
+                if (matchedSymbols.length === 1) {
+                  // To be used when there is only one closest match. The count parameter
+                  // allows i18n to pick between the keys "fes.misspelling" and
+                  // "fes.misspelling__plural"
+                  msg = (0, _internationalization.translator)('fes.misspelling', {
+                    name: errSym,
+                    actualName: matchedSymbols[0].name,
+                    type: matchedSymbols[0].type,
+                    location: locationObj
+                      ? (0, _internationalization.translator)('fes.location', locationObj)
+                      : '',
+                    count: matchedSymbols.length
+                  });
+                } else {
+                  // To be used when there are multiple closest matches. Gives each
+                  // suggestion on its own line, the function name followed by a link to
+                  // reference documentation
+                  var suggestions = matchedSymbols
+                    .map(function(symbol) {
+                      var message =
+                        '▶️ ' + symbol.name + (symbol.type === 'function' ? '()' : '');
+                      return mapToReference(message, symbol.name);
+                    })
+                    .join('\n');
+
+                  msg = (0, _internationalization.translator)('fes.misspelling', {
+                    name: errSym,
+                    suggestions: suggestions,
+                    location: locationObj
+                      ? (0, _internationalization.translator)('fes.location', locationObj)
+                      : '',
+                    count: matchedSymbols.length
+                  });
+                }
+
+                // If there is only one closest match, tell _friendlyError to also add
+                // a link to the reference documentation. In case of multiple matches,
+                // this is already done in the suggestions variable, one link for each
+                // suggestion.
+                report(
+                  msg,
+                  matchedSymbols.length === 1 ? matchedSymbols[0].name : undefined
+                );
+
+                return true;
+              }
+              return false;
+            };
+
+            /**
+             * prints a friendly stacktrace which only includes user-written functions
+             * and is easier for newcomers to understand
+             * @method printFriendlyStack
+             * @private
+             * @param {Array} friendlyStack
+             */
+            var printFriendlyStack = function printFriendlyStack(friendlyStack) {
+              var log =
+                _main.default._fesLogger && typeof _main.default._fesLogger === 'function'
+                  ? _main.default._fesLogger
+                  : console.log.bind(console);
+              if (friendlyStack.length > 1) {
+                var stacktraceMsg = '';
+                friendlyStack.forEach(function(frame, idx) {
+                  var location = ''
+                    .concat(frame.fileName, ':')
+                    .concat(frame.lineNumber, ':')
+                    .concat(frame.columnNumber);
