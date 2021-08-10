@@ -48605,3 +48605,145 @@
                     .concat(frame.fileName, ':')
                     .concat(frame.lineNumber, ':')
                     .concat(frame.columnNumber);
+
+                  var frameMsg,
+                    translationObj = {
+                      func: frame.functionName,
+                      line: frame.lineNumber,
+                      location: location,
+                      file: frame.fileName.split('/').slice(-1)
+                    };
+
+                  if (idx === 0) {
+                    frameMsg = (0, _internationalization.translator)(
+                      'fes.globalErrors.stackTop',
+                      translationObj
+                    );
+                  } else {
+                    frameMsg = (0, _internationalization.translator)(
+                      'fes.globalErrors.stackSubseq',
+                      translationObj
+                    );
+                  }
+                  stacktraceMsg += frameMsg;
+                });
+                log(stacktraceMsg);
+              }
+            };
+
+            /**
+             * Takes a stacktrace array and filters out all frames that show internal p5
+             * details. It also uses this processed stack to figure out if the error
+             * error happened internally within the library, and if the error was due to
+             * a non-loadX() method being used in preload
+             * "Internally" here means that the error exact location of the error (the
+             * top of the stack) is a piece of code write in the p5.js library (which may
+             * or may not have been called from the user's sketch)
+             *
+             * @method processStack
+             * @private
+             * @param {Error} error
+             * @param {Array} stacktrace
+             *
+             * @returns {Array} An array with two elements, [isInternal, friendlyStack]
+             * isInternal: a boolean indicating if the error happened internally
+             * friendlyStack: the simplified stacktrace, with internal details filtered
+             */
+            var processStack = function processStack(error, stacktrace) {
+              // cannot process a stacktrace that doesn't exist
+              if (!stacktrace) return [false, null];
+
+              stacktrace.forEach(function(frame) {
+                frame.functionName = frame.functionName || '';
+              });
+
+              // isInternal - Did this error happen inside the library
+              var isInternal = false;
+              var p5FileName, friendlyStack, currentEntryPoint;
+              for (var i = stacktrace.length - 1; i >= 0; i--) {
+                var splitted = stacktrace[i].functionName.split('.');
+                if (entryPoints.includes(splitted[splitted.length - 1])) {
+                  // remove everything below an entry point function (setup, draw, etc).
+                  // (it's usually the internal initialization calls)
+                  friendlyStack = stacktrace.slice(0, i + 1);
+                  currentEntryPoint = splitted[splitted.length - 1];
+                  for (var j = 0; j < i; j++) {
+                    // Due to the current build process, all p5 functions have
+                    // _main.default in their names in the final build. This is the
+                    // easiest way to check if a function is inside the p5 library
+                    if (stacktrace[j].functionName.search('_main.default') !== -1) {
+                      isInternal = true;
+                      p5FileName = stacktrace[j].fileName;
+                      break;
+                    }
+                  }
+                  break;
+                }
+              }
+
+              // in some cases ( errors in promises, callbacks, etc), no entry-point
+              // function may be found in the stacktrace. In that case just use the
+              // entire stacktrace for friendlyStack
+              if (!friendlyStack) friendlyStack = stacktrace;
+
+              if (isInternal) {
+                // the frameIndex property is added before the filter, so frameIndex
+                // corresponds to the index of a frame in the original stacktrace.
+                // Then we filter out all frames which belong to the file that contains
+                // the p5 library
+                friendlyStack = friendlyStack
+                  .map(function(frame, index) {
+                    frame.frameIndex = index;
+                    return frame;
+                  })
+                  .filter(function(frame) {
+                    return frame.fileName !== p5FileName;
+                  });
+
+                // a weird case, if for some reason we can't identify the function called
+                // from user's code
+                if (friendlyStack.length === 0) return [true, null];
+
+                // get the function just above the topmost frame in the friendlyStack.
+                // i.e the name of the library function called from user's code
+                var func = stacktrace[friendlyStack[0].frameIndex - 1].functionName
+                  .split('.')
+                  .slice(-1)[0];
+
+                // Try and get the location (line no.) from the top element of the stack
+                var locationObj;
+                if (
+                  friendlyStack[0].fileName &&
+                  friendlyStack[0].lineNumber &&
+                  friendlyStack[0].columnNumber
+                ) {
+                  locationObj = {
+                    location: ''
+                      .concat(friendlyStack[0].fileName, ':')
+                      .concat(friendlyStack[0].lineNumber, ':')
+                      .concat(friendlyStack[0].columnNumber),
+                    file: friendlyStack[0].fileName.split('/').slice(-1),
+                    line: friendlyStack[0].lineNumber
+                  };
+
+                  // if already handled by another part of the FES, don't handle again
+                  if (_main.default._fesLogCache[locationObj.location]) return [true, null];
+                }
+
+                // Check if the error is due to a non loadX method being used incorrectly
+                // in preload
+                if (
+                  currentEntryPoint === 'preload' &&
+                  _main.default.prototype._preloadMethods[func] == null
+                ) {
+                  report(
+                    (0, _internationalization.translator)('fes.wrongPreload', {
+                      func: func,
+                      location: locationObj
+                        ? (0, _internationalization.translator)('fes.location', locationObj)
+                        : '',
+                      error: error.message
+                    }),
+
+                    'preload'
+                  );
