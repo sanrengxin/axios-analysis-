@@ -48880,3 +48880,147 @@
                       var url =
                         'https://developer.mozilla.org/docs/Web/JavaScript/Reference/Errors/Illegal_character#What_went_wrong';
                       report(
+                        (0, _internationalization.translator)(
+                          'fes.globalErrors.syntax.invalidToken',
+                          {
+                            url: url
+                          }
+                        )
+                      );
+
+                      break;
+                    }
+                    case 'UNEXPECTEDTOKEN': {
+                      var _url =
+                        'https://developer.mozilla.org/docs/Web/JavaScript/Reference/Errors/Unexpected_token#What_went_wrong';
+                      report(
+                        (0, _internationalization.translator)(
+                          'fes.globalErrors.syntax.unexpectedToken',
+                          {
+                            url: _url
+                          }
+                        )
+                      );
+
+                      break;
+                    }
+                  }
+
+                  break;
+                }
+                case 'ReferenceError': {
+                  switch (matchedError.type) {
+                    case 'NOTDEFINED': {
+                      var errSym = matchedError.match[1];
+
+                      if (errSym && handleMisspelling(errSym, error)) {
+                        break;
+                      }
+
+                      // if the flow gets this far, this is likely not a misspelling
+                      // of a p5 property/function
+                      var url1 = 'https://p5js.org/examples/data-variable-scope.html';
+                      var url2 =
+                        'https://developer.mozilla.org/docs/Web/JavaScript/Reference/Errors/Not_Defined#What_went_wrong';
+                      report(
+                        (0, _internationalization.translator)(
+                          'fes.globalErrors.reference.notDefined',
+                          {
+                            url1: url1,
+                            url2: url2,
+                            symbol: errSym,
+                            location: locationObj
+                              ? (0, _internationalization.translator)(
+                                  'fes.location',
+                                  locationObj
+                                )
+                              : ''
+                          }
+                        )
+                      );
+
+                      if (friendlyStack) printFriendlyStack(friendlyStack);
+                      break;
+                    }
+                  }
+
+                  break;
+                }
+
+                case 'TypeError': {
+                  switch (matchedError.type) {
+                    case 'NOTFUNC': {
+                      var _errSym = matchedError.match[1];
+                      var splitSym = _errSym.split('.');
+                      var _url2 =
+                        'https://developer.mozilla.org/docs/Web/JavaScript/Reference/Errors/Not_a_function#What_went_wrong';
+
+                      // if errSym is aa.bb.cc , symbol would be cc and obj would aa.bb
+                      var translationObj = {
+                        url: _url2,
+                        symbol: splitSym[splitSym.length - 1],
+                        obj: splitSym.slice(0, splitSym.length - 1).join('.'),
+                        location: locationObj
+                          ? (0, _internationalization.translator)(
+                              'fes.location',
+                              locationObj
+                            )
+                          : ''
+                      };
+
+                      // There are two cases to handle here. When the function is called
+                      // as a property of an object and when it's called independently.
+                      // Both have different explanations.
+                      if (splitSym.length > 1) {
+                        report(
+                          (0, _internationalization.translator)(
+                            'fes.globalErrors.type.notfuncObj',
+                            translationObj
+                          )
+                        );
+                      } else {
+                        report(
+                          (0, _internationalization.translator)(
+                            'fes.globalErrors.type.notfunc',
+                            translationObj
+                          )
+                        );
+                      }
+
+                      if (friendlyStack) printFriendlyStack(friendlyStack);
+                      break;
+                    }
+                  }
+                }
+              }
+            };
+
+            _main.default._fesErrorMonitor = fesErrorMonitor;
+            _main.default._checkForUserDefinedFunctions = checkForUserDefinedFunctions;
+
+            // logger for testing purposes.
+            _main.default._fesLogger = null;
+            _main.default._fesLogCache = {};
+
+            window.addEventListener('load', checkForUserDefinedFunctions, false);
+            window.addEventListener('error', _main.default._fesErrorMonitor, false);
+            window.addEventListener(
+              'unhandledrejection',
+              _main.default._fesErrorMonitor,
+              false
+            );
+
+            /**
+             * Prints out all the colors in the color pallete with white text.
+             * For color blindness testing.
+             */
+            /* function testColors() {
+                                                                                              const str = 'A box of biscuits, a box of mixed biscuits and a biscuit mixer';
+                                                                                              report(str, 'print', '#ED225D'); // p5.js magenta
+                                                                                              report(str, 'print', '#2D7BB6'); // p5.js blue
+                                                                                              report(str, 'print', '#EE9900'); // p5.js orange
+                                                                                              report(str, 'print', '#A67F59'); // p5.js light brown
+                                                                                              report(str, 'print', '#704F21'); // p5.js gold
+                                                                                              report(str, 'print', '#1CC581'); // auto cyan
+                                                                                              report(str, 'print', '#FF6625'); // auto orange
+                                                                                              report(str, 'print', '#79EB22'); // auto green
