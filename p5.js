@@ -48747,3 +48747,136 @@
 
                     'preload'
                   );
+                } else {
+                  // Library error
+                  report(
+                    (0, _internationalization.translator)('fes.libraryError', {
+                      func: func,
+                      location: locationObj
+                        ? (0, _internationalization.translator)('fes.location', locationObj)
+                        : '',
+                      error: error.message
+                    }),
+
+                    func
+                  );
+                }
+
+                // Finally, if it's an internal error, print the friendlyStack
+                // ( fesErrorMonitor won't handle this error )
+                if (friendlyStack && friendlyStack.length) {
+                  printFriendlyStack(friendlyStack);
+                }
+              }
+              return [isInternal, friendlyStack];
+            };
+
+            /**
+             * The main function for handling global errors. Called when an error
+             * happens and is responsible for detecting the type of error that
+             * has happened and showing the appropriate message
+             *
+             * @method fesErrorMonitor
+             * @private
+             * @param {*} e The object to extract error details from
+             */
+            var fesErrorMonitor = function fesErrorMonitor(e) {
+              if (_main.default.disableFriendlyErrors) return;
+              // Try to get the error object from e
+              var error;
+              if (e instanceof Error) {
+                error = e;
+              } else if (e instanceof ErrorEvent) {
+                error = e.error;
+              } else if (e instanceof PromiseRejectionEvent) {
+                error = e.reason;
+                if (!(error instanceof Error)) return;
+              }
+              if (!error) return;
+
+              var stacktrace = _main.default._getErrorStackParser().parse(error);
+              // process the stacktrace from the browser and simplify it to give
+              // friendlyStack.
+              var _processStack = processStack(error, stacktrace),
+                _processStack2 = _slicedToArray(_processStack, 2),
+                isInternal = _processStack2[0],
+                friendlyStack = _processStack2[1];
+
+              // if this is an internal library error, the type of the error is not relevant,
+              // only the user code that lead to it is.
+              if (isInternal) {
+                return;
+              }
+
+              var errList = errorTable[error.name];
+              if (!errList) return; // this type of error can't be handled yet
+              var matchedError;
+              var _iteratorNormalCompletion = true;
+              var _didIteratorError = false;
+              var _iteratorError = undefined;
+              try {
+                for (
+                  var _iterator = errList[Symbol.iterator](), _step;
+                  !(_iteratorNormalCompletion = (_step = _iterator.next()).done);
+                  _iteratorNormalCompletion = true
+                ) {
+                  var obj = _step.value;
+                  var string = obj.msg;
+                  // capture the primary symbol mentioned in the error
+                  string = string.replace(new RegExp('{{}}', 'g'), '([a-zA-Z0-9_]+)');
+                  string = string.replace(new RegExp('{{.}}', 'g'), '(.+)');
+                  string = string.replace(new RegExp('{}', 'g'), '(?:[a-zA-Z0-9_]+)');
+                  var matched = error.message.match(string);
+
+                  if (matched) {
+                    matchedError = Object.assign({}, obj);
+                    matchedError.match = matched;
+                    break;
+                  }
+                }
+              } catch (err) {
+                _didIteratorError = true;
+                _iteratorError = err;
+              } finally {
+                try {
+                  if (!_iteratorNormalCompletion && _iterator.return != null) {
+                    _iterator.return();
+                  }
+                } finally {
+                  if (_didIteratorError) {
+                    throw _iteratorError;
+                  }
+                }
+              }
+
+              if (!matchedError) return;
+
+              // Try and get the location from the top element of the stack
+              var locationObj;
+              if (
+                stacktrace &&
+                stacktrace[0].fileName &&
+                stacktrace[0].lineNumber &&
+                stacktrace[0].columnNumber
+              ) {
+                locationObj = {
+                  location: ''
+                    .concat(stacktrace[0].fileName, ':')
+                    .concat(stacktrace[0].lineNumber, ':')
+                    .concat(stacktrace[0].columnNumber),
+
+                  file: stacktrace[0].fileName.split('/').slice(-1),
+                  line: friendlyStack[0].lineNumber
+                };
+              }
+
+              switch (error.name) {
+                case 'SyntaxError': {
+                  // We can't really do much with syntax errors other than try to use
+                  // a simpler framing of the error message. The stack isn't available
+                  // for syntax errors
+                  switch (matchedError.type) {
+                    case 'INVALIDTOKEN': {
+                      var url =
+                        'https://developer.mozilla.org/docs/Web/JavaScript/Reference/Errors/Illegal_character#What_went_wrong';
+                      report(
