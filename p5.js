@@ -49024,3 +49024,149 @@
                                                                                               report(str, 'print', '#1CC581'); // auto cyan
                                                                                               report(str, 'print', '#FF6625'); // auto orange
                                                                                               report(str, 'print', '#79EB22'); // auto green
+                                                                                              report(str, 'print', '#B40033'); // p5.js darkened magenta
+                                                                                              report(str, 'print', '#084B7F'); // p5.js darkened blue
+                                                                                              report(str, 'print', '#945F00'); // p5.js darkened orange
+                                                                                              report(str, 'print', '#6B441D'); // p5.js darkened brown
+                                                                                              report(str, 'print', '#2E1B00'); // p5.js darkened gold
+                                                                                              report(str, 'print', '#008851'); // auto dark cyan
+                                                                                              report(str, 'print', '#C83C00'); // auto dark orange
+                                                                                              report(str, 'print', '#4DB200'); // auto dark green
+                                                                                            } */
+          }
+
+          // This is a lazily-defined list of p5 symbols that may be
+          // misused by beginners at top-level code, outside of setup/draw. We'd like
+          // to detect these errors and help the user by suggesting they move them
+          // into setup/draw.
+          //
+          // For more details, see https://github.com/processing/p5.js/issues/1121.
+          misusedAtTopLevelCode = null;
+          var FAQ_URL =
+            'https://github.com/processing/p5.js/wiki/p5.js-overview#why-cant-i-assign-variables-using-p5-functions-and-variables-before-setup';
+
+          defineMisusedAtTopLevelCode = function defineMisusedAtTopLevelCode() {
+            var uniqueNamesFound = {};
+
+            var getSymbols = function getSymbols(obj) {
+              return Object.getOwnPropertyNames(obj)
+                .filter(function(name) {
+                  if (name[0] === '_') {
+                    return false;
+                  }
+                  if (name in uniqueNamesFound) {
+                    return false;
+                  }
+
+                  uniqueNamesFound[name] = true;
+
+                  return true;
+                })
+                .map(function(name) {
+                  var type;
+
+                  if (typeof obj[name] === 'function') {
+                    type = 'function';
+                  } else if (name === name.toUpperCase()) {
+                    type = 'constant';
+                  } else {
+                    type = 'variable';
+                  }
+
+                  return { name: name, type: type };
+                });
+            };
+
+            misusedAtTopLevelCode = [].concat(
+              getSymbols(_main.default.prototype),
+              // At present, p5 only adds its constants to p5.prototype during
+              // construction, which may not have happened at the time a
+              // ReferenceError is thrown, so we'll manually add them to our list.
+              getSymbols(_dereq_('../constants'))
+            );
+
+            // This will ultimately ensure that we report the most specific error
+            // possible to the user, e.g. advising them about HALF_PI instead of PI
+            // when their code misuses the former.
+            misusedAtTopLevelCode.sort(function(a, b) {
+              return b.name.length - a.name.length;
+            });
+          };
+
+          var helpForMisusedAtTopLevelCode = function helpForMisusedAtTopLevelCode(e, log) {
+            if (!log) {
+              log = console.log.bind(console);
+            }
+
+            if (!misusedAtTopLevelCode) {
+              defineMisusedAtTopLevelCode();
+            }
+
+            // If we find that we're logging lots of false positives, we can
+            // uncomment the following code to avoid displaying anything if the
+            // user's code isn't likely to be using p5's global mode. (Note that
+            // setup/draw are more likely to be defined due to JS function hoisting.)
+            //
+            //if (!('setup' in window || 'draw' in window)) {
+            //  return;
+            //}
+
+            misusedAtTopLevelCode.some(function(symbol) {
+              // Note that while just checking for the occurrence of the
+              // symbol name in the error message could result in false positives,
+              // a more rigorous test is difficult because different browsers
+              // log different messages, and the format of those messages may
+              // change over time.
+              //
+              // For example, if the user uses 'PI' in their code, it may result
+              // in any one of the following messages:
+              //
+              //   * 'PI' is undefined                           (Microsoft Edge)
+              //   * ReferenceError: PI is undefined             (Firefox)
+              //   * Uncaught ReferenceError: PI is not defined  (Chrome)
+
+              if (
+                e.message &&
+                e.message.match('\\W?'.concat(symbol.name, '\\W')) !== null
+              ) {
+                var symbolName =
+                  symbol.type === 'function' ? ''.concat(symbol.name, '()') : symbol.name;
+                if (typeof IS_MINIFIED !== 'undefined') {
+                  log(
+                    "Did you just try to use p5.js's "
+                      .concat(symbolName, ' ')
+                      .concat(
+                        symbol.type,
+                        "? If so, you may want to move it into your sketch's setup() function.\n\nFor more details, see: "
+                      )
+                      .concat(FAQ_URL)
+                  );
+                } else {
+                  log(
+                    (0, _internationalization.translator)('fes.misusedTopLevel', {
+                      symbolName: symbolName,
+                      symbolType: symbol.type,
+                      link: FAQ_URL
+                    })
+                  );
+                }
+                return true;
+              }
+            });
+          };
+
+          // Exposing this primarily for unit testing.
+          _main.default.prototype._helpForMisusedAtTopLevelCode = helpForMisusedAtTopLevelCode;
+
+          if (document.readyState !== 'complete') {
+            window.addEventListener('error', helpForMisusedAtTopLevelCode, false);
+
+            // Our job is only to catch ReferenceErrors that are thrown when
+            // global (non-instance mode) p5 APIs are used at the top-level
+            // scope of a file, so we'll unbind our error listener now to make
+            // sure we don't log false positives later.
+            window.addEventListener('load', function() {
+              window.removeEventListener('error', helpForMisusedAtTopLevelCode, false);
+            });
+          }
+          var _default = _main.default;
