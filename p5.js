@@ -49304,3 +49304,148 @@
 
                 case 8:
                   return {
+                    message: (0, _internationalization.translator)('fes.fileLoadError.gif'),
+                    method: 'loadImage'
+                  };
+              }
+            };
+
+            /**
+             * This is called internally if there is a error during file loading.
+             *
+             * @method _friendlyFileLoadError
+             * @private
+             * @param  {Number} errorType
+             * @param  {String} filePath
+             */
+            _main.default._friendlyFileLoadError = function(errorType, filePath) {
+              var _fileLoadErrorCases = fileLoadErrorCases(errorType, filePath),
+                message = _fileLoadErrorCases.message,
+                method = _fileLoadErrorCases.method;
+              _main.default._friendlyError(message, method, 3);
+            };
+          }
+          var _default = _main.default;
+          exports.default = _default;
+        },
+        { '../internationalization': 57, '../main': 59 }
+      ],
+      53: [
+        function(_dereq_, module, exports) {
+          'use strict';
+          Object.defineProperty(exports, '__esModule', { value: true });
+          exports.default = void 0;
+
+          var _main = _interopRequireDefault(_dereq_('../main'));
+          function _interopRequireDefault(obj) {
+            return obj && obj.__esModule ? obj : { default: obj };
+          } /** // Borrow from stacktracejs https://github.com/stacktracejs/stacktrace.js with
+           * @for p5
+           * @requires core
+           */
+          // minor modifications. The license for the same and the code is included below
+          // Copyright (c) 2017 Eric Wendelin and other contributors
+          // Permission is hereby granted, free of charge, to any person obtaining a copy of
+          // this software and associated documentation files (the "Software"), to deal in
+          // the Software without restriction, including without limitation the rights to
+          // use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+          // of the Software, and to permit persons to whom the Software is furnished to do
+          // so, subject to the following conditions:
+          // The above copyright notice and this permission notice shall be included in all
+          // copies or substantial portions of the Software.
+          // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+          // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+          // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+          // AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+          // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+          // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+          // SOFTWARE.
+          function ErrorStackParser() {
+            'use strict';
+
+            var FIREFOX_SAFARI_STACK_REGEXP = /(^|@)\S+:\d+/;
+            var CHROME_IE_STACK_REGEXP = /^\s*at .*(\S+:\d+|\(native\))/m;
+            var SAFARI_NATIVE_CODE_REGEXP = /^(eval@)?(\[native code])?$/;
+
+            return {
+              /**
+               * Given an Error object, extract the most information from it.
+               * @private
+               * @param {Error} error object
+               * @return {Array} of stack frames
+               */
+              parse: function ErrorStackParser$$parse(error) {
+                if (
+                  typeof error.stacktrace !== 'undefined' ||
+                  typeof error['opera#sourceloc'] !== 'undefined'
+                ) {
+                  return this.parseOpera(error);
+                } else if (error.stack && error.stack.match(CHROME_IE_STACK_REGEXP)) {
+                  return this.parseV8OrIE(error);
+                } else if (error.stack) {
+                  return this.parseFFOrSafari(error);
+                } else {
+                  // throw new Error('Cannot parse given Error object');
+                }
+              },
+
+              // Separate line and column numbers from a string of the form: (URI:Line:Column)
+              extractLocation: function ErrorStackParser$$extractLocation(urlLike) {
+                // Fail-fast but return locations like "(native)"
+                if (urlLike.indexOf(':') === -1) {
+                  return [urlLike];
+                }
+
+                var regExp = /(.+?)(?::(\d+))?(?::(\d+))?$/;
+                var parts = regExp.exec(urlLike.replace(/[()]/g, ''));
+                return [parts[1], parts[2] || undefined, parts[3] || undefined];
+              },
+
+              parseV8OrIE: function ErrorStackParser$$parseV8OrIE(error) {
+                var filtered = error.stack.split('\n').filter(function(line) {
+                  return !!line.match(CHROME_IE_STACK_REGEXP);
+                }, this);
+
+                return filtered.map(function(line) {
+                  if (line.indexOf('(eval ') > -1) {
+                    // Throw away eval information until we implement stacktrace.js/stackframe#8
+                    line = line
+                      .replace(/eval code/g, 'eval')
+                      .replace(/(\(eval at [^()]*)|(\),.*$)/g, '');
+                  }
+                  var sanitizedLine = line.replace(/^\s+/, '').replace(/\(eval code/g, '(');
+
+                  // capture and preseve the parenthesized location "(/foo/my bar.js:12:87)" in
+                  // case it has spaces in it, as the string is split on \s+ later on
+                  var location = sanitizedLine.match(/ (\((.+):(\d+):(\d+)\)$)/);
+
+                  // remove the parenthesized location from the line, if it was matched
+                  sanitizedLine = location
+                    ? sanitizedLine.replace(location[0], '')
+                    : sanitizedLine;
+
+                  var tokens = sanitizedLine.split(/\s+/).slice(1);
+                  // if a location was matched, pass it to extractLocation() otherwise pop the last token
+                  var locationParts = this.extractLocation(
+                    location ? location[1] : tokens.pop()
+                  );
+
+                  var functionName = tokens.join(' ') || undefined;
+                  var fileName =
+                    ['eval', '<anonymous>'].indexOf(locationParts[0]) > -1
+                      ? undefined
+                      : locationParts[0];
+
+                  return {
+                    functionName: functionName,
+                    fileName: fileName,
+                    lineNumber: locationParts[1],
+                    columnNumber: locationParts[2],
+                    source: line
+                  };
+                }, this);
+              },
+
+              parseFFOrSafari: function ErrorStackParser$$parseFFOrSafari(error) {
+                var filtered = error.stack.split('\n').filter(function(line) {
+                  return !line.match(SAFARI_NATIVE_CODE_REGEXP);
