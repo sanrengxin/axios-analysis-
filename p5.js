@@ -49170,3 +49170,137 @@
             });
           }
           var _default = _main.default;
+          exports.default = _default;
+        },
+        {
+          '../constants': 48,
+          '../internationalization': 57,
+          '../main': 59,
+          './browser_errors': 50
+        }
+      ],
+      52: [
+        function(_dereq_, module, exports) {
+          'use strict';
+          Object.defineProperty(exports, '__esModule', { value: true });
+          exports.default = void 0;
+
+          var _main = _interopRequireDefault(_dereq_('../main'));
+          var _internationalization = _dereq_('../internationalization');
+          function _interopRequireDefault(obj) {
+            return obj && obj.__esModule ? obj : { default: obj };
+          }
+          /**
+           * @for p5
+           * @requires core
+           *
+           * This file contains the part of the FES responsible for dealing with
+           * file load errors
+           */ if (typeof IS_MINIFIED !== 'undefined') {
+            _main.default._friendlyFileLoadError = function() {};
+          } else {
+            // mapping used by `_friendlyFileLoadError`
+            var fileLoadErrorCases = function fileLoadErrorCases(num, filePath) {
+              var suggestion = (0, _internationalization.translator)(
+                'fes.fileLoadError.suggestion',
+                {
+                  filePath: filePath,
+                  link: 'https://github.com/processing/p5.js/wiki/Local-server'
+                }
+              );
+
+              switch (num) {
+                case 0:
+                  return {
+                    message: (0, _internationalization.translator)(
+                      'fes.fileLoadError.image',
+                      {
+                        suggestion: suggestion
+                      }
+                    ),
+
+                    method: 'loadImage'
+                  };
+
+                case 1:
+                  return {
+                    message: (0, _internationalization.translator)(
+                      'fes.fileLoadError.xml',
+                      {
+                        suggestion: suggestion
+                      }
+                    ),
+
+                    method: 'loadXML'
+                  };
+
+                case 2:
+                  return {
+                    message: (0, _internationalization.translator)(
+                      'fes.fileLoadError.table',
+                      {
+                        suggestion: suggestion
+                      }
+                    ),
+
+                    method: 'loadTable'
+                  };
+
+                case 3:
+                  return {
+                    message: (0, _internationalization.translator)(
+                      'fes.fileLoadError.strings',
+                      {
+                        suggestion: suggestion
+                      }
+                    ),
+
+                    method: 'loadStrings'
+                  };
+
+                case 4:
+                  return {
+                    message: (0, _internationalization.translator)(
+                      'fes.fileLoadError.font',
+                      {
+                        suggestion: suggestion
+                      }
+                    ),
+
+                    method: 'loadFont'
+                  };
+
+                case 5:
+                  return {
+                    message: (0, _internationalization.translator)(
+                      'fes.fileLoadError.json',
+                      {
+                        suggestion: suggestion
+                      }
+                    ),
+
+                    method: 'loadJSON'
+                  };
+
+                case 6:
+                  return {
+                    message: (0, _internationalization.translator)(
+                      'fes.fileLoadError.bytes',
+                      {
+                        suggestion: suggestion
+                      }
+                    ),
+
+                    method: 'loadBytes'
+                  };
+
+                case 7:
+                  return {
+                    message: (0, _internationalization.translator)(
+                      'fes.fileLoadError.large'
+                    ),
+                    method: 'loadX'
+                  };
+
+                case 8:
+                  return {
