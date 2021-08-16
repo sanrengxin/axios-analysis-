@@ -49449,3 +49449,135 @@
               parseFFOrSafari: function ErrorStackParser$$parseFFOrSafari(error) {
                 var filtered = error.stack.split('\n').filter(function(line) {
                   return !line.match(SAFARI_NATIVE_CODE_REGEXP);
+                }, this);
+
+                return filtered.map(function(line) {
+                  // Throw away eval information until we implement stacktrace.js/stackframe#8
+                  if (line.indexOf(' > eval') > -1) {
+                    line = line.replace(
+                      / line (\d+)(?: > eval line \d+)* > eval:\d+:\d+/g,
+                      ':$1'
+                    );
+                  }
+
+                  if (line.indexOf('@') === -1 && line.indexOf(':') === -1) {
+                    // Safari eval frames only have function names and nothing else
+                    return {
+                      functionName: line
+                    };
+                  } else {
+                    var functionNameRegex = /((.*".+"[^@]*)?[^@]*)(?:@)/;
+                    var matches = line.match(functionNameRegex);
+                    var functionName = matches && matches[1] ? matches[1] : undefined;
+                    var locationParts = this.extractLocation(
+                      line.replace(functionNameRegex, '')
+                    );
+
+                    return {
+                      functionName: functionName,
+                      fileName: locationParts[0],
+                      lineNumber: locationParts[1],
+                      columnNumber: locationParts[2],
+                      source: line
+                    };
+                  }
+                }, this);
+              },
+
+              parseOpera: function ErrorStackParser$$parseOpera(e) {
+                if (
+                  !e.stacktrace ||
+                  (e.message.indexOf('\n') > -1 &&
+                    e.message.split('\n').length > e.stacktrace.split('\n').length)
+                ) {
+                  return this.parseOpera9(e);
+                } else if (!e.stack) {
+                  return this.parseOpera10(e);
+                } else {
+                  return this.parseOpera11(e);
+                }
+              },
+
+              parseOpera9: function ErrorStackParser$$parseOpera9(e) {
+                var lineRE = /Line (\d+).*script (?:in )?(\S+)/i;
+                var lines = e.message.split('\n');
+                var result = [];
+
+                for (var i = 2, len = lines.length; i < len; i += 2) {
+                  var match = lineRE.exec(lines[i]);
+                  if (match) {
+                    result.push({
+                      fileName: match[2],
+                      lineNumber: match[1],
+                      source: lines[i]
+                    });
+                  }
+                }
+
+                return result;
+              },
+
+              parseOpera10: function ErrorStackParser$$parseOpera10(e) {
+                var lineRE = /Line (\d+).*script (?:in )?(\S+)(?:: In function (\S+))?$/i;
+                var lines = e.stacktrace.split('\n');
+                var result = [];
+
+                for (var i = 0, len = lines.length; i < len; i += 2) {
+                  var match = lineRE.exec(lines[i]);
+                  if (match) {
+                    result.push({
+                      functionName: match[3] || undefined,
+                      fileName: match[2],
+                      lineNumber: match[1],
+                      source: lines[i]
+                    });
+                  }
+                }
+
+                return result;
+              },
+
+              // Opera 10.65+ Error.stack very similar to FF/Safari
+              parseOpera11: function ErrorStackParser$$parseOpera11(error) {
+                var filtered = error.stack.split('\n').filter(function(line) {
+                  return (
+                    !!line.match(FIREFOX_SAFARI_STACK_REGEXP) &&
+                    !line.match(/^Error created at/)
+                  );
+                }, this);
+
+                return filtered.map(function(line) {
+                  var tokens = line.split('@');
+                  var locationParts = this.extractLocation(tokens.pop());
+                  var functionCall = tokens.shift() || '';
+                  var functionName =
+                    functionCall
+                      .replace(/<anonymous function(: (\w+))?>/, '$2')
+                      .replace(/\([^)]*\)/g, '') || undefined;
+                  var argsRaw;
+                  if (functionCall.match(/\(([^)]*)\)/)) {
+                    argsRaw = functionCall.replace(/^[^(]+\(([^)]*)\)$/, '$1');
+                  }
+                  var args =
+                    argsRaw === undefined || argsRaw === '[arguments not available]'
+                      ? undefined
+                      : argsRaw.split(',');
+
+                  return {
+                    functionName: functionName,
+                    args: args,
+                    fileName: locationParts[0],
+                    lineNumber: locationParts[1],
+                    columnNumber: locationParts[2],
+                    source: line
+                  };
+                }, this);
+              }
+            };
+          }
+
+          // End borrow
+
+          // wrapper exposing ErrorStackParser
+          _main.default._getErrorStackParser = function getErrorStackParser() {
+            return new ErrorStackParser();
