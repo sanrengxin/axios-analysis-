@@ -49733,3 +49733,138 @@
           }
           function _getPrototypeOf(o) {
             _getPrototypeOf = Object.setPrototypeOf
+              ? Object.getPrototypeOf
+              : function _getPrototypeOf(o) {
+                  return o.__proto__ || Object.getPrototypeOf(o);
+                };
+            return _getPrototypeOf(o);
+          }
+          function _typeof(obj) {
+            if (typeof Symbol === 'function' && typeof Symbol.iterator === 'symbol') {
+              _typeof = function _typeof(obj) {
+                return typeof obj;
+              };
+            } else {
+              _typeof = function _typeof(obj) {
+                return obj &&
+                  typeof Symbol === 'function' &&
+                  obj.constructor === Symbol &&
+                  obj !== Symbol.prototype
+                  ? 'symbol'
+                  : typeof obj;
+              };
+            }
+            return _typeof(obj);
+          }
+
+          if (typeof IS_MINIFIED !== 'undefined') {
+            _main.default._validateParameters = _main.default._clearValidateParamsCache = function() {};
+          } else {
+            // for parameter validation
+            var dataDoc = _dereq_('../../../docs/parameterData.json');
+            var arrDoc = JSON.parse(JSON.stringify(dataDoc));
+
+            var docCache = {};
+            var builtinTypes = new Set([
+              'null',
+              'number',
+              'string',
+              'boolean',
+              'constant',
+              'function',
+              'any',
+              'integer'
+            ]);
+
+            var basicTypes = {
+              number: true,
+              boolean: true,
+              string: true,
+              function: true,
+              undefined: true
+            };
+
+            // reverse map of all constants
+            var constantsReverseMap = {};
+            for (var key in constants) {
+              constantsReverseMap[constants[key]] = key;
+            }
+
+            // mapping names of p5 types to their constructor function
+            // p5Constructors:
+            //    - Color: f()
+            //    - Graphics: f()
+            //    - Vector: f()
+            // and so on
+            var p5Constructors = {};
+
+            // For speedup over many runs. funcSpecificConstructors[func] only has the
+            // constructors for types which were seen earlier as args of "func"
+            var funcSpecificConstructors = {};
+            window.addEventListener('load', function() {
+              // Make a list of all p5 classes to be used for argument validation
+              // This must be done only when everything has loaded otherwise we get
+              // an empty array
+              for (
+                var _i = 0, _Object$keys = Object.keys(_main.default);
+                _i < _Object$keys.length;
+                _i++
+              ) {
+                var _key = _Object$keys[_i];
+                // Get a list of all constructors in p5. They are functions whose names
+                // start with a capital letter
+                if (
+                  typeof _main.default[_key] === 'function' &&
+                  _key[0] !== _key[0].toLowerCase()
+                ) {
+                  p5Constructors[_key] = _main.default[_key];
+                }
+              }
+            });
+
+            var argumentTree = {};
+            // The following two functions are responsible for querying and inserting
+            // into the argument tree. It stores the types of arguments that each
+            // function has seen so far. It is used to query if a sequence of
+            // arguments seen in validate parameters was seen before.
+            // Lets consider that the following segment of code runs repeatedly, perhaps
+            // in a loop or in draw()
+            //   color(10, 10, 10);
+            //   color(10, 10);
+            //   color('r', 'g', 'b');
+            // After the first of run the code segment, the argument tree looks like
+            // - color
+            //     - number
+            //        - number
+            //            - number
+            //                - seen: true
+            //            - seen: true
+            //     - string
+            //        - string
+            //            - string
+            //                - seen: true
+            // seen: true signifies that this argument was also seen as the last
+            // argument in a call. Now in the second run of the sketch, it would traverse
+            // the existing tree and see seen: true, i.e this sequence was seen
+            // before and so scoring can be skipped. This also prevents logging multiple
+            // validation messages for the same thing.
+
+            // These two functions would be called repeatedly over and over again,
+            // so they need to be as optimized for performance as possible
+
+            var addType = function addType(value, obj, func) {
+              var type = _typeof(value);
+              if (basicTypes[type]) {
+                if (constantsReverseMap[value]) {
+                  // check if the value is a p5 constant and if it is, we would want the
+                  // value itself to be stored in the tree instead of the type
+                  obj = obj[value] || (obj[value] = {});
+                } else {
+                  obj = obj[type] || (obj[type] = {});
+                }
+              } else if (value === null) {
+                // typeof null -> "object". don't want that
+                obj = obj['null'] || (obj['null'] = {});
+              } else {
+                // objects which are instances of p5 classes have nameless constructors.
+                // native objects have a constructor named "Object". This check
