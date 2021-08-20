@@ -49868,3 +49868,127 @@
               } else {
                 // objects which are instances of p5 classes have nameless constructors.
                 // native objects have a constructor named "Object". This check
+                // differentiates between the two so that we dont waste time finding the
+                // p5 class if we just have a native object
+                if (value.constructor && value.constructor.name) {
+                  obj = obj[value.constructor.name] || (obj[value.constructor.name] = {});
+                  return obj;
+                }
+
+                // constructors for types defined in p5 do not have a name property.
+                // e.constructor.name gives "". Code in this segment is a workaround for it
+
+                // p5C will only have the name: constructor mapping for types
+                // which were already seen as args of "func"
+                var p5C = funcSpecificConstructors[func];
+                // p5C would contain much fewer items than p5Constructors. if we find our
+                // answer in p5C, we don't have to scan through p5Constructors
+
+                if (p5C === undefined) {
+                  // if there isn't an entry yet for func
+                  // make an entry of empty object
+                  p5C = funcSpecificConstructors[func] = {};
+                }
+
+                for (var _key2 in p5C) {
+                  // search on the constructors we have already seen (smaller search space)
+                  if (value instanceof p5C[_key2]) {
+                    obj = obj[_key2] || (obj[_key2] = {});
+                    return obj;
+                  }
+                }
+
+                for (var _key3 in p5Constructors) {
+                  // if the above search didn't work, search on all p5 constructors
+                  if (value instanceof p5Constructors[_key3]) {
+                    obj = obj[_key3] || (obj[_key3] = {});
+                    // if found, add to known constructors for this function
+                    p5C[_key3] = p5Constructors[_key3];
+                    return obj;
+                  }
+                }
+                // nothing worked, put the type as is
+                obj = obj[type] || (obj[type] = {});
+              }
+
+              return obj;
+            };
+            var buildArgTypeCache = function buildArgTypeCache(func, arr) {
+              // get the if an argument tree for current function already exists
+              var obj = argumentTree[func];
+              if (obj === undefined) {
+                // if it doesn't, create an empty tree
+                obj = argumentTree[func] = {};
+              }
+
+              for (var i = 0, len = arr.length; i < len; ++i) {
+                var value = arr[i];
+                if (value instanceof Array) {
+                  // an array is passed as an argument, expand it and get the type of
+                  // each of its element. We distinguish the start of an array with 'as'
+                  // or arraystart. This would help distinguish between the arguments
+                  // (number, number, number) and (number, [number, number])
+                  obj = obj['as'] || (obj['as'] = {});
+                  for (var j = 0, lenA = value.length; j < lenA; ++j) {
+                    obj = addType(value[j], obj, func);
+                  }
+                } else {
+                  obj = addType(value, obj, func);
+                }
+              }
+              return obj;
+            };
+
+            // validateParameters() helper functions:
+            // lookupParamDoc() for querying data.json
+            var lookupParamDoc = function lookupParamDoc(func) {
+              // look for the docs in the `data.json` datastructure
+
+              var ichDot = func.lastIndexOf('.');
+              var funcName = func.substr(ichDot + 1);
+              var funcClass = func.substr(0, ichDot) || 'p5';
+
+              var classitems = arrDoc;
+              var queryResult = classitems[funcClass][funcName];
+
+              // different JSON structure for funct with multi-format
+              var overloads = [];
+              if (queryResult.hasOwnProperty('overloads')) {
+                // add all the overloads
+                for (var i = 0; i < queryResult.overloads.length; i++) {
+                  overloads.push({ formats: queryResult.overloads[i].params });
+                }
+              } else {
+                // no overloads, just add the main method definition
+                overloads.push({ formats: queryResult.params || [] });
+              }
+
+              // parse the parameter types for each overload
+              var mapConstants = {};
+              var maxParams = 0;
+              overloads.forEach(function(overload) {
+                var formats = overload.formats;
+
+                // keep a record of the maximum number of arguments
+                // this method requires.
+                if (maxParams < formats.length) {
+                  maxParams = formats.length;
+                }
+
+                // calculate the minimum number of arguments
+                // this overload requires.
+                var minParams = formats.length;
+                while (minParams > 0 && formats[minParams - 1].optional) {
+                  minParams--;
+                }
+                overload.minParams = minParams;
+
+                // loop through each parameter position, and parse its types
+                formats.forEach(function(format) {
+                  // split this parameter's types
+                  format.types = format.type.split('|').map(function ct(type) {
+                    // array
+                    if (type.substr(type.length - 2, 2) === '[]') {
+                      return {
+                        name: type,
+                        array: ct(type.substr(0, type.length - 2))
