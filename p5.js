@@ -49992,3 +49992,139 @@
                       return {
                         name: type,
                         array: ct(type.substr(0, type.length - 2))
+                      };
+                    }
+
+                    var lowerType = type.toLowerCase();
+
+                    // contant
+                    if (lowerType === 'constant') {
+                      var constant;
+                      if (mapConstants.hasOwnProperty(format.name)) {
+                        constant = mapConstants[format.name];
+                      } else {
+                        // parse possible constant values from description
+                        var myRe = /either\s+(?:[A-Z0-9_]+\s*,?\s*(?:or)?\s*)+/g;
+                        var values = {};
+                        var names = [];
+
+                        constant = mapConstants[format.name] = {
+                          values: values,
+                          names: names
+                        };
+
+                        var myArray = myRe.exec(format.description);
+                        if (func === 'endShape' && format.name === 'mode') {
+                          values[constants.CLOSE] = true;
+                          names.push('CLOSE');
+                        } else {
+                          var match = myArray[0];
+                          var reConst = /[A-Z0-9_]+/g;
+                          var matchConst;
+                          while ((matchConst = reConst.exec(match)) !== null) {
+                            var name = matchConst[0];
+                            if (constants.hasOwnProperty(name)) {
+                              values[constants[name]] = true;
+                              names.push(name);
+                            }
+                          }
+                        }
+                      }
+                      return {
+                        name: type,
+                        builtin: lowerType,
+                        names: constant.names,
+                        values: constant.values
+                      };
+                    }
+
+                    // function
+                    if (lowerType.substr(0, 'function'.length) === 'function') {
+                      lowerType = 'function';
+                    }
+                    // builtin
+                    if (builtinTypes.has(lowerType)) {
+                      return { name: type, builtin: lowerType };
+                    }
+
+                    // find type's prototype
+                    var t = window;
+                    var typeParts = type.split('.');
+
+                    // special-case 'p5' since it may be non-global
+                    if (typeParts[0] === 'p5') {
+                      t = _main.default;
+                      typeParts.shift();
+                    }
+
+                    typeParts.forEach(function(p) {
+                      t = t && t[p];
+                    });
+                    if (t) {
+                      return { name: type, prototype: t };
+                    }
+
+                    return { name: type, type: lowerType };
+                  });
+                });
+              });
+              return {
+                overloads: overloads,
+                maxParams: maxParams
+              };
+            };
+
+            var isNumber = function isNumber(param) {
+              switch (_typeof(param)) {
+                case 'number':
+                  return true;
+                case 'string':
+                  return !isNaN(param);
+                default:
+                  return false;
+              }
+            };
+
+            var testParamType = function testParamType(param, type) {
+              var isArray = param instanceof Array;
+              var matches = true;
+              if (type.array && isArray) {
+                for (var i = 0; i < param.length; i++) {
+                  var error = testParamType(param[i], type.array);
+                  if (error) return error / 2; // half error for elements
+                }
+              } else if (type.prototype) {
+                matches = param instanceof type.prototype;
+              } else if (type.builtin) {
+                switch (type.builtin) {
+                  case 'number':
+                    matches = isNumber(param);
+                    break;
+                  case 'integer':
+                    matches = isNumber(param) && Number(param) === Math.floor(param);
+                    break;
+                  case 'boolean':
+                  case 'any':
+                    matches = true;
+                    break;
+                  case 'array':
+                    matches = isArray;
+                    break;
+                  case 'string':
+                    matches = /*typeof param === 'number' ||*/ typeof param === 'string';
+                    break;
+                  case 'constant':
+                    matches = type.values.hasOwnProperty(param);
+                    break;
+                  case 'function':
+                    matches = param instanceof Function;
+                    break;
+                  case 'null':
+                    matches = param === null;
+                    break;
+                }
+              } else {
+                matches = _typeof(param) === type.t;
+              }
+              return matches ? 0 : 1;
+            };
