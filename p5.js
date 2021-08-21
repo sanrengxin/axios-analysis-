@@ -50285,3 +50285,139 @@
                   var argType =
                     arg instanceof Array
                       ? 'array'
+                      : arg === null ? 'null' : arg.name || _typeof(arg);
+
+                  translationObj = {
+                    func: func,
+                    formatType: formatType(),
+                    argType: argType,
+                    /* i18next-extract-mark-context-next-line ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"] */
+                    position: (0, _internationalization.translator)('fes.positions.p', {
+                      context: (errorObj.position + 1).toString(),
+                      defaultValue: (errorObj.position + 1).toString()
+                    })
+                  };
+
+                  break;
+                }
+                case 'TOO_FEW_ARGUMENTS': {
+                  translationObj = {
+                    func: func,
+                    minParams: errorObj.minParams,
+                    argCount: errorObj.argCount
+                  };
+
+                  break;
+                }
+                case 'TOO_MANY_ARGUMENTS': {
+                  translationObj = {
+                    func: func,
+                    maxParams: errorObj.maxParams,
+                    argCount: errorObj.argCount
+                  };
+
+                  break;
+                }
+              }
+
+              if (translationObj) {
+                try {
+                  // const re = /Function\.validateParameters.*[\r\n].*[\r\n].*\(([^)]*)/;
+                  var myError = new Error();
+                  var parsed = _main.default._getErrorStackParser().parse(myError);
+                  if (
+                    parsed[3] &&
+                    parsed[3].functionName &&
+                    parsed[3].functionName.includes('.') &&
+                    _main.default.prototype[parsed[3].functionName.split('.').slice(-1)[0]]
+                  ) {
+                    return;
+                  }
+                  if (_main.default._throwValidationErrors) {
+                    throw new _main.default.ValidationError(message, func, errorObj.type);
+                  }
+
+                  // try to extract the location from where the function was called
+                  if (
+                    parsed[3] &&
+                    parsed[3].fileName &&
+                    parsed[3].lineNumber &&
+                    parsed[3].columnNumber
+                  ) {
+                    var location = ''
+                      .concat(parsed[3].fileName, ':')
+                      .concat(parsed[3].lineNumber, ':')
+                      .concat(parsed[3].columnNumber);
+
+                    translationObj.location = (0, _internationalization.translator)(
+                      'fes.location',
+                      {
+                        location: location,
+                        // for e.g. get "sketch.js" from "https://example.com/abc/sketch.js"
+                        file: parsed[3].fileName.split('/').slice(-1),
+                        line: parsed[3].lineNumber
+                      }
+                    );
+
+                    // tell fesErrorMonitor that we have already given a friendly message
+                    // for this line, so it need not to do the same in case of an error
+                    _main.default._fesLogCache[location] = true;
+                  }
+                } catch (err) {
+                  if (err instanceof _main.default.ValidationError) {
+                    throw err;
+                  }
+                }
+
+                translationObj.context = errorObj.type;
+                // i18next-extract-mark-context-next-line ["EMPTY_VAR", "TOO_MANY_ARGUMENTS", "TOO_FEW_ARGUMENTS", "WRONG_TYPE"]
+                message = (0, _internationalization.translator)(
+                  'fes.friendlyParamError.type',
+                  translationObj
+                );
+
+                _main.default._friendlyError(''.concat(message, '.'), func, 3);
+              }
+            };
+
+            // if a function is called with some set of wrong arguments, and then called
+            // again with the same set of arguments, the messages due to the second call
+            // will be supressed. If two tests test on the same wrong arguments, the
+            // second test won't see the validationError. clearing argumentTree solves it
+            _main.default._clearValidateParamsCache = function clearValidateParamsCache() {
+              for (
+                var _i2 = 0, _Object$keys2 = Object.keys(argumentTree);
+                _i2 < _Object$keys2.length;
+                _i2++
+              ) {
+                var _key4 = _Object$keys2[_i2];
+                delete argumentTree[_key4];
+              }
+            };
+
+            // allowing access to argumentTree for testing
+            _main.default._getValidateParamsArgTree = function getValidateParamsArgTree() {
+              return argumentTree;
+            };
+
+            /**
+             * Validates parameters
+             * param  {String}               func    the name of the function
+             * param  {Array}                args    user input arguments
+             *
+             * example:
+             *  const a;
+             *  ellipse(10,10,a,5);
+             * console ouput:
+             *  "It looks like ellipse received an empty variable in spot #2."
+             *
+             * example:
+             *  ellipse(10,"foo",5,5);
+             * console output:
+             *  "ellipse was expecting a number for parameter #1,
+             *           received "foo" instead."
+             */
+            _main.default._validateParameters = function validateParameters(func, args) {
+              if (_main.default.disableFriendlyErrors) {
+                return; // skip FES
+              }
