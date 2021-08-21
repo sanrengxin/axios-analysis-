@@ -50128,3 +50128,160 @@
               }
               return matches ? 0 : 1;
             };
+
+            // testType() for non-object type parameter validation
+            var testParamTypes = function testParamTypes(param, types) {
+              var minScore = 9999;
+              for (var i = 0; minScore > 0 && i < types.length; i++) {
+                var score = testParamType(param, types[i]);
+                if (minScore > score) minScore = score;
+              }
+              return minScore;
+            };
+
+            // generate a score (higher is worse) for applying these args to
+            // this overload.
+            var scoreOverload = function scoreOverload(args, argCount, overload, minScore) {
+              var score = 0;
+              var formats = overload.formats;
+              var minParams = overload.minParams;
+
+              // check for too few/many args
+              // the score is double number of extra/missing args
+              if (argCount < minParams) {
+                score = (minParams - argCount) * 2;
+              } else if (argCount > formats.length) {
+                score = (argCount - formats.length) * 2;
+              }
+
+              // loop through the formats, adding up the error score for each arg.
+              // quit early if the score gets higher than the previous best overload.
+              for (var p = 0; score <= minScore && p < formats.length; p++) {
+                var arg = args[p];
+                var format = formats[p];
+                // '== null' checks for 'null' and typeof 'undefined'
+                if (arg == null) {
+                  // handle undefined args
+                  if (!format.optional || p < minParams || p < argCount) {
+                    score += 1;
+                  }
+                } else {
+                  score += testParamTypes(arg, format.types);
+                }
+              }
+              return score;
+            };
+
+            // gets a list of errors for this overload
+            var getOverloadErrors = function getOverloadErrors(args, argCount, overload) {
+              var formats = overload.formats;
+              var minParams = overload.minParams;
+
+              // check for too few/many args
+              if (argCount < minParams) {
+                return [
+                  {
+                    type: 'TOO_FEW_ARGUMENTS',
+                    argCount: argCount,
+                    minParams: minParams
+                  }
+                ];
+              } else if (argCount > formats.length) {
+                return [
+                  {
+                    type: 'TOO_MANY_ARGUMENTS',
+                    argCount: argCount,
+                    maxParams: formats.length
+                  }
+                ];
+              }
+
+              var errorArray = [];
+              for (var p = 0; p < formats.length; p++) {
+                var arg = args[p];
+                var format = formats[p];
+                // '== null' checks for 'null' and typeof 'undefined'
+                if (arg == null) {
+                  // handle undefined args
+                  if (!format.optional || p < minParams || p < argCount) {
+                    errorArray.push({
+                      type: 'EMPTY_VAR',
+                      position: p,
+                      format: format
+                    });
+                  }
+                } else if (testParamTypes(arg, format.types) > 0) {
+                  errorArray.push({
+                    type: 'WRONG_TYPE',
+                    position: p,
+                    format: format,
+                    arg: arg
+                  });
+                }
+              }
+
+              return errorArray;
+            };
+
+            // a custom error type, used by the mocha
+            // tests when expecting validation errors
+            _main.default.ValidationError = (function(name) {
+              var err = /*#__PURE__*/ (function(_Error) {
+                _inherits(err, _Error);
+                function err(message, func, type) {
+                  var _this;
+                  _classCallCheck(this, err);
+                  _this = _possibleConstructorReturn(this, _getPrototypeOf(err).call(this));
+                  _this.message = message;
+                  _this.func = func;
+                  _this.type = type;
+                  if ('captureStackTrace' in Error)
+                    Error.captureStackTrace(_assertThisInitialized(_this), err);
+                  else _this.stack = new Error().stack;
+                  return _this;
+                }
+                return err;
+              })(_wrapNativeSuper(Error));
+
+              err.prototype.name = name;
+              return err;
+            })('ValidationError');
+
+            // function for generating console.log() msg
+            _main.default._friendlyParamError = function(errorObj, func) {
+              var message;
+              var translationObj;
+
+              function formatType() {
+                var format = errorObj.format;
+                return format.types
+                  .map(function(type) {
+                    return type.names ? type.names.join('|') : type.name;
+                  })
+                  .join('|');
+              }
+
+              switch (errorObj.type) {
+                case 'EMPTY_VAR': {
+                  translationObj = {
+                    func: func,
+                    formatType: formatType(),
+                    // It needs to be this way for i18next-extract to work. The comment
+                    // specifies the values that the context can take so that it can
+                    // statically prepare the translation files with them.
+                    /* i18next-extract-mark-context-next-line ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"] */
+                    position: (0, _internationalization.translator)('fes.positions.p', {
+                      context: (errorObj.position + 1).toString(),
+                      defaultValue: (errorObj.position + 1).toString()
+                    }),
+
+                    link: '[https://p5js.org/examples/data-variable-scope.html]'
+                  };
+
+                  break;
+                }
+                case 'WRONG_TYPE': {
+                  var arg = errorObj.arg;
+                  var argType =
+                    arg instanceof Array
+                      ? 'array'
