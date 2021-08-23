@@ -50421,3 +50421,132 @@
               if (_main.default.disableFriendlyErrors) {
                 return; // skip FES
               }
+
+              // query / build the argument type tree and check if this sequence
+              // has already been seen before.
+              var obj = buildArgTypeCache(func, args);
+              if (obj.seen) {
+                return;
+              }
+              // mark this sequence as seen
+              obj.seen = true;
+              // lookup the docs in the 'data.json' file
+              var docs = docCache[func] || (docCache[func] = lookupParamDoc(func));
+              var overloads = docs.overloads;
+
+              var argCount = args.length;
+
+              // the following line ignores trailing undefined arguments, commenting
+              // it to resolve https://github.com/processing/p5.js/issues/4571
+              // '== null' checks for 'null' and typeof 'undefined'
+              // while (argCount > 0 && args[argCount - 1] == null) argCount--;
+
+              // find the overload with the best score
+              var minScore = 99999;
+              var minOverload;
+              for (var i = 0; i < overloads.length; i++) {
+                var score = scoreOverload(args, argCount, overloads[i], minScore);
+                if (score === 0) {
+                  return; // done!
+                } else if (minScore > score) {
+                  // this score is better that what we have so far...
+                  minScore = score;
+                  minOverload = i;
+                }
+              }
+
+              // this should _always_ be true here...
+              if (minScore > 0) {
+                // get the errors for the best overload
+                var errorArray = getOverloadErrors(args, argCount, overloads[minOverload]);
+
+                // generate err msg
+                for (var n = 0; n < errorArray.length; n++) {
+                  _main.default._friendlyParamError(errorArray[n], func);
+                }
+              }
+            };
+            _main.default.prototype._validateParameters = _main.default.validateParameters;
+          }
+          var _default = _main.default;
+          exports.default = _default;
+        },
+        {
+          '../../../docs/parameterData.json': 1,
+          '../constants': 48,
+          '../internationalization': 57,
+          '../main': 59
+        }
+      ],
+      55: [
+        function(_dereq_, module, exports) {
+          'use strict';
+          function _typeof(obj) {
+            if (typeof Symbol === 'function' && typeof Symbol.iterator === 'symbol') {
+              _typeof = function _typeof(obj) {
+                return typeof obj;
+              };
+            } else {
+              _typeof = function _typeof(obj) {
+                return obj &&
+                  typeof Symbol === 'function' &&
+                  obj.constructor === Symbol &&
+                  obj !== Symbol.prototype
+                  ? 'symbol'
+                  : typeof obj;
+              };
+            }
+            return _typeof(obj);
+          }
+          Object.defineProperty(exports, '__esModule', { value: true });
+          exports.default = void 0;
+
+          var constants = _interopRequireWildcard(_dereq_('./constants'));
+          function _getRequireWildcardCache() {
+            if (typeof WeakMap !== 'function') return null;
+            var cache = new WeakMap();
+            _getRequireWildcardCache = function _getRequireWildcardCache() {
+              return cache;
+            };
+            return cache;
+          }
+          function _interopRequireWildcard(obj) {
+            if (obj && obj.__esModule) {
+              return obj;
+            }
+            if (obj === null || (_typeof(obj) !== 'object' && typeof obj !== 'function')) {
+              return { default: obj };
+            }
+            var cache = _getRequireWildcardCache();
+            if (cache && cache.has(obj)) {
+              return cache.get(obj);
+            }
+            var newObj = {};
+            var hasPropertyDescriptor =
+              Object.defineProperty && Object.getOwnPropertyDescriptor;
+            for (var key in obj) {
+              if (Object.prototype.hasOwnProperty.call(obj, key)) {
+                var desc = hasPropertyDescriptor
+                  ? Object.getOwnPropertyDescriptor(obj, key)
+                  : null;
+                if (desc && (desc.get || desc.set)) {
+                  Object.defineProperty(newObj, key, desc);
+                } else {
+                  newObj[key] = obj[key];
+                }
+              }
+            }
+            newObj.default = obj;
+            if (cache) {
+              cache.set(obj, newObj);
+            }
+            return newObj;
+          }
+          /**
+           * @requires constants
+           */ function modeAdjust(a, b, c, d, mode) {
+            if (mode === constants.CORNER) {
+              return { x: a, y: b, w: c, h: d };
+            } else if (mode === constants.CORNERS) {
+              return { x: a, y: b, w: c - a, h: d - b };
+            } else if (mode === constants.RADIUS) {
