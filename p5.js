@@ -50550,3 +50550,132 @@
             } else if (mode === constants.CORNERS) {
               return { x: a, y: b, w: c - a, h: d - b };
             } else if (mode === constants.RADIUS) {
+              return { x: a - c, y: b - d, w: 2 * c, h: 2 * d };
+            } else if (mode === constants.CENTER) {
+              return { x: a - c * 0.5, y: b - d * 0.5, w: c, h: d };
+            }
+          }
+          var _default = { modeAdjust: modeAdjust };
+          exports.default = _default;
+        },
+        { './constants': 48 }
+      ],
+      56: [
+        function(_dereq_, module, exports) {
+          'use strict';
+          var _main = _interopRequireDefault(_dereq_('../core/main'));
+          var _internationalization = _dereq_('./internationalization');
+          function _interopRequireDefault(obj) {
+            return obj && obj.__esModule ? obj : { default: obj };
+          }
+
+          /**
+           * _globalInit
+           *
+           * TODO: ???
+           * if sketch is on window
+           * assume "global" mode
+           * and instantiate p5 automatically
+           * otherwise do nothing
+           *
+           * @private
+           * @return {Undefined}
+           */
+          var _globalInit = function _globalInit() {
+            // Could have been any property defined within the p5 constructor.
+            // If that property is already a part of the global object,
+            // this code has already run before, likely due to a duplicate import
+            if (typeof window._setupDone !== 'undefined') {
+              console.warn(
+                'p5.js seems to have been imported multiple times. Please remove the duplicate import'
+              );
+
+              return;
+            }
+
+            if (!window.mocha) {
+              // If there is a setup or draw function on the window
+              // then instantiate p5 in "global" mode
+              if (
+                ((window.setup && typeof window.setup === 'function') ||
+                  (window.draw && typeof window.draw === 'function')) &&
+                !_main.default.instance
+              ) {
+                new _main.default();
+              }
+            }
+          };
+
+          // make a promise that resolves when the document is ready
+          var waitForDocumentReady = function waitForDocumentReady() {
+            return new Promise(function(resolve, reject) {
+              // if the page is ready, initialize p5 immediately
+              if (document.readyState === 'complete') {
+                resolve();
+                // if the page is still loading, add an event listener
+                // and initialize p5 as soon as it finishes loading
+              } else {
+                window.addEventListener('load', resolve, false);
+              }
+            });
+          };
+
+          // only load translations if we're using the full, un-minified library
+          var waitingForTranslator =
+            typeof IS_MINIFIED === 'undefined'
+              ? (0, _internationalization.initialize)()
+              : Promise.resolve();
+
+          Promise.all([waitForDocumentReady(), waitingForTranslator]).then(_globalInit);
+        },
+        { '../core/main': 59, './internationalization': 57 }
+      ],
+      57: [
+        function(_dereq_, module, exports) {
+          'use strict';
+          Object.defineProperty(exports, '__esModule', { value: true });
+          exports.initialize = exports.translator = void 0;
+          var _i18next = _interopRequireDefault(_dereq_('i18next'));
+          var _i18nextBrowserLanguagedetector = _interopRequireDefault(
+            _dereq_('i18next-browser-languagedetector')
+          );
+          function _interopRequireDefault(obj) {
+            return obj && obj.__esModule ? obj : { default: obj };
+          }
+          function _classCallCheck(instance, Constructor) {
+            if (!(instance instanceof Constructor)) {
+              throw new TypeError('Cannot call a class as a function');
+            }
+          }
+          function _defineProperties(target, props) {
+            for (var i = 0; i < props.length; i++) {
+              var descriptor = props[i];
+              descriptor.enumerable = descriptor.enumerable || false;
+              descriptor.configurable = true;
+              if ('value' in descriptor) descriptor.writable = true;
+              Object.defineProperty(target, descriptor.key, descriptor);
+            }
+          }
+          function _createClass(Constructor, protoProps, staticProps) {
+            if (protoProps) _defineProperties(Constructor.prototype, protoProps);
+            if (staticProps) _defineProperties(Constructor, staticProps);
+            return Constructor;
+          }
+
+          var fallbackResources, languages;
+          if (typeof IS_MINIFIED === 'undefined') {
+            // internationalization is only for the unminified build
+
+            var translationsModule = _dereq_('../../translations');
+            fallbackResources = translationsModule.default;
+            languages = translationsModule.languages;
+
+            if (typeof P5_DEV_BUILD !== 'undefined') {
+              // When the library is built in development mode ( using npm run dev )
+              // we want to use the current translation files on the disk, which may have
+              // been updated but not yet pushed to the CDN.
+              var completeResources = _dereq_('../../translations/dev');
+              for (
+                var _i = 0, _Object$keys = Object.keys(completeResources);
+                _i < _Object$keys.length;
+                _i++
