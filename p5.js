@@ -50679,3 +50679,138 @@
                 var _i = 0, _Object$keys = Object.keys(completeResources);
                 _i < _Object$keys.length;
                 _i++
+              ) {
+                var language = _Object$keys[_i];
+                // In es_translation, language is es and namespace is translation
+                // In es_MX_translation, language is es-MX and namespace is translation
+                var parts = language.split('_');
+                var lng = parts.slice(0, parts.length - 1).join('-');
+                var ns = parts[parts.length - 1];
+
+                fallbackResources[lng] = fallbackResources[lng] || {};
+                fallbackResources[lng][ns] = completeResources[language];
+              }
+            }
+          }
+
+          /**
+           * This is our i18next "backend" plugin. It tries to fetch languages
+           * from a CDN.
+           */ var FetchResources = /*#__PURE__*/ (function() {
+            function FetchResources(services, options) {
+              _classCallCheck(this, FetchResources);
+              this.init(services, options);
+            }
+
+            // run fetch with a timeout. Automatically rejects on timeout
+            // default timeout = 2000 ms
+            _createClass(FetchResources, [
+              {
+                key: 'fetchWithTimeout',
+                value: function fetchWithTimeout(url, options) {
+                  var timeout =
+                    arguments.length > 2 && arguments[2] !== undefined
+                      ? arguments[2]
+                      : 2000;
+                  return Promise.race([
+                    fetch(url, options),
+                    new Promise(function(_, reject) {
+                      return setTimeout(function() {
+                        return reject(new Error('timeout'));
+                      }, timeout);
+                    })
+                  ]);
+                }
+              },
+              {
+                key: 'init',
+                value: function init(services) {
+                  var options =
+                    arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+                  this.services = services;
+                  this.options = options;
+                }
+              },
+              {
+                key: 'read',
+                value: function read(language, namespace, callback) {
+                  var loadPath = this.options.loadPath;
+
+                  if (language === this.options.fallback) {
+                    // if the default language of the user is the same as our inbuilt fallback,
+                    // there's no need to fetch resources from the cdn. This won't actually
+                    // need to run when we use "partialBundledLanguages" in the init
+                    // function.
+                    callback(null, fallbackResources[language][namespace]);
+                  } else if (languages.includes(language)) {
+                    // The user's language is included in the list of languages
+                    // that we so far added translations for.
+
+                    var url = this.services.interpolator.interpolate(loadPath, {
+                      lng: language,
+                      ns: namespace
+                    });
+
+                    this.loadUrl(url, callback);
+                  } else {
+                    // We don't have translations for this language. i18next will use
+                    // the default language instead.
+                    callback('Not found', false);
+                  }
+                }
+              },
+              {
+                key: 'loadUrl',
+                value: function loadUrl(url, callback) {
+                  this.fetchWithTimeout(url)
+                    .then(
+                      function(response) {
+                        var ok = response.ok;
+
+                        if (!ok) {
+                          // caught in the catch() below
+                          throw new Error('failed loading '.concat(url));
+                        }
+                        return response.json();
+                      },
+                      function() {
+                        // caught in the catch() below
+                        throw new Error('failed loading '.concat(url));
+                      }
+                    )
+                    .then(function(data) {
+                      return callback(null, data);
+                    })
+                    .catch(callback);
+                }
+              }
+            ]);
+            return FetchResources;
+          })();
+
+          FetchResources.type = 'backend';
+
+          /**
+           * This is our translation function. Give it a key and
+           * it will retreive the appropriate string
+           * (within supported languages) according to the
+           * user's browser's language settings.
+           * @function translator
+           * @param {String} key a key that corresponds to a message in our translation files
+           * @param {Object} values values for use in the message under the given `key`
+           * @returns {String} message (with values inserted) in the user's browser language
+           * @private
+           */
+          var translator = function translator(key, values) {
+            console.debug('p5.js translator called before translations were loaded');
+
+            // Certain FES functionality may trigger before translations are downloaded.
+            // Using "partialBundledLanguages" option during initialization, we can
+            // still use our fallback language to display messages
+            _i18next.default.t(key, values); /* i18next-extract-disable-line */
+          };
+          // (We'll set this to a real value in the init function below!)
+
+          /**
+           * Set up our translation function, with loaded languages
+           */ exports.translator = translator;
