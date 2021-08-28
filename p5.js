@@ -50814,3 +50814,141 @@
           /**
            * Set up our translation function, with loaded languages
            */ exports.translator = translator;
+          var initialize = function initialize() {
+            var i18init = _i18next.default
+              .use(_i18nextBrowserLanguagedetector.default)
+              .use(FetchResources)
+              .init({
+                fallbackLng: 'en',
+                nestingPrefix: '$tr(',
+                nestingSuffix: ')',
+                defaultNS: 'translation',
+                returnEmptyString: false,
+                interpolation: {
+                  escapeValue: false
+                },
+
+                detection: {
+                  checkWhitelist: false,
+
+                  // prevent storing or locating language from cookie or localStorage
+                  // more info on https://github.com/processing/p5.js/issues/4862
+                  order: ['querystring', 'navigator', 'htmlTag', 'path', 'subdomain'],
+                  caches: []
+                },
+
+                backend: {
+                  fallback: 'en',
+                  loadPath:
+                    'https://cdn.jsdelivr.net/npm/p5/translations/{{lng}}/{{ns}}.json'
+                },
+
+                partialBundledLanguages: true,
+                resources: fallbackResources
+              })
+              .then(
+                function(translateFn) {
+                  exports.translator = translator = translateFn;
+                },
+                function(e) {
+                  return console.debug('Translations failed to load ('.concat(e, ')'));
+                }
+              );
+
+            // i18next.init() returns a promise that resolves when the translations
+            // are loaded. We use this in core/init.js to hold p5 initialization until
+            // we have the translation files.
+            return i18init;
+          };
+          exports.initialize = initialize;
+        },
+        {
+          '../../translations': 118,
+          '../../translations/dev': undefined,
+          i18next: 30,
+          'i18next-browser-languagedetector': 27
+        }
+      ],
+      58: [
+        function(_dereq_, module, exports) {
+          'use strict';
+          Object.defineProperty(exports, '__esModule', { value: true });
+          exports.default = void 0;
+
+          var _main = _interopRequireDefault(_dereq_('./main'));
+          function _interopRequireDefault(obj) {
+            return obj && obj.__esModule ? obj : { default: obj };
+          }
+          /**
+           * @for p5
+           * @requires core
+           * These are functions that are part of the Processing API but are not part of
+           * the p5.js API. In some cases they have a new name, in others, they are
+           * removed completely. Not all unsupported Processing functions are listed here
+           * but we try to include ones that a user coming from Processing might likely
+           * call.
+           */ _main.default.prototype.pushStyle = function() {
+            throw new Error('pushStyle() not used, see push()');
+          };
+          _main.default.prototype.popStyle = function() {
+            throw new Error('popStyle() not used, see pop()');
+          };
+
+          _main.default.prototype.popMatrix = function() {
+            throw new Error('popMatrix() not used, see pop()');
+          };
+
+          _main.default.prototype.pushMatrix = function() {
+            throw new Error('pushMatrix() not used, see push()');
+          };
+          var _default = _main.default;
+          exports.default = _default;
+        },
+        { './main': 59 }
+      ],
+      59: [
+        function(_dereq_, module, exports) {
+          'use strict';
+          function _typeof(obj) {
+            if (typeof Symbol === 'function' && typeof Symbol.iterator === 'symbol') {
+              _typeof = function _typeof(obj) {
+                return typeof obj;
+              };
+            } else {
+              _typeof = function _typeof(obj) {
+                return obj &&
+                  typeof Symbol === 'function' &&
+                  obj.constructor === Symbol &&
+                  obj !== Symbol.prototype
+                  ? 'symbol'
+                  : typeof obj;
+              };
+            }
+            return _typeof(obj);
+          }
+          Object.defineProperty(exports, '__esModule', { value: true });
+          exports.default = void 0;
+
+          _dereq_('./shim');
+
+          var constants = _interopRequireWildcard(_dereq_('./constants'));
+          function _getRequireWildcardCache() {
+            if (typeof WeakMap !== 'function') return null;
+            var cache = new WeakMap();
+            _getRequireWildcardCache = function _getRequireWildcardCache() {
+              return cache;
+            };
+            return cache;
+          }
+          function _interopRequireWildcard(obj) {
+            if (obj && obj.__esModule) {
+              return obj;
+            }
+            if (obj === null || (_typeof(obj) !== 'object' && typeof obj !== 'function')) {
+              return { default: obj };
+            }
+            var cache = _getRequireWildcardCache();
+            if (cache && cache.has(obj)) {
+              return cache.get(obj);
+            }
+            var newObj = {};
