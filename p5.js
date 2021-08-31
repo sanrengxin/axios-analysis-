@@ -50952,3 +50952,134 @@
               return cache.get(obj);
             }
             var newObj = {};
+            var hasPropertyDescriptor =
+              Object.defineProperty && Object.getOwnPropertyDescriptor;
+            for (var key in obj) {
+              if (Object.prototype.hasOwnProperty.call(obj, key)) {
+                var desc = hasPropertyDescriptor
+                  ? Object.getOwnPropertyDescriptor(obj, key)
+                  : null;
+                if (desc && (desc.get || desc.set)) {
+                  Object.defineProperty(newObj, key, desc);
+                } else {
+                  newObj[key] = obj[key];
+                }
+              }
+            }
+            newObj.default = obj;
+            if (cache) {
+              cache.set(obj, newObj);
+            }
+            return newObj;
+          }
+          function _classCallCheck(instance, Constructor) {
+            if (!(instance instanceof Constructor)) {
+              throw new TypeError('Cannot call a class as a function');
+            }
+          }
+          function _defineProperties(target, props) {
+            for (var i = 0; i < props.length; i++) {
+              var descriptor = props[i];
+              descriptor.enumerable = descriptor.enumerable || false;
+              descriptor.configurable = true;
+              if ('value' in descriptor) descriptor.writable = true;
+              Object.defineProperty(target, descriptor.key, descriptor);
+            }
+          }
+          function _createClass(Constructor, protoProps, staticProps) {
+            if (protoProps) _defineProperties(Constructor.prototype, protoProps);
+            if (staticProps) _defineProperties(Constructor, staticProps);
+            return Constructor;
+          }
+
+          /**
+           * This is the p5 instance constructor.
+           *
+           * A p5 instance holds all the properties and methods related to
+           * a p5 sketch.  It expects an incoming sketch closure and it can also
+           * take an optional node parameter for attaching the generated p5 canvas
+           * to a node.  The sketch closure takes the newly created p5 instance as
+           * its sole argument and may optionally set <a href="#/p5/preload">preload()</a>,
+           * <a href="#/p5/setup">setup()</a>, and/or
+           * <a href="#/p5/draw">draw()</a> properties on it for running a sketch.
+           *
+           * A p5 sketch can run in "global" or "instance" mode:
+           * "global"   - all properties and methods are attached to the window
+           * "instance" - all properties and methods are bound to this p5 object
+           *
+           * @class p5
+           * @constructor
+           * @param  {function}           sketch a closure that can set optional <a href="#/p5/preload">preload()</a>,
+           *                              <a href="#/p5/setup">setup()</a>, and/or <a href="#/p5/draw">draw()</a> properties on the
+           *                              given p5 instance
+           * @param  {HTMLElement}        [node] element to attach canvas to
+           * @return {p5}                 a p5 instance
+           */ var p5 = /*#__PURE__*/ (function() {
+            function p5(sketch, node, sync) {
+              var _this = this;
+              _classCallCheck(this, p5);
+              //////////////////////////////////////////////
+              // PUBLIC p5 PROPERTIES AND METHODS
+              //////////////////////////////////////////////
+
+              /**
+               * Called directly before <a href="#/p5/setup">setup()</a>, the <a href="#/p5/preload">preload()</a> function is used to handle
+               * asynchronous loading of external files in a blocking way. If a preload
+               * function is defined, <a href="#/p5/setup">setup()</a> will wait until any load calls within have
+               * finished. Nothing besides load calls (<a href="#/p5/loadImage">loadImage</a>, <a href="#/p5/loadJSON">loadJSON</a>, <a href="#/p5/loadFont">loadFont</a>,
+               * <a href="#/p5/loadStrings">loadStrings</a>, etc.) should be inside the preload function. If asynchronous
+               * loading is preferred, the load methods can instead be called in <a href="#/p5/setup">setup()</a>
+               * or anywhere else with the use of a callback parameter.
+               *
+               * By default the text "loading..." will be displayed. To make your own
+               * loading page, include an HTML element with id "p5_loading" in your
+               * page. More information <a href="http://bit.ly/2kQ6Nio">here</a>.
+               *
+               * @method preload
+               * @example
+               * <div><code>
+               * let img;
+               * let c;
+               * function preload() {
+               *   // preload() runs once
+               *   img = loadImage('assets/laDefense.jpg');
+               * }
+               *
+               * function setup() {
+               *   // setup() waits until preload() is done
+               *   img.loadPixels();
+               *   // get color of middle pixel
+               *   c = img.get(img.width / 2, img.height / 2);
+               * }
+               *
+               * function draw() {
+               *   background(c);
+               *   image(img, 25, 25, 50, 50);
+               * }
+               * </code></div>
+               *
+               * @alt
+               * nothing displayed
+               *
+               */
+
+              /**
+               * The <a href="#/p5/setup">setup()</a> function is called once when the program starts. It's used to
+               * define initial environment properties such as screen size and background
+               * color and to load media such as images and fonts as the program starts.
+               * There can only be one <a href="#/p5/setup">setup()</a> function for each program and it shouldn't
+               * be called again after its initial execution.
+               *
+               * Note: Variables declared within <a href="#/p5/setup">setup()</a> are not accessible within other
+               * functions, including <a href="#/p5/draw">draw()</a>.
+               *
+               * @method setup
+               * @example
+               * <div><code>
+               * let a = 0;
+               *
+               * function setup() {
+               *   background(0);
+               *   noStroke();
+               *   fill(102);
+               * }
