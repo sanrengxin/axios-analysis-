@@ -51083,3 +51083,132 @@
                *   noStroke();
                *   fill(102);
                * }
+               *
+               * function draw() {
+               *   rect(a++ % width, 10, 2, 80);
+               * }
+               * </code></div>
+               *
+               * @alt
+               * nothing displayed
+               *
+               */
+
+              /**
+               * Called directly after <a href="#/p5/setup">setup()</a>, the <a href="#/p5/draw">draw()</a> function continuously executes
+               * the lines of code contained inside its block until the program is stopped
+               * or <a href="#/p5/noLoop">noLoop()</a> is called. Note if <a href="#/p5/noLoop">noLoop()</a> is called in <a href="#/p5/setup">setup()</a>, <a href="#/p5/draw">draw()</a> will
+               * still be executed once before stopping. <a href="#/p5/draw">draw()</a> is called automatically and
+               * should never be called explicitly.
+               *
+               * It should always be controlled with <a href="#/p5/noLoop">noLoop()</a>, <a href="#/p5/redraw">redraw()</a> and <a href="#/p5/loop">loop()</a>. After
+               * <a href="#/p5/noLoop">noLoop()</a> stops the code in <a href="#/p5/draw">draw()</a> from executing, <a href="#/p5/redraw">redraw()</a> causes the
+               * code inside <a href="#/p5/draw">draw()</a> to execute once, and <a href="#/p5/loop">loop()</a> will cause the code
+               * inside <a href="#/p5/draw">draw()</a> to resume executing continuously.
+               *
+               * The number of times <a href="#/p5/draw">draw()</a> executes in each second may be controlled with
+               * the <a href="#/p5/frameRate">frameRate()</a> function.
+               *
+               * There can only be one <a href="#/p5/draw">draw()</a> function for each sketch, and <a href="#/p5/draw">draw()</a> must
+               * exist if you want the code to run continuously, or to process events such
+               * as <a href="#/p5/mousePressed">mousePressed()</a>. Sometimes, you might have an empty call to <a href="#/p5/draw">draw()</a> in
+               * your program, as shown in the above example.
+               *
+               * It is important to note that the drawing coordinate system will be reset
+               * at the beginning of each <a href="#/p5/draw">draw()</a> call. If any transformations are performed
+               * within <a href="#/p5/draw">draw()</a> (ex: scale, rotate, translate), their effects will be
+               * undone at the beginning of <a href="#/p5/draw">draw()</a>, so transformations will not accumulate
+               * over time. On the other hand, styling applied (ex: fill, stroke, etc) will
+               * remain in effect.
+               *
+               * @method draw
+               * @example
+               * <div><code>
+               * let yPos = 0;
+               * function setup() {
+               *   // setup() runs once
+               *   frameRate(30);
+               * }
+               * function draw() {
+               *   // draw() loops forever, until stopped
+               *   background(204);
+               *   yPos = yPos - 1;
+               *   if (yPos < 0) {
+               *     yPos = height;
+               *   }
+               *   line(0, yPos, width, yPos);
+               * }
+               * </code></div>
+               *
+               * @alt
+               * nothing displayed
+               *
+               */
+
+              //////////////////////////////////////////////
+              // PRIVATE p5 PROPERTIES AND METHODS
+              //////////////////////////////////////////////
+
+              this._accessibleOutputs = {
+                text: false,
+                grid: false,
+                textLabel: false,
+                gridLabel: false
+              };
+
+              this._setupDone = false;
+              // for handling hidpi
+              this._pixelDensity = Math.ceil(window.devicePixelRatio) || 1;
+              this._userNode = node;
+              this._curElement = null;
+              this._elements = [];
+              this._glAttributes = null;
+              this._requestAnimId = 0;
+              this._preloadCount = 0;
+              this._isGlobal = false;
+              this._loop = true;
+              this._initializeInstanceVariables();
+              this._defaultCanvasSize = {
+                width: 100,
+                height: 100
+              };
+
+              this._events = {
+                // keep track of user-events for unregistering later
+                mousemove: null,
+                mousedown: null,
+                mouseup: null,
+                dragend: null,
+                dragover: null,
+                click: null,
+                dblclick: null,
+                mouseover: null,
+                mouseout: null,
+                keydown: null,
+                keyup: null,
+                keypress: null,
+                touchstart: null,
+                touchmove: null,
+                touchend: null,
+                resize: null,
+                blur: null
+              };
+
+              this._millisStart = -1;
+
+              // States used in the custom random generators
+              this._lcg_random_state = null;
+              this._gaussian_previous = false;
+
+              this._events.wheel = null;
+              this._loadingScreenId = 'p5_loading';
+
+              // Allows methods to be registered on an instance that
+              // are instance-specific.
+              this._registeredMethods = {};
+              var methods = Object.getOwnPropertyNames(p5.prototype._registeredMethods);
+              var _iteratorNormalCompletion = true;
+              var _didIteratorError = false;
+              var _iteratorError = undefined;
+              try {
+                for (
