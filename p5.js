@@ -51212,3 +51212,123 @@
               var _iteratorError = undefined;
               try {
                 for (
+                  var _iterator = methods[Symbol.iterator](), _step;
+                  !(_iteratorNormalCompletion = (_step = _iterator.next()).done);
+                  _iteratorNormalCompletion = true
+                ) {
+                  var prop = _step.value;
+                  this._registeredMethods[prop] = p5.prototype._registeredMethods[
+                    prop
+                  ].slice();
+                }
+              } catch (err) {
+                _didIteratorError = true;
+                _iteratorError = err;
+              } finally {
+                try {
+                  if (!_iteratorNormalCompletion && _iterator.return != null) {
+                    _iterator.return();
+                  }
+                } finally {
+                  if (_didIteratorError) {
+                    throw _iteratorError;
+                  }
+                }
+              }
+
+              if (window.DeviceOrientationEvent) {
+                this._events.deviceorientation = null;
+              }
+              if (window.DeviceMotionEvent && !window._isNodeWebkit) {
+                this._events.devicemotion = null;
+              }
+
+              this._start = function() {
+                // Find node if id given
+                if (_this._userNode) {
+                  if (typeof _this._userNode === 'string') {
+                    _this._userNode = document.getElementById(_this._userNode);
+                  }
+                }
+
+                var context = _this._isGlobal ? window : _this;
+                if (context.preload) {
+                  // Setup loading screen
+                  // Set loading screen into dom if not present
+                  // Otherwise displays and removes user provided loading screen
+                  var loadingScreen = document.getElementById(_this._loadingScreenId);
+                  if (!loadingScreen) {
+                    loadingScreen = document.createElement('div');
+                    loadingScreen.innerHTML = 'Loading...';
+                    loadingScreen.style.position = 'absolute';
+                    loadingScreen.id = _this._loadingScreenId;
+                    var _node = _this._userNode || document.body;
+                    _node.appendChild(loadingScreen);
+                  }
+                  var _methods = _this._preloadMethods;
+                  for (var method in _methods) {
+                    // default to p5 if no object defined
+                    _methods[method] = _methods[method] || p5;
+                    var obj = _methods[method];
+                    //it's p5, check if it's global or instance
+                    if (obj === p5.prototype || obj === p5) {
+                      if (_this._isGlobal) {
+                        window[method] = _this._wrapPreload(_this, method);
+                      }
+                      obj = _this;
+                    }
+                    _this._registeredPreloadMethods[method] = obj[method];
+                    obj[method] = _this._wrapPreload(obj, method);
+                  }
+
+                  context.preload();
+                  _this._runIfPreloadsAreDone();
+                } else {
+                  _this._setup();
+                  _this._draw();
+                }
+              };
+
+              this._runIfPreloadsAreDone = function() {
+                var context = this._isGlobal ? window : this;
+                if (context._preloadCount === 0) {
+                  var loadingScreen = document.getElementById(context._loadingScreenId);
+                  if (loadingScreen) {
+                    loadingScreen.parentNode.removeChild(loadingScreen);
+                  }
+                  if (!this._setupDone) {
+                    this._lastFrameTime = window.performance.now();
+                    context._setup();
+                    context._draw();
+                  }
+                }
+              };
+
+              this._decrementPreload = function() {
+                var context = this._isGlobal ? window : this;
+                if (typeof context.preload === 'function') {
+                  context._setProperty('_preloadCount', context._preloadCount - 1);
+                  context._runIfPreloadsAreDone();
+                }
+              };
+
+              this._wrapPreload = function(obj, fnName) {
+                var _this2 = this;
+                return function() {
+                  //increment counter
+                  _this2._incrementPreload();
+                  //call original function
+                  for (
+                    var _len = arguments.length, args = new Array(_len), _key = 0;
+                    _key < _len;
+                    _key++
+                  ) {
+                    args[_key] = arguments[_key];
+                  }
+                  return _this2._registeredPreloadMethods[fnName].apply(obj, args);
+                };
+              };
+
+              this._incrementPreload = function() {
+                var context = this._isGlobal ? window : this;
+                context._setProperty('_preloadCount', context._preloadCount + 1);
