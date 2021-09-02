@@ -51332,3 +51332,128 @@
               this._incrementPreload = function() {
                 var context = this._isGlobal ? window : this;
                 context._setProperty('_preloadCount', context._preloadCount + 1);
+              };
+
+              this._setup = function() {
+                // Always create a default canvas.
+                // Later on if the user calls createCanvas, this default one
+                // will be replaced
+                _this.createCanvas(
+                  _this._defaultCanvasSize.width,
+                  _this._defaultCanvasSize.height,
+                  'p2d'
+                );
+
+                // return preload functions to their normal vals if switched by preload
+                var context = _this._isGlobal ? window : _this;
+                if (typeof context.preload === 'function') {
+                  for (var f in _this._preloadMethods) {
+                    context[f] = _this._preloadMethods[f][f];
+                    if (context[f] && _this) {
+                      context[f] = context[f].bind(_this);
+                    }
+                  }
+                }
+
+                // Record the time when sketch starts
+                _this._millisStart = window.performance.now();
+
+                // Short-circuit on this, in case someone used the library in "global"
+                // mode earlier
+                if (typeof context.setup === 'function') {
+                  context.setup();
+                }
+
+                // unhide any hidden canvases that were created
+                var canvases = document.getElementsByTagName('canvas');
+                var _iteratorNormalCompletion2 = true;
+                var _didIteratorError2 = false;
+                var _iteratorError2 = undefined;
+                try {
+                  for (
+                    var _iterator2 = canvases[Symbol.iterator](), _step2;
+                    !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done);
+                    _iteratorNormalCompletion2 = true
+                  ) {
+                    var k = _step2.value;
+                    if (k.dataset.hidden === 'true') {
+                      k.style.visibility = '';
+                      delete k.dataset.hidden;
+                    }
+                  }
+                } catch (err) {
+                  _didIteratorError2 = true;
+                  _iteratorError2 = err;
+                } finally {
+                  try {
+                    if (!_iteratorNormalCompletion2 && _iterator2.return != null) {
+                      _iterator2.return();
+                    }
+                  } finally {
+                    if (_didIteratorError2) {
+                      throw _iteratorError2;
+                    }
+                  }
+                }
+
+                _this._lastFrameTime = window.performance.now();
+                _this._setupDone = true;
+                if (_this._accessibleOutputs.grid || _this._accessibleOutputs.text) {
+                  _this._updateAccsOutput();
+                }
+              };
+
+              this._draw = function() {
+                var now = window.performance.now();
+                var time_since_last = now - _this._lastFrameTime;
+                var target_time_between_frames = 1000 / _this._targetFrameRate;
+
+                // only draw if we really need to; don't overextend the browser.
+                // draw if we're within 5ms of when our next frame should paint
+                // (this will prevent us from giving up opportunities to draw
+                // again when it's really about time for us to do so). fixes an
+                // issue where the frameRate is too low if our refresh loop isn't
+                // in sync with the browser. note that we have to draw once even
+                // if looping is off, so we bypass the time delay if that
+                // is the case.
+                var epsilon = 5;
+                if (
+                  !_this._loop ||
+                  time_since_last >= target_time_between_frames - epsilon
+                ) {
+                  //mandatory update values(matrixs and stack)
+                  _this.redraw();
+                  _this._frameRate = 1000.0 / (now - _this._lastFrameTime);
+                  _this.deltaTime = now - _this._lastFrameTime;
+                  _this._setProperty('deltaTime', _this.deltaTime);
+                  _this._lastFrameTime = now;
+
+                  // If the user is actually using mouse module, then update
+                  // coordinates, otherwise skip. We can test this by simply
+                  // checking if any of the mouse functions are available or not.
+                  // NOTE : This reflects only in complete build or modular build.
+                  if (typeof _this._updateMouseCoords !== 'undefined') {
+                    _this._updateMouseCoords();
+
+                    //reset delta values so they reset even if there is no mouse event to set them
+                    // for example if the mouse is outside the screen
+                    _this._setProperty('movedX', 0);
+                    _this._setProperty('movedY', 0);
+                  }
+                }
+
+                // get notified the next time the browser gives us
+                // an opportunity to draw.
+                if (_this._loop) {
+                  _this._requestAnimId = window.requestAnimationFrame(_this._draw);
+                }
+              };
+
+              this._setProperty = function(prop, value) {
+                _this[prop] = value;
+                if (_this._isGlobal) {
+                  window[prop] = value;
+                }
+              };
+
+              /**
