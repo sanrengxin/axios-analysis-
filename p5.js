@@ -51457,3 +51457,125 @@
               };
 
               /**
+               * Removes the entire p5 sketch. This will remove the canvas and any
+               * elements created by p5.js. It will also stop the draw loop and unbind
+               * any properties or methods from the window global scope. It will
+               * leave a variable p5 in case you wanted to create a new p5 sketch.
+               * If you like, you can set p5 = null to erase it. While all functions and
+               * variables and objects created by the p5 library will be removed, any
+               * other global variables created by your code will remain.
+               *
+               * @method remove
+               * @example
+               * <div class='norender'><code>
+               * function draw() {
+               *   ellipse(50, 50, 10, 10);
+               * }
+               *
+               * function mousePressed() {
+               *   remove(); // remove whole sketch on mouse press
+               * }
+               * </code></div>
+               *
+               * @alt
+               * nothing displayed
+               *
+               */
+              this.remove = function() {
+                var loadingScreen = document.getElementById(_this._loadingScreenId);
+                if (loadingScreen) {
+                  loadingScreen.parentNode.removeChild(loadingScreen);
+                  // Add 1 to preload counter to prevent the sketch ever executing setup()
+                  _this._incrementPreload();
+                }
+                if (_this._curElement) {
+                  // stop draw
+                  _this._loop = false;
+                  if (_this._requestAnimId) {
+                    window.cancelAnimationFrame(_this._requestAnimId);
+                  }
+
+                  // unregister events sketch-wide
+                  for (var ev in _this._events) {
+                    window.removeEventListener(ev, _this._events[ev]);
+                  }
+
+                  // remove DOM elements created by p5, and listeners
+                  var _iteratorNormalCompletion3 = true;
+                  var _didIteratorError3 = false;
+                  var _iteratorError3 = undefined;
+                  try {
+                    for (
+                      var _iterator3 = _this._elements[Symbol.iterator](), _step3;
+                      !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done);
+                      _iteratorNormalCompletion3 = true
+                    ) {
+                      var e = _step3.value;
+                      if (e.elt && e.elt.parentNode) {
+                        e.elt.parentNode.removeChild(e.elt);
+                      }
+                      for (var elt_ev in e._events) {
+                        e.elt.removeEventListener(elt_ev, e._events[elt_ev]);
+                      }
+                    }
+
+                    // call any registered remove functions
+                  } catch (err) {
+                    _didIteratorError3 = true;
+                    _iteratorError3 = err;
+                  } finally {
+                    try {
+                      if (!_iteratorNormalCompletion3 && _iterator3.return != null) {
+                        _iterator3.return();
+                      }
+                    } finally {
+                      if (_didIteratorError3) {
+                        throw _iteratorError3;
+                      }
+                    }
+                  }
+                  var self = _this;
+                  _this._registeredMethods.remove.forEach(function(f) {
+                    if (typeof f !== 'undefined') {
+                      f.call(self);
+                    }
+                  });
+                }
+                // remove window bound properties and methods
+                if (_this._isGlobal) {
+                  for (var p in p5.prototype) {
+                    try {
+                      delete window[p];
+                    } catch (x) {
+                      window[p] = undefined;
+                    }
+                  }
+                  for (var p2 in _this) {
+                    if (_this.hasOwnProperty(p2)) {
+                      try {
+                        delete window[p2];
+                      } catch (x) {
+                        window[p2] = undefined;
+                      }
+                    }
+                  }
+                  p5.instance = null;
+                }
+              };
+
+              // call any registered init functions
+              this._registeredMethods.init.forEach(function(f) {
+                if (typeof f !== 'undefined') {
+                  f.call(this);
+                }
+              }, this);
+              // Set up promise preloads
+              this._setupPromisePreloads();
+
+              var friendlyBindGlobal = this._createFriendlyGlobalFunctionBinder();
+
+              // If the user has created a global setup or draw function,
+              // assume "global" mode and make everything global (i.e. on the window)
+              if (!sketch) {
+                this._isGlobal = true;
+                p5.instance = this;
