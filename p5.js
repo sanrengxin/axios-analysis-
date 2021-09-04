@@ -51579,3 +51579,143 @@
               if (!sketch) {
                 this._isGlobal = true;
                 p5.instance = this;
+                // Loop through methods on the prototype and attach them to the window
+                for (var p in p5.prototype) {
+                  if (typeof p5.prototype[p] === 'function') {
+                    var ev = p.substring(2);
+                    if (!this._events.hasOwnProperty(ev)) {
+                      if (Math.hasOwnProperty(p) && Math[p] === p5.prototype[p]) {
+                        // Multiple p5 methods are just native Math functions. These can be
+                        // called without any binding.
+                        friendlyBindGlobal(p, p5.prototype[p]);
+                      } else {
+                        friendlyBindGlobal(p, p5.prototype[p].bind(this));
+                      }
+                    }
+                  } else {
+                    friendlyBindGlobal(p, p5.prototype[p]);
+                  }
+                }
+                // Attach its properties to the window
+                for (var p2 in this) {
+                  if (this.hasOwnProperty(p2)) {
+                    friendlyBindGlobal(p2, this[p2]);
+                  }
+                }
+              } else {
+                // Else, the user has passed in a sketch closure that may set
+                // user-provided 'setup', 'draw', etc. properties on this instance of p5
+                sketch(this);
+
+                // Run a check to see if the user has misspelled 'setup', 'draw', etc
+                // detects capitalization mistakes only ( Setup, SETUP, MouseClicked, etc)
+                p5._checkForUserDefinedFunctions(this);
+              }
+
+              // Bind events to window (not using container div bc key events don't work)
+
+              for (var e in this._events) {
+                var f = this['_on'.concat(e)];
+                if (f) {
+                  var m = f.bind(this);
+                  window.addEventListener(e, m, { passive: false });
+                  this._events[e] = m;
+                }
+              }
+
+              var focusHandler = function focusHandler() {
+                _this._setProperty('focused', true);
+              };
+              var blurHandler = function blurHandler() {
+                _this._setProperty('focused', false);
+              };
+              window.addEventListener('focus', focusHandler);
+              window.addEventListener('blur', blurHandler);
+              this.registerMethod('remove', function() {
+                window.removeEventListener('focus', focusHandler);
+                window.removeEventListener('blur', blurHandler);
+              });
+
+              if (document.readyState === 'complete') {
+                this._start();
+              } else {
+                window.addEventListener('load', this._start.bind(this), false);
+              }
+            }
+            _createClass(p5, [
+              {
+                key: '_initializeInstanceVariables',
+                value: function _initializeInstanceVariables() {
+                  this._styles = [];
+
+                  this._bezierDetail = 20;
+                  this._curveDetail = 20;
+
+                  this._colorMode = constants.RGB;
+                  this._colorMaxes = {
+                    rgb: [255, 255, 255, 255],
+                    hsb: [360, 100, 100, 1],
+                    hsl: [360, 100, 100, 1]
+                  };
+
+                  this._downKeys = {}; //Holds the key codes of currently pressed keys
+                }
+              },
+              {
+                key: 'registerPreloadMethod',
+                value: function registerPreloadMethod(fnString, obj) {
+                  // obj = obj || p5.prototype;
+                  if (!p5.prototype._preloadMethods.hasOwnProperty(fnString)) {
+                    p5.prototype._preloadMethods[fnString] = obj;
+                  }
+                }
+              },
+              {
+                key: 'registerMethod',
+                value: function registerMethod(name, m) {
+                  var target = this || p5.prototype;
+                  if (!target._registeredMethods.hasOwnProperty(name)) {
+                    target._registeredMethods[name] = [];
+                  }
+                  target._registeredMethods[name].push(m);
+                }
+
+                // create a function which provides a standardized process for binding
+                // globals; this is implemented as a factory primarily so that there's a
+                // way to redefine what "global" means for the binding function so it
+                // can be used in scenarios like unit testing where the window object
+                // might not exist
+              },
+              {
+                key: '_createFriendlyGlobalFunctionBinder',
+                value: function _createFriendlyGlobalFunctionBinder() {
+                  var options =
+                    arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+                  var globalObject = options.globalObject || window;
+                  var log = options.log || console.log.bind(console);
+                  var propsToForciblyOverwrite = {
+                    // p5.print actually always overwrites an existing global function,
+                    // albeit one that is very unlikely to be used:
+                    //
+                    //   https://developer.mozilla.org/en-US/docs/Web/API/Window/print
+                    print: true
+                  };
+
+                  return function(prop, value) {
+                    if (
+                      !p5.disableFriendlyErrors &&
+                      typeof IS_MINIFIED === 'undefined' &&
+                      typeof value === 'function' &&
+                      !(prop in p5.prototype._preloadMethods)
+                    ) {
+                      try {
+                        // Because p5 has so many common function names, it's likely
+                        // that users may accidentally overwrite global p5 functions with
+                        // their own variables. Let's allow this but log a warning to
+                        // help users who may be doing this unintentionally.
+                        //
+                        // For more information, see:
+                        //
+                        //   https://github.com/processing/p5.js/issues/1317
+
+                        if (prop in globalObject && !(prop in propsToForciblyOverwrite)) {
