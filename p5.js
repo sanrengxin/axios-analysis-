@@ -51719,3 +51719,148 @@
                         //   https://github.com/processing/p5.js/issues/1317
 
                         if (prop in globalObject && !(prop in propsToForciblyOverwrite)) {
+                          throw new Error('global "'.concat(prop, '" already exists'));
+                        }
+
+                        // It's possible that this might throw an error because there
+                        // are a lot of edge-cases in which `Object.defineProperty` might
+                        // not succeed; since this functionality is only intended to
+                        // help beginners anyways, we'll just catch such an exception
+                        // if it occurs, and fall back to legacy behavior.
+                        Object.defineProperty(globalObject, prop, {
+                          configurable: true,
+                          enumerable: true,
+                          get: function get() {
+                            return value;
+                          },
+                          set: function set(newValue) {
+                            Object.defineProperty(globalObject, prop, {
+                              configurable: true,
+                              enumerable: true,
+                              value: newValue,
+                              writable: true
+                            });
+
+                            log(
+                              'You just changed the value of "'.concat(
+                                prop,
+                                '", which was a p5 function. This could cause problems later if you\'re not careful.'
+                              )
+                            );
+                          }
+                        });
+                      } catch (e) {
+                        log(
+                          'p5 had problems creating the global function "'.concat(
+                            prop,
+                            '", possibly because your code is already using that name as a variable. You may want to rename your variable to something else.'
+                          )
+                        );
+
+                        globalObject[prop] = value;
+                      }
+                    } else {
+                      globalObject[prop] = value;
+                    }
+                  };
+                }
+              }
+            ]);
+            return p5;
+          })();
+
+          // This is a pointer to our global mode p5 instance, if we're in
+          // global mode.
+          p5.instance = null;
+
+          /**
+           * Allows for the friendly error system (FES) to be turned off when creating a sketch,
+           * which can give a significant boost to performance when needed.
+           * See <a href='https://github.com/processing/p5.js/wiki/Optimizing-p5.js-Code-for-Performance#disable-the-friendly-error-system-fes'>
+           * disabling the friendly error system</a>.
+           *
+           * @property {Boolean} disableFriendlyErrors
+           * @example
+           * <div class="norender notest"><code>
+           * p5.disableFriendlyErrors = true;
+           *
+           * function setup() {
+           *   createCanvas(100, 50);
+           * }
+           * </code></div>
+           */
+          p5.disableFriendlyErrors = false;
+
+          // attach constants to p5 prototype
+          for (var k in constants) {
+            p5.prototype[k] = constants[k];
+          }
+
+          // functions that cause preload to wait
+          // more can be added by using registerPreloadMethod(func)
+          p5.prototype._preloadMethods = {
+            loadJSON: p5.prototype,
+            loadImage: p5.prototype,
+            loadStrings: p5.prototype,
+            loadXML: p5.prototype,
+            loadBytes: p5.prototype,
+            loadTable: p5.prototype,
+            loadFont: p5.prototype,
+            loadModel: p5.prototype,
+            loadShader: p5.prototype
+          };
+
+          p5.prototype._registeredMethods = { init: [], pre: [], post: [], remove: [] };
+
+          p5.prototype._registeredPreloadMethods = {};
+          var _default = p5;
+          exports.default = _default;
+        },
+        { './constants': 48, './shim': 70 }
+      ],
+      60: [
+        function(_dereq_, module, exports) {
+          'use strict';
+          Object.defineProperty(exports, '__esModule', { value: true });
+          exports.default = void 0;
+
+          var _main = _interopRequireDefault(_dereq_('./main'));
+          function _interopRequireDefault(obj) {
+            return obj && obj.__esModule ? obj : { default: obj };
+          }
+          /**
+           * @module DOM
+           * @submodule DOM
+           * @for p5.Element
+           */ /**
+           * Base class for all elements added to a sketch, including canvas,
+           * graphics buffers, and other HTML elements. It is not called directly, but <a href="#/p5.Element">p5.Element</a>
+           * objects are created by calling <a href="#/p5/createCanvas">createCanvas</a>, <a href="#/p5/createGraphics">createGraphics</a>,
+           * <a href="#/p5/createDiv">createDiv</a>, <a href="#/p5/createImg">createImg</a>, <a href="#/p5/createInput">createInput</a>, etc.
+           *
+           * @class p5.Element
+           * @constructor
+           * @param {String} elt DOM node that is wrapped
+           * @param {p5} [pInst] pointer to p5 instance
+           */ _main.default.Element = function(elt, pInst) {
+            /**
+             * Underlying HTML element. All normal HTML methods can be called on this.
+             * @example
+             * <div>
+             * <code>
+             * function setup() {
+             *   let c = createCanvas(50, 50);
+             *   c.elt.style.border = '5px solid red';
+             * }
+             *
+             * function draw() {
+             *   background(220);
+             * }
+             * </code>
+             * </div>
+             *
+             * @property elt
+             * @readOnly
+             */
+            this.elt = elt;
+            this._pInst = this._pixelsState = pInst;
