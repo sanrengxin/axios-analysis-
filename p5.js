@@ -51864,3 +51864,124 @@
              */
             this.elt = elt;
             this._pInst = this._pixelsState = pInst;
+            this._events = {};
+            this.width = this.elt.offsetWidth;
+            this.height = this.elt.offsetHeight;
+          };
+
+          /**
+           *
+           * Attaches the element to the parent specified. A way of setting
+           * the container for the element. Accepts either a string ID, DOM
+           * node, or <a href="#/p5.Element">p5.Element</a>. If no arguments given, parent node is returned.
+           * For more ways to position the canvas, see the
+           * <a href='https://github.com/processing/p5.js/wiki/Positioning-your-canvas'>
+           * positioning the canvas</a> wiki page.
+           *
+           * @method parent
+           * @param  {String|p5.Element|Object} parent the ID, DOM node, or <a href="#/p5.Element">p5.Element</a>
+           *                         of desired parent element
+           * @chainable
+           *
+           * @example
+           * <div class="norender notest"><code>
+           * // Add the following comment to html file.
+           * // &lt;div id="myContainer">&lt;/div>
+           *
+           * // The js code
+           * let cnv = createCanvas(100, 100);
+           * cnv.parent('myContainer');
+           * </code></div>
+           *
+           * <div class='norender'><code>
+           * let div0 = createDiv('this is the parent');
+           * let div1 = createDiv('this is the child');
+           * div1.parent(div0); // use p5.Element
+           * </code></div>
+           *
+           * <div class='norender'><code>
+           * let div0 = createDiv('this is the parent');
+           * div0.id('apples');
+           * let div1 = createDiv('this is the child');
+           * div1.parent('apples'); // use id
+           * </code></div>
+           *
+           * <div class='norender notest'><code>
+           * let elt = document.getElementById('myParentDiv');
+           * let div1 = createDiv('this is the child');
+           * div1.parent(elt); // use element from page
+           * </code></div>
+           *
+           * @alt
+           * no display.
+           */
+          /**
+           * @method parent
+           * @return {p5.Element}
+           */
+          _main.default.Element.prototype.parent = function(p) {
+            if (typeof p === 'undefined') {
+              return this.elt.parentNode;
+            }
+
+            if (typeof p === 'string') {
+              if (p[0] === '#') {
+                p = p.substring(1);
+              }
+              p = document.getElementById(p);
+            } else if (p instanceof _main.default.Element) {
+              p = p.elt;
+            }
+            p.appendChild(this.elt);
+            return this;
+          };
+
+          /**
+           *
+           * Sets the ID of the element. If no ID argument is passed in, it instead
+           * returns the current ID of the element.
+           * Note that only one element can have a particular id in a page.
+           * The <a href="#/p5.Element/class">.class()</a> function can be used
+           * to identify multiple elements with the same class name.
+           *
+           * @method id
+           * @param  {String} id ID of the element
+           * @chainable
+           *
+           * @example
+           * <div class='norender'><code>
+           * function setup() {
+           *   let cnv = createCanvas(100, 100);
+           *   // Assigns a CSS selector ID to
+           *   // the canvas element.
+           *   cnv.id('mycanvas');
+           * }
+           * </code></div>
+           *
+           * @alt
+           * no display.
+           */
+          /**
+           * @method id
+           * @return {String} the id of the element
+           */
+          _main.default.Element.prototype.id = function(id) {
+            if (typeof id === 'undefined') {
+              return this.elt.id;
+            }
+
+            this.elt.id = id;
+            this.width = this.elt.offsetWidth;
+            this.height = this.elt.offsetHeight;
+            return this;
+          };
+
+          /**
+           *
+           * Adds given class to the element. If no class argument is passed in, it
+           * instead returns a string containing the current class(es) of the element.
+           *
+           * @method class
+           * @param  {String} class class to add
+           * @chainable
+           *
