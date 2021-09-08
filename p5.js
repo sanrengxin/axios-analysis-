@@ -51985,3 +51985,144 @@
            * @param  {String} class class to add
            * @chainable
            *
+           * @example
+           * <div class='norender'><code>
+           * function setup() {
+           *   let cnv = createCanvas(100, 100);
+           *   // Assigns a CSS selector class 'small'
+           *   // to the canvas element.
+           *   cnv.class('small');
+           * }
+           * </code></div>
+           *
+           * @alt
+           * no display.
+           */
+          /**
+           * @method class
+           * @return {String} the class of the element
+           */
+          _main.default.Element.prototype.class = function(c) {
+            if (typeof c === 'undefined') {
+              return this.elt.className;
+            }
+
+            this.elt.className = c;
+            return this;
+          };
+
+          /**
+           * The .<a href="#/p5.Element/mousePressed">mousePressed()</a> function is called
+           * once after every time a mouse button is pressed over the element. Some mobile
+           * browsers may also trigger this event on a touch screen, if the user performs
+           * a quick tap. This can be used to attach element specific event listeners.
+           *
+           * @method mousePressed
+           * @param  {Function|Boolean} fxn function to be fired when mouse is
+           *                                pressed over the element.
+           *                                if `false` is passed instead, the previously
+           *                                firing function will no longer fire.
+           * @chainable
+           * @example
+           * <div class='norender'><code>
+           * let cnv, d, g;
+           * function setup() {
+           *   cnv = createCanvas(100, 100);
+           *   cnv.mousePressed(changeGray); // attach listener for
+           *   // canvas click only
+           *   d = 10;
+           *   g = 100;
+           * }
+           *
+           * function draw() {
+           *   background(g);
+           *   ellipse(width / 2, height / 2, d, d);
+           * }
+           *
+           * // this function fires with any click anywhere
+           * function mousePressed() {
+           *   d = d + 10;
+           * }
+           *
+           * // this function fires only when cnv is clicked
+           * function changeGray() {
+           *   g = random(0, 255);
+           * }
+           * </code></div>
+           *
+           * @alt
+           * no display.
+           */
+          _main.default.Element.prototype.mousePressed = function(fxn) {
+            // Prepend the mouse property setters to the event-listener.
+            // This is required so that mouseButton is set correctly prior to calling the callback (fxn).
+            // For details, see https://github.com/processing/p5.js/issues/3087.
+            var eventPrependedFxn = function eventPrependedFxn(event) {
+              this._pInst._setProperty('mouseIsPressed', true);
+              this._pInst._setMouseButton(event);
+              // Pass along the return-value of the callback:
+              return fxn.call(this);
+            };
+            // Pass along the event-prepended form of the callback.
+            _main.default.Element._adjustListener('mousedown', eventPrependedFxn, this);
+            return this;
+          };
+
+          /**
+           * The .<a href="#/p5.Element/doubleClicked">doubleClicked()</a> function is called once after every time a
+           * mouse button is pressed twice over the element. This can be used to
+           * attach element and action specific event listeners.
+           *
+           * @method doubleClicked
+           * @param  {Function|Boolean} fxn function to be fired when mouse is
+           *                                double clicked over the element.
+           *                                if `false` is passed instead, the previously
+           *                                firing function will no longer fire.
+           * @return {p5.Element}
+           * @example
+           * <div class='norender'><code>
+           * let cnv, d, g;
+           * function setup() {
+           *   cnv = createCanvas(100, 100);
+           *   cnv.doubleClicked(changeGray); // attach listener for
+           *   // canvas double click only
+           *   d = 10;
+           *   g = 100;
+           * }
+           *
+           * function draw() {
+           *   background(g);
+           *   ellipse(width / 2, height / 2, d, d);
+           * }
+           *
+           * // this function fires with any double click anywhere
+           * function doubleClicked() {
+           *   d = d + 10;
+           * }
+           *
+           * // this function fires only when cnv is double clicked
+           * function changeGray() {
+           *   g = random(0, 255);
+           * }
+           * </code></div>
+           *
+           * @alt
+           * no display.
+           */
+          _main.default.Element.prototype.doubleClicked = function(fxn) {
+            _main.default.Element._adjustListener('dblclick', fxn, this);
+            return this;
+          };
+
+          /**
+           * The <a href="#/p5.Element/mouseWheel">mouseWheel()</a> function is called
+           * once after every time a mouse wheel is scrolled over the element. This can
+           * be used to attach element specific event listeners.
+           *
+           * The function accepts a callback function as argument which will be executed
+           * when the `wheel` event is triggered on the element, the callback function is
+           * passed one argument `event`. The `event.deltaY` property returns negative
+           * values if the mouse wheel is rotated up or away from the user and positive
+           * in the other direction. The `event.deltaX` does the same as `event.deltaY`
+           * except it reads the horizontal wheel scroll of the mouse wheel.
+           *
