@@ -52126,3 +52126,126 @@
            * in the other direction. The `event.deltaX` does the same as `event.deltaY`
            * except it reads the horizontal wheel scroll of the mouse wheel.
            *
+           * On OS X with "natural" scrolling enabled, the `event.deltaY` values are
+           * reversed.
+           *
+           * @method mouseWheel
+           * @param  {Function|Boolean} fxn function to be fired when mouse is
+           *                                scrolled over the element.
+           *                                if `false` is passed instead, the previously
+           *                                firing function will no longer fire.
+           * @chainable
+           * @example
+           * <div class='norender'><code>
+           * let cnv, d, g;
+           * function setup() {
+           *   cnv = createCanvas(100, 100);
+           *   cnv.mouseWheel(changeSize); // attach listener for
+           *   // activity on canvas only
+           *   d = 10;
+           *   g = 100;
+           * }
+           *
+           * function draw() {
+           *   background(g);
+           *   ellipse(width / 2, height / 2, d, d);
+           * }
+           *
+           * // this function fires with mousewheel movement
+           * // anywhere on screen
+           * function mouseWheel() {
+           *   g = g + 10;
+           * }
+           *
+           * // this function fires with mousewheel movement
+           * // over canvas only
+           * function changeSize(event) {
+           *   if (event.deltaY > 0) {
+           *     d = d + 10;
+           *   } else {
+           *     d = d - 10;
+           *   }
+           * }
+           * </code></div>
+           *
+           * @alt
+           * no display.
+           */
+          _main.default.Element.prototype.mouseWheel = function(fxn) {
+            _main.default.Element._adjustListener('wheel', fxn, this);
+            return this;
+          };
+
+          /**
+           * The <a href="#/p5.Element/mouseReleased">mouseReleased()</a> function is
+           * called once after every time a mouse button is released over the element.
+           * Some mobile browsers may also trigger this event on a touch screen, if the
+           * user performs a quick tap. This can be used to attach element specific event listeners.
+           *
+           * @method mouseReleased
+           * @param  {Function|Boolean} fxn function to be fired when mouse is
+           *                                released over the element.
+           *                                if `false` is passed instead, the previously
+           *                                firing function will no longer fire.
+           * @chainable
+           * @example
+           * <div class='norender'><code>
+           * let cnv, d, g;
+           * function setup() {
+           *   cnv = createCanvas(100, 100);
+           *   cnv.mouseReleased(changeGray); // attach listener for
+           *   // activity on canvas only
+           *   d = 10;
+           *   g = 100;
+           * }
+           *
+           * function draw() {
+           *   background(g);
+           *   ellipse(width / 2, height / 2, d, d);
+           * }
+           *
+           * // this function fires after the mouse has been
+           * // released
+           * function mouseReleased() {
+           *   d = d + 10;
+           * }
+           *
+           * // this function fires after the mouse has been
+           * // released while on canvas
+           * function changeGray() {
+           *   g = random(0, 255);
+           * }
+           * </code></div>
+           *
+           * @alt
+           * no display.
+           */
+          _main.default.Element.prototype.mouseReleased = function(fxn) {
+            _main.default.Element._adjustListener('mouseup', fxn, this);
+            return this;
+          };
+
+          /**
+           * The .<a href="#/p5.Element/mouseClicked">mouseClicked()</a> function is
+           * called once after a mouse button is pressed and released over the element.
+           * Some mobile browsers may also trigger this event on a touch screen, if the
+           * user performs a quick tap.This can be used to attach element specific event listeners.
+           *
+           * @method mouseClicked
+           * @param  {Function|Boolean} fxn function to be fired when mouse is
+           *                                clicked over the element.
+           *                                if `false` is passed instead, the previously
+           *                                firing function will no longer fire.
+           * @chainable
+           * @example
+           * <div class="norender">
+           * <code>
+           * let cnv, d, g;
+           * function setup() {
+           *   cnv = createCanvas(100, 100);
+           *   cnv.mouseClicked(changeGray); // attach listener for
+           *   // activity on canvas only
+           *   d = 10;
+           *   g = 100;
+           * }
+           *
