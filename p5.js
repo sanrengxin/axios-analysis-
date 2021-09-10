@@ -52249,3 +52249,148 @@
            *   g = 100;
            * }
            *
+           * function draw() {
+           *   background(g);
+           *   ellipse(width / 2, height / 2, d, d);
+           * }
+           *
+           * // this function fires after the mouse has been
+           * // clicked anywhere
+           * function mouseClicked() {
+           *   d = d + 10;
+           * }
+           *
+           * // this function fires after the mouse has been
+           * // clicked on canvas
+           * function changeGray() {
+           *   g = random(0, 255);
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * no display.
+           */
+          _main.default.Element.prototype.mouseClicked = function(fxn) {
+            _main.default.Element._adjustListener('click', fxn, this);
+            return this;
+          };
+
+          /**
+           * The .<a href="#/p5.Element/mouseMoved">mouseMoved()</a> function is called once every time a
+           * mouse moves over the element. This can be used to attach an
+           * element specific event listener.
+           *
+           * @method mouseMoved
+           * @param  {Function|Boolean} fxn function to be fired when a mouse moves
+           *                                over the element.
+           *                                if `false` is passed instead, the previously
+           *                                firing function will no longer fire.
+           * @chainable
+           * @example
+           * <div class='norender'><code>
+           * let cnv;
+           * let d = 30;
+           * let g;
+           * function setup() {
+           *   cnv = createCanvas(100, 100);
+           *   cnv.mouseMoved(changeSize); // attach listener for
+           *   // activity on canvas only
+           *   d = 10;
+           *   g = 100;
+           * }
+           *
+           * function draw() {
+           *   background(g);
+           *   fill(200);
+           *   ellipse(width / 2, height / 2, d, d);
+           * }
+           *
+           * // this function fires when mouse moves anywhere on
+           * // page
+           * function mouseMoved() {
+           *   g = g + 5;
+           *   if (g > 255) {
+           *     g = 0;
+           *   }
+           * }
+           *
+           * // this function fires when mouse moves over canvas
+           * function changeSize() {
+           *   d = d + 2;
+           *   if (d > 100) {
+           *     d = 0;
+           *   }
+           * }
+           * </code></div>
+           *
+           * @alt
+           * no display.
+           */
+          _main.default.Element.prototype.mouseMoved = function(fxn) {
+            _main.default.Element._adjustListener('mousemove', fxn, this);
+            return this;
+          };
+
+          /**
+           * The .<a href="#/p5.Element/mouseOver">mouseOver()</a> function is called once after every time a
+           * mouse moves onto the element. This can be used to attach an
+           * element specific event listener.
+           *
+           * @method mouseOver
+           * @param  {Function|Boolean} fxn function to be fired when a mouse moves
+           *                                onto the element.
+           *                                if `false` is passed instead, the previously
+           *                                firing function will no longer fire.
+           * @chainable
+           * @example
+           * <div class='norender'><code>
+           * let cnv;
+           * let d;
+           * function setup() {
+           *   cnv = createCanvas(100, 100);
+           *   cnv.mouseOver(changeGray);
+           *   d = 10;
+           * }
+           *
+           * function draw() {
+           *   ellipse(width / 2, height / 2, d, d);
+           * }
+           *
+           * function changeGray() {
+           *   d = d + 10;
+           *   if (d > 100) {
+           *     d = 0;
+           *   }
+           * }
+           * </code></div>
+           *
+           * @alt
+           * no display.
+           */
+          _main.default.Element.prototype.mouseOver = function(fxn) {
+            _main.default.Element._adjustListener('mouseover', fxn, this);
+            return this;
+          };
+
+          /**
+           * The .<a href="#/p5.Element/mouseOut">mouseOut()</a> function is called once after every time a
+           * mouse moves off the element. This can be used to attach an
+           * element specific event listener.
+           *
+           * @method mouseOut
+           * @param  {Function|Boolean} fxn function to be fired when a mouse
+           *                                moves off of an element.
+           *                                if `false` is passed instead, the previously
+           *                                firing function will no longer fire.
+           * @chainable
+           * @example
+           * <div class='norender'><code>
+           * let cnv;
+           * let d;
+           * function setup() {
+           *   cnv = createCanvas(100, 100);
+           *   cnv.mouseOut(changeGray);
+           *   d = 10;
+           * }
+           *
