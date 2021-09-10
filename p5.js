@@ -52394,3 +52394,142 @@
            *   d = 10;
            * }
            *
+           * function draw() {
+           *   ellipse(width / 2, height / 2, d, d);
+           * }
+           *
+           * function changeGray() {
+           *   d = d + 10;
+           *   if (d > 100) {
+           *     d = 0;
+           *   }
+           * }
+           * </code></div>
+           *
+           * @alt
+           * no display.
+           */
+          _main.default.Element.prototype.mouseOut = function(fxn) {
+            _main.default.Element._adjustListener('mouseout', fxn, this);
+            return this;
+          };
+
+          /**
+           * The .<a href="#/p5.Element/touchStarted">touchStarted()</a> function is called once after every time a touch is
+           * registered. This can be used to attach element specific event listeners.
+           *
+           * @method touchStarted
+           * @param  {Function|Boolean} fxn function to be fired when a touch
+           *                                starts over the element.
+           *                                if `false` is passed instead, the previously
+           *                                firing function will no longer fire.
+           * @chainable
+           * @example
+           * <div class='norender'><code>
+           * let cnv;
+           * let d;
+           * let g;
+           * function setup() {
+           *   cnv = createCanvas(100, 100);
+           *   cnv.touchStarted(changeGray); // attach listener for
+           *   // canvas click only
+           *   d = 10;
+           *   g = 100;
+           * }
+           *
+           * function draw() {
+           *   background(g);
+           *   ellipse(width / 2, height / 2, d, d);
+           * }
+           *
+           * // this function fires with any touch anywhere
+           * function touchStarted() {
+           *   d = d + 10;
+           * }
+           *
+           * // this function fires only when cnv is clicked
+           * function changeGray() {
+           *   g = random(0, 255);
+           * }
+           * </code></div>
+           *
+           * @alt
+           * no display.
+           */
+          _main.default.Element.prototype.touchStarted = function(fxn) {
+            _main.default.Element._adjustListener('touchstart', fxn, this);
+            return this;
+          };
+
+          /**
+           * The .<a href="#/p5.Element/touchMoved">touchMoved()</a> function is called once after every time a touch move is
+           * registered. This can be used to attach element specific event listeners.
+           *
+           * @method touchMoved
+           * @param  {Function|Boolean} fxn function to be fired when a touch moves over
+           *                                the element.
+           *                                if `false` is passed instead, the previously
+           *                                firing function will no longer fire.
+           * @chainable
+           * @example
+           * <div class='norender'><code>
+           * let cnv;
+           * let g;
+           * function setup() {
+           *   cnv = createCanvas(100, 100);
+           *   cnv.touchMoved(changeGray); // attach listener for
+           *   // canvas click only
+           *   g = 100;
+           * }
+           *
+           * function draw() {
+           *   background(g);
+           * }
+           *
+           * // this function fires only when cnv is clicked
+           * function changeGray() {
+           *   g = random(0, 255);
+           * }
+           * </code></div>
+           *
+           * @alt
+           * no display.
+           */
+          _main.default.Element.prototype.touchMoved = function(fxn) {
+            _main.default.Element._adjustListener('touchmove', fxn, this);
+            return this;
+          };
+
+          /**
+           * The .<a href="#/p5.Element/touchEnded">touchEnded()</a> function is called once after every time a touch is
+           * registered. This can be used to attach element specific event listeners.
+           *
+           * @method touchEnded
+           * @param  {Function|Boolean} fxn function to be fired when a touch ends
+           *                                over the element.
+           *                                if `false` is passed instead, the previously
+           *                                firing function will no longer fire.
+           * @chainable
+           * @example
+           * <div class='norender'><code>
+           * let cnv;
+           * let d;
+           * let g;
+           * function setup() {
+           *   cnv = createCanvas(100, 100);
+           *   cnv.touchEnded(changeGray); // attach listener for
+           *   // canvas click only
+           *   d = 10;
+           *   g = 100;
+           * }
+           *
+           * function draw() {
+           *   background(g);
+           *   ellipse(width / 2, height / 2, d, d);
+           * }
+           *
+           * // this function fires with any touch anywhere
+           * function touchEnded() {
+           *   d = d + 10;
+           * }
+           *
