@@ -52533,3 +52533,163 @@
            *   d = d + 10;
            * }
            *
+           * // this function fires only when cnv is clicked
+           * function changeGray() {
+           *   g = random(0, 255);
+           * }
+           * </code></div>
+           *
+           * @alt
+           * no display.
+           */
+          _main.default.Element.prototype.touchEnded = function(fxn) {
+            _main.default.Element._adjustListener('touchend', fxn, this);
+            return this;
+          };
+
+          /**
+           * The .<a href="#/p5.Element/dragOver">dragOver()</a> function is called once after every time a
+           * file is dragged over the element. This can be used to attach an
+           * element specific event listener.
+           *
+           * @method dragOver
+           * @param  {Function|Boolean} fxn function to be fired when a file is
+           *                                dragged over the element.
+           *                                if `false` is passed instead, the previously
+           *                                firing function will no longer fire.
+           * @chainable
+           * @example
+           * <div><code>
+           * // To test this sketch, simply drag a
+           * // file over the canvas
+           * function setup() {
+           *   let c = createCanvas(100, 100);
+           *   background(200);
+           *   textAlign(CENTER);
+           *   text('Drag file', width / 2, height / 2);
+           *   c.dragOver(dragOverCallback);
+           * }
+           *
+           * // This function will be called whenever
+           * // a file is dragged over the canvas
+           * function dragOverCallback() {
+           *   background(240);
+           *   text('Dragged over', width / 2, height / 2);
+           * }
+           * </code></div>
+           * @alt
+           * nothing displayed
+           */
+          _main.default.Element.prototype.dragOver = function(fxn) {
+            _main.default.Element._adjustListener('dragover', fxn, this);
+            return this;
+          };
+
+          /**
+           * The .dragLeave() function is called once after every time a
+           * dragged file leaves the element area. This can be used to attach an
+           * element specific event listener.
+           *
+           * @method dragLeave
+           * @param  {Function|Boolean} fxn function to be fired when a file is
+           *                                dragged off the element.
+           *                                if `false` is passed instead, the previously
+           *                                firing function will no longer fire.
+           * @chainable
+           * @example
+           * <div><code>
+           * // To test this sketch, simply drag a file
+           * // over and then out of the canvas area
+           * function setup() {
+           *   let c = createCanvas(100, 100);
+           *   background(200);
+           *   textAlign(CENTER);
+           *   text('Drag file', width / 2, height / 2);
+           *   c.dragLeave(dragLeaveCallback);
+           * }
+           *
+           * // This function will be called whenever
+           * // a file is dragged out of the canvas
+           * function dragLeaveCallback() {
+           *   background(240);
+           *   text('Dragged off', width / 2, height / 2);
+           * }
+           * </code></div>
+           * @alt
+           * nothing displayed
+           */
+          _main.default.Element.prototype.dragLeave = function(fxn) {
+            _main.default.Element._adjustListener('dragleave', fxn, this);
+            return this;
+          };
+
+          // General handler for event attaching and detaching
+          _main.default.Element._adjustListener = function(ev, fxn, ctx) {
+            if (fxn === false) {
+              _main.default.Element._detachListener(ev, ctx);
+            } else {
+              _main.default.Element._attachListener(ev, fxn, ctx);
+            }
+            return this;
+          };
+
+          _main.default.Element._attachListener = function(ev, fxn, ctx) {
+            // detach the old listener if there was one
+            if (ctx._events[ev]) {
+              _main.default.Element._detachListener(ev, ctx);
+            }
+            var f = fxn.bind(ctx);
+            ctx.elt.addEventListener(ev, f, false);
+            ctx._events[ev] = f;
+          };
+
+          _main.default.Element._detachListener = function(ev, ctx) {
+            var f = ctx._events[ev];
+            ctx.elt.removeEventListener(ev, f, false);
+            ctx._events[ev] = null;
+          };
+
+          /**
+           * Helper fxn for sharing pixel methods
+           */
+          _main.default.Element.prototype._setProperty = function(prop, value) {
+            this[prop] = value;
+          };
+          var _default = _main.default.Element;
+          exports.default = _default;
+        },
+        { './main': 59 }
+      ],
+      61: [
+        function(_dereq_, module, exports) {
+          'use strict';
+          function _typeof(obj) {
+            if (typeof Symbol === 'function' && typeof Symbol.iterator === 'symbol') {
+              _typeof = function _typeof(obj) {
+                return typeof obj;
+              };
+            } else {
+              _typeof = function _typeof(obj) {
+                return obj &&
+                  typeof Symbol === 'function' &&
+                  obj.constructor === Symbol &&
+                  obj !== Symbol.prototype
+                  ? 'symbol'
+                  : typeof obj;
+              };
+            }
+            return _typeof(obj);
+          }
+          Object.defineProperty(exports, '__esModule', { value: true });
+          exports.default = void 0;
+
+          var _main = _interopRequireDefault(_dereq_('./main'));
+          var constants = _interopRequireWildcard(_dereq_('./constants'));
+          function _getRequireWildcardCache() {
+            if (typeof WeakMap !== 'function') return null;
+            var cache = new WeakMap();
+            _getRequireWildcardCache = function _getRequireWildcardCache() {
+              return cache;
+            };
+            return cache;
+          }
