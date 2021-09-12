@@ -52693,3 +52693,128 @@
             };
             return cache;
           }
+          function _interopRequireWildcard(obj) {
+            if (obj && obj.__esModule) {
+              return obj;
+            }
+            if (obj === null || (_typeof(obj) !== 'object' && typeof obj !== 'function')) {
+              return { default: obj };
+            }
+            var cache = _getRequireWildcardCache();
+            if (cache && cache.has(obj)) {
+              return cache.get(obj);
+            }
+            var newObj = {};
+            var hasPropertyDescriptor =
+              Object.defineProperty && Object.getOwnPropertyDescriptor;
+            for (var key in obj) {
+              if (Object.prototype.hasOwnProperty.call(obj, key)) {
+                var desc = hasPropertyDescriptor
+                  ? Object.getOwnPropertyDescriptor(obj, key)
+                  : null;
+                if (desc && (desc.get || desc.set)) {
+                  Object.defineProperty(newObj, key, desc);
+                } else {
+                  newObj[key] = obj[key];
+                }
+              }
+            }
+            newObj.default = obj;
+            if (cache) {
+              cache.set(obj, newObj);
+            }
+            return newObj;
+          }
+          function _interopRequireDefault(obj) {
+            return obj && obj.__esModule ? obj : { default: obj };
+          }
+          /**
+           * @module Rendering
+           * @submodule Rendering
+           * @for p5
+           */ /**
+           * Thin wrapper around a renderer, to be used for creating a
+           * graphics buffer object. Use this class if you need
+           * to draw into an off-screen graphics buffer. The two parameters define the
+           * width and height in pixels. The fields and methods for this class are
+           * extensive, but mirror the normal drawing API for p5.
+           *
+           * @class p5.Graphics
+           * @constructor
+           * @extends p5.Element
+           * @param {Number} w            width
+           * @param {Number} h            height
+           * @param {Constant} renderer   the renderer to use, either P2D or WEBGL
+           * @param {p5} [pInst]          pointer to p5 instance
+           */ _main.default.Graphics = function(w, h, renderer, pInst) {
+            var r = renderer || constants.P2D;
+
+            this.canvas = document.createElement('canvas');
+            var node = pInst._userNode || document.body;
+            node.appendChild(this.canvas);
+
+            _main.default.Element.call(this, this.canvas, pInst);
+
+            // bind methods and props of p5 to the new object
+            for (var p in _main.default.prototype) {
+              if (!this[p]) {
+                if (typeof _main.default.prototype[p] === 'function') {
+                  this[p] = _main.default.prototype[p].bind(this);
+                } else {
+                  this[p] = _main.default.prototype[p];
+                }
+              }
+            }
+
+            _main.default.prototype._initializeInstanceVariables.apply(this);
+            this.width = w;
+            this.height = h;
+            this._pixelDensity = pInst._pixelDensity;
+
+            if (r === constants.WEBGL) {
+              this._renderer = new _main.default.RendererGL(this.canvas, this, false);
+            } else {
+              this._renderer = new _main.default.Renderer2D(this.canvas, this, false);
+            }
+            pInst._elements.push(this);
+
+            Object.defineProperty(this, 'deltaTime', {
+              get: function get() {
+                return this._pInst.deltaTime;
+              }
+            });
+
+            this._renderer.resize(w, h);
+            this._renderer._applyDefaults();
+            return this;
+          };
+
+          _main.default.Graphics.prototype = Object.create(_main.default.Element.prototype);
+
+          /**
+           * Resets certain values such as those modified by functions in the Transform category
+           * and in the Lights category that are not automatically reset
+           * with graphics buffer objects. Calling this in <a href='#/p5/draw'>draw()</a> will copy the behavior
+           * of the standard canvas.
+           *
+           * @method reset
+           * @example
+           *
+           * <div><code>
+           * let pg;
+           * function setup() {
+           *   createCanvas(100, 100);
+           *   background(0);
+           *   pg = createGraphics(50, 100);
+           *   pg.fill(0);
+           *   frameRate(5);
+           * }
+           *
+           * function draw() {
+           *   image(pg, width / 2, 0);
+           *   pg.background(255);
+           *   // p5.Graphics object behave a bit differently in some cases
+           *   // The normal canvas on the left resets the translate
+           *   // with every loop through draw()
+           *   // the graphics object on the right doesn't automatically reset
+           *   // so translate() is additive and it moves down the screen
