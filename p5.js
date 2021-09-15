@@ -53254,3 +53254,144 @@
                   x += maxWidth;
                   break;
               }
+
+              var baselineHacked = false;
+              if (typeof maxHeight !== 'undefined') {
+                switch (this._textBaseline) {
+                  case constants.BOTTOM:
+                    shiftedY = y + (maxHeight - totalHeight);
+                    y = Math.max(shiftedY, y);
+                    break;
+                  case constants.CENTER:
+                    shiftedY = y + (maxHeight - totalHeight) / 2;
+                    y = Math.max(shiftedY, y);
+                    break;
+                  case constants.BASELINE:
+                    baselineHacked = true;
+                    this._textBaseline = constants.TOP;
+                    break;
+                }
+
+                // remember the max-allowed y-position for any line (fix to #928)
+                finalMaxHeight = y + maxHeight - p.textAscent();
+              }
+
+              for (ii = 0; ii < cars.length; ii++) {
+                line = '';
+                words = cars[ii].split(' ');
+                for (n = 0; n < words.length; n++) {
+                  testLine = ''.concat(line + words[n], ' ');
+                  testWidth = this.textWidth(testLine);
+                  if (testWidth > maxWidth) {
+                    var _currentWord = words[n];
+                    for (var _index = 0; _index < _currentWord.length; _index++) {
+                      testLine = ''.concat(line + _currentWord[_index]);
+                      testWidth = this.textWidth(testLine);
+                      if (testWidth > maxWidth && line.length > 0) {
+                        var lastChar = line.slice(-1);
+                        var shouldAddHyphen = lastChar !== '\n' && lastChar !== ' ';
+                        line = ''.concat(line).concat(shouldAddHyphen ? '-' : '');
+
+                        this._renderText(p, line, x, y, finalMaxHeight);
+                        y += p.textLeading();
+
+                        line = ''.concat(_currentWord[_index]);
+                      } else {
+                        line = testLine;
+                      }
+                    }
+                    line = ''.concat(line, ' ');
+                  } else {
+                    line = testLine;
+                  }
+                }
+
+                this._renderText(p, line, x, y, finalMaxHeight);
+                y += p.textLeading();
+
+                if (baselineHacked) {
+                  this._textBaseline = constants.BASELINE;
+                }
+              }
+            } else {
+              // Offset to account for vertically centering multiple lines of text - no
+              // need to adjust anything for vertical align top or baseline
+              var offset = 0;
+
+              var vAlign = p.textAlign().vertical;
+              if (vAlign === constants.CENTER) {
+                offset = (cars.length - 1) * p.textLeading() / 2;
+              } else if (vAlign === constants.BOTTOM) {
+                offset = (cars.length - 1) * p.textLeading();
+              }
+
+              for (jj = 0; jj < cars.length; jj++) {
+                this._renderText(p, cars[jj], x, y - offset, finalMaxHeight);
+                y += p.textLeading();
+              }
+            }
+
+            return p;
+          };
+
+          _main.default.Renderer.prototype._applyDefaults = function() {
+            return this;
+          };
+
+          /**
+           * Helper fxn to check font type (system or otf)
+           */
+          _main.default.Renderer.prototype._isOpenType = function() {
+            var f =
+              arguments.length > 0 && arguments[0] !== undefined
+                ? arguments[0]
+                : this._textFont;
+            return _typeof(f) === 'object' && f.font && f.font.supported;
+          };
+
+          _main.default.Renderer.prototype._updateTextMetrics = function() {
+            if (this._isOpenType()) {
+              this._setProperty('_textAscent', this._textFont._textAscent());
+              this._setProperty('_textDescent', this._textFont._textDescent());
+              return this;
+            }
+
+            // Adapted from http://stackoverflow.com/a/25355178
+            var text = document.createElement('span');
+            text.style.fontFamily = this._textFont;
+            text.style.fontSize = ''.concat(this._textSize, 'px');
+            text.innerHTML = 'ABCjgq|';
+
+            var block = document.createElement('div');
+            block.style.display = 'inline-block';
+            block.style.width = '1px';
+            block.style.height = '0px';
+
+            var container = document.createElement('div');
+            container.appendChild(text);
+            container.appendChild(block);
+
+            container.style.height = '0px';
+            container.style.overflow = 'hidden';
+            document.body.appendChild(container);
+
+            block.style.verticalAlign = 'baseline';
+            var blockOffset = calculateOffset(block);
+            var textOffset = calculateOffset(text);
+            var ascent = blockOffset[1] - textOffset[1];
+
+            block.style.verticalAlign = 'bottom';
+            blockOffset = calculateOffset(block);
+            textOffset = calculateOffset(text);
+            var height = blockOffset[1] - textOffset[1];
+            var descent = height - ascent;
+
+            document.body.removeChild(container);
+
+            this._setProperty('_textAscent', ascent);
+            this._setProperty('_textDescent', descent);
+
+            return this;
+          };
+
+          /**
