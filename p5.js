@@ -53113,3 +53113,144 @@
             region.canvas
               .getContext('2d')
               .drawImage(canvas, x, y, w * pd, h * pd, 0, 0, w, h);
+
+            return region;
+          };
+
+          _main.default.Renderer.prototype.textLeading = function(l) {
+            if (typeof l === 'number') {
+              this._setProperty('_textLeading', l);
+              return this._pInst;
+            }
+
+            return this._textLeading;
+          };
+
+          _main.default.Renderer.prototype.textSize = function(s) {
+            if (typeof s === 'number') {
+              this._setProperty('_textSize', s);
+              this._setProperty('_textLeading', s * constants._DEFAULT_LEADMULT);
+              return this._applyTextProperties();
+            }
+
+            return this._textSize;
+          };
+
+          _main.default.Renderer.prototype.textStyle = function(s) {
+            if (s) {
+              if (
+                s === constants.NORMAL ||
+                s === constants.ITALIC ||
+                s === constants.BOLD ||
+                s === constants.BOLDITALIC
+              ) {
+                this._setProperty('_textStyle', s);
+              }
+
+              return this._applyTextProperties();
+            }
+
+            return this._textStyle;
+          };
+
+          _main.default.Renderer.prototype.textAscent = function() {
+            if (this._textAscent === null) {
+              this._updateTextMetrics();
+            }
+            return this._textAscent;
+          };
+
+          _main.default.Renderer.prototype.textDescent = function() {
+            if (this._textDescent === null) {
+              this._updateTextMetrics();
+            }
+            return this._textDescent;
+          };
+
+          _main.default.Renderer.prototype.textAlign = function(h, v) {
+            if (typeof h !== 'undefined') {
+              this._setProperty('_textAlign', h);
+
+              if (typeof v !== 'undefined') {
+                this._setProperty('_textBaseline', v);
+              }
+
+              return this._applyTextProperties();
+            } else {
+              return {
+                horizontal: this._textAlign,
+                vertical: this._textBaseline
+              };
+            }
+          };
+
+          _main.default.Renderer.prototype.text = function(str, x, y, maxWidth, maxHeight) {
+            var p = this._pInst;
+            var cars;
+            var n;
+            var ii;
+            var jj;
+            var line;
+            var testLine;
+            var testWidth;
+            var words;
+            var totalHeight;
+            var shiftedY;
+            var finalMaxHeight = Number.MAX_VALUE;
+
+            if (!(this._doFill || this._doStroke)) {
+              return;
+            }
+
+            if (typeof str === 'undefined') {
+              return;
+            } else if (typeof str !== 'string') {
+              str = str.toString();
+            }
+
+            str = str.replace(/(\t)/g, '  ');
+            cars = str.split('\n');
+
+            if (typeof maxWidth !== 'undefined') {
+              totalHeight = 0;
+              for (ii = 0; ii < cars.length; ii++) {
+                line = '';
+                words = cars[ii].split(' ');
+                for (n = 0; n < words.length; n++) {
+                  testLine = ''.concat(line + words[n], ' ');
+                  testWidth = this.textWidth(testLine);
+                  if (testWidth > maxWidth) {
+                    var currentWord = words[n];
+                    for (var index = 0; index < currentWord.length; index++) {
+                      testLine = ''.concat(line + currentWord[index]);
+                      testWidth = this.textWidth(testLine);
+                      if (testWidth > maxWidth && line.length > 0) {
+                        line = ''.concat(currentWord[index]);
+                        totalHeight += p.textLeading();
+                      } else {
+                        line = testLine;
+                      }
+                    }
+                    line = ''.concat(line, ' ');
+                  } else {
+                    line = testLine;
+                  }
+                }
+                if (ii < cars.length - 1) {
+                  totalHeight += p.textLeading();
+                }
+              }
+
+              if (this._rectMode === constants.CENTER) {
+                x -= maxWidth / 2;
+                y -= maxHeight / 2;
+              }
+
+              switch (this._textAlign) {
+                case constants.CENTER:
+                  x += maxWidth / 2;
+                  break;
+                case constants.RIGHT:
+                  x += maxWidth;
+                  break;
+              }
