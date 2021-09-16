@@ -53395,3 +53395,132 @@
           };
 
           /**
+           * Helper fxn to measure ascent and descent.
+           * Adapted from http://stackoverflow.com/a/25355178
+           */
+          function calculateOffset(object) {
+            var currentLeft = 0,
+              currentTop = 0;
+            if (object.offsetParent) {
+              do {
+                currentLeft += object.offsetLeft;
+                currentTop += object.offsetTop;
+              } while ((object = object.offsetParent));
+            } else {
+              currentLeft += object.offsetLeft;
+              currentTop += object.offsetTop;
+            }
+            return [currentLeft, currentTop];
+          }
+          var _default = _main.default.Renderer;
+          exports.default = _default;
+        },
+        { '../core/constants': 48, './main': 59 }
+      ],
+      63: [
+        function(_dereq_, module, exports) {
+          'use strict';
+          function _typeof(obj) {
+            if (typeof Symbol === 'function' && typeof Symbol.iterator === 'symbol') {
+              _typeof = function _typeof(obj) {
+                return typeof obj;
+              };
+            } else {
+              _typeof = function _typeof(obj) {
+                return obj &&
+                  typeof Symbol === 'function' &&
+                  obj.constructor === Symbol &&
+                  obj !== Symbol.prototype
+                  ? 'symbol'
+                  : typeof obj;
+              };
+            }
+            return _typeof(obj);
+          }
+          Object.defineProperty(exports, '__esModule', { value: true });
+          exports.default = void 0;
+          var _main = _interopRequireDefault(_dereq_('./main'));
+          var constants = _interopRequireWildcard(_dereq_('./constants'));
+          var _filters = _interopRequireDefault(_dereq_('../image/filters'));
+
+          _dereq_('./p5.Renderer');
+          function _getRequireWildcardCache() {
+            if (typeof WeakMap !== 'function') return null;
+            var cache = new WeakMap();
+            _getRequireWildcardCache = function _getRequireWildcardCache() {
+              return cache;
+            };
+            return cache;
+          }
+          function _interopRequireWildcard(obj) {
+            if (obj && obj.__esModule) {
+              return obj;
+            }
+            if (obj === null || (_typeof(obj) !== 'object' && typeof obj !== 'function')) {
+              return { default: obj };
+            }
+            var cache = _getRequireWildcardCache();
+            if (cache && cache.has(obj)) {
+              return cache.get(obj);
+            }
+            var newObj = {};
+            var hasPropertyDescriptor =
+              Object.defineProperty && Object.getOwnPropertyDescriptor;
+            for (var key in obj) {
+              if (Object.prototype.hasOwnProperty.call(obj, key)) {
+                var desc = hasPropertyDescriptor
+                  ? Object.getOwnPropertyDescriptor(obj, key)
+                  : null;
+                if (desc && (desc.get || desc.set)) {
+                  Object.defineProperty(newObj, key, desc);
+                } else {
+                  newObj[key] = obj[key];
+                }
+              }
+            }
+            newObj.default = obj;
+            if (cache) {
+              cache.set(obj, newObj);
+            }
+            return newObj;
+          }
+          function _interopRequireDefault(obj) {
+            return obj && obj.__esModule ? obj : { default: obj };
+          }
+
+          /**
+           * p5.Renderer2D
+           * The 2D graphics canvas renderer class.
+           * extends p5.Renderer
+           */
+          var styleEmpty = 'rgba(0,0,0,0)';
+          // const alphaThreshold = 0.00125; // minimum visible
+
+          _main.default.Renderer2D = function(elt, pInst, isMainCanvas) {
+            _main.default.Renderer.call(this, elt, pInst, isMainCanvas);
+            this.drawingContext = this.canvas.getContext('2d');
+            this._pInst._setProperty('drawingContext', this.drawingContext);
+            return this;
+          };
+
+          _main.default.Renderer2D.prototype = Object.create(
+            _main.default.Renderer.prototype
+          );
+
+          _main.default.Renderer2D.prototype._applyDefaults = function() {
+            this._cachedFillStyle = this._cachedStrokeStyle = undefined;
+            this._cachedBlendMode = constants.BLEND;
+            this._setFill(constants._DEFAULT_FILL);
+            this._setStroke(constants._DEFAULT_STROKE);
+            this.drawingContext.lineCap = constants.ROUND;
+            this.drawingContext.font = 'normal 12px sans-serif';
+          };
+
+          _main.default.Renderer2D.prototype.resize = function(w, h) {
+            _main.default.Renderer.prototype.resize.call(this, w, h);
+            this.drawingContext.scale(this._pInst._pixelDensity, this._pInst._pixelDensity);
+          };
+
+          //////////////////////////////////////////////
+          // COLOR | Setting
+          //////////////////////////////////////////////
