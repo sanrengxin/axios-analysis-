@@ -53664,3 +53664,132 @@
               if (!cnv) {
                 cnv = img.canvas || img.elt;
               }
+              var s = 1;
+              if (img.width && img.width > 0) {
+                s = cnv.width / img.width;
+              }
+              if (this._isErasing) {
+                this.blendMode(this._cachedBlendMode);
+              }
+              this.drawingContext.drawImage(
+                cnv,
+                s * sx,
+                s * sy,
+                s * sWidth,
+                s * sHeight,
+                dx,
+                dy,
+                dWidth,
+                dHeight
+              );
+
+              if (this._isErasing) {
+                this._pInst.erase();
+              }
+            } catch (e) {
+              if (e.name !== 'NS_ERROR_NOT_AVAILABLE') {
+                throw e;
+              }
+            }
+          };
+
+          _main.default.Renderer2D.prototype._getTintedImageCanvas = function(img) {
+            if (!img.canvas) {
+              return img;
+            }
+            var pixels = _filters.default._toPixels(img.canvas);
+            var tmpCanvas = document.createElement('canvas');
+            tmpCanvas.width = img.canvas.width;
+            tmpCanvas.height = img.canvas.height;
+            var tmpCtx = tmpCanvas.getContext('2d');
+            var id = tmpCtx.createImageData(img.canvas.width, img.canvas.height);
+            var newPixels = id.data;
+            for (var i = 0; i < pixels.length; i += 4) {
+              var r = pixels[i];
+              var g = pixels[i + 1];
+              var b = pixels[i + 2];
+              var a = pixels[i + 3];
+              newPixels[i] = r * this._tint[0] / 255;
+              newPixels[i + 1] = g * this._tint[1] / 255;
+              newPixels[i + 2] = b * this._tint[2] / 255;
+              newPixels[i + 3] = a * this._tint[3] / 255;
+            }
+            tmpCtx.putImageData(id, 0, 0);
+            return tmpCanvas;
+          };
+
+          //////////////////////////////////////////////
+          // IMAGE | Pixels
+          //////////////////////////////////////////////
+
+          _main.default.Renderer2D.prototype.blendMode = function(mode) {
+            if (mode === constants.SUBTRACT) {
+              console.warn('blendMode(SUBTRACT) only works in WEBGL mode.');
+            } else if (
+              mode === constants.BLEND ||
+              mode === constants.REMOVE ||
+              mode === constants.DARKEST ||
+              mode === constants.LIGHTEST ||
+              mode === constants.DIFFERENCE ||
+              mode === constants.MULTIPLY ||
+              mode === constants.EXCLUSION ||
+              mode === constants.SCREEN ||
+              mode === constants.REPLACE ||
+              mode === constants.OVERLAY ||
+              mode === constants.HARD_LIGHT ||
+              mode === constants.SOFT_LIGHT ||
+              mode === constants.DODGE ||
+              mode === constants.BURN ||
+              mode === constants.ADD
+            ) {
+              this._cachedBlendMode = mode;
+              this.drawingContext.globalCompositeOperation = mode;
+            } else {
+              throw new Error('Mode '.concat(mode, ' not recognized.'));
+            }
+          };
+
+          _main.default.Renderer2D.prototype.blend = function() {
+            var currBlend = this.drawingContext.globalCompositeOperation;
+            for (
+              var _len = arguments.length, args = new Array(_len), _key = 0;
+              _key < _len;
+              _key++
+            ) {
+              args[_key] = arguments[_key];
+            }
+            var blendMode = args[args.length - 1];
+
+            var copyArgs = Array.prototype.slice.call(args, 0, args.length - 1);
+
+            this.drawingContext.globalCompositeOperation = blendMode;
+
+            _main.default.prototype.copy.apply(this, copyArgs);
+
+            this.drawingContext.globalCompositeOperation = currBlend;
+          };
+
+          // p5.Renderer2D.prototype.get = p5.Renderer.prototype.get;
+          // .get() is not overridden
+
+          // x,y are canvas-relative (pre-scaled by _pixelDensity)
+          _main.default.Renderer2D.prototype._getPixel = function(x, y) {
+            var imageData, index;
+            imageData = this.drawingContext.getImageData(x, y, 1, 1).data;
+            index = 0;
+            return [
+              imageData[index + 0],
+              imageData[index + 1],
+              imageData[index + 2],
+              imageData[index + 3]
+            ];
+          };
+
+          _main.default.Renderer2D.prototype.loadPixels = function() {
+            var pixelsState = this._pixelsState; // if called by p5.Image
+
+            var pd = pixelsState._pixelDensity;
+            var w = this.width * pd;
+            var h = this.height * pd;
+            var imageData = this.drawingContext.getImageData(0, 0, w, h);
+            // @todo this should actually set pixels per object, so diff buffers can
