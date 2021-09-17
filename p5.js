@@ -53524,3 +53524,143 @@
           //////////////////////////////////////////////
           // COLOR | Setting
           //////////////////////////////////////////////
+
+          _main.default.Renderer2D.prototype.background = function() {
+            this.drawingContext.save();
+            this.resetMatrix();
+
+            if (
+              (arguments.length <= 0 ? undefined : arguments[0]) instanceof
+              _main.default.Image
+            ) {
+              this._pInst.image(
+                arguments.length <= 0 ? undefined : arguments[0],
+                0,
+                0,
+                this.width,
+                this.height
+              );
+            } else {
+              var _this$_pInst;
+              var curFill = this._getFill();
+              // create background rect
+              var color = (_this$_pInst = this._pInst).color.apply(_this$_pInst, arguments);
+
+              //accessible Outputs
+              if (this._pInst._addAccsOutput()) {
+                this._pInst._accsBackground(color.levels);
+              }
+
+              var newFill = color.toString();
+              this._setFill(newFill);
+
+              if (this._isErasing) {
+                this.blendMode(this._cachedBlendMode);
+              }
+
+              this.drawingContext.fillRect(0, 0, this.width, this.height);
+              // reset fill
+              this._setFill(curFill);
+
+              if (this._isErasing) {
+                this._pInst.erase();
+              }
+            }
+            this.drawingContext.restore();
+          };
+
+          _main.default.Renderer2D.prototype.clear = function() {
+            this.drawingContext.save();
+            this.resetMatrix();
+            this.drawingContext.clearRect(0, 0, this.width, this.height);
+            this.drawingContext.restore();
+          };
+
+          _main.default.Renderer2D.prototype.fill = function() {
+            var _this$_pInst2;
+            var color = (_this$_pInst2 = this._pInst).color.apply(_this$_pInst2, arguments);
+            this._setFill(color.toString());
+
+            //accessible Outputs
+            if (this._pInst._addAccsOutput()) {
+              this._pInst._accsCanvasColors('fill', color.levels);
+            }
+          };
+
+          _main.default.Renderer2D.prototype.stroke = function() {
+            var _this$_pInst3;
+            var color = (_this$_pInst3 = this._pInst).color.apply(_this$_pInst3, arguments);
+            this._setStroke(color.toString());
+
+            //accessible Outputs
+            if (this._pInst._addAccsOutput()) {
+              this._pInst._accsCanvasColors('stroke', color.levels);
+            }
+          };
+
+          _main.default.Renderer2D.prototype.erase = function(opacityFill, opacityStroke) {
+            if (!this._isErasing) {
+              // cache the fill style
+              this._cachedFillStyle = this.drawingContext.fillStyle;
+              var newFill = this._pInst.color(255, opacityFill).toString();
+              this.drawingContext.fillStyle = newFill;
+
+              //cache the stroke style
+              this._cachedStrokeStyle = this.drawingContext.strokeStyle;
+              var newStroke = this._pInst.color(255, opacityStroke).toString();
+              this.drawingContext.strokeStyle = newStroke;
+
+              //cache blendMode
+              var tempBlendMode = this._cachedBlendMode;
+              this.blendMode(constants.REMOVE);
+              this._cachedBlendMode = tempBlendMode;
+
+              this._isErasing = true;
+            }
+          };
+
+          _main.default.Renderer2D.prototype.noErase = function() {
+            if (this._isErasing) {
+              this.drawingContext.fillStyle = this._cachedFillStyle;
+              this.drawingContext.strokeStyle = this._cachedStrokeStyle;
+
+              this.blendMode(this._cachedBlendMode);
+              this._isErasing = false;
+            }
+          };
+
+          //////////////////////////////////////////////
+          // IMAGE | Loading & Displaying
+          //////////////////////////////////////////////
+
+          _main.default.Renderer2D.prototype.image = function(
+            img,
+            sx,
+            sy,
+            sWidth,
+            sHeight,
+            dx,
+            dy,
+            dWidth,
+            dHeight
+          ) {
+            var cnv;
+            if (img.gifProperties) {
+              img._animateGif(this._pInst);
+            }
+
+            try {
+              if (this._tint) {
+                if (
+                  _main.default.MediaElement &&
+                  img instanceof _main.default.MediaElement
+                ) {
+                  img.loadPixels();
+                }
+                if (img.canvas) {
+                  cnv = this._getTintedImageCanvas(img);
+                }
+              }
+              if (!cnv) {
+                cnv = img.canvas || img.elt;
+              }
