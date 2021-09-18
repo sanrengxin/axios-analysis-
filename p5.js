@@ -53944,3 +53944,127 @@
     */
           _main.default.Renderer2D.prototype.arc = function(x, y, w, h, start, stop, mode) {
             var ctx = this.drawingContext;
+            var rx = w / 2.0;
+            var ry = h / 2.0;
+            var epsilon = 0.00001; // Smallest visible angle on displays up to 4K.
+            var arcToDraw = 0;
+            var curves = [];
+
+            x += rx;
+            y += ry;
+
+            // Create curves
+            while (stop - start >= epsilon) {
+              arcToDraw = Math.min(stop - start, constants.HALF_PI);
+              curves.push(this._acuteArcToBezier(start, arcToDraw));
+              start += arcToDraw;
+            }
+
+            // Fill curves
+            if (this._doFill) {
+              ctx.beginPath();
+              curves.forEach(function(curve, index) {
+                if (index === 0) {
+                  ctx.moveTo(x + curve.ax * rx, y + curve.ay * ry);
+                }
+                // prettier-ignore
+                ctx.bezierCurveTo(x + curve.bx * rx, y + curve.by * ry,
+      x + curve.cx * rx, y + curve.cy * ry,
+      x + curve.dx * rx, y + curve.dy * ry);
+              });
+              if (mode === constants.PIE || mode == null) {
+                ctx.lineTo(x, y);
+              }
+              ctx.closePath();
+              ctx.fill();
+            }
+
+            // Stroke curves
+            if (this._doStroke) {
+              ctx.beginPath();
+              curves.forEach(function(curve, index) {
+                if (index === 0) {
+                  ctx.moveTo(x + curve.ax * rx, y + curve.ay * ry);
+                }
+                // prettier-ignore
+                ctx.bezierCurveTo(x + curve.bx * rx, y + curve.by * ry,
+      x + curve.cx * rx, y + curve.cy * ry,
+      x + curve.dx * rx, y + curve.dy * ry);
+              });
+              if (mode === constants.PIE) {
+                ctx.lineTo(x, y);
+                ctx.closePath();
+              } else if (mode === constants.CHORD) {
+                ctx.closePath();
+              }
+              ctx.stroke();
+            }
+            return this;
+          };
+
+          _main.default.Renderer2D.prototype.ellipse = function(args) {
+            var ctx = this.drawingContext;
+            var doFill = this._doFill,
+              doStroke = this._doStroke;
+            var x = parseFloat(args[0]),
+              y = parseFloat(args[1]),
+              w = parseFloat(args[2]),
+              h = parseFloat(args[3]);
+            if (doFill && !doStroke) {
+              if (this._getFill() === styleEmpty) {
+                return this;
+              }
+            } else if (!doFill && doStroke) {
+              if (this._getStroke() === styleEmpty) {
+                return this;
+              }
+            }
+            var kappa = 0.5522847498,
+              // control point offset horizontal
+              ox = w / 2 * kappa,
+              // control point offset vertical
+              oy = h / 2 * kappa,
+              // x-end
+              xe = x + w,
+              // y-end
+              ye = y + h,
+              // x-middle
+              xm = x + w / 2,
+              ym = y + h / 2; // y-middle
+            ctx.beginPath();
+            ctx.moveTo(x, ym);
+            ctx.bezierCurveTo(x, ym - oy, xm - ox, y, xm, y);
+            ctx.bezierCurveTo(xm + ox, y, xe, ym - oy, xe, ym);
+            ctx.bezierCurveTo(xe, ym + oy, xm + ox, ye, xm, ye);
+            ctx.bezierCurveTo(xm - ox, ye, x, ym + oy, x, ym);
+            if (doFill) {
+              ctx.fill();
+            }
+            if (doStroke) {
+              ctx.stroke();
+            }
+          };
+
+          _main.default.Renderer2D.prototype.line = function(x1, y1, x2, y2) {
+            var ctx = this.drawingContext;
+            if (!this._doStroke) {
+              return this;
+            } else if (this._getStroke() === styleEmpty) {
+              return this;
+            }
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(x2, y2);
+            ctx.stroke();
+            return this;
+          };
+
+          _main.default.Renderer2D.prototype.point = function(x, y) {
+            var ctx = this.drawingContext;
+            if (!this._doStroke) {
+              return this;
+            } else if (this._getStroke() === styleEmpty) {
+              return this;
+            }
+            var s = this._getStroke();
+            var f = this._getFill();
