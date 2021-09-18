@@ -53793,3 +53793,154 @@
             var h = this.height * pd;
             var imageData = this.drawingContext.getImageData(0, 0, w, h);
             // @todo this should actually set pixels per object, so diff buffers can
+            // have diff pixel arrays.
+            pixelsState._setProperty('imageData', imageData);
+            pixelsState._setProperty('pixels', imageData.data);
+          };
+
+          _main.default.Renderer2D.prototype.set = function(x, y, imgOrCol) {
+            // round down to get integer numbers
+            x = Math.floor(x);
+            y = Math.floor(y);
+            var pixelsState = this._pixelsState;
+            if (imgOrCol instanceof _main.default.Image) {
+              this.drawingContext.save();
+              this.drawingContext.setTransform(1, 0, 0, 1, 0, 0);
+              this.drawingContext.scale(
+                pixelsState._pixelDensity,
+                pixelsState._pixelDensity
+              );
+
+              this.drawingContext.clearRect(x, y, imgOrCol.width, imgOrCol.height);
+              this.drawingContext.drawImage(imgOrCol.canvas, x, y);
+              this.drawingContext.restore();
+            } else {
+              var r = 0,
+                g = 0,
+                b = 0,
+                a = 0;
+              var idx =
+                4 *
+                (y * pixelsState._pixelDensity * (this.width * pixelsState._pixelDensity) +
+                  x * pixelsState._pixelDensity);
+              if (!pixelsState.imageData) {
+                pixelsState.loadPixels.call(pixelsState);
+              }
+              if (typeof imgOrCol === 'number') {
+                if (idx < pixelsState.pixels.length) {
+                  r = imgOrCol;
+                  g = imgOrCol;
+                  b = imgOrCol;
+                  a = 255;
+                  //this.updatePixels.call(this);
+                }
+              } else if (imgOrCol instanceof Array) {
+                if (imgOrCol.length < 4) {
+                  throw new Error('pixel array must be of the form [R, G, B, A]');
+                }
+                if (idx < pixelsState.pixels.length) {
+                  r = imgOrCol[0];
+                  g = imgOrCol[1];
+                  b = imgOrCol[2];
+                  a = imgOrCol[3];
+                  //this.updatePixels.call(this);
+                }
+              } else if (imgOrCol instanceof _main.default.Color) {
+                if (idx < pixelsState.pixels.length) {
+                  r = imgOrCol.levels[0];
+                  g = imgOrCol.levels[1];
+                  b = imgOrCol.levels[2];
+                  a = imgOrCol.levels[3];
+                  //this.updatePixels.call(this);
+                }
+              }
+              // loop over pixelDensity * pixelDensity
+              for (var i = 0; i < pixelsState._pixelDensity; i++) {
+                for (var j = 0; j < pixelsState._pixelDensity; j++) {
+                  // loop over
+                  idx =
+                    4 *
+                    ((y * pixelsState._pixelDensity + j) *
+                      this.width *
+                      pixelsState._pixelDensity +
+                      (x * pixelsState._pixelDensity + i));
+                  pixelsState.pixels[idx] = r;
+                  pixelsState.pixels[idx + 1] = g;
+                  pixelsState.pixels[idx + 2] = b;
+                  pixelsState.pixels[idx + 3] = a;
+                }
+              }
+            }
+          };
+
+          _main.default.Renderer2D.prototype.updatePixels = function(x, y, w, h) {
+            var pixelsState = this._pixelsState;
+            var pd = pixelsState._pixelDensity;
+            if (x === undefined && y === undefined && w === undefined && h === undefined) {
+              x = 0;
+              y = 0;
+              w = this.width;
+              h = this.height;
+            }
+            x *= pd;
+            y *= pd;
+            w *= pd;
+            h *= pd;
+
+            if (this.gifProperties) {
+              this.gifProperties.frames[this.gifProperties.displayIndex].image =
+                pixelsState.imageData;
+            }
+
+            this.drawingContext.putImageData(pixelsState.imageData, x, y, 0, 0, w, h);
+          };
+
+          //////////////////////////////////////////////
+          // SHAPE | 2D Primitives
+          //////////////////////////////////////////////
+
+          /**
+           * Generate a cubic Bezier representing an arc on the unit circle of total
+           * angle `size` radians, beginning `start` radians above the x-axis. Up to
+           * four of these curves are combined to make a full arc.
+           *
+           * See www.joecridge.me/bezier.pdf for an explanation of the method.
+           */
+          _main.default.Renderer2D.prototype._acuteArcToBezier = function _acuteArcToBezier(
+            start,
+            size
+          ) {
+            // Evaluate constants.
+            var alpha = size / 2.0,
+              cos_alpha = Math.cos(alpha),
+              sin_alpha = Math.sin(alpha),
+              cot_alpha = 1.0 / Math.tan(alpha),
+              // This is how far the arc needs to be rotated.
+              phi = start + alpha,
+              cos_phi = Math.cos(phi),
+              sin_phi = Math.sin(phi),
+              lambda = (4.0 - cos_alpha) / 3.0,
+              mu = sin_alpha + (cos_alpha - lambda) * cot_alpha;
+
+            // Return rotated waypoints.
+            return {
+              ax: Math.cos(start).toFixed(7),
+              ay: Math.sin(start).toFixed(7),
+              bx: (lambda * cos_phi + mu * sin_phi).toFixed(7),
+              by: (lambda * sin_phi - mu * cos_phi).toFixed(7),
+              cx: (lambda * cos_phi - mu * sin_phi).toFixed(7),
+              cy: (lambda * sin_phi + mu * cos_phi).toFixed(7),
+              dx: Math.cos(start + size).toFixed(7),
+              dy: Math.sin(start + size).toFixed(7)
+            };
+          };
+
+          /*
+    * This function requires that:
+    *
+    *   0 <= start < TWO_PI
+    *
+    *   start <= stop < start + TWO_PI
+    */
+          _main.default.Renderer2D.prototype.arc = function(x, y, w, h, start, stop, mode) {
+            var ctx = this.drawingContext;
