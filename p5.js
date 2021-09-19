@@ -54209,3 +54209,126 @@
           };
 
           _main.default.Renderer2D.prototype.triangle = function(args) {
+            var ctx = this.drawingContext;
+            var doFill = this._doFill,
+              doStroke = this._doStroke;
+            var x1 = args[0],
+              y1 = args[1];
+            var x2 = args[2],
+              y2 = args[3];
+            var x3 = args[4],
+              y3 = args[5];
+            if (doFill && !doStroke) {
+              if (this._getFill() === styleEmpty) {
+                return this;
+              }
+            } else if (!doFill && doStroke) {
+              if (this._getStroke() === styleEmpty) {
+                return this;
+              }
+            }
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(x2, y2);
+            ctx.lineTo(x3, y3);
+            ctx.closePath();
+            if (doFill) {
+              ctx.fill();
+            }
+            if (doStroke) {
+              ctx.stroke();
+            }
+          };
+
+          _main.default.Renderer2D.prototype.endShape = function(
+            mode,
+            vertices,
+            isCurve,
+            isBezier,
+            isQuadratic,
+            isContour,
+            shapeKind
+          ) {
+            if (vertices.length === 0) {
+              return this;
+            }
+            if (!this._doStroke && !this._doFill) {
+              return this;
+            }
+            var closeShape = mode === constants.CLOSE;
+            var v;
+            if (closeShape && !isContour) {
+              vertices.push(vertices[0]);
+            }
+            var i, j;
+            var numVerts = vertices.length;
+            if (isCurve && (shapeKind === constants.POLYGON || shapeKind === null)) {
+              if (numVerts > 3) {
+                var b = [],
+                  s = 1 - this._curveTightness;
+                this.drawingContext.beginPath();
+                this.drawingContext.moveTo(vertices[1][0], vertices[1][1]);
+                for (i = 1; i + 2 < numVerts; i++) {
+                  v = vertices[i];
+                  b[0] = [v[0], v[1]];
+                  b[1] = [
+                    v[0] + (s * vertices[i + 1][0] - s * vertices[i - 1][0]) / 6,
+                    v[1] + (s * vertices[i + 1][1] - s * vertices[i - 1][1]) / 6
+                  ];
+
+                  b[2] = [
+                    vertices[i + 1][0] + (s * vertices[i][0] - s * vertices[i + 2][0]) / 6,
+                    vertices[i + 1][1] + (s * vertices[i][1] - s * vertices[i + 2][1]) / 6
+                  ];
+
+                  b[3] = [vertices[i + 1][0], vertices[i + 1][1]];
+                  this.drawingContext.bezierCurveTo(
+                    b[1][0],
+                    b[1][1],
+                    b[2][0],
+                    b[2][1],
+                    b[3][0],
+                    b[3][1]
+                  );
+                }
+                if (closeShape) {
+                  this.drawingContext.lineTo(vertices[i + 1][0], vertices[i + 1][1]);
+                }
+                this._doFillStrokeClose(closeShape);
+              }
+            } else if (
+              isBezier &&
+              (shapeKind === constants.POLYGON || shapeKind === null)
+            ) {
+              this.drawingContext.beginPath();
+              for (i = 0; i < numVerts; i++) {
+                if (vertices[i].isVert) {
+                  if (vertices[i].moveTo) {
+                    this.drawingContext.moveTo(vertices[i][0], vertices[i][1]);
+                  } else {
+                    this.drawingContext.lineTo(vertices[i][0], vertices[i][1]);
+                  }
+                } else {
+                  this.drawingContext.bezierCurveTo(
+                    vertices[i][0],
+                    vertices[i][1],
+                    vertices[i][2],
+                    vertices[i][3],
+                    vertices[i][4],
+                    vertices[i][5]
+                  );
+                }
+              }
+              this._doFillStrokeClose(closeShape);
+            } else if (
+              isQuadratic &&
+              (shapeKind === constants.POLYGON || shapeKind === null)
+            ) {
+              this.drawingContext.beginPath();
+              for (i = 0; i < numVerts; i++) {
+                if (vertices[i].isVert) {
+                  if (vertices[i].moveTo) {
+                    this.drawingContext.moveTo(vertices[i][0], vertices[i][1]);
+                  } else {
+                    this.drawingContext.lineTo(vertices[i][0], vertices[i][1]);
+                  }
