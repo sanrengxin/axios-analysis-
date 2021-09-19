@@ -54068,3 +54068,144 @@
             }
             var s = this._getStroke();
             var f = this._getFill();
+            x = Math.round(x);
+            y = Math.round(y);
+            // swapping fill color to stroke and back after for correct point rendering
+            this._setFill(s);
+            if (ctx.lineWidth > 1) {
+              ctx.beginPath();
+              ctx.arc(x, y, ctx.lineWidth / 2, 0, constants.TWO_PI, false);
+              ctx.fill();
+            } else {
+              ctx.fillRect(x, y, 1, 1);
+            }
+            this._setFill(f);
+          };
+
+          _main.default.Renderer2D.prototype.quad = function(
+            x1,
+            y1,
+            x2,
+            y2,
+            x3,
+            y3,
+            x4,
+            y4
+          ) {
+            var ctx = this.drawingContext;
+            var doFill = this._doFill,
+              doStroke = this._doStroke;
+            if (doFill && !doStroke) {
+              if (this._getFill() === styleEmpty) {
+                return this;
+              }
+            } else if (!doFill && doStroke) {
+              if (this._getStroke() === styleEmpty) {
+                return this;
+              }
+            }
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(x2, y2);
+            ctx.lineTo(x3, y3);
+            ctx.lineTo(x4, y4);
+            ctx.closePath();
+            if (doFill) {
+              ctx.fill();
+            }
+            if (doStroke) {
+              ctx.stroke();
+            }
+            return this;
+          };
+
+          _main.default.Renderer2D.prototype.rect = function(args) {
+            var x = args[0];
+            var y = args[1];
+            var w = args[2];
+            var h = args[3];
+            var tl = args[4];
+            var tr = args[5];
+            var br = args[6];
+            var bl = args[7];
+            var ctx = this.drawingContext;
+            var doFill = this._doFill,
+              doStroke = this._doStroke;
+            if (doFill && !doStroke) {
+              if (this._getFill() === styleEmpty) {
+                return this;
+              }
+            } else if (!doFill && doStroke) {
+              if (this._getStroke() === styleEmpty) {
+                return this;
+              }
+            }
+            ctx.beginPath();
+
+            if (typeof tl === 'undefined') {
+              // No rounded corners
+              ctx.rect(x, y, w, h);
+            } else {
+              // At least one rounded corner
+              // Set defaults when not specified
+              if (typeof tr === 'undefined') {
+                tr = tl;
+              }
+              if (typeof br === 'undefined') {
+                br = tr;
+              }
+              if (typeof bl === 'undefined') {
+                bl = br;
+              }
+
+              // corner rounding must always be positive
+              var absW = Math.abs(w);
+              var absH = Math.abs(h);
+              var hw = absW / 2;
+              var hh = absH / 2;
+
+              // Clip radii
+              if (absW < 2 * tl) {
+                tl = hw;
+              }
+              if (absH < 2 * tl) {
+                tl = hh;
+              }
+              if (absW < 2 * tr) {
+                tr = hw;
+              }
+              if (absH < 2 * tr) {
+                tr = hh;
+              }
+              if (absW < 2 * br) {
+                br = hw;
+              }
+              if (absH < 2 * br) {
+                br = hh;
+              }
+              if (absW < 2 * bl) {
+                bl = hw;
+              }
+              if (absH < 2 * bl) {
+                bl = hh;
+              }
+
+              // Draw shape
+              ctx.beginPath();
+              ctx.moveTo(x + tl, y);
+              ctx.arcTo(x + w, y, x + w, y + h, tr);
+              ctx.arcTo(x + w, y + h, x, y + h, br);
+              ctx.arcTo(x, y + h, x, y, bl);
+              ctx.arcTo(x, y, x + w, y, tl);
+              ctx.closePath();
+            }
+            if (this._doFill) {
+              ctx.fill();
+            }
+            if (this._doStroke) {
+              ctx.stroke();
+            }
+            return this;
+          };
+
+          _main.default.Renderer2D.prototype.triangle = function(args) {
