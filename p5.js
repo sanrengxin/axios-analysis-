@@ -54332,3 +54332,124 @@
                   } else {
                     this.drawingContext.lineTo(vertices[i][0], vertices[i][1]);
                   }
+                } else {
+                  this.drawingContext.quadraticCurveTo(
+                    vertices[i][0],
+                    vertices[i][1],
+                    vertices[i][2],
+                    vertices[i][3]
+                  );
+                }
+              }
+              this._doFillStrokeClose(closeShape);
+            } else {
+              if (shapeKind === constants.POINTS) {
+                for (i = 0; i < numVerts; i++) {
+                  v = vertices[i];
+                  if (this._doStroke) {
+                    this._pInst.stroke(v[6]);
+                  }
+                  this._pInst.point(v[0], v[1]);
+                }
+              } else if (shapeKind === constants.LINES) {
+                for (i = 0; i + 1 < numVerts; i += 2) {
+                  v = vertices[i];
+                  if (this._doStroke) {
+                    this._pInst.stroke(vertices[i + 1][6]);
+                  }
+                  this._pInst.line(v[0], v[1], vertices[i + 1][0], vertices[i + 1][1]);
+                }
+              } else if (shapeKind === constants.TRIANGLES) {
+                for (i = 0; i + 2 < numVerts; i += 3) {
+                  v = vertices[i];
+                  this.drawingContext.beginPath();
+                  this.drawingContext.moveTo(v[0], v[1]);
+                  this.drawingContext.lineTo(vertices[i + 1][0], vertices[i + 1][1]);
+                  this.drawingContext.lineTo(vertices[i + 2][0], vertices[i + 2][1]);
+                  this.drawingContext.closePath();
+                  if (this._doFill) {
+                    this._pInst.fill(vertices[i + 2][5]);
+                    this.drawingContext.fill();
+                  }
+                  if (this._doStroke) {
+                    this._pInst.stroke(vertices[i + 2][6]);
+                    this.drawingContext.stroke();
+                  }
+                }
+              } else if (shapeKind === constants.TRIANGLE_STRIP) {
+                for (i = 0; i + 1 < numVerts; i++) {
+                  v = vertices[i];
+                  this.drawingContext.beginPath();
+                  this.drawingContext.moveTo(vertices[i + 1][0], vertices[i + 1][1]);
+                  this.drawingContext.lineTo(v[0], v[1]);
+                  if (this._doStroke) {
+                    this._pInst.stroke(vertices[i + 1][6]);
+                  }
+                  if (this._doFill) {
+                    this._pInst.fill(vertices[i + 1][5]);
+                  }
+                  if (i + 2 < numVerts) {
+                    this.drawingContext.lineTo(vertices[i + 2][0], vertices[i + 2][1]);
+                    if (this._doStroke) {
+                      this._pInst.stroke(vertices[i + 2][6]);
+                    }
+                    if (this._doFill) {
+                      this._pInst.fill(vertices[i + 2][5]);
+                    }
+                  }
+                  this._doFillStrokeClose(closeShape);
+                }
+              } else if (shapeKind === constants.TRIANGLE_FAN) {
+                if (numVerts > 2) {
+                  // For performance reasons, try to batch as many of the
+                  // fill and stroke calls as possible.
+                  this.drawingContext.beginPath();
+                  for (i = 2; i < numVerts; i++) {
+                    v = vertices[i];
+                    this.drawingContext.moveTo(vertices[0][0], vertices[0][1]);
+                    this.drawingContext.lineTo(vertices[i - 1][0], vertices[i - 1][1]);
+                    this.drawingContext.lineTo(v[0], v[1]);
+                    this.drawingContext.lineTo(vertices[0][0], vertices[0][1]);
+                    // If the next colour is going to be different, stroke / fill now
+                    if (i < numVerts - 1) {
+                      if (
+                        (this._doFill && v[5] !== vertices[i + 1][5]) ||
+                        (this._doStroke && v[6] !== vertices[i + 1][6])
+                      ) {
+                        if (this._doFill) {
+                          this._pInst.fill(v[5]);
+                          this.drawingContext.fill();
+                          this._pInst.fill(vertices[i + 1][5]);
+                        }
+                        if (this._doStroke) {
+                          this._pInst.stroke(v[6]);
+                          this.drawingContext.stroke();
+                          this._pInst.stroke(vertices[i + 1][6]);
+                        }
+                        this.drawingContext.closePath();
+                        this.drawingContext.beginPath(); // Begin the next one
+                      }
+                    }
+                  }
+                  this._doFillStrokeClose(closeShape);
+                }
+              } else if (shapeKind === constants.QUADS) {
+                for (i = 0; i + 3 < numVerts; i += 4) {
+                  v = vertices[i];
+                  this.drawingContext.beginPath();
+                  this.drawingContext.moveTo(v[0], v[1]);
+                  for (j = 1; j < 4; j++) {
+                    this.drawingContext.lineTo(vertices[i + j][0], vertices[i + j][1]);
+                  }
+                  this.drawingContext.lineTo(v[0], v[1]);
+                  if (this._doFill) {
+                    this._pInst.fill(vertices[i + 3][5]);
+                  }
+                  if (this._doStroke) {
+                    this._pInst.stroke(vertices[i + 3][6]);
+                  }
+                  this._doFillStrokeClose(closeShape);
+                }
+              } else if (shapeKind === constants.QUAD_STRIP) {
+                if (numVerts > 3) {
+                  for (i = 0; i + 1 < numVerts; i += 2) {
