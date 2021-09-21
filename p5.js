@@ -54453,3 +54453,141 @@
               } else if (shapeKind === constants.QUAD_STRIP) {
                 if (numVerts > 3) {
                   for (i = 0; i + 1 < numVerts; i += 2) {
+                    v = vertices[i];
+                    this.drawingContext.beginPath();
+                    if (i + 3 < numVerts) {
+                      this.drawingContext.moveTo(vertices[i + 2][0], vertices[i + 2][1]);
+                      this.drawingContext.lineTo(v[0], v[1]);
+                      this.drawingContext.lineTo(vertices[i + 1][0], vertices[i + 1][1]);
+                      this.drawingContext.lineTo(vertices[i + 3][0], vertices[i + 3][1]);
+                      if (this._doFill) {
+                        this._pInst.fill(vertices[i + 3][5]);
+                      }
+                      if (this._doStroke) {
+                        this._pInst.stroke(vertices[i + 3][6]);
+                      }
+                    } else {
+                      this.drawingContext.moveTo(v[0], v[1]);
+                      this.drawingContext.lineTo(vertices[i + 1][0], vertices[i + 1][1]);
+                    }
+                    this._doFillStrokeClose(closeShape);
+                  }
+                }
+              } else {
+                this.drawingContext.beginPath();
+                this.drawingContext.moveTo(vertices[0][0], vertices[0][1]);
+                for (i = 1; i < numVerts; i++) {
+                  v = vertices[i];
+                  if (v.isVert) {
+                    if (v.moveTo) {
+                      this.drawingContext.moveTo(v[0], v[1]);
+                    } else {
+                      this.drawingContext.lineTo(v[0], v[1]);
+                    }
+                  }
+                }
+                this._doFillStrokeClose(closeShape);
+              }
+            }
+            isCurve = false;
+            isBezier = false;
+            isQuadratic = false;
+            isContour = false;
+            if (closeShape) {
+              vertices.pop();
+            }
+
+            return this;
+          };
+          //////////////////////////////////////////////
+          // SHAPE | Attributes
+          //////////////////////////////////////////////
+
+          _main.default.Renderer2D.prototype.strokeCap = function(cap) {
+            if (
+              cap === constants.ROUND ||
+              cap === constants.SQUARE ||
+              cap === constants.PROJECT
+            ) {
+              this.drawingContext.lineCap = cap;
+            }
+            return this;
+          };
+
+          _main.default.Renderer2D.prototype.strokeJoin = function(join) {
+            if (
+              join === constants.ROUND ||
+              join === constants.BEVEL ||
+              join === constants.MITER
+            ) {
+              this.drawingContext.lineJoin = join;
+            }
+            return this;
+          };
+
+          _main.default.Renderer2D.prototype.strokeWeight = function(w) {
+            if (typeof w === 'undefined' || w === 0) {
+              // hack because lineWidth 0 doesn't work
+              this.drawingContext.lineWidth = 0.0001;
+            } else {
+              this.drawingContext.lineWidth = w;
+            }
+            return this;
+          };
+
+          _main.default.Renderer2D.prototype._getFill = function() {
+            if (!this._cachedFillStyle) {
+              this._cachedFillStyle = this.drawingContext.fillStyle;
+            }
+            return this._cachedFillStyle;
+          };
+
+          _main.default.Renderer2D.prototype._setFill = function(fillStyle) {
+            if (fillStyle !== this._cachedFillStyle) {
+              this.drawingContext.fillStyle = fillStyle;
+              this._cachedFillStyle = fillStyle;
+            }
+          };
+
+          _main.default.Renderer2D.prototype._getStroke = function() {
+            if (!this._cachedStrokeStyle) {
+              this._cachedStrokeStyle = this.drawingContext.strokeStyle;
+            }
+            return this._cachedStrokeStyle;
+          };
+
+          _main.default.Renderer2D.prototype._setStroke = function(strokeStyle) {
+            if (strokeStyle !== this._cachedStrokeStyle) {
+              this.drawingContext.strokeStyle = strokeStyle;
+              this._cachedStrokeStyle = strokeStyle;
+            }
+          };
+
+          //////////////////////////////////////////////
+          // SHAPE | Curves
+          //////////////////////////////////////////////
+          _main.default.Renderer2D.prototype.bezier = function(
+            x1,
+            y1,
+            x2,
+            y2,
+            x3,
+            y3,
+            x4,
+            y4
+          ) {
+            this._pInst.beginShape();
+            this._pInst.vertex(x1, y1);
+            this._pInst.bezierVertex(x2, y2, x3, y3, x4, y4);
+            this._pInst.endShape();
+            return this;
+          };
+
+          _main.default.Renderer2D.prototype.curve = function(
+            x1,
+            y1,
+            x2,
+            y2,
+            x3,
+            y3,
+            x4,
