@@ -54591,3 +54591,126 @@
             x3,
             y3,
             x4,
+            y4
+          ) {
+            this._pInst.beginShape();
+            this._pInst.curveVertex(x1, y1);
+            this._pInst.curveVertex(x2, y2);
+            this._pInst.curveVertex(x3, y3);
+            this._pInst.curveVertex(x4, y4);
+            this._pInst.endShape();
+            return this;
+          };
+
+          //////////////////////////////////////////////
+          // SHAPE | Vertex
+          //////////////////////////////////////////////
+
+          _main.default.Renderer2D.prototype._doFillStrokeClose = function(closeShape) {
+            if (closeShape) {
+              this.drawingContext.closePath();
+            }
+            if (this._doFill) {
+              this.drawingContext.fill();
+            }
+            if (this._doStroke) {
+              this.drawingContext.stroke();
+            }
+          };
+
+          //////////////////////////////////////////////
+          // TRANSFORM
+          //////////////////////////////////////////////
+
+          _main.default.Renderer2D.prototype.applyMatrix = function(a, b, c, d, e, f) {
+            this.drawingContext.transform(a, b, c, d, e, f);
+          };
+
+          _main.default.Renderer2D.prototype.resetMatrix = function() {
+            this.drawingContext.setTransform(1, 0, 0, 1, 0, 0);
+            this.drawingContext.scale(this._pInst._pixelDensity, this._pInst._pixelDensity);
+
+            return this;
+          };
+
+          _main.default.Renderer2D.prototype.rotate = function(rad) {
+            this.drawingContext.rotate(rad);
+          };
+
+          _main.default.Renderer2D.prototype.scale = function(x, y) {
+            this.drawingContext.scale(x, y);
+            return this;
+          };
+
+          _main.default.Renderer2D.prototype.translate = function(x, y) {
+            // support passing a vector as the 1st parameter
+            if (x instanceof _main.default.Vector) {
+              y = x.y;
+              x = x.x;
+            }
+            this.drawingContext.translate(x, y);
+            return this;
+          };
+
+          //////////////////////////////////////////////
+          // TYPOGRAPHY
+          //
+          //////////////////////////////////////////////
+
+          _main.default.Renderer2D.prototype.text = function(
+            str,
+            x,
+            y,
+            maxWidth,
+            maxHeight
+          ) {
+            var baselineHacked;
+
+            // baselineHacked: (HACK)
+            // A temporary fix to conform to Processing's implementation
+            // of BASELINE vertical alignment in a bounding box
+
+            if (typeof maxWidth !== 'undefined') {
+              if (this.drawingContext.textBaseline === constants.BASELINE) {
+                baselineHacked = true;
+                this.drawingContext.textBaseline = constants.TOP;
+              }
+            }
+
+            var p = _main.default.Renderer.prototype.text.apply(this, arguments);
+
+            if (baselineHacked) {
+              this.drawingContext.textBaseline = constants.BASELINE;
+            }
+
+            return p;
+          };
+
+          _main.default.Renderer2D.prototype._renderText = function(p, line, x, y, maxY) {
+            if (y >= maxY) {
+              return; // don't render lines beyond our maxY position
+            }
+
+            p.push(); // fix to #803
+
+            if (!this._isOpenType()) {
+              // a system/browser font
+
+              // no stroke unless specified by user
+              if (this._doStroke && this._strokeSet) {
+                this.drawingContext.strokeText(line, x, y);
+              }
+
+              if (this._doFill) {
+                // if fill hasn't been set by user, use default text fill
+                if (!this._fillSet) {
+                  this._setFill(constants._DEFAULT_TEXT_FILL);
+                }
+
+                this.drawingContext.fillText(line, x, y);
+              }
+            } else {
+              // an opentype font, let it handle the rendering
+
+              this._textFont._renderPath(line, x, y, { renderer: this });
+            }
