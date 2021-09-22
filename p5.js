@@ -54714,3 +54714,131 @@
 
               this._textFont._renderPath(line, x, y, { renderer: this });
             }
+
+            p.pop();
+            return p;
+          };
+
+          _main.default.Renderer2D.prototype.textWidth = function(s) {
+            if (this._isOpenType()) {
+              return this._textFont._textWidth(s, this._textSize);
+            }
+
+            return this.drawingContext.measureText(s).width;
+          };
+
+          _main.default.Renderer2D.prototype._applyTextProperties = function() {
+            var font;
+            var p = this._pInst;
+
+            this._setProperty('_textAscent', null);
+            this._setProperty('_textDescent', null);
+
+            font = this._textFont;
+
+            if (this._isOpenType()) {
+              font = this._textFont.font.familyName;
+              this._setProperty('_textStyle', this._textFont.font.styleName);
+            }
+
+            this.drawingContext.font = ''
+              .concat(this._textStyle || 'normal', ' ')
+              .concat(this._textSize || 12, 'px ')
+              .concat(font || 'sans-serif');
+
+            this.drawingContext.textAlign = this._textAlign;
+            if (this._textBaseline === constants.CENTER) {
+              this.drawingContext.textBaseline = constants._CTX_MIDDLE;
+            } else {
+              this.drawingContext.textBaseline = this._textBaseline;
+            }
+
+            return p;
+          };
+
+          //////////////////////////////////////////////
+          // STRUCTURE
+          //////////////////////////////////////////////
+
+          // a push() operation is in progress.
+          // the renderer should return a 'style' object that it wishes to
+          // store on the push stack.
+          // derived renderers should call the base class' push() method
+          // to fetch the base style object.
+          _main.default.Renderer2D.prototype.push = function() {
+            this.drawingContext.save();
+
+            // get the base renderer style
+            return _main.default.Renderer.prototype.push.apply(this);
+          };
+
+          // a pop() operation is in progress
+          // the renderer is passed the 'style' object that it returned
+          // from its push() method.
+          // derived renderers should pass this object to their base
+          // class' pop method
+          _main.default.Renderer2D.prototype.pop = function(style) {
+            this.drawingContext.restore();
+            // Re-cache the fill / stroke state
+            this._cachedFillStyle = this.drawingContext.fillStyle;
+            this._cachedStrokeStyle = this.drawingContext.strokeStyle;
+
+            _main.default.Renderer.prototype.pop.call(this, style);
+          };
+          var _default = _main.default.Renderer2D;
+          exports.default = _default;
+        },
+        { '../image/filters': 80, './constants': 48, './main': 59, './p5.Renderer': 62 }
+      ],
+      64: [
+        function(_dereq_, module, exports) {
+          'use strict';
+
+          var _main = _interopRequireDefault(_dereq_('./main'));
+          function _interopRequireDefault(obj) {
+            return obj && obj.__esModule ? obj : { default: obj };
+          }
+
+          _main.default.prototype._promisePreloads = [
+            /* Example object
+                                            {
+                                              target: p5.prototype, // The target object to have the method modified
+                                              method: 'loadXAsync', // The name of the preload function to wrap
+                                              addCallbacks: true,   // Whether to automatically handle the p5 callbacks
+                                              legacyPreloadSetup: { // Optional object to generate a legacy-style preload
+                                                method: 'loadX',    // The name of the legacy preload function to generate
+                                                createBaseObject: function() {
+                                                  return {};
+                                                } // An optional function to create the base object for the legacy preload.
+                                              }
+                                            }
+                                            */
+          ];
+
+          _main.default.prototype.registerPromisePreload = function(setup) {
+            _main.default.prototype._promisePreloads.push(setup);
+          };
+
+          var initialSetupRan = false;
+
+          _main.default.prototype._setupPromisePreloads = function() {
+            var _iteratorNormalCompletion = true;
+            var _didIteratorError = false;
+            var _iteratorError = undefined;
+            try {
+              for (
+                var _iterator = this._promisePreloads[Symbol.iterator](), _step;
+                !(_iteratorNormalCompletion = (_step = _iterator.next()).done);
+                _iteratorNormalCompletion = true
+              ) {
+                var preloadSetup = _step.value;
+                var thisValue = this;
+                var method = preloadSetup.method,
+                  addCallbacks = preloadSetup.addCallbacks,
+                  legacyPreloadSetup = preloadSetup.legacyPreloadSetup;
+                // Get the target object that the preload gets assigned to by default,
+                // that is the current object.
+                var target = preloadSetup.target || this;
+                var sourceFunction = target[method].bind(target);
+                // If the target is the p5 prototype, then only set it up on the first run per page
+                if (target === _main.default.prototype) {
