@@ -54842,3 +54842,157 @@
                 var sourceFunction = target[method].bind(target);
                 // If the target is the p5 prototype, then only set it up on the first run per page
                 if (target === _main.default.prototype) {
+                  if (initialSetupRan) {
+                    continue;
+                  }
+                  thisValue = null;
+                  sourceFunction = target[method];
+                }
+
+                // Replace the original method with a wrapped version
+                target[method] = this._wrapPromisePreload(
+                  thisValue,
+                  sourceFunction,
+                  addCallbacks
+                );
+
+                // If a legacy preload is required
+                if (legacyPreloadSetup) {
+                  // What is the name for this legacy preload
+                  var legacyMethod = legacyPreloadSetup.method;
+                  // Wrap the already wrapped Promise-returning method with the legacy setup
+                  target[legacyMethod] = this._legacyPreloadGenerator(
+                    thisValue,
+                    legacyPreloadSetup,
+                    target[method]
+                  );
+                }
+              }
+            } catch (err) {
+              _didIteratorError = true;
+              _iteratorError = err;
+            } finally {
+              try {
+                if (!_iteratorNormalCompletion && _iterator.return != null) {
+                  _iterator.return();
+                }
+              } finally {
+                if (_didIteratorError) {
+                  throw _iteratorError;
+                }
+              }
+            }
+            initialSetupRan = true;
+          };
+
+          _main.default.prototype._wrapPromisePreload = function(
+            thisValue,
+            fn,
+            addCallbacks
+          ) {
+            var replacementFunction = function replacementFunction() {
+              var _this = this;
+              // Uses the current preload counting mechanism for now.
+              this._incrementPreload();
+              // A variable for the callback function if specified
+              var callback = null;
+              // A variable for the errorCallback function if specified
+              var errorCallback = null;
+              for (
+                var _len = arguments.length, args = new Array(_len), _key = 0;
+                _key < _len;
+                _key++
+              ) {
+                args[_key] = arguments[_key];
+              }
+              if (addCallbacks) {
+                // Loop from the end of the args array, pulling up to two functions off of
+                // the end and putting them in fns
+                for (var i = args.length - 1; i >= 0 && !errorCallback; i--) {
+                  if (typeof args[i] !== 'function') {
+                    break;
+                  }
+                  errorCallback = callback;
+                  callback = args.pop();
+                }
+              }
+              // Call the underlying funciton and pass it to Promise.resolve,
+              // so that even if it didn't return a promise we can still
+              // act on the result as if it did.
+              var promise = Promise.resolve(fn.apply(this, args));
+              // Add the optional callbacks
+              if (callback) {
+                promise.then(callback);
+              }
+              if (errorCallback) {
+                promise.catch(errorCallback);
+              }
+              // Decrement the preload counter only if the promise resolved
+              promise.then(function() {
+                return _this._decrementPreload();
+              });
+              // Return the original promise so that neither callback changes the result.
+              return promise;
+            };
+            if (thisValue) {
+              replacementFunction = replacementFunction.bind(thisValue);
+            }
+            return replacementFunction;
+          };
+
+          var objectCreator = function objectCreator() {
+            return {};
+          };
+
+          _main.default.prototype._legacyPreloadGenerator = function(
+            thisValue,
+            legacyPreloadSetup,
+            fn
+          ) {
+            // Create a function that will generate an object before the preload is
+            // launched. For example, if the object should be an array or be an instance
+            // of a specific class.
+            var baseValueGenerator = legacyPreloadSetup.createBaseObject || objectCreator;
+            var returnedFunction = function returnedFunction() {
+              var _this2 = this;
+              // Our then clause needs to run before setup, so we also increment the preload counter
+              this._incrementPreload();
+              // Generate the return value based on the generator.
+              var returnValue = baseValueGenerator.apply(this, arguments);
+              // Run the original wrapper
+              fn.apply(this, arguments).then(function(data) {
+                // Copy each key from the resolved value into returnValue
+                Object.assign(returnValue, data);
+                // Decrement the preload counter, to allow setup to continue.
+                _this2._decrementPreload();
+              });
+              return returnValue;
+            };
+            if (thisValue) {
+              returnedFunction = returnedFunction.bind(thisValue);
+            }
+            return returnedFunction;
+          };
+        },
+        { './main': 59 }
+      ],
+      65: [
+        function(_dereq_, module, exports) {
+          'use strict';
+          Object.defineProperty(exports, '__esModule', { value: true });
+          exports.default = void 0;
+
+          var _main = _interopRequireDefault(_dereq_('./main'));
+          var constants = _interopRequireWildcard(_dereq_('./constants'));
+          _dereq_('./p5.Graphics');
+          _dereq_('./p5.Renderer2D');
+          _dereq_('../webgl/p5.RendererGL');
+          function _getRequireWildcardCache() {
+            if (typeof WeakMap !== 'function') return null;
+            var cache = new WeakMap();
+            _getRequireWildcardCache = function _getRequireWildcardCache() {
+              return cache;
+            };
+            return cache;
+          }
+          function _interopRequireWildcard(obj) {
