@@ -54996,3 +54996,143 @@
             return cache;
           }
           function _interopRequireWildcard(obj) {
+            if (obj && obj.__esModule) {
+              return obj;
+            }
+            if (obj === null || (_typeof(obj) !== 'object' && typeof obj !== 'function')) {
+              return { default: obj };
+            }
+            var cache = _getRequireWildcardCache();
+            if (cache && cache.has(obj)) {
+              return cache.get(obj);
+            }
+            var newObj = {};
+            var hasPropertyDescriptor =
+              Object.defineProperty && Object.getOwnPropertyDescriptor;
+            for (var key in obj) {
+              if (Object.prototype.hasOwnProperty.call(obj, key)) {
+                var desc = hasPropertyDescriptor
+                  ? Object.getOwnPropertyDescriptor(obj, key)
+                  : null;
+                if (desc && (desc.get || desc.set)) {
+                  Object.defineProperty(newObj, key, desc);
+                } else {
+                  newObj[key] = obj[key];
+                }
+              }
+            }
+            newObj.default = obj;
+            if (cache) {
+              cache.set(obj, newObj);
+            }
+            return newObj;
+          }
+          function _interopRequireDefault(obj) {
+            return obj && obj.__esModule ? obj : { default: obj };
+          }
+          function _typeof(obj) {
+            if (typeof Symbol === 'function' && typeof Symbol.iterator === 'symbol') {
+              _typeof = function _typeof(obj) {
+                return typeof obj;
+              };
+            } else {
+              _typeof = function _typeof(obj) {
+                return obj &&
+                  typeof Symbol === 'function' &&
+                  obj.constructor === Symbol &&
+                  obj !== Symbol.prototype
+                  ? 'symbol'
+                  : typeof obj;
+              };
+            }
+            return _typeof(obj);
+          }
+          var defaultId = 'defaultCanvas0'; // this gets set again in createCanvas
+          var defaultClass = 'p5Canvas';
+
+          /**
+           * Creates a canvas element in the document, and sets the dimensions of it
+           * in pixels. This method should be called only once at the start of setup.
+           * Calling <a href="#/p5/createCanvas">createCanvas</a> more than once in a
+           * sketch will result in very unpredictable behavior. If you want more than
+           * one drawing canvas you could use <a href="#/p5/createGraphics">createGraphics</a>
+           * (hidden by default but it can be shown).
+           *
+           * Important note: in 2D mode (i.e. when `p5.Renderer` is not set) the origin (0,0)
+           * is positioned at the top left of the screen. In 3D mode (i.e. when `p5.Renderer`
+           * is set to `WEBGL`), the origin is positioned at the center of the canvas.
+           * See [this issue](https://github.com/processing/p5.js/issues/1545) for more information.
+           *
+           * The system variables width and height are set by the parameters passed to this
+           * function. If <a href="#/p5/createCanvas">createCanvas()</a> is not used, the
+           * window will be given a default size of 100x100 pixels.
+           *
+           * For more ways to position the canvas, see the
+           * <a href='https://github.com/processing/p5.js/wiki/Positioning-your-canvas'>
+           * positioning the canvas</a> wiki page.
+           *
+           * @method createCanvas
+           * @param  {Number} w width of the canvas
+           * @param  {Number} h height of the canvas
+           * @param  {Constant} [renderer] either P2D or WEBGL
+           * @return {p5.Renderer}
+           * @example
+           * <div>
+           * <code>
+           * function setup() {
+           *   createCanvas(100, 50);
+           *   background(153);
+           *   line(0, 0, width, height);
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * Black line extending from top-left of canvas to bottom right.
+           */
+          _main.default.prototype.createCanvas = function(w, h, renderer) {
+            _main.default._validateParameters('createCanvas', arguments);
+            //optional: renderer, otherwise defaults to p2d
+            var r = renderer || constants.P2D;
+            var c;
+
+            if (r === constants.WEBGL) {
+              c = document.getElementById(defaultId);
+              if (c) {
+                //if defaultCanvas already exists
+                c.parentNode.removeChild(c); //replace the existing defaultCanvas
+                var thisRenderer = this._renderer;
+                this._elements = this._elements.filter(function(e) {
+                  return e !== thisRenderer;
+                });
+              }
+              c = document.createElement('canvas');
+              c.id = defaultId;
+              c.classList.add(defaultClass);
+            } else {
+              if (!this._defaultGraphicsCreated) {
+                c = document.createElement('canvas');
+                var i = 0;
+                while (document.getElementById('defaultCanvas'.concat(i))) {
+                  i++;
+                }
+                defaultId = 'defaultCanvas'.concat(i);
+                c.id = defaultId;
+                c.classList.add(defaultClass);
+              } else {
+                // resize the default canvas if new one is created
+                c = this.canvas;
+              }
+            }
+
+            // set to invisible if still in setup (to prevent flashing with manipulate)
+            if (!this._setupDone) {
+              c.dataset.hidden = true; // tag to show later
+              c.style.visibility = 'hidden';
+            }
+
+            if (this._userNode) {
+              // user input node case
+              this._userNode.appendChild(c);
+            } else {
+              //create main element
