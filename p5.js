@@ -55136,3 +55136,130 @@
               this._userNode.appendChild(c);
             } else {
               //create main element
+              if (document.getElementsByTagName('main').length === 0) {
+                var m = document.createElement('main');
+                document.body.appendChild(m);
+              }
+              //append canvas to main
+              document.getElementsByTagName('main')[0].appendChild(c);
+            }
+
+            // Init our graphics renderer
+            //webgl mode
+            if (r === constants.WEBGL) {
+              this._setProperty('_renderer', new _main.default.RendererGL(c, this, true));
+              this._elements.push(this._renderer);
+            } else {
+              //P2D mode
+              if (!this._defaultGraphicsCreated) {
+                this._setProperty('_renderer', new _main.default.Renderer2D(c, this, true));
+                this._defaultGraphicsCreated = true;
+                this._elements.push(this._renderer);
+              }
+            }
+            this._renderer.resize(w, h);
+            this._renderer._applyDefaults();
+            return this._renderer;
+          };
+
+          /**
+           * Resizes the canvas to given width and height. The canvas will be cleared
+           * and draw will be called immediately, allowing the sketch to re-render itself
+           * in the resized canvas.
+           * @method resizeCanvas
+           * @param  {Number} w width of the canvas
+           * @param  {Number} h height of the canvas
+           * @param  {Boolean} [noRedraw] don't redraw the canvas immediately
+           * @example
+           * <div class="norender"><code>
+           * function setup() {
+           *   createCanvas(windowWidth, windowHeight);
+           * }
+           *
+           * function draw() {
+           *   background(0, 100, 200);
+           * }
+           *
+           * function windowResized() {
+           *   resizeCanvas(windowWidth, windowHeight);
+           * }
+           * </code></div>
+           *
+           * @alt
+           * No image displayed.
+           */
+          _main.default.prototype.resizeCanvas = function(w, h, noRedraw) {
+            _main.default._validateParameters('resizeCanvas', arguments);
+            if (this._renderer) {
+              // save canvas properties
+              var props = {};
+              for (var key in this.drawingContext) {
+                var val = this.drawingContext[key];
+                if (_typeof(val) !== 'object' && typeof val !== 'function') {
+                  props[key] = val;
+                }
+              }
+              this._renderer.resize(w, h);
+              this.width = w;
+              this.height = h;
+              // reset canvas properties
+              for (var savedKey in props) {
+                try {
+                  this.drawingContext[savedKey] = props[savedKey];
+                } catch (err) {
+                  // ignore read-only property errors
+                }
+              }
+              if (!noRedraw) {
+                this.redraw();
+              }
+            }
+            //accessible Outputs
+            if (this._addAccsOutput()) {
+              this._updateAccsOutput();
+            }
+          };
+
+          /**
+           * Removes the default canvas for a p5 sketch that doesn't require a canvas
+           * @method noCanvas
+           * @example
+           * <div>
+           * <code>
+           * function setup() {
+           *   noCanvas();
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * no image displayed
+           */
+          _main.default.prototype.noCanvas = function() {
+            if (this.canvas) {
+              this.canvas.parentNode.removeChild(this.canvas);
+            }
+          };
+
+          /**
+           * Creates and returns a new p5.Renderer object. Use this class if you need
+           * to draw into an off-screen graphics buffer. The two parameters define the
+           * width and height in pixels.
+           *
+           * @method createGraphics
+           * @param  {Number} w width of the offscreen graphics buffer
+           * @param  {Number} h height of the offscreen graphics buffer
+           * @param  {Constant} [renderer] either P2D or WEBGL
+           *                               undefined defaults to p2d
+           * @return {p5.Graphics} offscreen graphics buffer
+           * @example
+           * <div>
+           * <code>
+           * let pg;
+           * function setup() {
+           *   createCanvas(100, 100);
+           *   pg = createGraphics(100, 100);
+           * }
+           *
+           * function draw() {
+           *   background(200);
