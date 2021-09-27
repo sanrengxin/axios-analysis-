@@ -55420,3 +55420,144 @@
               };
             }
             return _typeof(obj);
+          }
+          Object.defineProperty(exports, '__esModule', { value: true });
+          exports.default = void 0;
+
+          var _main = _interopRequireDefault(_dereq_('../main'));
+          var constants = _interopRequireWildcard(_dereq_('../constants'));
+          var _helpers = _interopRequireDefault(_dereq_('../helpers'));
+          _dereq_('../friendly_errors/fes_core');
+          _dereq_('../friendly_errors/file_errors');
+          _dereq_('../friendly_errors/validate_params');
+          function _getRequireWildcardCache() {
+            if (typeof WeakMap !== 'function') return null;
+            var cache = new WeakMap();
+            _getRequireWildcardCache = function _getRequireWildcardCache() {
+              return cache;
+            };
+            return cache;
+          }
+          function _interopRequireWildcard(obj) {
+            if (obj && obj.__esModule) {
+              return obj;
+            }
+            if (obj === null || (_typeof(obj) !== 'object' && typeof obj !== 'function')) {
+              return { default: obj };
+            }
+            var cache = _getRequireWildcardCache();
+            if (cache && cache.has(obj)) {
+              return cache.get(obj);
+            }
+            var newObj = {};
+            var hasPropertyDescriptor =
+              Object.defineProperty && Object.getOwnPropertyDescriptor;
+            for (var key in obj) {
+              if (Object.prototype.hasOwnProperty.call(obj, key)) {
+                var desc = hasPropertyDescriptor
+                  ? Object.getOwnPropertyDescriptor(obj, key)
+                  : null;
+                if (desc && (desc.get || desc.set)) {
+                  Object.defineProperty(newObj, key, desc);
+                } else {
+                  newObj[key] = obj[key];
+                }
+              }
+            }
+            newObj.default = obj;
+            if (cache) {
+              cache.set(obj, newObj);
+            }
+            return newObj;
+          }
+          function _interopRequireDefault(obj) {
+            return obj && obj.__esModule ? obj : { default: obj };
+          }
+          /**
+           * @module Shape
+           * @submodule 2D Primitives
+           * @for p5
+           * @requires core
+           * @requires constants
+           */ /**
+           * This function does 3 things:
+           *
+           *   1. Bounds the desired start/stop angles for an arc (in radians) so that:
+           *
+           *          0 <= start < TWO_PI ;    start <= stop < start + TWO_PI
+           *
+           *      This means that the arc rendering functions don't have to be concerned
+           *      with what happens if stop is smaller than start, or if the arc 'goes
+           *      round more than once', etc.: they can just start at start and increase
+           *      until stop and the correct arc will be drawn.
+           *
+           *   2. Optionally adjusts the angles within each quadrant to counter the naive
+           *      scaling of the underlying ellipse up from the unit circle.  Without
+           *      this, the angles become arbitrary when width != height: 45 degrees
+           *      might be drawn at 5 degrees on a 'wide' ellipse, or at 85 degrees on
+           *      a 'tall' ellipse.
+           *
+           *   3. Flags up when start and stop correspond to the same place on the
+           *      underlying ellipse.  This is useful if you want to do something special
+           *      there (like rendering a whole ellipse instead).
+           */ _main.default.prototype._normalizeArcAngles = function(
+            start,
+            stop,
+            width,
+            height,
+            correctForScaling
+          ) {
+            var epsilon = 0.00001; // Smallest visible angle on displays up to 4K.
+            var separation;
+
+            // The order of the steps is important here: each one builds upon the
+            // adjustments made in the steps that precede it.
+
+            // Constrain both start and stop to [0,TWO_PI).
+            start = start - constants.TWO_PI * Math.floor(start / constants.TWO_PI);
+            stop = stop - constants.TWO_PI * Math.floor(stop / constants.TWO_PI);
+
+            // Get the angular separation between the requested start and stop points.
+            //
+            // Technically this separation only matches what gets drawn if
+            // correctForScaling is enabled.  We could add a more complicated calculation
+            // for when the scaling is uncorrected (in which case the drawn points could
+            // end up pushed together or pulled apart quite dramatically relative to what
+            // was requested), but it would make things more opaque for little practical
+            // benefit.
+            //
+            // (If you do disable correctForScaling and find that correspondToSamePoint
+            // is set too aggressively, the easiest thing to do is probably to just make
+            // epsilon smaller...)
+            separation = Math.min(
+              Math.abs(start - stop),
+              constants.TWO_PI - Math.abs(start - stop)
+            );
+
+            // Optionally adjust the angles to counter linear scaling.
+            if (correctForScaling) {
+              if (start <= constants.HALF_PI) {
+                start = Math.atan(width / height * Math.tan(start));
+              } else if (start > constants.HALF_PI && start <= 3 * constants.HALF_PI) {
+                start = Math.atan(width / height * Math.tan(start)) + constants.PI;
+              } else {
+                start = Math.atan(width / height * Math.tan(start)) + constants.TWO_PI;
+              }
+              if (stop <= constants.HALF_PI) {
+                stop = Math.atan(width / height * Math.tan(stop));
+              } else if (stop > constants.HALF_PI && stop <= 3 * constants.HALF_PI) {
+                stop = Math.atan(width / height * Math.tan(stop)) + constants.PI;
+              } else {
+                stop = Math.atan(width / height * Math.tan(stop)) + constants.TWO_PI;
+              }
+            }
+
+            // Ensure that start <= stop < start + TWO_PI.
+            if (start > stop) {
+              stop += constants.TWO_PI;
+            }
+
+            return {
+              start: start,
+              stop: stop,
+              correspondToSamePoint: separation < epsilon
