@@ -55561,3 +55561,129 @@
               start: start,
               stop: stop,
               correspondToSamePoint: separation < epsilon
+            };
+          };
+
+          /**
+           * Draw an arc to the screen. If called with only x, y, w, h, start and stop,
+           * the arc will be drawn and filled as an open pie segment. If a mode parameter
+           * is provided, the arc will be filled like an open semi-circle (OPEN), a closed
+           * semi-circle (CHORD), or as a closed pie segment (PIE). The origin may be changed
+           * with the <a href="#/p5/ellipseMode">ellipseMode()</a> function.
+           *
+           * The arc is always drawn clockwise from wherever start falls to wherever stop
+           * falls on the ellipse.Adding or subtracting TWO_PI to either angle does not
+           * change where they fall. If both start and stop fall at the same place, a full
+           * ellipse will be drawn. Be aware that the y-axis increases in the downward
+           * direction, therefore angles are measured clockwise from the positive
+           * x-direction ("3 o'clock").
+           *
+           * @method arc
+           * @param  {Number} x      x-coordinate of the arc's ellipse
+           * @param  {Number} y      y-coordinate of the arc's ellipse
+           * @param  {Number} w      width of the arc's ellipse by default
+           * @param  {Number} h      height of the arc's ellipse by default
+           * @param  {Number} start  angle to start the arc, specified in radians
+           * @param  {Number} stop   angle to stop the arc, specified in radians
+           * @param  {Constant} [mode] optional parameter to determine the way of drawing
+           *                         the arc. either CHORD, PIE or OPEN
+           * @param  {Number} [detail] optional parameter for WebGL mode only. This is to
+           *                         specify the number of vertices that makes up the
+           *                         perimeter of the arc. Default value is 25.
+           * @chainable
+           *
+           * @example
+           * <div>
+           * <code>
+           * arc(50, 55, 50, 50, 0, HALF_PI);
+           * noFill();
+           * arc(50, 55, 60, 60, HALF_PI, PI);
+           * arc(50, 55, 70, 70, PI, PI + QUARTER_PI);
+           * arc(50, 55, 80, 80, PI + QUARTER_PI, TWO_PI);
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * arc(50, 50, 80, 80, 0, PI + QUARTER_PI);
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * arc(50, 50, 80, 80, 0, PI + QUARTER_PI, OPEN);
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * arc(50, 50, 80, 80, 0, PI + QUARTER_PI, CHORD);
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * arc(50, 50, 80, 80, 0, PI + QUARTER_PI, PIE);
+           * </code>
+           * </div>
+           *
+           * @alt
+           *shattered outline of an ellipse with a quarter of a white circle bottom-right.
+           *white ellipse with top right quarter missing.
+           *white ellipse with black outline with top right missing.
+           *white ellipse with top right missing with black outline around shape.
+           *white ellipse with top right quarter missing with black outline around the shape.
+           */
+          _main.default.prototype.arc = function(x, y, w, h, start, stop, mode, detail) {
+            _main.default._validateParameters('arc', arguments);
+
+            // if the current stroke and fill settings wouldn't result in something
+            // visible, exit immediately
+            if (!this._renderer._doStroke && !this._renderer._doFill) {
+              return this;
+            }
+
+            if (start === stop) {
+              return this;
+            }
+
+            start = this._toRadians(start);
+            stop = this._toRadians(stop);
+
+            // p5 supports negative width and heights for ellipses
+            w = Math.abs(w);
+            h = Math.abs(h);
+
+            var vals = _helpers.default.modeAdjust(x, y, w, h, this._renderer._ellipseMode);
+            var angles = this._normalizeArcAngles(start, stop, vals.w, vals.h, true);
+
+            if (angles.correspondToSamePoint) {
+              // If the arc starts and ends at (near enough) the same place, we choose to
+              // draw an ellipse instead.  This is preferable to faking an ellipse (by
+              // making stop ever-so-slightly less than start + TWO_PI) because the ends
+              // join up to each other rather than at a vertex at the centre (leaving
+              // an unwanted spike in the stroke/fill).
+              this._renderer.ellipse([vals.x, vals.y, vals.w, vals.h, detail]);
+            } else {
+              this._renderer.arc(
+                vals.x,
+                vals.y,
+                vals.w,
+                vals.h,
+                angles.start, // [0, TWO_PI)
+                angles.stop, // [start, start + TWO_PI)
+                mode,
+                detail
+              );
+
+              //accessible Outputs
+              if (this._accessibleOutputs.grid || this._accessibleOutputs.text) {
+                this._accsOutput('arc', [
+                  vals.x,
+                  vals.y,
+                  vals.w,
+                  vals.h,
+                  angles.start,
+                  angles.stop,
+                  mode
+                ]);
