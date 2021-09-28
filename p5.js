@@ -55687,3 +55687,127 @@
                   angles.stop,
                   mode
                 ]);
+              }
+            }
+
+            return this;
+          };
+
+          /**
+           * Draws an ellipse (oval) to the screen. By default, the first two parameters
+           * set the location of the center of the ellipse, and the third and fourth
+           * parameters set the shape's width and height. If no height is specified, the
+           * value of width is used for both the width and height. If a negative height or
+           * width is specified, the absolute value is taken.
+           *
+           * An ellipse with equal width and height is a circle.The origin may be changed
+           * with the <a href="#/p5/ellipseMode">ellipseMode()</a> function.
+           *
+           * @method ellipse
+           * @param  {Number} x x-coordinate of the center of ellipse.
+           * @param  {Number} y y-coordinate of the center of ellipse.
+           * @param  {Number} w width of the ellipse.
+           * @param  {Number} [h] height of the ellipse.
+           * @chainable
+           * @example
+           * <div>
+           * <code>
+           * ellipse(56, 46, 55, 55);
+           * </code>
+           * </div>
+           *
+           * @alt
+           *white ellipse with black outline in middle-right of canvas that is 55x55
+           */
+
+          /**
+           * @method ellipse
+           * @param  {Number} x
+           * @param  {Number} y
+           * @param  {Number} w
+           * @param  {Number} h
+           * @param  {Integer} detail number of radial sectors to draw (for WebGL mode)
+           */
+          _main.default.prototype.ellipse = function(x, y, w, h, detailX) {
+            _main.default._validateParameters('ellipse', arguments);
+            return this._renderEllipse.apply(this, arguments);
+          };
+
+          /**
+           * Draws a circle to the screen. A circle is a simple closed shape. It is the set
+           * of all points in a plane that are at a given distance from a given point,
+           * the centre. This function is a special case of the ellipse() function, where
+           * the width and height of the ellipse are the same. Height and width of the
+           * ellipse correspond to the diameter of the circle. By default, the first two
+           * parameters set the location of the centre of the circle, the third sets the
+           * diameter of the circle.
+           *
+           * @method circle
+           * @param  {Number} x  x-coordinate of the centre of the circle.
+           * @param  {Number} y  y-coordinate of the centre of the circle.
+           * @param  {Number} d  diameter of the circle.
+           * @chainable
+           * @example
+           * <div>
+           * <code>
+           * // Draw a circle at location (30, 30) with a diameter of 20.
+           * circle(30, 30, 20);
+           * </code>
+           * </div>
+           *
+           * @alt
+           * white circle with black outline in mid of canvas that is 55x55.
+           */
+          _main.default.prototype.circle = function() {
+            _main.default._validateParameters('circle', arguments);
+            var args = Array.prototype.slice.call(arguments, 0, 2);
+            args.push(arguments[2]);
+            args.push(arguments[2]);
+            return this._renderEllipse.apply(this, args);
+          };
+
+          // internal method for drawing ellipses (without parameter validation)
+          _main.default.prototype._renderEllipse = function(x, y, w, h, detailX) {
+            // if the current stroke and fill settings wouldn't result in something
+            // visible, exit immediately
+            if (!this._renderer._doStroke && !this._renderer._doFill) {
+              return this;
+            }
+
+            // p5 supports negative width and heights for rects
+            if (w < 0) {
+              w = Math.abs(w);
+            }
+
+            if (typeof h === 'undefined') {
+              // Duplicate 3rd argument if only 3 given.
+              h = w;
+            } else if (h < 0) {
+              h = Math.abs(h);
+            }
+
+            var vals = _helpers.default.modeAdjust(x, y, w, h, this._renderer._ellipseMode);
+            this._renderer.ellipse([vals.x, vals.y, vals.w, vals.h, detailX]);
+
+            //accessible Outputs
+            if (this._accessibleOutputs.grid || this._accessibleOutputs.text) {
+              this._accsOutput('ellipse', [vals.x, vals.y, vals.w, vals.h]);
+            }
+
+            return this;
+          };
+
+          /**
+           * Draws a line (a direct path between two points) to the screen. If called with
+           * only 4 parameters, it will draw a line in 2D with a default width of 1 pixel.
+           * This width can be modified by using the <a href="#/p5/strokeWeight">
+           * strokeWeight()</a> function. A line cannot be filled, therefore the <a
+           * href="#/p5/fill">fill()</a> function will not affect the color of a line. So to
+           * color a line, use the <a href="#/p5/stroke">stroke()</a> function.
+           *
+           * @method line
+           * @param  {Number} x1 the x-coordinate of the first point
+           * @param  {Number} y1 the y-coordinate of the first point
+           * @param  {Number} x2 the x-coordinate of the second point
+           * @param  {Number} y2 the y-coordinate of the second point
+           * @chainable
