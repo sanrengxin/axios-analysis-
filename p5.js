@@ -55811,3 +55811,145 @@
            * @param  {Number} x2 the x-coordinate of the second point
            * @param  {Number} y2 the y-coordinate of the second point
            * @chainable
+           * @example
+           * <div>
+           * <code>
+           * line(30, 20, 85, 75);
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * line(30, 20, 85, 20);
+           * stroke(126);
+           * line(85, 20, 85, 75);
+           * stroke(255);
+           * line(85, 75, 30, 75);
+           * </code>
+           * </div>
+           *
+           * @alt
+           * An example showing a line 78 pixels long running from mid-top to bottom-right of canvas.
+           * An example showing 3 lines of various stroke sizes. Form top, bottom and right sides of a square.
+           */
+
+          /**
+           * @method line
+           * @param  {Number} x1
+           * @param  {Number} y1
+           * @param  {Number} z1 the z-coordinate of the first point
+           * @param  {Number} x2
+           * @param  {Number} y2
+           * @param  {Number} z2 the z-coordinate of the second point
+           * @chainable
+           */
+          _main.default.prototype.line = function() {
+            for (
+              var _len = arguments.length, args = new Array(_len), _key = 0;
+              _key < _len;
+              _key++
+            ) {
+              args[_key] = arguments[_key];
+            }
+            _main.default._validateParameters('line', args);
+
+            if (this._renderer._doStroke) {
+              var _this$_renderer;
+              (_this$_renderer = this._renderer).line.apply(_this$_renderer, args);
+            }
+
+            //accessible Outputs
+            if (this._accessibleOutputs.grid || this._accessibleOutputs.text) {
+              this._accsOutput('line', args);
+            }
+
+            return this;
+          };
+
+          /**
+           * Draws a point, a coordinate in space at the dimension of one pixel.
+           * The first parameter is the horizontal value for the point, the second
+           * param is the vertical value for the point. The color of the point is
+           * changed with the <a href="#/p5/stroke">stroke()</a> function. The size of the point
+           * can be changed with the <a href="#/p5/strokeWeight">strokeWeight()</a> function.
+           *
+           * @method point
+           * @param  {Number} x the x-coordinate
+           * @param  {Number} y the y-coordinate
+           * @param  {Number} [z] the z-coordinate (for WebGL mode)
+           * @chainable
+           * @example
+           * <div>
+           * <code>
+           * point(30, 20);
+           * point(85, 20);
+           * point(85, 75);
+           * point(30, 75);
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * point(30, 20);
+           * point(85, 20);
+           * stroke('purple'); // Change the color
+           * strokeWeight(10); // Make the points 10 pixels in size
+           * point(85, 75);
+           * point(30, 75);
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * let a = createVector(10, 10);
+           * point(a);
+           * let b = createVector(10, 20);
+           * point(b);
+           * point(createVector(20, 10));
+           * point(createVector(20, 20));
+           * </code>
+           * </div>
+           *
+           * @alt
+           * 4 points centered in the middle-right of the canvas.
+           * 2 large points and 2 large purple points centered in the middle-right of the canvas.
+           * Vertices of a square of length 10 pixels towards the top-left of the canvas.
+           */
+
+          /**
+           * @method point
+           * @param {p5.Vector} coordinate_vector the coordinate vector
+           * @chainable
+           */
+          _main.default.prototype.point = function() {
+            for (
+              var _len2 = arguments.length, args = new Array(_len2), _key2 = 0;
+              _key2 < _len2;
+              _key2++
+            ) {
+              args[_key2] = arguments[_key2];
+            }
+            _main.default._validateParameters('point', args);
+
+            if (this._renderer._doStroke) {
+              if (args.length === 1 && args[0] instanceof _main.default.Vector) {
+                this._renderer.point.call(this._renderer, args[0].x, args[0].y, args[0].z);
+              } else {
+                var _this$_renderer2;
+                (_this$_renderer2 = this._renderer).point.apply(_this$_renderer2, args);
+                //accessible Outputs
+                if (this._accessibleOutputs.grid || this._accessibleOutputs.text) {
+                  this._accsOutput('point', args);
+                }
+              }
+            }
+
+            return this;
+          };
+
+          /**
+           * Draws a quad on the canvas. A quad is a quadrilateral, a four sided polygon. It is
+           * similar to a rectangle, but the angles between its edges are not
+           * constrained to ninety degrees. The first pair of parameters (x1,y1)
+           * sets the first vertex and the subsequent pairs should proceed
+           * clockwise or counter-clockwise around the defined shape.
