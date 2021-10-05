@@ -55953,3 +55953,139 @@
            * constrained to ninety degrees. The first pair of parameters (x1,y1)
            * sets the first vertex and the subsequent pairs should proceed
            * clockwise or counter-clockwise around the defined shape.
+           * z-arguments only work when quad() is used in WEBGL mode.
+           *
+           * @method quad
+           * @param {Number} x1 the x-coordinate of the first point
+           * @param {Number} y1 the y-coordinate of the first point
+           * @param {Number} x2 the x-coordinate of the second point
+           * @param {Number} y2 the y-coordinate of the second point
+           * @param {Number} x3 the x-coordinate of the third point
+           * @param {Number} y3 the y-coordinate of the third point
+           * @param {Number} x4 the x-coordinate of the fourth point
+           * @param {Number} y4 the y-coordinate of the fourth point
+           * @chainable
+           * @example
+           * <div>
+           * <code>
+           * quad(38, 31, 86, 20, 69, 63, 30, 76);
+           * </code>
+           * </div>
+           *
+           * @alt
+           *irregular white quadrilateral shape with black outline mid-right of canvas.
+           */
+          /**
+           * @method quad
+           * @param {Number} x1
+           * @param {Number} y1
+           * @param {Number} z1 the z-coordinate of the first point
+           * @param {Number} x2
+           * @param {Number} y2
+           * @param {Number} z2 the z-coordinate of the second point
+           * @param {Number} x3
+           * @param {Number} y3
+           * @param {Number} z3 the z-coordinate of the third point
+           * @param {Number} x4
+           * @param {Number} y4
+           * @param {Number} z4 the z-coordinate of the fourth point
+           * @chainable
+           */
+          _main.default.prototype.quad = function() {
+            for (
+              var _len3 = arguments.length, args = new Array(_len3), _key3 = 0;
+              _key3 < _len3;
+              _key3++
+            ) {
+              args[_key3] = arguments[_key3];
+            }
+            _main.default._validateParameters('quad', args);
+
+            if (this._renderer._doStroke || this._renderer._doFill) {
+              if (this._renderer.isP3D && args.length !== 12) {
+                // if 3D and we weren't passed 12 args, assume Z is 0
+                // prettier-ignore
+                this._renderer.quad.call(
+      this._renderer,
+      args[0], args[1], 0,
+      args[2], args[3], 0,
+      args[4], args[5], 0,
+      args[6], args[7], 0);
+              } else {
+                var _this$_renderer3;
+                (_this$_renderer3 = this._renderer).quad.apply(_this$_renderer3, args);
+                //accessibile outputs
+                if (this._accessibleOutputs.grid || this._accessibleOutputs.text) {
+                  this._accsOutput('quadrilateral', args);
+                }
+              }
+            }
+
+            return this;
+          };
+
+          /**
+           * Draws a rectangle on the canvas. A rectangle is a four-sided closed shape with
+           * every angle at ninety degrees. By default, the first two parameters set
+           * the location of the upper-left corner, the third sets the width, and the
+           * fourth sets the height. The way these parameters are interpreted, may be
+           * changed with the <a href="#/p5/rectMode">rectMode()</a> function.
+           *
+           * The fifth, sixth, seventh and eighth parameters, if specified,
+           * determine corner radius for the top-left, top-right, lower-right and
+           * lower-left corners, respectively. An omitted corner radius parameter is set
+           * to the value of the previously specified radius value in the parameter list.
+           *
+           * @method rect
+           * @param  {Number} x  x-coordinate of the rectangle.
+           * @param  {Number} y  y-coordinate of the rectangle.
+           * @param  {Number} w  width of the rectangle.
+           * @param  {Number} [h]  height of the rectangle.
+           * @param  {Number} [tl] optional radius of top-left corner.
+           * @param  {Number} [tr] optional radius of top-right corner.
+           * @param  {Number} [br] optional radius of bottom-right corner.
+           * @param  {Number} [bl] optional radius of bottom-left corner.
+           * @chainable
+           * @example
+           * <div>
+           * <code>
+           * // Draw a rectangle at location (30, 20) with a width and height of 55.
+           * rect(30, 20, 55, 55);
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * // Draw a rectangle with rounded corners, each having a radius of 20.
+           * rect(30, 20, 55, 55, 20);
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * // Draw a rectangle with rounded corners having the following radii:
+           * // top-left = 20, top-right = 15, bottom-right = 10, bottom-left = 5.
+           * rect(30, 20, 55, 55, 20, 15, 10, 5);
+           * </code>
+           * </div>
+           *
+           * @alt
+           * 55x55 white rect with black outline in mid-right of canvas.
+           * 55x55 white rect with black outline and rounded edges in mid-right of canvas.
+           * 55x55 white rect with black outline and rounded edges of different radii.
+           */
+
+          /**
+           * @method rect
+           * @param  {Number} x
+           * @param  {Number} y
+           * @param  {Number} w
+           * @param  {Number} h
+           * @param  {Integer} [detailX] number of segments in the x-direction (for WebGL mode)
+           * @param  {Integer} [detailY] number of segments in the y-direction (for WebGL mode)
+           * @chainable
+           */
+          _main.default.prototype.rect = function() {
+            _main.default._validateParameters('rect', arguments);
+            return this._renderRect.apply(this, arguments);
+          };
