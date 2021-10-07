@@ -56089,3 +56089,147 @@
             _main.default._validateParameters('rect', arguments);
             return this._renderRect.apply(this, arguments);
           };
+
+          /**
+           * Draws a square to the screen. A square is a four-sided shape with every angle
+           * at ninety degrees, and equal side size. This function is a special case of the
+           * rect() function, where the width and height are the same, and the parameter
+           * is called "s" for side size. By default, the first two parameters set the
+           * location of the upper-left corner, the third sets the side size of the square.
+           * The way these parameters are interpreted, may be changed with the <a
+           * href="#/p5/rectMode">rectMode()</a> function.
+           *
+           * The fourth, fifth, sixth and seventh parameters, if specified,
+           * determine corner radius for the top-left, top-right, lower-right and
+           * lower-left corners, respectively. An omitted corner radius parameter is set
+           * to the value of the previously specified radius value in the parameter list.
+           *
+           * @method square
+           * @param  {Number} x  x-coordinate of the square.
+           * @param  {Number} y  y-coordinate of the square.
+           * @param  {Number} s  side size of the square.
+           * @param  {Number} [tl] optional radius of top-left corner.
+           * @param  {Number} [tr] optional radius of top-right corner.
+           * @param  {Number} [br] optional radius of bottom-right corner.
+           * @param  {Number} [bl] optional radius of bottom-left corner.
+           * @chainable
+           * @example
+           * <div>
+           * <code>
+           * // Draw a square at location (30, 20) with a side size of 55.
+           * square(30, 20, 55);
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * // Draw a square with rounded corners, each having a radius of 20.
+           * square(30, 20, 55, 20);
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * // Draw a square with rounded corners having the following radii:
+           * // top-left = 20, top-right = 15, bottom-right = 10, bottom-left = 5.
+           * square(30, 20, 55, 20, 15, 10, 5);
+           * </code>
+           * </div>
+           *
+           * @alt
+           * 55x55 white square with black outline in mid-right of canvas.
+           * 55x55 white square with black outline and rounded edges in mid-right of canvas.
+           * 55x55 white square with black outline and rounded edges of different radii.
+           */
+          _main.default.prototype.square = function(x, y, s, tl, tr, br, bl) {
+            _main.default._validateParameters('square', arguments);
+            // duplicate width for height in case of square
+            return this._renderRect.call(this, x, y, s, s, tl, tr, br, bl);
+          };
+
+          // internal method to have renderer draw a rectangle
+          _main.default.prototype._renderRect = function() {
+            if (this._renderer._doStroke || this._renderer._doFill) {
+              // duplicate width for height in case only 3 arguments is provided
+              if (arguments.length === 3) {
+                arguments[3] = arguments[2];
+              }
+              var vals = _helpers.default.modeAdjust(
+                arguments[0],
+                arguments[1],
+                arguments[2],
+                arguments[3],
+                this._renderer._rectMode
+              );
+
+              var args = [vals.x, vals.y, vals.w, vals.h];
+              // append the additional arguments (either cornder radii, or
+              // segment details) to the argument list
+              for (var i = 4; i < arguments.length; i++) {
+                args[i] = arguments[i];
+              }
+              this._renderer.rect(args);
+
+              //accessible outputs
+              if (this._accessibleOutputs.grid || this._accessibleOutputs.text) {
+                this._accsOutput('rectangle', [vals.x, vals.y, vals.w, vals.h]);
+              }
+            }
+
+            return this;
+          };
+
+          /**
+           * Draws a triangle to the canvas. A triangle is a plane created by connecting
+           * three points. The first two arguments specify the first point, the middle two
+           * arguments specify the second point, and the last two arguments specify the
+           * third point.
+           *
+           * @method triangle
+           * @param  {Number} x1 x-coordinate of the first point
+           * @param  {Number} y1 y-coordinate of the first point
+           * @param  {Number} x2 x-coordinate of the second point
+           * @param  {Number} y2 y-coordinate of the second point
+           * @param  {Number} x3 x-coordinate of the third point
+           * @param  {Number} y3 y-coordinate of the third point
+           * @chainable
+           * @example
+           * <div>
+           * <code>
+           * triangle(30, 75, 58, 20, 86, 75);
+           * </code>
+           * </div>
+           *
+           *@alt
+           * white triangle with black outline in mid-right of canvas.
+           */
+          _main.default.prototype.triangle = function() {
+            for (
+              var _len4 = arguments.length, args = new Array(_len4), _key4 = 0;
+              _key4 < _len4;
+              _key4++
+            ) {
+              args[_key4] = arguments[_key4];
+            }
+            _main.default._validateParameters('triangle', args);
+
+            if (this._renderer._doStroke || this._renderer._doFill) {
+              this._renderer.triangle(args);
+            }
+
+            //accessible outputs
+            if (this._accessibleOutputs.grid || this._accessibleOutputs.text) {
+              this._accsOutput('triangle', args);
+            }
+
+            return this;
+          };
+          var _default = _main.default;
+          exports.default = _default;
+        },
+        {
+          '../constants': 48,
+          '../friendly_errors/fes_core': 51,
+          '../friendly_errors/file_errors': 52,
+          '../friendly_errors/validate_params': 54,
+          '../helpers': 55,
