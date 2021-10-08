@@ -56233,3 +56233,138 @@
           '../friendly_errors/file_errors': 52,
           '../friendly_errors/validate_params': 54,
           '../helpers': 55,
+          '../main': 59
+        }
+      ],
+      67: [
+        function(_dereq_, module, exports) {
+          'use strict';
+          function _typeof(obj) {
+            if (typeof Symbol === 'function' && typeof Symbol.iterator === 'symbol') {
+              _typeof = function _typeof(obj) {
+                return typeof obj;
+              };
+            } else {
+              _typeof = function _typeof(obj) {
+                return obj &&
+                  typeof Symbol === 'function' &&
+                  obj.constructor === Symbol &&
+                  obj !== Symbol.prototype
+                  ? 'symbol'
+                  : typeof obj;
+              };
+            }
+            return _typeof(obj);
+          }
+          Object.defineProperty(exports, '__esModule', { value: true });
+          exports.default = void 0;
+
+          var _main = _interopRequireDefault(_dereq_('../main'));
+          var constants = _interopRequireWildcard(_dereq_('../constants'));
+          function _getRequireWildcardCache() {
+            if (typeof WeakMap !== 'function') return null;
+            var cache = new WeakMap();
+            _getRequireWildcardCache = function _getRequireWildcardCache() {
+              return cache;
+            };
+            return cache;
+          }
+          function _interopRequireWildcard(obj) {
+            if (obj && obj.__esModule) {
+              return obj;
+            }
+            if (obj === null || (_typeof(obj) !== 'object' && typeof obj !== 'function')) {
+              return { default: obj };
+            }
+            var cache = _getRequireWildcardCache();
+            if (cache && cache.has(obj)) {
+              return cache.get(obj);
+            }
+            var newObj = {};
+            var hasPropertyDescriptor =
+              Object.defineProperty && Object.getOwnPropertyDescriptor;
+            for (var key in obj) {
+              if (Object.prototype.hasOwnProperty.call(obj, key)) {
+                var desc = hasPropertyDescriptor
+                  ? Object.getOwnPropertyDescriptor(obj, key)
+                  : null;
+                if (desc && (desc.get || desc.set)) {
+                  Object.defineProperty(newObj, key, desc);
+                } else {
+                  newObj[key] = obj[key];
+                }
+              }
+            }
+            newObj.default = obj;
+            if (cache) {
+              cache.set(obj, newObj);
+            }
+            return newObj;
+          }
+          function _interopRequireDefault(obj) {
+            return obj && obj.__esModule ? obj : { default: obj };
+          }
+          /**
+           * @module Shape
+           * @submodule Attributes
+           * @for p5
+           * @requires core
+           * @requires constants
+           */ /**
+           * Modifies the location from which ellipses are drawn by changing the way in
+           * which parameters given to <a href="#/p5/ellipse">ellipse()</a>,
+           * <a href="#/p5/circle">circle()</a> and <a href="#/p5/arc">arc()</a> are interpreted.
+           *
+           * The default mode is CENTER, in which the first two parameters are interpreted
+           * as the shape's center point's x and y coordinates respectively, while the third
+           * and fourth parameters are its width and height.
+           *
+           * ellipseMode(RADIUS) also uses the first two parameters as the shape's center
+           * point's x and y coordinates, but uses the third and fourth parameters to
+           * specify half of the shapes's width and height.
+           *
+           * ellipseMode(CORNER) interprets the first two parameters as the upper-left
+           * corner of the shape, while the third and fourth parameters are its width
+           * and height.
+           *
+           * ellipseMode(CORNERS) interprets the first two parameters as the location of
+           * one corner of the ellipse's bounding box, and the third and fourth parameters
+           * as the location of the opposite corner.
+           *
+           * The parameter to this method must be written in ALL CAPS because they are
+           * predefined as constants in ALL CAPS and Javascript is a case-sensitive language.
+           *
+           * @method ellipseMode
+           * @param  {Constant} mode either CENTER, RADIUS, CORNER, or CORNERS
+           * @chainable
+           * @example
+           * <div>
+           * <code>
+           * // Example showing RADIUS and CENTER ellipsemode with 2 overlaying ellipses
+           * ellipseMode(RADIUS);
+           * fill(255);
+           * ellipse(50, 50, 30, 30); // Outer white ellipse
+           * ellipseMode(CENTER);
+           * fill(100);
+           * ellipse(50, 50, 30, 30); // Inner gray ellipse
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * // Example showing CORNER and CORNERS ellipseMode with 2 overlaying ellipses
+           * ellipseMode(CORNER);
+           * fill(255);
+           * ellipse(25, 25, 50, 50); // Outer white ellipse
+           * ellipseMode(CORNERS);
+           * fill(100);
+           * ellipse(25, 25, 50, 50); // Inner gray ellipse
+           * </code>
+           * </div>
+           *
+           * @alt
+           * 60x60 white ellipse and 30x30 grey ellipse with black outlines at center.
+           * 60x60 white ellipse and 30x30 grey ellipse top-right with black outlines.
+           */ _main.default.prototype.ellipseMode = function(m) {
+            _main.default._validateParameters('ellipseMode', arguments);
+            if (
