@@ -56368,3 +56368,150 @@
            */ _main.default.prototype.ellipseMode = function(m) {
             _main.default._validateParameters('ellipseMode', arguments);
             if (
+              m === constants.CORNER ||
+              m === constants.CORNERS ||
+              m === constants.RADIUS ||
+              m === constants.CENTER
+            ) {
+              this._renderer._ellipseMode = m;
+            }
+            return this;
+          };
+
+          /**
+           * Draws all geometry with jagged (aliased) edges. Note that <a href="#/p5/smooth">smooth()</a> is
+           * active by default in 2D mode, so it is necessary to call <a href="#/p5/noSmooth">noSmooth()</a> to disable
+           * smoothing of geometry, images, and fonts. In 3D mode, <a href="#/p5/noSmooth">noSmooth()</a> is enabled
+           * by default, so it is necessary to call <a href="#/p5/smooth">smooth()</a> if you would like
+           * smooth (antialiased) edges on your geometry.
+           *
+           * @method noSmooth
+           * @chainable
+           * @example
+           * <div>
+           * <code>
+           * background(0);
+           * noStroke();
+           * smooth();
+           * ellipse(30, 48, 36, 36);
+           * noSmooth();
+           * ellipse(70, 48, 36, 36);
+           * </code>
+           * </div>
+           *
+           * @alt
+           * 2 pixelated 36x36 white ellipses to left & right of center, black background
+           */
+          _main.default.prototype.noSmooth = function() {
+            this.setAttributes('antialias', false);
+            if (!this._renderer.isP3D) {
+              if ('imageSmoothingEnabled' in this.drawingContext) {
+                this.drawingContext.imageSmoothingEnabled = false;
+              }
+            }
+            return this;
+          };
+
+          /**
+           * Modifies the location from which rectangles are drawn by changing the way
+           * in which parameters given to <a href="#/p5/rect">rect()</a> are interpreted.
+           *
+           * The default mode is CORNER, which interprets the first two parameters as the
+           * upper-left corner of the shape, while the third and fourth parameters are its
+           * width and height.
+           *
+           * rectMode(CORNERS) interprets the first two parameters as the location of
+           * one of the corners, and the third and fourth parameters as the location of
+           * the diagonally opposite corner. Note, the rectangle is drawn between the
+           * coordinates, so it is not neccesary that the first corner be the upper left
+           * corner.
+           *
+           * rectMode(CENTER) interprets the first two parameters as the shape's center
+           * point, while the third and fourth parameters are its width and height.
+           *
+           * rectMode(RADIUS) also uses the first two parameters as the shape's center
+           * point, but uses the third and fourth parameters to specify half of the shape's
+           * width and height respectively.
+           *
+           * The parameter to this method must be written in ALL CAPS because they are
+           * predefined as constants in ALL CAPS and Javascript is a case-sensitive language.
+           *
+           * @method rectMode
+           * @param  {Constant} mode either CORNER, CORNERS, CENTER, or RADIUS
+           * @chainable
+           * @example
+           * <div>
+           * <code>
+           * rectMode(CORNER);
+           * fill(255);
+           * rect(25, 25, 50, 50); // Draw white rectangle using CORNER mode
+           *
+           * rectMode(CORNERS);
+           * fill(100);
+           * rect(25, 25, 50, 50); // Draw gray rectangle using CORNERS mode
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * rectMode(RADIUS);
+           * fill(255);
+           * rect(50, 50, 30, 30); // Draw white rectangle using RADIUS mode
+           *
+           * rectMode(CENTER);
+           * fill(100);
+           * rect(50, 50, 30, 30); // Draw gray rectangle using CENTER mode
+           * </code>
+           * </div>
+           *
+           * @alt
+           * 50x50 white rect at center and 25x25 grey rect in the top left of the other.
+           * 50x50 white rect at center and 25x25 grey rect in the center of the other.
+           */
+          _main.default.prototype.rectMode = function(m) {
+            _main.default._validateParameters('rectMode', arguments);
+            if (
+              m === constants.CORNER ||
+              m === constants.CORNERS ||
+              m === constants.RADIUS ||
+              m === constants.CENTER
+            ) {
+              this._renderer._rectMode = m;
+            }
+            return this;
+          };
+
+          /**
+           * Draws all geometry with smooth (anti-aliased) edges. <a href="#/p5/smooth">smooth()</a> will also
+           * improve image quality of resized images. Note that <a href="#/p5/smooth">smooth()</a> is active by
+           * default in 2D mode; <a href="#/p5/noSmooth">noSmooth()</a> can be used to disable smoothing of geometry,
+           * images, and fonts. In 3D mode, <a href="#/p5/noSmooth">noSmooth()</a> is enabled
+           * by default, so it is necessary to call <a href="#/p5/smooth">smooth()</a> if you would like
+           * smooth (antialiased) edges on your geometry.
+           *
+           * @method smooth
+           * @chainable
+           * @example
+           * <div>
+           * <code>
+           * background(0);
+           * noStroke();
+           * smooth();
+           * ellipse(30, 48, 36, 36);
+           * noSmooth();
+           * ellipse(70, 48, 36, 36);
+           * </code>
+           * </div>
+           *
+           * @alt
+           * 2 pixelated 36x36 white ellipses one left one right of center. On black.
+           */
+          _main.default.prototype.smooth = function() {
+            this.setAttributes('antialias', true);
+            if (!this._renderer.isP3D) {
+              if ('imageSmoothingEnabled' in this.drawingContext) {
+                this.drawingContext.imageSmoothingEnabled = true;
+              }
+            }
+            return this;
+          };
