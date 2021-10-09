@@ -56651,3 +56651,144 @@
            * @alt
            * 3 horizontal black lines. Top line: thin, mid: medium, bottom:thick.
            */
+          _main.default.prototype.strokeWeight = function(w) {
+            _main.default._validateParameters('strokeWeight', arguments);
+            this._renderer.strokeWeight(w);
+            return this;
+          };
+          var _default = _main.default;
+          exports.default = _default;
+        },
+        { '../constants': 48, '../main': 59 }
+      ],
+      68: [
+        function(_dereq_, module, exports) {
+          'use strict';
+          Object.defineProperty(exports, '__esModule', { value: true });
+          exports.default = void 0;
+
+          var _main = _interopRequireDefault(_dereq_('../main'));
+          _dereq_('../friendly_errors/fes_core');
+          _dereq_('../friendly_errors/file_errors');
+          _dereq_('../friendly_errors/validate_params');
+          function _interopRequireDefault(obj) {
+            return obj && obj.__esModule ? obj : { default: obj };
+          }
+          /**
+           * @module Shape
+           * @submodule Curves
+           * @for p5
+           * @requires core
+           */ /**
+           * Draws a cubic Bezier curve on the screen. These curves are defined by a
+           * series of anchor and control points. The first two parameters specify
+           * the first anchor point and the last two parameters specify the other
+           * anchor point, which become the first and last points on the curve. The
+           * middle parameters specify the two control points which define the shape
+           * of the curve. Approximately speaking, control points "pull" the curve
+           * towards them.
+           *
+           * Bezier curves were developed by French automotive engineer Pierre Bezier,
+           * and are commonly used in computer graphics to define gently sloping curves.
+           * See also <a href="#/p5/curve">curve()</a>.
+           *
+           * @method bezier
+           * @param  {Number} x1 x-coordinate for the first anchor point
+           * @param  {Number} y1 y-coordinate for the first anchor point
+           * @param  {Number} x2 x-coordinate for the first control point
+           * @param  {Number} y2 y-coordinate for the first control point
+           * @param  {Number} x3 x-coordinate for the second control point
+           * @param  {Number} y3 y-coordinate for the second control point
+           * @param  {Number} x4 x-coordinate for the second anchor point
+           * @param  {Number} y4 y-coordinate for the second anchor point
+           * @chainable
+           * @example
+           * <div>
+           * <code>
+           * noFill();
+           * stroke(255, 102, 0);
+           * line(85, 20, 10, 10);
+           * line(90, 90, 15, 80);
+           * stroke(0, 0, 0);
+           * bezier(85, 20, 10, 10, 90, 90, 15, 80);
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * background(0, 0, 0);
+           * noFill();
+           * stroke(255);
+           * bezier(250, 250, 0, 100, 100, 0, 100, 0, 0, 0, 100, 0);
+           * </code>
+           * </div>
+           *
+           * @alt
+           * stretched black s-shape in center with orange lines extending from end points.
+           * a white colored curve on black background from the upper-right corner to the lower right corner.
+           */ /**
+           * @method bezier
+           * @param  {Number} x1
+           * @param  {Number} y1
+           * @param  {Number} z1 z-coordinate for the first anchor point
+           * @param  {Number} x2
+           * @param  {Number} y2
+           * @param  {Number} z2 z-coordinate for the first control point
+           * @param  {Number} x3
+           * @param  {Number} y3
+           * @param  {Number} z3 z-coordinate for the second control point
+           * @param  {Number} x4
+           * @param  {Number} y4
+           * @param  {Number} z4 z-coordinate for the second anchor point
+           * @chainable
+           */ _main.default.prototype.bezier = function() {
+            var _this$_renderer;
+            for (
+              var _len = arguments.length, args = new Array(_len), _key = 0;
+              _key < _len;
+              _key++
+            ) {
+              args[_key] = arguments[_key];
+            }
+            _main.default._validateParameters('bezier', args);
+
+            // if the current stroke and fill settings wouldn't result in something
+            // visible, exit immediately
+            if (!this._renderer._doStroke && !this._renderer._doFill) {
+              return this;
+            }
+
+            (_this$_renderer = this._renderer).bezier.apply(_this$_renderer, args);
+
+            return this;
+          };
+
+          /**
+           * Sets the resolution at which Bezier's curve is displayed. The default value is 20.
+           *
+           * Note, This function is only useful when using the WEBGL renderer
+           * as the default canvas renderer does not use this information.
+           *
+           * @method bezierDetail
+           * @param {Number} detail resolution of the curves
+           * @chainable
+           * @example
+           * <div modernizr='webgl'>
+           * <code>
+           * function setup() {
+           *   createCanvas(100, 100, WEBGL);
+           *   noFill();
+           *   bezierDetail(5);
+           * }
+           *
+           * function draw() {
+           *   background(200);
+           *   // prettier-ignore
+           *   bezier(-40, -40, 0,
+           *           90, -40, 0,
+           *          -90,  40, 0,
+           *           40,  40, 0);
+           * }
+           * </code>
+           * </div>
+           *
