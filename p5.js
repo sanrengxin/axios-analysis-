@@ -56515,3 +56515,139 @@
             }
             return this;
           };
+
+          /**
+           * Sets the style for rendering line endings. These ends are either rounded,
+           * squared or extended, each of which specified with the corresponding
+           * parameters: ROUND, SQUARE and PROJECT. The default cap is ROUND.
+           *
+           * The parameter to this method must be written in ALL CAPS because they are
+           * predefined as constants in ALL CAPS and Javascript is a case-sensitive language.
+           *
+           * @method strokeCap
+           * @param  {Constant} cap either ROUND, SQUARE or PROJECT
+           * @chainable
+           * @example
+           * <div>
+           * <code>
+           * // Example of different strokeCaps
+           * strokeWeight(12.0);
+           * strokeCap(ROUND);
+           * line(20, 30, 80, 30);
+           * strokeCap(SQUARE);
+           * line(20, 50, 80, 50);
+           * strokeCap(PROJECT);
+           * line(20, 70, 80, 70);
+           * </code>
+           * </div>
+           *
+           * @alt
+           * 3 lines. Top line: rounded ends, mid: squared, bottom:longer squared ends.
+           */
+          _main.default.prototype.strokeCap = function(cap) {
+            _main.default._validateParameters('strokeCap', arguments);
+            if (
+              cap === constants.ROUND ||
+              cap === constants.SQUARE ||
+              cap === constants.PROJECT
+            ) {
+              this._renderer.strokeCap(cap);
+            }
+            return this;
+          };
+
+          /**
+           * Sets the style of the joints which connect line segments. These joints
+           * are either mitered, beveled or rounded and specified with the
+           * corresponding parameters MITER, BEVEL and ROUND. The default joint is
+           * MITER.
+           *
+           * The parameter to this method must be written in ALL CAPS because they are
+           * predefined as constants in ALL CAPS and Javascript is a case-sensitive language.
+           *
+           * @method strokeJoin
+           * @param  {Constant} join either MITER, BEVEL, ROUND
+           * @chainable
+           * @example
+           * <div>
+           * <code>
+           * // Example of MITER type of joints
+           * noFill();
+           * strokeWeight(10.0);
+           * strokeJoin(MITER);
+           * beginShape();
+           * vertex(35, 20);
+           * vertex(65, 50);
+           * vertex(35, 80);
+           * endShape();
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * // Example of BEVEL type of joints
+           * noFill();
+           * strokeWeight(10.0);
+           * strokeJoin(BEVEL);
+           * beginShape();
+           * vertex(35, 20);
+           * vertex(65, 50);
+           * vertex(35, 80);
+           * endShape();
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * // Example of ROUND type of joints
+           * noFill();
+           * strokeWeight(10.0);
+           * strokeJoin(ROUND);
+           * beginShape();
+           * vertex(35, 20);
+           * vertex(65, 50);
+           * vertex(35, 80);
+           * endShape();
+           * </code>
+           * </div>
+           *
+           * @alt
+           * Right-facing arrowhead shape with pointed tip in center of canvas.
+           * Right-facing arrowhead shape with flat tip in center of canvas.
+           * Right-facing arrowhead shape with rounded tip in center of canvas.
+           */
+          _main.default.prototype.strokeJoin = function(join) {
+            _main.default._validateParameters('strokeJoin', arguments);
+            if (
+              join === constants.ROUND ||
+              join === constants.BEVEL ||
+              join === constants.MITER
+            ) {
+              this._renderer.strokeJoin(join);
+            }
+            return this;
+          };
+
+          /**
+           * Sets the width of the stroke used for lines, points and the border around
+           * shapes. All widths are set in units of pixels.
+           *
+           * @method strokeWeight
+           * @param  {Number} weight the weight of the stroke (in pixels)
+           * @chainable
+           * @example
+           * <div>
+           * <code>
+           * // Example of different stroke weights
+           * strokeWeight(1); // Default
+           * line(20, 20, 80, 20);
+           * strokeWeight(4); // Thicker
+           * line(20, 40, 80, 40);
+           * strokeWeight(10); // Beastly
+           * line(20, 70, 80, 70);
+           * </code>
+           * </div>
+           *
+           * @alt
+           * 3 horizontal black lines. Top line: thin, mid: medium, bottom:thick.
+           */
