@@ -56792,3 +56792,149 @@
            * </code>
            * </div>
            *
+           * @alt
+           * stretched black s-shape with a low level of bezier detail
+           */
+          _main.default.prototype.bezierDetail = function(d) {
+            _main.default._validateParameters('bezierDetail', arguments);
+            this._bezierDetail = d;
+            return this;
+          };
+
+          /**
+    * Given the x or y co-ordinate values of control and anchor points of a bezier
+    * curve, it evaluates the x or y coordinate of the bezier at position t. The
+    * parameters a and d are the x or y coordinates of first and last points on the
+    * curve while b and c are of the control points.The final parameter t is the
+    * position of the resultant point which is given between 0 and 1.
+    * This can be done once with the x coordinates and a second time
+    * with the y coordinates to get the location of a bezier curve at t.
+    *
+    * @method bezierPoint
+    * @param {Number} a coordinate of first point on the curve
+    * @param {Number} b coordinate of first control point
+    * @param {Number} c coordinate of second control point
+    * @param {Number} d coordinate of second point on the curve
+    * @param {Number} t value between 0 and 1
+    * @return {Number} the value of the Bezier at position t
+    * @example
+    * <div>
+    * <code>
+    * noFill();
+    * let x1 = 85,
+     x2 = 10,
+     x3 = 90,
+     x4 = 15;
+    * let y1 = 20,
+     y2 = 10,
+     y3 = 90,
+     y4 = 80;
+    * bezier(x1, y1, x2, y2, x3, y3, x4, y4);
+    * fill(255);
+    * let steps = 10;
+    * for (let i = 0; i <= steps; i++) {
+    *   let t = i / steps;
+    *   let x = bezierPoint(x1, x2, x3, x4, t);
+    *   let y = bezierPoint(y1, y2, y3, y4, t);
+    *   circle(x, y, 5);
+    * }
+    * </code>
+    * </div>
+    *
+    * @alt
+    * 10 points plotted on a given bezier at equal distances.
+    */
+          _main.default.prototype.bezierPoint = function(a, b, c, d, t) {
+            _main.default._validateParameters('bezierPoint', arguments);
+
+            var adjustedT = 1 - t;
+            return (
+              Math.pow(adjustedT, 3) * a +
+              3 * Math.pow(adjustedT, 2) * t * b +
+              3 * adjustedT * Math.pow(t, 2) * c +
+              Math.pow(t, 3) * d
+            );
+          };
+
+          /**
+           * Evaluates the tangent to the Bezier at position t for points a, b, c, d.
+           * The parameters a and d are the first and last points
+           * on the curve, and b and c are the control points.
+           * The final parameter t varies between 0 and 1.
+           *
+           * @method bezierTangent
+           * @param {Number} a coordinate of first point on the curve
+           * @param {Number} b coordinate of first control point
+           * @param {Number} c coordinate of second control point
+           * @param {Number} d coordinate of second point on the curve
+           * @param {Number} t value between 0 and 1
+           * @return {Number} the tangent at position t
+           * @example
+           * <div>
+           * <code>
+           * noFill();
+           * bezier(85, 20, 10, 10, 90, 90, 15, 80);
+           * let steps = 6;
+           * fill(255);
+           * for (let i = 0; i <= steps; i++) {
+           *   let t = i / steps;
+           *   // Get the location of the point
+           *   let x = bezierPoint(85, 10, 90, 15, t);
+           *   let y = bezierPoint(20, 10, 90, 80, t);
+           *   // Get the tangent points
+           *   let tx = bezierTangent(85, 10, 90, 15, t);
+           *   let ty = bezierTangent(20, 10, 90, 80, t);
+           *   // Calculate an angle from the tangent points
+           *   let a = atan2(ty, tx);
+           *   a += PI;
+           *   stroke(255, 102, 0);
+           *   line(x, y, cos(a) * 30 + x, sin(a) * 30 + y);
+           *   // The following line of code makes a line
+           *   // inverse of the above line
+           *   //line(x, y, cos(a)*-30 + x, sin(a)*-30 + y);
+           *   stroke(0);
+           *   ellipse(x, y, 5, 5);
+           * }
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * noFill();
+           * bezier(85, 20, 10, 10, 90, 90, 15, 80);
+           * stroke(255, 102, 0);
+           * let steps = 16;
+           * for (let i = 0; i <= steps; i++) {
+           *   let t = i / steps;
+           *   let x = bezierPoint(85, 10, 90, 15, t);
+           *   let y = bezierPoint(20, 10, 90, 80, t);
+           *   let tx = bezierTangent(85, 10, 90, 15, t);
+           *   let ty = bezierTangent(20, 10, 90, 80, t);
+           *   let a = atan2(ty, tx);
+           *   a -= HALF_PI;
+           *   line(x, y, cos(a) * 8 + x, sin(a) * 8 + y);
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * s-shaped line with 6 short orange lines showing the tangents at those points.
+           * s-shaped line with 6 short orange lines showing lines coming out the underside of the bezier.
+           */
+          _main.default.prototype.bezierTangent = function(a, b, c, d, t) {
+            _main.default._validateParameters('bezierTangent', arguments);
+
+            var adjustedT = 1 - t;
+            return (
+              3 * d * Math.pow(t, 2) -
+              3 * c * Math.pow(t, 2) +
+              6 * c * adjustedT * t -
+              6 * b * adjustedT * t +
+              3 * b * Math.pow(adjustedT, 2) -
+              3 * a * Math.pow(adjustedT, 2)
+            );
+          };
+
+          /**
+           * Draws a curved line on the screen between two points, given as the
+           * middle four parameters. The first two parameters are a control point, as
