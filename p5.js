@@ -56938,3 +56938,151 @@
           /**
            * Draws a curved line on the screen between two points, given as the
            * middle four parameters. The first two parameters are a control point, as
+           * if the curve came from this point even though it's not drawn. The last
+           * two parameters similarly describe the other control point. <br /><br />
+           * Longer curves can be created by putting a series of <a href="#/p5/curve">curve()</a> functions
+           * together or using <a href="#/p5/curveVertex">curveVertex()</a>. An additional function called
+           * <a href="#/p5/curveTightness">curveTightness()</a> provides control for the visual quality of the curve.
+           * The <a href="#/p5/curve">curve()</a> function is an implementation of Catmull-Rom splines.
+           *
+           * @method curve
+           * @param  {Number} x1 x-coordinate for the beginning control point
+           * @param  {Number} y1 y-coordinate for the beginning control point
+           * @param  {Number} x2 x-coordinate for the first point
+           * @param  {Number} y2 y-coordinate for the first point
+           * @param  {Number} x3 x-coordinate for the second point
+           * @param  {Number} y3 y-coordinate for the second point
+           * @param  {Number} x4 x-coordinate for the ending control point
+           * @param  {Number} y4 y-coordinate for the ending control point
+           * @chainable
+           * @example
+           * <div>
+           * <code>
+           * noFill();
+           * stroke(255, 102, 0);
+           * curve(5, 26, 5, 26, 73, 24, 73, 61);
+           * stroke(0);
+           * curve(5, 26, 73, 24, 73, 61, 15, 65);
+           * stroke(255, 102, 0);
+           * curve(73, 24, 73, 61, 15, 65, 15, 65);
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * // Define the curve points as JavaScript objects
+           * let p1 = { x: 5, y: 26 };
+           * let p2 = { x: 73, y: 24 };
+           * let p3 = { x: 73, y: 61 };
+           * let p4 = { x: 15, y: 65 };
+           * noFill();
+           * stroke(255, 102, 0);
+           * curve(p1.x, p1.y, p1.x, p1.y, p2.x, p2.y, p3.x, p3.y);
+           * stroke(0);
+           * curve(p1.x, p1.y, p2.x, p2.y, p3.x, p3.y, p4.x, p4.y);
+           * stroke(255, 102, 0);
+           * curve(p2.x, p2.y, p3.x, p3.y, p4.x, p4.y, p4.x, p4.y);
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * noFill();
+           * stroke(255, 102, 0);
+           * curve(5, 26, 0, 5, 26, 0, 73, 24, 0, 73, 61, 0);
+           * stroke(0);
+           * curve(5, 26, 0, 73, 24, 0, 73, 61, 0, 15, 65, 0);
+           * stroke(255, 102, 0);
+           * curve(73, 24, 0, 73, 61, 0, 15, 65, 0, 15, 65, 0);
+           * </code>
+           * </div>
+           *
+           * @alt
+           * horseshoe shape with orange ends facing left and black curved center.
+           * horseshoe shape with orange ends facing left and black curved center.
+           * curving black and orange lines.
+           */
+
+          /**
+           * @method curve
+           * @param  {Number} x1
+           * @param  {Number} y1
+           * @param  {Number} z1 z-coordinate for the beginning control point
+           * @param  {Number} x2
+           * @param  {Number} y2
+           * @param  {Number} z2 z-coordinate for the first point
+           * @param  {Number} x3
+           * @param  {Number} y3
+           * @param  {Number} z3 z-coordinate for the second point
+           * @param  {Number} x4
+           * @param  {Number} y4
+           * @param  {Number} z4 z-coordinate for the ending control point
+           * @chainable
+           */
+          _main.default.prototype.curve = function() {
+            for (
+              var _len2 = arguments.length, args = new Array(_len2), _key2 = 0;
+              _key2 < _len2;
+              _key2++
+            ) {
+              args[_key2] = arguments[_key2];
+            }
+            _main.default._validateParameters('curve', args);
+
+            if (this._renderer._doStroke) {
+              var _this$_renderer2;
+              (_this$_renderer2 = this._renderer).curve.apply(_this$_renderer2, args);
+            }
+
+            return this;
+          };
+
+          /**
+           * Sets the resolution at which curves display. The default value is 20 while
+           * the minimum value is 3.
+           *
+           * This function is only useful when using the WEBGL renderer
+           * as the default canvas renderer does not use this
+           * information.
+           *
+           * @method curveDetail
+           * @param {Number} resolution resolution of the curves
+           * @chainable
+           * @example
+           * <div modernizr='webgl'>
+           * <code>
+           * function setup() {
+           *   createCanvas(100, 100, WEBGL);
+           *
+           *   curveDetail(5);
+           * }
+           * function draw() {
+           *   background(200);
+           *
+           *   curve(250, 600, 0, -30, 40, 0, 30, 30, 0, -250, 600, 0);
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * white arch shape with a low level of curve detail.
+           */
+          _main.default.prototype.curveDetail = function(d) {
+            _main.default._validateParameters('curveDetail', arguments);
+            if (d < 3) {
+              this._curveDetail = 3;
+            } else {
+              this._curveDetail = d;
+            }
+            return this;
+          };
+
+          /**
+           * Modifies the quality of forms created with <a href="#/p5/curve">curve()</a>
+           * and <a href="#/p5/curveVertex">curveVertex()</a>.The parameter tightness
+           * determines how the curve fits to the vertex points. The value 0.0 is the
+           * default value for tightness (this value defines the curves to be Catmull-Rom
+           * splines) and the value 1.0 connects all the points with straight lines.
+           * Values within the range -5.0 and 5.0 will deform the curves but will leave
+           * them recognizable and as values increase in magnitude, they will continue to deform.
+           *
