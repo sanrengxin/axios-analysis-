@@ -57086,3 +57086,129 @@
            * Values within the range -5.0 and 5.0 will deform the curves but will leave
            * them recognizable and as values increase in magnitude, they will continue to deform.
            *
+           * @method curveTightness
+           * @param {Number} amount amount of deformation from the original vertices
+           * @chainable
+           * @example
+           * <div>
+           * <code>
+           * // Move the mouse left and right to see the curve change
+           * function setup() {
+           *   createCanvas(100, 100);
+           *   noFill();
+           * }
+           *
+           * function draw() {
+           *   background(204);
+           *   let t = map(mouseX, 0, width, -5, 5);
+           *   curveTightness(t);
+           *   beginShape();
+           *   curveVertex(10, 26);
+           *   curveVertex(10, 26);
+           *   curveVertex(83, 24);
+           *   curveVertex(83, 61);
+           *   curveVertex(25, 65);
+           *   curveVertex(25, 65);
+           *   endShape();
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * Line shaped like right-facing arrow,points move with mouse-x and warp shape.
+           */
+          _main.default.prototype.curveTightness = function(t) {
+            _main.default._validateParameters('curveTightness', arguments);
+            this._renderer._curveTightness = t;
+            return this;
+          };
+
+          /**
+           * Evaluates the curve at position t for points a, b, c, d.
+           * The parameter t varies between 0 and 1, a and d are control points
+           * of the curve, and b and c are the start and end points of the curve.
+           * This can be done once with the x coordinates and a second time
+           * with the y coordinates to get the location of a curve at t.
+           *
+           * @method curvePoint
+           * @param {Number} a coordinate of first control point of the curve
+           * @param {Number} b coordinate of first point
+           * @param {Number} c coordinate of second point
+           * @param {Number} d coordinate of second control point
+           * @param {Number} t value between 0 and 1
+           * @return {Number} bezier value at position t
+           * @example
+           * <div>
+           * <code>
+           * noFill();
+           * curve(5, 26, 5, 26, 73, 24, 73, 61);
+           * curve(5, 26, 73, 24, 73, 61, 15, 65);
+           * fill(255);
+           * ellipseMode(CENTER);
+           * let steps = 6;
+           * for (let i = 0; i <= steps; i++) {
+           *   let t = i / steps;
+           *   let x = curvePoint(5, 5, 73, 73, t);
+           *   let y = curvePoint(26, 26, 24, 61, t);
+           *   ellipse(x, y, 5, 5);
+           *   x = curvePoint(5, 73, 73, 15, t);
+           *   y = curvePoint(26, 24, 61, 65, t);
+           *   ellipse(x, y, 5, 5);
+           * }
+           * </code>
+           * </div>
+           *
+           *line hooking down to right-bottom with 13 5x5 white ellipse points
+           */
+          _main.default.prototype.curvePoint = function(a, b, c, d, t) {
+            _main.default._validateParameters('curvePoint', arguments);
+
+            var t3 = t * t * t,
+              t2 = t * t,
+              f1 = -0.5 * t3 + t2 - 0.5 * t,
+              f2 = 1.5 * t3 - 2.5 * t2 + 1.0,
+              f3 = -1.5 * t3 + 2.0 * t2 + 0.5 * t,
+              f4 = 0.5 * t3 - 0.5 * t2;
+            return a * f1 + b * f2 + c * f3 + d * f4;
+          };
+
+          /**
+           * Evaluates the tangent to the curve at position t for points a, b, c, d.
+           * The parameter t varies between 0 and 1, a and d are points on the curve,
+           * and b and c are the control points.
+           *
+           * @method curveTangent
+           * @param {Number} a coordinate of first control point
+           * @param {Number} b coordinate of first point on the curve
+           * @param {Number} c coordinate of second point on the curve
+           * @param {Number} d coordinate of second conrol point
+           * @param {Number} t value between 0 and 1
+           * @return {Number} the tangent at position t
+           * @example
+           * <div>
+           * <code>
+           * noFill();
+           * curve(5, 26, 73, 24, 73, 61, 15, 65);
+           * let steps = 6;
+           * for (let i = 0; i <= steps; i++) {
+           *   let t = i / steps;
+           *   let x = curvePoint(5, 73, 73, 15, t);
+           *   let y = curvePoint(26, 24, 61, 65, t);
+           *   //ellipse(x, y, 5, 5);
+           *   let tx = curveTangent(5, 73, 73, 15, t);
+           *   let ty = curveTangent(26, 24, 61, 65, t);
+           *   let a = atan2(ty, tx);
+           *   a -= PI / 2.0;
+           *   line(x, y, cos(a) * 8 + x, sin(a) * 8 + y);
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * right curving line mid-right of canvas with 7 short lines radiating from it.
+           */
+          _main.default.prototype.curveTangent = function(a, b, c, d, t) {
+            _main.default._validateParameters('curveTangent', arguments);
+
+            var t2 = t * t,
+              f1 = -3 * t2 / 2 + 2 * t - 0.5,
