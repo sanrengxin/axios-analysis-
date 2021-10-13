@@ -57212,3 +57212,132 @@
 
             var t2 = t * t,
               f1 = -3 * t2 / 2 + 2 * t - 0.5,
+              f2 = 9 * t2 / 2 - 5 * t,
+              f3 = -9 * t2 / 2 + 4 * t + 0.5,
+              f4 = 3 * t2 / 2 - t;
+            return a * f1 + b * f2 + c * f3 + d * f4;
+          };
+          var _default = _main.default;
+          exports.default = _default;
+        },
+        {
+          '../friendly_errors/fes_core': 51,
+          '../friendly_errors/file_errors': 52,
+          '../friendly_errors/validate_params': 54,
+          '../main': 59
+        }
+      ],
+      69: [
+        function(_dereq_, module, exports) {
+          'use strict';
+          function _typeof(obj) {
+            if (typeof Symbol === 'function' && typeof Symbol.iterator === 'symbol') {
+              _typeof = function _typeof(obj) {
+                return typeof obj;
+              };
+            } else {
+              _typeof = function _typeof(obj) {
+                return obj &&
+                  typeof Symbol === 'function' &&
+                  obj.constructor === Symbol &&
+                  obj !== Symbol.prototype
+                  ? 'symbol'
+                  : typeof obj;
+              };
+            }
+            return _typeof(obj);
+          }
+          Object.defineProperty(exports, '__esModule', { value: true });
+          exports.default = void 0;
+
+          var _main = _interopRequireDefault(_dereq_('../main'));
+          var constants = _interopRequireWildcard(_dereq_('../constants'));
+          function _getRequireWildcardCache() {
+            if (typeof WeakMap !== 'function') return null;
+            var cache = new WeakMap();
+            _getRequireWildcardCache = function _getRequireWildcardCache() {
+              return cache;
+            };
+            return cache;
+          }
+          function _interopRequireWildcard(obj) {
+            if (obj && obj.__esModule) {
+              return obj;
+            }
+            if (obj === null || (_typeof(obj) !== 'object' && typeof obj !== 'function')) {
+              return { default: obj };
+            }
+            var cache = _getRequireWildcardCache();
+            if (cache && cache.has(obj)) {
+              return cache.get(obj);
+            }
+            var newObj = {};
+            var hasPropertyDescriptor =
+              Object.defineProperty && Object.getOwnPropertyDescriptor;
+            for (var key in obj) {
+              if (Object.prototype.hasOwnProperty.call(obj, key)) {
+                var desc = hasPropertyDescriptor
+                  ? Object.getOwnPropertyDescriptor(obj, key)
+                  : null;
+                if (desc && (desc.get || desc.set)) {
+                  Object.defineProperty(newObj, key, desc);
+                } else {
+                  newObj[key] = obj[key];
+                }
+              }
+            }
+            newObj.default = obj;
+            if (cache) {
+              cache.set(obj, newObj);
+            }
+            return newObj;
+          }
+          function _interopRequireDefault(obj) {
+            return obj && obj.__esModule ? obj : { default: obj };
+          }
+          /**
+           * @module Shape
+           * @submodule Vertex
+           * @for p5
+           * @requires core
+           * @requires constants
+           */ var shapeKind = null;
+          var vertices = [];
+          var contourVertices = [];
+          var isBezier = false;
+          var isCurve = false;
+          var isQuadratic = false;
+          var isContour = false;
+          var isFirstContour = true;
+
+          /**
+           * Use the <a href="#/p5/beginContour">beginContour()</a> and
+           * <a href="#/p5/endContour">endContour()</a> functions to create negative shapes
+           * within shapes such as the center of the letter 'O'. <a href="#/p5/beginContour">beginContour()</a>
+           * begins recording vertices for the shape and <a href="#/p5/endContour">endContour()</a> stops recording.
+           * The vertices that define a negative shape must "wind" in the opposite direction
+           * from the exterior shape. First draw vertices for the exterior clockwise order, then for internal shapes, draw vertices
+           * shape in counter-clockwise.
+           *
+           * These functions can only be used within a <a href="#/p5/beginShape">beginShape()</a>/<a href="#/p5/endShape">endShape()</a> pair and
+           * transformations such as <a href="#/p5/translate">translate()</a>, <a href="#/p5/rotate">rotate()</a>, and <a href="#/p5/scale">scale()</a> do not work
+           * within a <a href="#/p5/beginContour">beginContour()</a>/<a href="#/p5/endContour">endContour()</a> pair. It is also not possible to use
+           * other shapes, such as <a href="#/p5/ellipse">ellipse()</a> or <a href="#/p5/rect">rect()</a> within.
+           *
+           * @method beginContour
+           * @chainable
+           * @example
+           * <div>
+           * <code>
+           * translate(50, 50);
+           * stroke(255, 0, 0);
+           * beginShape();
+           * // Exterior part of shape, clockwise winding
+           * vertex(-40, -40);
+           * vertex(40, -40);
+           * vertex(40, 40);
+           * vertex(-40, 40);
+           * // Interior part of shape, counter-clockwise winding
+           * beginContour();
+           * vertex(-20, -20);
+           * vertex(-20, 20);
