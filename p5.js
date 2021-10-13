@@ -57341,3 +57341,136 @@
            * beginContour();
            * vertex(-20, -20);
            * vertex(-20, 20);
+           * vertex(20, 20);
+           * vertex(20, -20);
+           * endContour();
+           * endShape(CLOSE);
+           * </code>
+           * </div>
+           *
+           * @alt
+           * white rect and smaller grey rect with red outlines in center of canvas.
+           */
+          _main.default.prototype.beginContour = function() {
+            contourVertices = [];
+            isContour = true;
+            return this;
+          };
+
+          /**
+           * Using the <a href="#/p5/beginShape">beginShape()</a> and <a href="#/p5/endShape">endShape()</a> functions allow creating more
+           * complex forms. <a href="#/p5/beginShape">beginShape()</a> begins recording vertices for a shape and
+           * <a href="#/p5/endShape">endShape()</a> stops recording. The value of the kind parameter tells it which
+           * types of shapes to create from the provided vertices. With no mode
+           * specified, the shape can be any irregular polygon.
+           *
+           * The parameters available for <a href="#/p5/beginShape">beginShape()</a> are POINTS, LINES, TRIANGLES,
+           * TRIANGLE_FAN, TRIANGLE_STRIP, QUADS, QUAD_STRIP, and TESS (WebGL only). After calling the
+           * <a href="#/p5/beginShape">beginShape()</a> function, a series of <a href="#/p5/vertex">vertex()</a> commands must follow. To stop
+           * drawing the shape, call <a href="#/p5/endShape">endShape()</a>. Each shape will be outlined with the
+           * current stroke color and filled with the fill color.
+           *
+           * Transformations such as <a href="#/p5/translate">translate()</a>, <a href="#/p5/rotate">rotate()</a>, and <a href="#/p5/scale">scale()</a> do not work
+           * within <a href="#/p5/beginShape">beginShape()</a>. It is also not possible to use other shapes, such as
+           * <a href="#/p5/ellipse">ellipse()</a> or <a href="#/p5/rect">rect()</a> within <a href="#/p5/beginShape">beginShape()</a>.
+           *
+           * @method beginShape
+           * @param  {Constant} [kind] either POINTS, LINES, TRIANGLES, TRIANGLE_FAN
+           *                                TRIANGLE_STRIP, QUADS, QUAD_STRIP or TESS
+           * @chainable
+           * @example
+           * <div>
+           * <code>
+           * beginShape();
+           * vertex(30, 20);
+           * vertex(85, 20);
+           * vertex(85, 75);
+           * vertex(30, 75);
+           * endShape(CLOSE);
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * beginShape(POINTS);
+           * vertex(30, 20);
+           * vertex(85, 20);
+           * vertex(85, 75);
+           * vertex(30, 75);
+           * endShape();
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * beginShape(LINES);
+           * vertex(30, 20);
+           * vertex(85, 20);
+           * vertex(85, 75);
+           * vertex(30, 75);
+           * endShape();
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * noFill();
+           * beginShape();
+           * vertex(30, 20);
+           * vertex(85, 20);
+           * vertex(85, 75);
+           * vertex(30, 75);
+           * endShape();
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * noFill();
+           * beginShape();
+           * vertex(30, 20);
+           * vertex(85, 20);
+           * vertex(85, 75);
+           * vertex(30, 75);
+           * endShape(CLOSE);
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * beginShape(TRIANGLES);
+           * vertex(30, 75);
+           * vertex(40, 20);
+           * vertex(50, 75);
+           * vertex(60, 20);
+           * vertex(70, 75);
+           * vertex(80, 20);
+           * endShape();
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * beginShape(TRIANGLE_STRIP);
+           * vertex(30, 75);
+           * vertex(40, 20);
+           * vertex(50, 75);
+           * vertex(60, 20);
+           * vertex(70, 75);
+           * vertex(80, 20);
+           * vertex(90, 75);
+           * endShape();
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * beginShape(TRIANGLE_FAN);
+           * vertex(57.5, 50);
+           * vertex(57.5, 15);
+           * vertex(92, 50);
+           * vertex(57.5, 85);
+           * vertex(22, 50);
+           * vertex(57.5, 15);
+           * endShape();
+           * </code>
