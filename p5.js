@@ -57594,3 +57594,147 @@
            * endShape();
            * </code>
            * </div>
+           *
+           * <div>
+           * <code>
+           * beginShape();
+           * vertex(30, 20);
+           * bezierVertex(80, 0, 80, 75, 30, 75);
+           * bezierVertex(50, 80, 60, 25, 30, 20);
+           * endShape();
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * function setup() {
+           *   createCanvas(100, 100, WEBGL);
+           *   setAttributes('antialias', true);
+           * }
+           * function draw() {
+           *   orbitControl();
+           *   background(50);
+           *   strokeWeight(4);
+           *   stroke(255);
+           *   point(-25, 30);
+           *   point(25, 30);
+           *   point(25, -30);
+           *   point(-25, -30);
+           *
+           *   strokeWeight(1);
+           *   noFill();
+           *
+           *   beginShape();
+           *   vertex(-25, 30);
+           *   bezierVertex(25, 30, 25, -30, -25, -30);
+           *   endShape();
+           *
+           *   beginShape();
+           *   vertex(-25, 30, 20);
+           *   bezierVertex(25, 30, 20, 25, -30, 20, -25, -30, 20);
+           *   endShape();
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * crescent-shaped line in middle of canvas. Points facing left.
+           * white crescent shape in middle of canvas. Points facing left.
+           * crescent shape in middle of canvas with another crescent shape on positive z-axis.
+           */
+
+          /**
+           * @method bezierVertex
+           * @param  {Number} x2
+           * @param  {Number} y2
+           * @param  {Number} z2 z-coordinate for the first control point (for WebGL mode)
+           * @param  {Number} x3
+           * @param  {Number} y3
+           * @param  {Number} z3 z-coordinate for the second control point (for WebGL mode)
+           * @param  {Number} x4
+           * @param  {Number} y4
+           * @param  {Number} z4 z-coordinate for the anchor point (for WebGL mode)
+           * @chainable
+           */
+          _main.default.prototype.bezierVertex = function() {
+            for (
+              var _len = arguments.length, args = new Array(_len), _key = 0;
+              _key < _len;
+              _key++
+            ) {
+              args[_key] = arguments[_key];
+            }
+            _main.default._validateParameters('bezierVertex', args);
+            if (this._renderer.isP3D) {
+              var _this$_renderer2;
+              (_this$_renderer2 = this._renderer).bezierVertex.apply(
+                _this$_renderer2,
+                args
+              );
+            } else {
+              if (vertices.length === 0) {
+                _main.default._friendlyError(
+                  'vertex() must be used once before calling bezierVertex()',
+                  'bezierVertex'
+                );
+              } else {
+                isBezier = true;
+                var vert = [];
+                for (var i = 0; i < args.length; i++) {
+                  vert[i] = args[i];
+                }
+                vert.isVert = false;
+                if (isContour) {
+                  contourVertices.push(vert);
+                } else {
+                  vertices.push(vert);
+                }
+              }
+            }
+            return this;
+          };
+
+          /**
+           * Specifies vertex coordinates for curves. This function may only
+           * be used between <a href="#/p5/beginShape">beginShape()</a> and <a href="#/p5/endShape">endShape()</a> and only when there
+           * is no MODE parameter specified to <a href="#/p5/beginShape">beginShape()</a>.
+           * For WebGL mode curveVertex() can be used in 2D as well as 3D mode.
+           * 2D mode expects 2 parameters, while 3D mode expects 3 parameters.
+           *
+           * The first and last points in a series of curveVertex() lines will be used to
+           * guide the beginning and end of a the curve. A minimum of four
+           * points is required to draw a tiny curve between the second and
+           * third points. Adding a fifth point with curveVertex() will draw
+           * the curve between the second, third, and fourth points. The
+           * curveVertex() function is an implementation of Catmull-Rom
+           * splines.
+           *
+           * @method curveVertex
+           * @param {Number} x x-coordinate of the vertex
+           * @param {Number} y y-coordinate of the vertex
+           * @chainable
+           * @example
+           * <div>
+           * <code>
+           * strokeWeight(5);
+           * point(84, 91);
+           * point(68, 19);
+           * point(21, 17);
+           * point(32, 91);
+           * strokeWeight(1);
+           *
+           * noFill();
+           * beginShape();
+           * curveVertex(84, 91);
+           * curveVertex(84, 91);
+           * curveVertex(68, 19);
+           * curveVertex(21, 17);
+           * curveVertex(32, 91);
+           * curveVertex(32, 91);
+           * endShape();
+           * </code>
+           * </div>
+           *
+           * @alt
+           * Upside-down u-shape line, mid canvas. left point extends beyond canvas view.
+           */
