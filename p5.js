@@ -57474,3 +57474,123 @@
            * vertex(57.5, 15);
            * endShape();
            * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * beginShape(QUADS);
+           * vertex(30, 20);
+           * vertex(30, 75);
+           * vertex(50, 75);
+           * vertex(50, 20);
+           * vertex(65, 20);
+           * vertex(65, 75);
+           * vertex(85, 75);
+           * vertex(85, 20);
+           * endShape();
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * beginShape(QUAD_STRIP);
+           * vertex(30, 20);
+           * vertex(30, 75);
+           * vertex(50, 20);
+           * vertex(50, 75);
+           * vertex(65, 20);
+           * vertex(65, 75);
+           * vertex(85, 20);
+           * vertex(85, 75);
+           * endShape();
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * beginShape();
+           * vertex(20, 20);
+           * vertex(40, 20);
+           * vertex(40, 40);
+           * vertex(60, 40);
+           * vertex(60, 60);
+           * vertex(20, 60);
+           * endShape(CLOSE);
+           * </code>
+           * </div>
+           *
+           * @alt
+           * white square-shape with black outline in middle-right of canvas.
+           * 4 black points in a square shape in middle-right of canvas.
+           * 2 horizontal black lines. In the top-right and bottom-right of canvas.
+           * 3 line shape with horizontal on top, vertical in middle and horizontal bottom.
+           * square line shape in middle-right of canvas.
+           * 2 white triangle shapes mid-right canvas. left one pointing up and right down.
+           * 5 horizontal interlocking and alternating white triangles in mid-right canvas.
+           * 4 interlocking white triangles in 45 degree rotated square-shape.
+           * 2 white rectangle shapes in mid-right canvas. Both 20x55.
+           * 3 side-by-side white rectangles center rect is smaller in mid-right canvas.
+           * Thick white l-shape with black outline mid-top-left of canvas.
+           */
+          _main.default.prototype.beginShape = function(kind) {
+            _main.default._validateParameters('beginShape', arguments);
+            if (this._renderer.isP3D) {
+              var _this$_renderer;
+              (_this$_renderer = this._renderer).beginShape.apply(
+                _this$_renderer,
+                arguments
+              );
+            } else {
+              if (
+                kind === constants.POINTS ||
+                kind === constants.LINES ||
+                kind === constants.TRIANGLES ||
+                kind === constants.TRIANGLE_FAN ||
+                kind === constants.TRIANGLE_STRIP ||
+                kind === constants.QUADS ||
+                kind === constants.QUAD_STRIP
+              ) {
+                shapeKind = kind;
+              } else {
+                shapeKind = null;
+              }
+
+              vertices = [];
+              contourVertices = [];
+            }
+            return this;
+          };
+
+          /**
+           * Specifies vertex coordinates for Bezier curves. Each call to
+           * bezierVertex() defines the position of two control points and
+           * one anchor point of a Bezier curve, adding a new segment to a
+           * line or shape. For WebGL mode bezierVertex() can be used in 2D
+           * as well as 3D mode. 2D mode expects 6 parameters, while 3D mode
+           * expects 9 parameters (including z coordinates).
+           *
+           * The first time bezierVertex() is used within a <a href="#/p5/beginShape">beginShape()</a>
+           * call, it must be prefaced with a call to <a href="#/p5/vertex">vertex()</a> to set the first anchor
+           * point. This function must be used between <a href="#/p5/beginShape">beginShape()</a> and <a href="#/p5/endShape">endShape()</a>
+           * and only when there is no MODE or POINTS parameter specified to
+           * <a href="#/p5/beginShape">beginShape()</a>.
+           *
+           * @method bezierVertex
+           * @param  {Number} x2 x-coordinate for the first control point
+           * @param  {Number} y2 y-coordinate for the first control point
+           * @param  {Number} x3 x-coordinate for the second control point
+           * @param  {Number} y3 y-coordinate for the second control point
+           * @param  {Number} x4 x-coordinate for the anchor point
+           * @param  {Number} y4 y-coordinate for the anchor point
+           * @chainable
+           *
+           * @example
+           * <div>
+           * <code>
+           * noFill();
+           * beginShape();
+           * vertex(30, 20);
+           * bezierVertex(80, 0, 80, 75, 30, 75);
+           * endShape();
+           * </code>
+           * </div>
