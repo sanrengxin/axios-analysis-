@@ -57738,3 +57738,151 @@
            * @alt
            * Upside-down u-shape line, mid canvas. left point extends beyond canvas view.
            */
+
+          /**
+           * @method curveVertex
+           * @param {Number} x
+           * @param {Number} y
+           * @param {Number} [z] z-coordinate of the vertex (for WebGL mode)
+           * @chainable
+           * @example
+           * <div>
+           * <code>
+           * function setup() {
+           *   createCanvas(100, 100, WEBGL);
+           *   setAttributes('antialias', true);
+           * }
+           * function draw() {
+           *   orbitControl();
+           *   background(50);
+           *   strokeWeight(4);
+           *   stroke(255);
+           *
+           *   point(-25, 25);
+           *   point(-25, 25);
+           *   point(-25, -25);
+           *   point(25, -25);
+           *   point(25, 25);
+           *   point(25, 25);
+           *
+           *   strokeWeight(1);
+           *   noFill();
+           *
+           *   beginShape();
+           *   curveVertex(-25, 25);
+           *   curveVertex(-25, 25);
+           *   curveVertex(-25, -25);
+           *   curveVertex(25, -25);
+           *   curveVertex(25, 25);
+           *   curveVertex(25, 25);
+           *   endShape();
+           *
+           *   beginShape();
+           *   curveVertex(-25, 25, 20);
+           *   curveVertex(-25, 25, 20);
+           *   curveVertex(-25, -25, 20);
+           *   curveVertex(25, -25, 20);
+           *   curveVertex(25, 25, 20);
+           *   curveVertex(25, 25, 20);
+           *   endShape();
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * Upside-down u-shape line, mid canvas with the same shape in positive z-axis.
+           */
+          _main.default.prototype.curveVertex = function() {
+            for (
+              var _len2 = arguments.length, args = new Array(_len2), _key2 = 0;
+              _key2 < _len2;
+              _key2++
+            ) {
+              args[_key2] = arguments[_key2];
+            }
+            _main.default._validateParameters('curveVertex', args);
+            if (this._renderer.isP3D) {
+              var _this$_renderer3;
+              (_this$_renderer3 = this._renderer).curveVertex.apply(_this$_renderer3, args);
+            } else {
+              isCurve = true;
+              this.vertex(args[0], args[1]);
+            }
+            return this;
+          };
+
+          /**
+           * Use the <a href="#/p5/beginContour">beginContour()</a> and <a href="#/p5/endContour">endContour()</a> functions to create negative
+           * shapes within shapes such as the center of the letter 'O'. <a href="#/p5/beginContour">beginContour()</a>
+           * begins recording vertices for the shape and <a href="#/p5/endContour">endContour()</a> stops recording.
+           * The vertices that define a negative shape must "wind" in the opposite
+           * direction from the exterior shape. First draw vertices for the exterior
+           * clockwise order, then for internal shapes, draw vertices
+           * shape in counter-clockwise.
+           *
+           * These functions can only be used within a <a href="#/p5/beginShape">beginShape()</a>/<a href="#/p5/endShape">endShape()</a> pair and
+           * transformations such as <a href="#/p5/translate">translate()</a>, <a href="#/p5/rotate">rotate()</a>, and <a href="#/p5/scale">scale()</a> do not work
+           * within a <a href="#/p5/beginContour">beginContour()</a>/<a href="#/p5/endContour">endContour()</a> pair. It is also not possible to use
+           * other shapes, such as <a href="#/p5/ellipse">ellipse()</a> or <a href="#/p5/rect">rect()</a> within.
+           *
+           * @method endContour
+           * @chainable
+           * @example
+           * <div>
+           * <code>
+           * translate(50, 50);
+           * stroke(255, 0, 0);
+           * beginShape();
+           * // Exterior part of shape, clockwise winding
+           * vertex(-40, -40);
+           * vertex(40, -40);
+           * vertex(40, 40);
+           * vertex(-40, 40);
+           * // Interior part of shape, counter-clockwise winding
+           * beginContour();
+           * vertex(-20, -20);
+           * vertex(-20, 20);
+           * vertex(20, 20);
+           * vertex(20, -20);
+           * endContour();
+           * endShape(CLOSE);
+           * </code>
+           * </div>
+           *
+           * @alt
+           * white rect and smaller grey rect with red outlines in center of canvas.
+           */
+          _main.default.prototype.endContour = function() {
+            var vert = contourVertices[0].slice(); // copy all data
+            vert.isVert = contourVertices[0].isVert;
+            vert.moveTo = false;
+            contourVertices.push(vert);
+
+            // prevent stray lines with multiple contours
+            if (isFirstContour) {
+              vertices.push(vertices[0]);
+              isFirstContour = false;
+            }
+
+            for (var i = 0; i < contourVertices.length; i++) {
+              vertices.push(contourVertices[i]);
+            }
+            return this;
+          };
+
+          /**
+           * The <a href="#/p5/endShape">endShape()</a> function is the companion to <a href="#/p5/beginShape">beginShape()</a> and may only be
+           * called after <a href="#/p5/beginShape">beginShape()</a>. When <a href="#/p5/endshape">endShape()</a> is called, all of image data
+           * defined since the previous call to <a href="#/p5/beginShape">beginShape()</a> is written into the image
+           * buffer. The constant CLOSE as the value for the MODE parameter to close
+           * the shape (to connect the beginning and the end).
+           *
+           * @method endShape
+           * @param  {Constant} [mode] use CLOSE to close the shape
+           * @chainable
+           * @example
+           * <div>
+           * <code>
+           * noFill();
+           *
+           * beginShape();
