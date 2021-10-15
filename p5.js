@@ -57886,3 +57886,153 @@
            * noFill();
            *
            * beginShape();
+           * vertex(20, 20);
+           * vertex(45, 20);
+           * vertex(45, 80);
+           * endShape(CLOSE);
+           *
+           * beginShape();
+           * vertex(50, 20);
+           * vertex(75, 20);
+           * vertex(75, 80);
+           * endShape();
+           * </code>
+           * </div>
+           *
+           * @alt
+           * Triangle line shape with smallest interior angle on bottom and upside-down L.
+           */
+          _main.default.prototype.endShape = function(mode) {
+            _main.default._validateParameters('endShape', arguments);
+            if (this._renderer.isP3D) {
+              this._renderer.endShape(
+                mode,
+                isCurve,
+                isBezier,
+                isQuadratic,
+                isContour,
+                shapeKind
+              );
+            } else {
+              if (vertices.length === 0) {
+                return this;
+              }
+              if (!this._renderer._doStroke && !this._renderer._doFill) {
+                return this;
+              }
+
+              var closeShape = mode === constants.CLOSE;
+
+              // if the shape is closed, the first element is also the last element
+              if (closeShape && !isContour) {
+                vertices.push(vertices[0]);
+              }
+
+              this._renderer.endShape(
+                mode,
+                vertices,
+                isCurve,
+                isBezier,
+                isQuadratic,
+                isContour,
+                shapeKind
+              );
+
+              // Reset some settings
+              isCurve = false;
+              isBezier = false;
+              isQuadratic = false;
+              isContour = false;
+              isFirstContour = true;
+
+              // If the shape is closed, the first element was added as last element.
+              // We must remove it again to prevent the list of vertices from growing
+              // over successive calls to endShape(CLOSE)
+              if (closeShape) {
+                vertices.pop();
+              }
+            }
+            return this;
+          };
+
+          /**
+           * Specifies vertex coordinates for quadratic Bezier curves. Each call to
+           * quadraticVertex() defines the position of one control points and one
+           * anchor point of a Bezier curve, adding a new segment to a line or shape.
+           * The first time quadraticVertex() is used within a <a href="#/p5/beginShape">beginShape()</a> call, it
+           * must be prefaced with a call to <a href="#/p5/vertex">vertex()</a> to set the first anchor point.
+           * For WebGL mode quadraticVertex() can be used in 2D as well as 3D mode.
+           * 2D mode expects 4 parameters, while 3D mode expects 6 parameters
+           * (including z coordinates).
+           *
+           * This function must be used between <a href="#/p5/beginShape">beginShape()</a> and <a href="#/p5/endShape">endShape()</a>
+           * and only when there is no MODE or POINTS parameter specified to
+           * <a href="#/p5/beginShape">beginShape()</a>.
+           *
+           * @method quadraticVertex
+           * @param  {Number} cx x-coordinate for the control point
+           * @param  {Number} cy y-coordinate for the control point
+           * @param  {Number} x3 x-coordinate for the anchor point
+           * @param  {Number} y3 y-coordinate for the anchor point
+           * @chainable
+           *
+           * @example
+           * <div>
+           * <code>
+           * strokeWeight(5);
+           * point(20, 20);
+           * point(80, 20);
+           * point(50, 50);
+           *
+           * noFill();
+           * strokeWeight(1);
+           * beginShape();
+           * vertex(20, 20);
+           * quadraticVertex(80, 20, 50, 50);
+           * endShape();
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * strokeWeight(5);
+           * point(20, 20);
+           * point(80, 20);
+           * point(50, 50);
+           *
+           * point(20, 80);
+           * point(80, 80);
+           * point(80, 60);
+           *
+           * noFill();
+           * strokeWeight(1);
+           * beginShape();
+           * vertex(20, 20);
+           * quadraticVertex(80, 20, 50, 50);
+           * quadraticVertex(20, 80, 80, 80);
+           * vertex(80, 60);
+           * endShape();
+           * </code>
+           * </div>
+           *
+           * @alt
+           * arched-shaped black line with 4 pixel thick stroke weight.
+           * backwards s-shaped black line with 4 pixel thick stroke weight.
+           */
+
+          /**
+           * @method quadraticVertex
+           * @param  {Number} cx
+           * @param  {Number} cy
+           * @param  {Number} cz z-coordinate for the control point (for WebGL mode)
+           * @param  {Number} x3
+           * @param  {Number} y3
+           * @param  {Number} z3 z-coordinate for the anchor point (for WebGL mode)
+           * @chainable
+           *
+           * @example
+           * <div>
+           * <code>
+           * function setup() {
+           *   createCanvas(100, 100, WEBGL);
+           *   setAttributes('antialias', true);
