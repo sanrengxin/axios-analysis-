@@ -58172,3 +58172,130 @@
            * vertex(-10, 10);
            * vertex(0, 35);
            * vertex(10, 10);
+           * vertex(35, 0);
+           * vertex(10, -8);
+           * vertex(0, -35);
+           * vertex(-10, -8);
+           * vertex(-35, 0);
+           * endShape();
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * strokeWeight(3);
+           * stroke(237, 34, 93);
+           * beginShape(LINES);
+           * vertex(10, 35);
+           * vertex(90, 35);
+           * vertex(10, 65);
+           * vertex(90, 65);
+           * vertex(35, 10);
+           * vertex(35, 90);
+           * vertex(65, 10);
+           * vertex(65, 90);
+           * endShape();
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * // Click to change the number of sides.
+           * // In WebGL mode, custom shapes will only
+           * // display hollow fill sections when
+           * // all calls to vertex() use the same z-value.
+           *
+           * let sides = 3;
+           * let angle, px, py;
+           *
+           * function setup() {
+           *   createCanvas(100, 100, WEBGL);
+           *   setAttributes('antialias', true);
+           *   fill(237, 34, 93);
+           *   strokeWeight(3);
+           * }
+           *
+           * function draw() {
+           *   background(200);
+           *   rotateX(frameCount * 0.01);
+           *   rotateZ(frameCount * 0.01);
+           *   ngon(sides, 0, 0, 80);
+           * }
+           *
+           * function mouseClicked() {
+           *   if (sides > 6) {
+           *     sides = 3;
+           *   } else {
+           *     sides++;
+           *   }
+           * }
+           *
+           * function ngon(n, x, y, d) {
+           *   beginShape(TESS);
+           *   for (let i = 0; i < n + 1; i++) {
+           *     angle = TWO_PI / n * i;
+           *     px = x + sin(angle) * d / 2;
+           *     py = y - cos(angle) * d / 2;
+           *     vertex(px, py, 0);
+           *   }
+           *   for (let i = 0; i < n + 1; i++) {
+           *     angle = TWO_PI / n * i;
+           *     px = x + sin(angle) * d / 4;
+           *     py = y - cos(angle) * d / 4;
+           *     vertex(px, py, 0);
+           *   }
+           *   endShape();
+           * }
+           * </code>
+           * </div>
+           * @alt
+           * 4 black points in a square shape in middle-right of canvas.
+           * 4 points making a diamond shape.
+           * 8 points making a star.
+           * 8 points making 4 lines.
+           * A rotating 3D shape with a hollow section in the middle.
+           */
+          /**
+           * @method vertex
+           * @param  {Number} x
+           * @param  {Number} y
+           * @param  {Number} z   z-coordinate of the vertex
+           * @param  {Number} [u] the vertex's texture u-coordinate
+           * @param  {Number} [v] the vertex's texture v-coordinate
+           * @chainable
+           */
+          _main.default.prototype.vertex = function(x, y, moveTo, u, v) {
+            if (this._renderer.isP3D) {
+              var _this$_renderer5;
+              (_this$_renderer5 = this._renderer).vertex.apply(_this$_renderer5, arguments);
+            } else {
+              var vert = [];
+              vert.isVert = true;
+              vert[0] = x;
+              vert[1] = y;
+              vert[2] = 0;
+              vert[3] = 0;
+              vert[4] = 0;
+              vert[5] = this._renderer._getFill();
+              vert[6] = this._renderer._getStroke();
+
+              if (moveTo) {
+                vert.moveTo = moveTo;
+              }
+              if (isContour) {
+                if (contourVertices.length === 0) {
+                  vert.moveTo = true;
+                }
+                contourVertices.push(vert);
+              } else {
+                vertices.push(vert);
+              }
+            }
+            return this;
+          };
+          var _default = _main.default;
+          exports.default = _default;
+        },
+        { '../constants': 48, '../main': 59 }
+      ],
+      70: [
