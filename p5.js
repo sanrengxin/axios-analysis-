@@ -58036,3 +58036,139 @@
            * function setup() {
            *   createCanvas(100, 100, WEBGL);
            *   setAttributes('antialias', true);
+           * }
+           * function draw() {
+           *   orbitControl();
+           *   background(50);
+           *   strokeWeight(4);
+           *   stroke(255);
+           *
+           *   point(-35, -35);
+           *   point(35, -35);
+           *   point(0, 0);
+           *   point(-35, 35);
+           *   point(35, 35);
+           *   point(35, 10);
+           *
+           *   strokeWeight(1);
+           *   noFill();
+           *
+           *   beginShape();
+           *   vertex(-35, -35);
+           *   quadraticVertex(35, -35, 0, 0);
+           *   quadraticVertex(-35, 35, 35, 35);
+           *   vertex(35, 10);
+           *   endShape();
+           *
+           *   beginShape();
+           *   vertex(-35, -35, 20);
+           *   quadraticVertex(35, -35, 20, 0, 0, 20);
+           *   quadraticVertex(-35, 35, 20, 35, 35, 20);
+           *   vertex(35, 10, 20);
+           *   endShape();
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * backwards s-shaped black line with the same s-shaped line in postive z-axis.
+           */
+          _main.default.prototype.quadraticVertex = function() {
+            for (
+              var _len3 = arguments.length, args = new Array(_len3), _key3 = 0;
+              _key3 < _len3;
+              _key3++
+            ) {
+              args[_key3] = arguments[_key3];
+            }
+            _main.default._validateParameters('quadraticVertex', args);
+            if (this._renderer.isP3D) {
+              var _this$_renderer4;
+              (_this$_renderer4 = this._renderer).quadraticVertex.apply(
+                _this$_renderer4,
+                args
+              );
+            } else {
+              //if we're drawing a contour, put the points into an
+              // array for inside drawing
+              if (this._contourInited) {
+                var pt = {};
+                pt.x = args[0];
+                pt.y = args[1];
+                pt.x3 = args[2];
+                pt.y3 = args[3];
+                pt.type = constants.QUADRATIC;
+                this._contourVertices.push(pt);
+
+                return this;
+              }
+              if (vertices.length > 0) {
+                isQuadratic = true;
+                var vert = [];
+                for (var i = 0; i < args.length; i++) {
+                  vert[i] = args[i];
+                }
+                vert.isVert = false;
+                if (isContour) {
+                  contourVertices.push(vert);
+                } else {
+                  vertices.push(vert);
+                }
+              } else {
+                _main.default._friendlyError(
+                  'vertex() must be used once before calling quadraticVertex()',
+                  'quadraticVertex'
+                );
+              }
+            }
+            return this;
+          };
+
+          /**
+           * All shapes are constructed by connecting a series of vertices. <a href="#/p5/vertex">vertex()</a>
+           * is used to specify the vertex coordinates for points, lines, triangles,
+           * quads, and polygons. It is used exclusively within the <a href="#/p5/beginShape">beginShape()</a> and
+           * <a href="#/p5/endShape">endShape()</a> functions.
+           *
+           * @method vertex
+           * @param  {Number} x x-coordinate of the vertex
+           * @param  {Number} y y-coordinate of the vertex
+           * @chainable
+           * @example
+           * <div>
+           * <code>
+           * strokeWeight(3);
+           * beginShape(POINTS);
+           * vertex(30, 20);
+           * vertex(85, 20);
+           * vertex(85, 75);
+           * vertex(30, 75);
+           * endShape();
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * createCanvas(100, 100, WEBGL);
+           * background(240, 240, 240);
+           * fill(237, 34, 93);
+           * noStroke();
+           * beginShape();
+           * vertex(0, 35);
+           * vertex(35, 0);
+           * vertex(0, -35);
+           * vertex(-35, 0);
+           * endShape();
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * createCanvas(100, 100, WEBGL);
+           * background(240, 240, 240);
+           * fill(237, 34, 93);
+           * noStroke();
+           * beginShape();
+           * vertex(-10, 10);
+           * vertex(0, 35);
+           * vertex(10, 10);
