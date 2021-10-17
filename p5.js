@@ -58419,3 +58419,166 @@
       71: [
         function(_dereq_, module, exports) {
           'use strict';
+          Object.defineProperty(exports, '__esModule', { value: true });
+          exports.default = void 0;
+
+          var _main = _interopRequireDefault(_dereq_('./main'));
+          function _interopRequireDefault(obj) {
+            return obj && obj.__esModule ? obj : { default: obj };
+          }
+          /**
+           * @module Structure
+           * @submodule Structure
+           * @for p5
+           * @requires core
+           */ /**
+                                                                                                                                                         * Stops p5.js from continuously executing the code within <a href="#/p5/draw">draw()</a>.
+                                                                                                                                                         * If <a href="#/p5/loop">loop()</a> is called, the code in <a href="#/p5/draw">draw()</a>
+                                                                                                                                                         * begins to run continuously again. If using <a href="#/p5/noLoop">noLoop()</a>
+                                                                                                                                                         * in <a href="#/p5/setup">setup()</a>, it should be the last line inside the block.
+                                                                                                                                                         *
+                                                                                                                                                         * When <a href="#/p5/noLoop">noLoop()</a> is used, it's not possible to manipulate
+                                                                                                                                                         * or access the screen inside event handling functions such as
+                                                                                                                                                         * <a href="#/p5/mousePressed">mousePressed()</a> or
+                                                                                                                                                         * <a href="#/p5/keyPressed">keyPressed()</a>. Instead, use those functions to
+                                                                                                                                                         * call <a href="#/p5/redraw">redraw()</a> or <a href="#/p5/loop">loop()</a>,
+                                                                                                                                                         * which will run <a href="#/p5/draw">draw()</a>, which can update the screen
+                                                                                                                                                         * properly. This means that when <a href="#/p5/noLoop">noLoop()</a> has been
+                                                                                                                                                         * called, no drawing can happen, and functions like <a href="#/p5/saveFrame">saveFrame()</a>
+                                                                                                                                                         * or <a href="#/p5/loadPixels">loadPixels()</a> may not be used.
+                                                                                                                                                         *
+                                                                                                                                                         * Note that if the sketch is resized, <a href="#/p5/redraw">redraw()</a> will
+                                                                                                                                                         * be called to update the sketch, even after <a href="#/p5/noLoop">noLoop()</a>
+                                                                                                                                                         * has been specified. Otherwise, the sketch would enter an odd state until
+                                                                                                                                                         * <a href="#/p5/loop">loop()</a> was called.
+                                                                                                                                                         *
+                                                                                                                                                         * Use <a href="#/p5/isLooping">isLooping()</a> to check current state of loop().
+                                                                                                                                                         *
+                                                                                                                                                         * @method noLoop
+                                                                                                                                                         * @example
+                                                                                                                                                         * <div>
+                                                                                                                                                         * <code>
+                                                                                                                                                         * function setup() {
+                                                                                                                                                         *   createCanvas(100, 100);
+                                                                                                                                                         *   background(200);
+                                                                                                                                                         *   noLoop();
+                                                                                                                                                         * }
+                                                                                                                                                        
+                                                                                                                                                         * function draw() {
+                                                                                                                                                         *   line(10, 10, 90, 90);
+                                                                                                                                                         * }
+                                                                                                                                                         * </code>
+                                                                                                                                                         * </div>
+                                                                                                                                                         *
+                                                                                                                                                         * <div>
+                                                                                                                                                         * <code>
+                                                                                                                                                         * let x = 0;
+                                                                                                                                                         * function setup() {
+                                                                                                                                                         *   createCanvas(100, 100);
+                                                                                                                                                         * }
+                                                                                                                                                         *
+                                                                                                                                                         * function draw() {
+                                                                                                                                                         *   background(204);
+                                                                                                                                                         *   x = x + 0.1;
+                                                                                                                                                         *   if (x > width) {
+                                                                                                                                                         *     x = 0;
+                                                                                                                                                         *   }
+                                                                                                                                                         *   line(x, 0, x, height);
+                                                                                                                                                         * }
+                                                                                                                                                         *
+                                                                                                                                                         * function mousePressed() {
+                                                                                                                                                         *   noLoop();
+                                                                                                                                                         * }
+                                                                                                                                                         *
+                                                                                                                                                         * function mouseReleased() {
+                                                                                                                                                         *   loop();
+                                                                                                                                                         * }
+                                                                                                                                                         * </code>
+                                                                                                                                                         * </div>
+                                                                                                                                                         *
+                                                                                                                                                         * @alt
+                                                                                                                                                         * 113 pixel long line extending from top-left to bottom right of canvas.
+                                                                                                                                                         * horizontal line moves slowly from left. Loops but stops on mouse press.
+                                                                                                                                                         */ _main.default.prototype.noLoop = function() {
+            this._loop = false;
+          };
+
+          /**
+           * By default, p5.js loops through draw() continuously, executing the code within
+           * it. However, the <a href="#/p5/draw">draw()</a> loop may be stopped by calling
+           * <a href="#/p5/noLoop">noLoop()</a>. In that case, the <a href="#/p5/draw">draw()</a>
+           * loop can be resumed with loop().
+           *
+           * Avoid calling loop() from inside setup().
+           *
+           * Use <a href="#/p5/isLooping">isLooping()</a> to check current state of loop().
+           *
+           * @method loop
+           * @example
+           * <div>
+           * <code>
+           * let x = 0;
+           * function setup() {
+           *   createCanvas(100, 100);
+           *   noLoop();
+           * }
+           *
+           * function draw() {
+           *   background(204);
+           *   x = x + 0.1;
+           *   if (x > width) {
+           *     x = 0;
+           *   }
+           *   line(x, 0, x, height);
+           * }
+           *
+           * function mousePressed() {
+           *   loop();
+           * }
+           *
+           * function mouseReleased() {
+           *   noLoop();
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * horizontal line moves slowly from left. Loops but stops on mouse press.
+           */
+          _main.default.prototype.loop = function() {
+            if (!this._loop) {
+              this._loop = true;
+              if (this._setupDone) {
+                this._draw();
+              }
+            }
+          };
+
+          /**
+           * By default, p5.js loops through <a href="#/p5/draw">draw()</a> continuously,
+           * executing the code within it. If the sketch is stopped with
+           * <a href="#/p5/noLoop">noLoop()</a> or resumed with <a href="#/p5/loop">loop()</a>,
+           * isLooping() returns the current state for use within custom event handlers.
+           *
+           * @method isLooping
+           * @example
+           * <div>
+           * <code>
+           * let checkbox, button, colBG, colFill;
+           *
+           * function setup() {
+           *   createCanvas(100, 100);
+           *
+           *   button = createButton('Colorize if loop()');
+           *   button.position(0, 120);
+           *   button.mousePressed(changeBG);
+           *
+           *   checkbox = createCheckbox('loop()', true);
+           *   checkbox.changed(checkLoop);
+           *
+           *   colBG = color(0);
+           *   colFill = color(255);
+           * }
+           *
+           * function changeBG() {
+           *   if (isLooping()) {
