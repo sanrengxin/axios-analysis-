@@ -58728,3 +58728,122 @@
            * <a href="#/p5/noStroke">noStroke()</a>,
            * <a href="#/p5/stroke">stroke()</a>,
            * <a href="#/p5/tint">tint()</a>,
+           * <a href="#/p5/noTint">noTint()</a>,
+           * <a href="#/p5/strokeWeight">strokeWeight()</a>,
+           * <a href="#/p5/strokeCap">strokeCap()</a>,
+           * <a href="#/p5/strokeJoin">strokeJoin()</a>,
+           * <a href="#/p5/imageMode">imageMode()</a>,
+           * <a href="#/p5/rectMode">rectMode()</a>,
+           * <a href="#/p5/ellipseMode">ellipseMode()</a>,
+           * <a href="#/p5/colorMode">colorMode()</a>,
+           * <a href="#/p5/textAlign">textAlign()</a>,
+           * <a href="#/p5/textFont">textFont()</a>,
+           * <a href="#/p5/textSize">textSize()</a>,
+           * <a href="#/p5/textLeading">textLeading()</a>,
+           * <a href="#/p5/applyMatrix">applyMatrix()</a>,
+           * <a href="#/p5/resetMatrix">resetMatrix()</a>,
+           * <a href="#/p5/rotate">rotate()</a>,
+           * <a href="#/p5/scale">scale()</a>,
+           * <a href="#/p5/shearX">shearX()</a>,
+           * <a href="#/p5/shearY">shearY()</a>,
+           * <a href="#/p5/translate">translate()</a>,
+           * <a href="#/p5/noiseSeed">noiseSeed()</a>.
+           *
+           * In WEBGL mode additional style settings are stored. These are controlled by
+           * the following functions:
+           * <a href="#/p5/setCamera">setCamera()</a>,
+           * <a href="#/p5/ambientLight">ambientLight()</a>,
+           * <a href="#/p5/directionalLight">directionalLight()</a>,
+           * <a href="#/p5/pointLight">pointLight()</a>,
+           * <a href="#/p5/texture">texture()</a>,
+           * <a href="#/p5/specularMaterial">specularMaterial()</a>,
+           * <a href="#/p5/shininess">shininess()</a>,
+           * <a href="#/p5/normalMaterial">normalMaterial()</a> and
+           * <a href="#/p5/shader">shader()</a>.
+           *
+           * @method pop
+           * @example
+           * <div>
+           * <code>
+           * ellipse(0, 50, 33, 33); // Left circle
+           *
+           * push(); // Start a new drawing state
+           * translate(50, 0);
+           * strokeWeight(10);
+           * fill(204, 153, 0);
+           * ellipse(0, 50, 33, 33); // Middle circle
+           * pop(); // Restore original state
+           *
+           * ellipse(100, 50, 33, 33); // Right circle
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * ellipse(0, 50, 33, 33); // Left circle
+           *
+           * push(); // Start a new drawing state
+           * strokeWeight(10);
+           * fill(204, 153, 0);
+           * ellipse(33, 50, 33, 33); // Left-middle circle
+           *
+           * push(); // Start another new drawing state
+           * stroke(0, 102, 153);
+           * ellipse(66, 50, 33, 33); // Right-middle circle
+           * pop(); // Restore previous state
+           *
+           * pop(); // Restore original state
+           *
+           * ellipse(100, 50, 33, 33); // Right circle
+           * </code>
+           * </div>
+           *
+           * @alt
+           * Gold ellipse + thick black outline @center 2 white ellipses on left and right.
+           * 2 Gold ellipses left black right blue stroke. 2 white ellipses on left+right.
+           */
+          _main.default.prototype.pop = function() {
+            var style = this._styles.pop();
+            if (style) {
+              this._renderer.pop(style.renderer);
+              Object.assign(this, style.props);
+            } else {
+              console.warn('pop() was called without matching push()');
+            }
+          };
+
+          /**
+           * Executes the code within <a href="#/p5/draw">draw()</a> one time. This
+           * function allows the program to update the display window only when necessary,
+           * for example when an event registered by <a href="#/p5/mousePressed">mousePressed()</a>
+           * or <a href="#/p5/keyPressed">keyPressed()</a> occurs.
+           *
+           * In structuring a program, it only makes sense to call <a href="#/p5/redraw">redraw()</a>
+           * within events such as <a href="#/p5/mousePressed">mousePressed()</a>. This
+           * is because <a href="#/p5/redraw">redraw()</a> does not run
+           * <a href="#/p5/draw">draw()</a> immediately (it only sets a flag that indicates
+           * an update is needed).
+           *
+           * The <a href="#/p5/redraw">redraw()</a> function does not work properly when
+           * called inside <a href="#/p5/draw">draw()</a>.To enable/disable animations,
+           * use <a href="#/p5/loop">loop()</a> and <a href="#/p5/noLoop">noLoop()</a>.
+           *
+           * In addition you can set the number of redraws per method call. Just
+           * add an integer as single parameter for the number of redraws.
+           *
+           * @method redraw
+           * @param  {Integer} [n] Redraw for n-times. The default value is 1.
+           * @example
+           * <div><code>
+           * let x = 0;
+           *
+           * function setup() {
+           *   createCanvas(100, 100);
+           *   noLoop();
+           * }
+           *
+           * function draw() {
+           *   background(204);
+           *   line(x, 0, x, height);
+           * }
+           *
