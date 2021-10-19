@@ -58847,3 +58847,147 @@
            *   line(x, 0, x, height);
            * }
            *
+           * function mousePressed() {
+           *   x += 1;
+           *   redraw();
+           * }
+           * </code>
+           * </div>
+           *
+           * <div class='norender'>
+           * <code>
+           * let x = 0;
+           *
+           * function setup() {
+           *   createCanvas(100, 100);
+           *   noLoop();
+           * }
+           *
+           * function draw() {
+           *   background(204);
+           *   x += 1;
+           *   line(x, 0, x, height);
+           * }
+           *
+           * function mousePressed() {
+           *   redraw(5);
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * black line on far left of canvas
+           * black line on far left of canvas
+           */
+          _main.default.prototype.redraw = function(n) {
+            if (this._inUserDraw || !this._setupDone) {
+              return;
+            }
+
+            var numberOfRedraws = parseInt(n);
+            if (isNaN(numberOfRedraws) || numberOfRedraws < 1) {
+              numberOfRedraws = 1;
+            }
+
+            var context = this._isGlobal ? window : this;
+            if (typeof context.draw === 'function') {
+              if (typeof context.setup === 'undefined') {
+                context.scale(context._pixelDensity, context._pixelDensity);
+              }
+              var callMethod = function callMethod(f) {
+                f.call(context);
+              };
+              for (var idxRedraw = 0; idxRedraw < numberOfRedraws; idxRedraw++) {
+                context.resetMatrix();
+                if (this._accessibleOutputs.grid || this._accessibleOutputs.text) {
+                  this._updateAccsOutput();
+                }
+                if (context._renderer.isP3D) {
+                  context._renderer._update();
+                }
+                context._setProperty('frameCount', context.frameCount + 1);
+                context._registeredMethods.pre.forEach(callMethod);
+                this._inUserDraw = true;
+                try {
+                  context.draw();
+                } finally {
+                  this._inUserDraw = false;
+                }
+                context._registeredMethods.post.forEach(callMethod);
+              }
+            }
+          };
+
+          /**
+           * The `p5()` constructor enables you to activate "instance mode" instead of normal
+           * "global mode". This is an advanced topic. A short description and example is
+           * included below. Please see
+           * <a target="blank" href="https://www.youtube.com/watch?v=Su792jEauZg&feature=youtu.be">
+           * Dan Shiffman's Coding Train video tutorial</a> or this
+           * <a target="blank" href="https://github.com/processing/p5.js/wiki/p5.js-overview#instantiation--namespace">tutorial page</a>
+           * for more info.
+           *
+           * By default, all p5.js functions are in the global namespace (i.e. bound to the window
+           * object), meaning you can call them simply `ellipse()`, `fill()`, etc. However, this
+           * might be inconvenient if you are mixing with other JS libraries (synchronously or
+           * asynchronously) or writing long programs of your own. p5.js currently supports a
+           * way around this problem called "instance mode". In instance mode, all p5 functions
+           * are bound up in a single variable instead of polluting your global namespace.
+           *
+           * Optionally, you can specify a default container for the canvas and any other elements
+           * to append to with a second argument. You can give the ID of an element in your html,
+           * or an html node itself.
+           *
+           * Note that creating instances like this also allows you to have more than one p5 sketch on
+           * a single web page, as they will each be wrapped up with their own set up variables. Of
+           * course, you could also use iframes to have multiple sketches in global mode.
+           *
+           * @method p5
+           * @param {Object} sketch a function containing a p5.js sketch
+           * @param {String|Object} node ID or pointer to HTML DOM node to contain sketch in
+           * @example
+           * <div class='norender'><code>
+           * const s = p => {
+           *   let x = 100;
+           *   let y = 100;
+           *
+           *   p.setup = function() {
+           *     p.createCanvas(700, 410);
+           *   };
+           *
+           *   p.draw = function() {
+           *     p.background(0);
+           *     p.fill(255);
+           *     p.rect(x, y, 50, 50);
+           *   };
+           * };
+           *
+           * new p5(s); // invoke p5
+           * </code></div>
+           *
+           * @alt
+           * white rectangle on black background
+           */ var _default = _main.default;
+          exports.default = _default;
+        },
+        { './main': 59 }
+      ],
+      72: [
+        function(_dereq_, module, exports) {
+          'use strict';
+          Object.defineProperty(exports, '__esModule', { value: true });
+          exports.default = void 0;
+
+          var _main = _interopRequireDefault(_dereq_('./main'));
+          function _interopRequireDefault(obj) {
+            return obj && obj.__esModule ? obj : { default: obj };
+          }
+          /**
+           * @module Transform
+           * @submodule Transform
+           * @for p5
+           * @requires core
+           * @requires constants
+           */ /**
+           * Multiplies the current matrix by the one specified through the parameters.
+           * This is a powerful operation that can perform the equivalent of translate,
