@@ -59139,3 +59139,108 @@
            * @example
            * <div>
            * <code>
+           * translate(50, 50);
+           * applyMatrix(0.5, 0.5, -0.5, 0.5, 0, 0);
+           * rect(0, 0, 20, 20);
+           * // Note that the translate is also reset.
+           * resetMatrix();
+           * rect(0, 0, 20, 20);
+           * </code>
+           * </div>
+           *
+           * @alt
+           * A rotated retangle in the center with another at the top left corner
+           */
+          _main.default.prototype.resetMatrix = function() {
+            this._renderer.resetMatrix();
+            return this;
+          };
+
+          /**
+           * Rotates a shape by the amount specified by the angle parameter. This
+           * function accounts for <a href="#/p5/angleMode">angleMode</a>, so angles
+           * can be entered in either RADIANS or DEGREES.
+           *
+           * Objects are always rotated around their relative position to the
+           * origin and positive numbers rotate objects in a clockwise direction.
+           * Transformations apply to everything that happens after and subsequent
+           * calls to the function accumulates the effect. For example, calling
+           * rotate(HALF_PI) and then rotate(HALF_PI) is the same as rotate(PI).
+           * All tranformations are reset when <a href="#/p5/draw">draw()</a> begins again.
+           *
+           * Technically, <a href="#/p5/rotate">rotate()</a> multiplies the current transformation matrix
+           * by a rotation matrix. This function can be further controlled by
+           * the <a href="#/p5/push">push()</a> and <a href="#/p5/pop">pop()</a>.
+           *
+           * @method rotate
+           * @param  {Number} angle the angle of rotation, specified in radians
+           *                        or degrees, depending on current angleMode
+           * @param  {p5.Vector|Number[]} [axis] (in 3d) the axis to rotate around
+           * @chainable
+           * @example
+           * <div>
+           * <code>
+           * translate(width / 2, height / 2);
+           * rotate(PI / 3.0);
+           * rect(-26, -26, 52, 52);
+           * </code>
+           * </div>
+           *
+           * @alt
+           * white 52x52 rect with black outline at center rotated counter 45 degrees
+           */
+          _main.default.prototype.rotate = function(angle, axis) {
+            _main.default._validateParameters('rotate', arguments);
+            this._renderer.rotate(this._toRadians(angle), axis);
+            return this;
+          };
+
+          /**
+           * Rotates a shape around X axis by the amount specified in angle parameter.
+           * The angles can be entered in either RADIANS or DEGREES.
+           *
+           * Objects are always rotated around their relative position to the
+           * origin and positive numbers rotate objects in a clockwise direction.
+           * All tranformations are reset when <a href="#/p5/draw">draw()</a> begins again.
+           *
+           * @method  rotateX
+           * @param  {Number} angle the angle of rotation, specified in radians
+           *                        or degrees, depending on current angleMode
+           * @chainable
+           * @example
+           * <div modernizr='webgl'>
+           * <code>
+           * function setup() {
+           *   createCanvas(100, 100, WEBGL);
+           * }
+           * function draw() {
+           *   background(255);
+           *   rotateX(millis() / 1000);
+           *   box();
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * 3d box rotating around the x axis.
+           */
+          _main.default.prototype.rotateX = function(angle) {
+            this._assert3d('rotateX');
+            _main.default._validateParameters('rotateX', arguments);
+            this._renderer.rotateX(this._toRadians(angle));
+            return this;
+          };
+
+          /**
+           * Rotates a shape around Y axis by the amount specified in angle parameter.
+           * The angles can be entered in either RADIANS or DEGREES.
+           *
+           * Objects are always rotated around their relative position to the
+           * origin and positive numbers rotate objects in a clockwise direction.
+           * All tranformations are reset when <a href="#/p5/draw">draw()</a> begins again.
+           *
+           * @method rotateY
+           * @param  {Number} angle the angle of rotation, specified in radians
+           *                        or degrees, depending on current angleMode
+           * @chainable
+           * @example
