@@ -59244,3 +59244,143 @@
            *                        or degrees, depending on current angleMode
            * @chainable
            * @example
+           * <div modernizr='webgl'>
+           * <code>
+           * function setup() {
+           *   createCanvas(100, 100, WEBGL);
+           * }
+           * function draw() {
+           *   background(255);
+           *   rotateY(millis() / 1000);
+           *   box();
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * 3d box rotating around the y axis.
+           */
+          _main.default.prototype.rotateY = function(angle) {
+            this._assert3d('rotateY');
+            _main.default._validateParameters('rotateY', arguments);
+            this._renderer.rotateY(this._toRadians(angle));
+            return this;
+          };
+
+          /**
+           * Rotates a shape around Z axis by the amount specified in angle parameter.
+           * The angles can be entered in either RADIANS or DEGREES.
+           *
+           * This method works in WEBGL mode only.
+           *
+           * Objects are always rotated around their relative position to the
+           * origin and positive numbers rotate objects in a clockwise direction.
+           * All tranformations are reset when <a href="#/p5/draw">draw()</a> begins again.
+           *
+           * @method rotateZ
+           * @param  {Number} angle the angle of rotation, specified in radians
+           *                        or degrees, depending on current angleMode
+           * @chainable
+           * @example
+           * <div modernizr='webgl'>
+           * <code>
+           * function setup() {
+           *   createCanvas(100, 100, WEBGL);
+           * }
+           * function draw() {
+           *   background(255);
+           *   rotateZ(millis() / 1000);
+           *   box();
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * 3d box rotating around the z axis.
+           */
+          _main.default.prototype.rotateZ = function(angle) {
+            this._assert3d('rotateZ');
+            _main.default._validateParameters('rotateZ', arguments);
+            this._renderer.rotateZ(this._toRadians(angle));
+            return this;
+          };
+
+          /**
+           * Increases or decreases the size of a shape by expanding or contracting
+           * vertices. Objects always scale from their relative origin to the
+           * coordinate system. Scale values are specified as decimal percentages.
+           * For example, the function call scale(2.0) increases the dimension of a
+           * shape by 200%.
+           *
+           * Transformations apply to everything that happens after and subsequent
+           * calls to the function multiply the effect. For example, calling scale(2.0)
+           * and then scale(1.5) is the same as scale(3.0). If <a href="#/p5/scale">scale()</a> is called
+           * within <a href="#/p5/draw">draw()</a>, the transformation is reset when the loop begins again.
+           *
+           * Using this function with the z parameter is only available in WEBGL mode.
+           * This function can be further controlled with <a href="#/p5/push">push()</a> and <a href="#/p5/pop">pop()</a>.
+           *
+           * @method scale
+           * @param  {Number|p5.Vector|Number[]} s
+           *                      percent to scale the object, or percentage to
+           *                      scale the object in the x-axis if multiple arguments
+           *                      are given
+           * @param  {Number} [y] percent to scale the object in the y-axis
+           * @param  {Number} [z] percent to scale the object in the z-axis (webgl only)
+           * @chainable
+           * @example
+           * <div>
+           * <code>
+           * rect(30, 20, 50, 50);
+           * scale(0.5);
+           * rect(30, 20, 50, 50);
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * rect(30, 20, 50, 50);
+           * scale(0.5, 1.3);
+           * rect(30, 20, 50, 50);
+           * </code>
+           * </div>
+           *
+           * @alt
+           * white 52x52 rect with black outline at center rotated counter 45 degrees
+           * 2 white rects with black outline- 1 50x50 at center. other 25x65 bottom left
+           */
+          /**
+           * @method scale
+           * @param  {p5.Vector|Number[]} scales per-axis percents to scale the object
+           * @chainable
+           */
+          _main.default.prototype.scale = function(x, y, z) {
+            _main.default._validateParameters('scale', arguments);
+            // Only check for Vector argument type if Vector is available
+            if (x instanceof _main.default.Vector) {
+              var v = x;
+              x = v.x;
+              y = v.y;
+              z = v.z;
+            } else if (x instanceof Array) {
+              var rg = x;
+              x = rg[0];
+              y = rg[1];
+              z = rg[2] || 1;
+            }
+            if (isNaN(y)) {
+              y = z = x;
+            } else if (isNaN(z)) {
+              z = 1;
+            }
+
+            this._renderer.scale.call(this._renderer, x, y, z);
+
+            return this;
+          };
+
+          /**
+           * Shears a shape around the x-axis by the amount specified by the angle
+           * parameter. Angles should be specified in the current angleMode.
+           * Objects are always sheared around their relative position to the origin
+           * and positive numbers shear objects in a clockwise direction.
