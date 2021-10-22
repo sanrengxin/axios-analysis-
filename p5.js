@@ -59384,3 +59384,124 @@
            * parameter. Angles should be specified in the current angleMode.
            * Objects are always sheared around their relative position to the origin
            * and positive numbers shear objects in a clockwise direction.
+           *
+           * Transformations apply to everything that happens after and subsequent
+           * calls to the function accumulates the effect. For example, calling
+           * shearX(PI/2) and then shearX(PI/2) is the same as shearX(PI).
+           * If <a href="#/p5/shearX">shearX()</a> is called within the <a href="#/p5/draw">draw()</a>,
+           * the transformation is reset when the loop begins again.
+           *
+           * Technically, <a href="#/p5/shearX">shearX()</a> multiplies the current
+           * transformation matrix by a rotation matrix. This function can be further
+           * controlled by the <a href="#/p5/push">push()</a> and <a href="#/p5/pop">pop()</a> functions.
+           *
+           * @method shearX
+           * @param  {Number} angle angle of shear specified in radians or degrees,
+           *                        depending on current angleMode
+           * @chainable
+           * @example
+           * <div>
+           * <code>
+           * translate(width / 4, height / 4);
+           * shearX(PI / 4.0);
+           * rect(0, 0, 30, 30);
+           * </code>
+           * </div>
+           *
+           * @alt
+           * white irregular quadrilateral with black outline at top middle.
+           */
+          _main.default.prototype.shearX = function(angle) {
+            _main.default._validateParameters('shearX', arguments);
+            var rad = this._toRadians(angle);
+            this._renderer.applyMatrix(1, 0, Math.tan(rad), 1, 0, 0);
+            return this;
+          };
+
+          /**
+           * Shears a shape around the y-axis the amount specified by the angle
+           * parameter. Angles should be specified in the current angleMode. Objects
+           * are always sheared around their relative position to the origin and
+           * positive numbers shear objects in a clockwise direction.
+           *
+           * Transformations apply to everything that happens after and subsequent
+           * calls to the function accumulates the effect. For example, calling
+           * shearY(PI/2) and then shearY(PI/2) is the same as shearY(PI). If
+           * <a href="#/p5/shearY">shearY()</a> is called within the <a href="#/p5/draw">draw()</a>, the transformation is reset when
+           * the loop begins again.
+           *
+           * Technically, <a href="#/p5/shearY">shearY()</a> multiplies the current transformation matrix by a
+           * rotation matrix. This function can be further controlled by the
+           * <a href="#/p5/push">push()</a> and <a href="#/p5/pop">pop()</a> functions.
+           *
+           * @method shearY
+           * @param  {Number} angle angle of shear specified in radians or degrees,
+           *                        depending on current angleMode
+           * @chainable
+           * @example
+           * <div>
+           * <code>
+           * translate(width / 4, height / 4);
+           * shearY(PI / 4.0);
+           * rect(0, 0, 30, 30);
+           * </code>
+           * </div>
+           *
+           * @alt
+           * white irregular quadrilateral with black outline at middle bottom.
+           */
+          _main.default.prototype.shearY = function(angle) {
+            _main.default._validateParameters('shearY', arguments);
+            var rad = this._toRadians(angle);
+            this._renderer.applyMatrix(1, Math.tan(rad), 0, 1, 0, 0);
+            return this;
+          };
+
+          /**
+    * Specifies an amount to displace objects within the display window.
+    * The x parameter specifies left/right translation, the y parameter
+    * specifies up/down translation.
+    *
+    * Transformations are cumulative and apply to everything that happens after
+    * and subsequent calls to the function accumulates the effect. For example,
+    * calling translate(50, 0) and then translate(20, 0) is the same as
+    * translate(70, 0). If <a href="#/p5/translate">translate()</a> is called within <a href="#/p5/draw">draw()</a>, the
+    * transformation is reset when the loop begins again. This function can be
+    * further controlled by using <a href="#/p5/push">push()</a> and <a href="#/p5/pop">pop()</a>.
+    *
+    * @method translate
+    * @param  {Number} x left/right translation
+    * @param  {Number} y up/down translation
+    * @param  {Number} [z] forward/backward translation (webgl only)
+    * @chainable
+    * @example
+    * <div>
+    * <code>
+    * translate(30, 20);
+    * rect(0, 0, 55, 55);
+    * </code>
+    * </div>
+    *
+    * <div>
+    * <code>
+    * rect(0, 0, 55, 55); // Draw rect at original 0,0
+    * translate(30, 20);
+    * rect(0, 0, 55, 55); // Draw rect at new 0,0
+    * translate(14, 14);
+    * rect(0, 0, 55, 55); // Draw rect at new 0,0
+    * </code>
+    * </div>
+    *
+   
+    * <div>
+    * <code>
+    * function draw() {
+    *   background(200);
+    *   rectMode(CENTER);
+    *   translate(width / 2, height / 2);
+    *   translate(p5.Vector.fromAngle(millis() / 1000, 40));
+    *   rect(0, 0, 20, 20);
+    * }
+    * </code>
+    * </div>
+    *
