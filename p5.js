@@ -59505,3 +59505,109 @@
     * </code>
     * </div>
     *
+    * @alt
+    * white 55x55 rect with black outline at center right.
+    * 3 white 55x55 rects with black outlines at top-l, center-r and bottom-r.
+    * a 20x20 white rect moving in a circle around the canvas
+    */
+          /**
+           * @method translate
+           * @param  {p5.Vector} vector the vector to translate by
+           * @chainable
+           */
+          _main.default.prototype.translate = function(x, y, z) {
+            _main.default._validateParameters('translate', arguments);
+            if (this._renderer.isP3D) {
+              this._renderer.translate(x, y, z);
+            } else {
+              this._renderer.translate(x, y);
+            }
+            return this;
+          };
+          var _default = _main.default;
+          exports.default = _default;
+        },
+        { './main': 59 }
+      ],
+      73: [
+        function(_dereq_, module, exports) {
+          'use strict';
+
+          var _main = _interopRequireDefault(_dereq_('../core/main'));
+          function _interopRequireDefault(obj) {
+            return obj && obj.__esModule ? obj : { default: obj };
+          }
+          function _toConsumableArray(arr) {
+            return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread();
+          }
+          function _nonIterableSpread() {
+            throw new TypeError('Invalid attempt to spread non-iterable instance');
+          }
+          function _iterableToArray(iter) {
+            if (
+              Symbol.iterator in Object(iter) ||
+              Object.prototype.toString.call(iter) === '[object Arguments]'
+            )
+              return Array.from(iter);
+          }
+          function _arrayWithoutHoles(arr) {
+            if (Array.isArray(arr)) {
+              for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) {
+                arr2[i] = arr[i];
+              }
+              return arr2;
+            }
+          }
+          function _typeof(obj) {
+            if (typeof Symbol === 'function' && typeof Symbol.iterator === 'symbol') {
+              _typeof = function _typeof(obj) {
+                return typeof obj;
+              };
+            } else {
+              _typeof = function _typeof(obj) {
+                return obj &&
+                  typeof Symbol === 'function' &&
+                  obj.constructor === Symbol &&
+                  obj !== Symbol.prototype
+                  ? 'symbol'
+                  : typeof obj;
+              };
+            }
+            return _typeof(obj);
+          }
+          /**
+           *
+           * Stores a value in local storage under the key name.
+           * Local storage is saved in the browser and persists
+           * between browsing sessions and page reloads.
+           * The key can be the name of the variable but doesn't
+           * have to be. To retrieve stored items
+           * see <a href="#/p5/getItem">getItem</a>.
+           *
+           * Sensitive data such as passwords or personal information
+           * should not be stored in local storage.
+           *
+           * @method storeItem
+           * @for p5
+           * @param {String} key
+           * @param {String|Number|Object|Boolean|p5.Color|p5.Vector} value
+           *
+           * @example
+           * <div><code>
+           * // Type to change the letter in the
+           * // center of the canvas.
+           * // If you reload the page, it will
+           * // still display the last key you entered
+           *
+           * let myText;
+           *
+           * function setup() {
+           *   createCanvas(100, 100);
+           *   myText = getItem('myText');
+           *   if (myText === null) {
+           *     myText = '';
+           *   }
+           * }
+           *
+           * function draw() {
+           *   textSize(40);
