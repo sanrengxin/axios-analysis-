@@ -59748,3 +59748,160 @@
                   break;
               }
             }
+            return value;
+          };
+
+          /**
+           *
+           * Clears all local storage items set with storeItem()
+           * for the current domain.
+           *
+           * @method clearStorage
+           * @for p5
+           *
+           * @example
+           * <div class="norender">
+           * <code>
+           * function setup() {
+           *   let myNum = 10;
+           *   let myBool = false;
+           *   storeItem('myNum', myNum);
+           *   storeItem('myBool', myBool);
+           *   print(getItem('myNum')); // logs 10 to the console
+           *   print(getItem('myBool')); // logs false to the console
+           *   clearStorage();
+           *   print(getItem('myNum')); // logs null to the console
+           *   print(getItem('myBool')); // logs null to the console
+           * }
+           * </code></div>
+           */
+          _main.default.prototype.clearStorage = function() {
+            localStorage.clear();
+          };
+
+          /**
+           *
+           * Removes an item that was stored with storeItem()
+           *
+           * @method removeItem
+           * @param {String} key
+           * @for p5
+           *
+           * @example
+           * <div class="norender">
+           * <code>
+           * function setup() {
+           *   let myVar = 10;
+           *   storeItem('myVar', myVar);
+           *   print(getItem('myVar')); // logs 10 to the console
+           *   removeItem('myVar');
+           *   print(getItem('myVar')); // logs null to the console
+           * }
+           * </code></div>
+           */
+          _main.default.prototype.removeItem = function(key) {
+            if (typeof key !== 'string') {
+              console.log(
+                'The argument that you passed to removeItem() - '.concat(
+                  key,
+                  ' is not a string.'
+                )
+              );
+            }
+            localStorage.removeItem(key);
+            localStorage.removeItem(''.concat(key, 'p5TypeID'));
+          };
+        },
+        { '../core/main': 59 }
+      ],
+      74: [
+        function(_dereq_, module, exports) {
+          'use strict';
+          Object.defineProperty(exports, '__esModule', { value: true });
+          exports.default = void 0;
+
+          var _main = _interopRequireDefault(_dereq_('../core/main'));
+          function _interopRequireDefault(obj) {
+            return obj && obj.__esModule ? obj : { default: obj };
+          }
+          /**
+           * @module Data
+           * @submodule Dictionary
+           * @for p5.TypedDict
+           * @requires core
+           *
+           * This module defines the p5 methods for the p5 Dictionary classes.
+           * The classes StringDict and NumberDict are for storing and working
+           * with key-value pairs.
+           */ /**
+           *
+           * Creates a new instance of p5.StringDict using the key-value pair
+           * or the object you provide.
+           *
+           * @method createStringDict
+           * @for p5
+           * @param {String} key
+           * @param {String} value
+           * @return {p5.StringDict}
+           *
+           * @example
+           * <div class="norender">
+           * <code>
+           * function setup() {
+           *   let myDictionary = createStringDict('p5', 'js');
+           *   print(myDictionary.hasKey('p5')); // logs true to console
+           *
+           *   let anotherDictionary = createStringDict({ happy: 'coding' });
+           *   print(anotherDictionary.hasKey('happy')); // logs true to console
+           * }
+           * </code></div>
+           */ /**
+           * @method createStringDict
+           * @param {Object} object object
+           * @return {p5.StringDict}
+           */ _main.default.prototype.createStringDict = function(key, value) {
+            _main.default._validateParameters('createStringDict', arguments);
+            return new _main.default.StringDict(key, value);
+          };
+          /**
+           *
+           * Creates a new instance of <a href="#/p5.NumberDict">p5.NumberDict</a> using the key-value pair
+           * or object you provide.
+           *
+           * @method createNumberDict
+           * @for p5
+           * @param {Number} key
+           * @param {Number} value
+           * @return {p5.NumberDict}
+           *
+           * @example
+           * <div class="norender">
+           * <code>
+           * function setup() {
+           *   let myDictionary = createNumberDict(100, 42);
+           *   print(myDictionary.hasKey(100)); // logs true to console
+           *
+           *   let anotherDictionary = createNumberDict({ 200: 84 });
+           *   print(anotherDictionary.hasKey(200)); // logs true to console
+           * }
+           * </code></div>
+           */
+          /**
+           * @method createNumberDict
+           * @param {Object} object object
+           * @return {p5.NumberDict}
+           */
+
+          _main.default.prototype.createNumberDict = function(key, value) {
+            _main.default._validateParameters('createNumberDict', arguments);
+            return new _main.default.NumberDict(key, value);
+          };
+
+          /**
+           *
+           * Base class for all p5.Dictionary types. Specifically
+           * typed Dictionary classes inherit from this class.
+           *
+           * @class p5.TypedDict
+           * @constructor
+           */
