@@ -60039,3 +60039,161 @@
            *   myDictionary.print();
            *   // above logs "key: p5 - value: js, key: happy - value: coding" to console
            * }
+           * </code></div>
+           */
+          /**
+           * @method create
+           * @param {Object} obj key/value pair
+           */
+
+          _main.default.TypedDict.prototype.create = function(key, value) {
+            if (key instanceof Object && typeof value === 'undefined') {
+              this._addObj(key);
+            } else if (typeof key !== 'undefined') {
+              this.set(key, value);
+            } else {
+              console.log(
+                'In order to create a new Dictionary entry you must pass ' +
+                  'an object or a key, value pair'
+              );
+            }
+          };
+
+          /**
+           * Removes all previously stored key-value pairs from the Dictionary.
+           *
+           * @method clear
+           * @example
+           * <div class="norender">
+           * <code>
+           * function setup() {
+           *   let myDictionary = createStringDict('p5', 'js');
+           *   print(myDictionary.hasKey('p5')); // prints 'true'
+           *   myDictionary.clear();
+           *   print(myDictionary.hasKey('p5')); // prints 'false'
+           * }
+           * </code>
+           * </div>
+           */
+
+          _main.default.TypedDict.prototype.clear = function() {
+            this.data = {};
+          };
+
+          /**
+           * Removes the key-value pair stored at the given key from the Dictionary.
+           *
+           * @method remove
+           * @param {Number|String} key for the pair to remove
+           *
+           * @example
+           * <div class="norender">
+           * <code>
+           * function setup() {
+           *   let myDictionary = createStringDict('p5', 'js');
+           *   myDictionary.create('happy', 'coding');
+           *   myDictionary.print();
+           *   // above logs "key: p5 - value: js, key: happy - value: coding" to console
+           *   myDictionary.remove('p5');
+           *   myDictionary.print();
+           *   // above logs "key: happy value: coding" to console
+           * }
+           * </code></div>
+           */
+
+          _main.default.TypedDict.prototype.remove = function(key) {
+            if (this.data.hasOwnProperty(key)) {
+              delete this.data[key];
+            } else {
+              throw new Error(''.concat(key, ' does not exist in this Dictionary'));
+            }
+          };
+
+          /**
+           * Logs the set of items currently stored in the Dictionary to the console.
+           *
+           * @method print
+           *
+           * @example
+           * <div class="norender">
+           * <code>
+           * function setup() {
+           *   let myDictionary = createStringDict('p5', 'js');
+           *   myDictionary.create('happy', 'coding');
+           *   myDictionary.print();
+           *   // above logs "key: p5 - value: js, key: happy - value: coding" to console
+           * }
+           * </code>
+           * </div>
+           */
+
+          _main.default.TypedDict.prototype.print = function() {
+            for (var item in this.data) {
+              console.log('key:'.concat(item, ' value:').concat(this.data[item]));
+            }
+          };
+
+          /**
+           * Converts the Dictionary into a CSV file for local download.
+           *
+           * @method saveTable
+           * @example
+           * <div>
+           * <code>
+           * function setup() {
+           *   createCanvas(100, 100);
+           *   background(200);
+           *   text('click here to save', 10, 10, 70, 80);
+           * }
+           *
+           * function mousePressed() {
+           *   if (mouseX > 0 && mouseX < width && mouseY > 0 && mouseY < height) {
+           *     createStringDict({
+           *       john: 1940,
+           *       paul: 1942,
+           *       george: 1943,
+           *       ringo: 1940
+           *     }).saveTable('beatles');
+           *   }
+           * }
+           * </code>
+           * </div>
+           */
+
+          _main.default.TypedDict.prototype.saveTable = function(filename) {
+            var output = '';
+
+            for (var key in this.data) {
+              output += ''.concat(key, ',').concat(this.data[key], '\n');
+            }
+
+            var blob = new Blob([output], { type: 'text/csv' });
+            _main.default.prototype.downloadFile(blob, filename || 'mycsv', 'csv');
+          };
+
+          /**
+           * Converts the Dictionary into a JSON file for local download.
+           *
+           * @method saveJSON
+           * @example
+           * <div>
+           * <code>
+           * function setup() {
+           *   createCanvas(100, 100);
+           *   background(200);
+           *   text('click here to save', 10, 10, 70, 80);
+           * }
+           *
+           * function mousePressed() {
+           *   if (mouseX > 0 && mouseX < width && mouseY > 0 && mouseY < height) {
+           *     createStringDict({
+           *       john: 1940,
+           *       paul: 1942,
+           *       george: 1943,
+           *       ringo: 1940
+           *     }).saveJSON('beatles');
+           *   }
+           * }
+           * </code>
+           * </div>
+           */
