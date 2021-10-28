@@ -59905,3 +59905,137 @@
            * @class p5.TypedDict
            * @constructor
            */
+
+          _main.default.TypedDict = function(key, value) {
+            if (key instanceof Object) {
+              this.data = key;
+            } else {
+              this.data = {};
+              this.data[key] = value;
+            }
+            return this;
+          };
+
+          /**
+           * Returns the number of key-value pairs currently stored in the Dictionary.
+           *
+           * @method size
+           * @return {Integer} the number of key-value pairs in the Dictionary
+           *
+           * @example
+           * <div class="norender">
+           * <code>
+           * function setup() {
+           *   let myDictionary = createNumberDict(1, 10);
+           *   myDictionary.create(2, 20);
+           *   myDictionary.create(3, 30);
+           *   print(myDictionary.size()); // logs 3 to the console
+           * }
+           * </code></div>
+           */
+          _main.default.TypedDict.prototype.size = function() {
+            return Object.keys(this.data).length;
+          };
+
+          /**
+           * Returns true if the given key exists in the Dictionary,
+           * otherwise returns false.
+           *
+           * @method hasKey
+           * @param {Number|String} key that you want to look up
+           * @return {Boolean} whether that key exists in Dictionary
+           *
+           * @example
+           * <div class="norender">
+           * <code>
+           * function setup() {
+           *   let myDictionary = createStringDict('p5', 'js');
+           *   print(myDictionary.hasKey('p5')); // logs true to console
+           * }
+           * </code></div>
+           */
+
+          _main.default.TypedDict.prototype.hasKey = function(key) {
+            return this.data.hasOwnProperty(key);
+          };
+
+          /**
+           * Returns the value stored at the given key.
+           *
+           * @method get
+           * @param {Number|String} the key you want to access
+           * @return {Number|String} the value stored at that key
+           *
+           * @example
+           * <div class="norender">
+           * <code>
+           * function setup() {
+           *   let myDictionary = createStringDict('p5', 'js');
+           *   let myValue = myDictionary.get('p5');
+           *   print(myValue === 'js'); // logs true to console
+           * }
+           * </code></div>
+           */
+
+          _main.default.TypedDict.prototype.get = function(key) {
+            if (this.data.hasOwnProperty(key)) {
+              return this.data[key];
+            } else {
+              console.log(''.concat(key, ' does not exist in this Dictionary'));
+            }
+          };
+
+          /**
+           * Updates the value associated with the given key in case it already exists
+           * in the Dictionary. Otherwise a new key-value pair is added.
+           *
+           * @method set
+           * @param {Number|String} key
+           * @param {Number|String} value
+           *
+           * @example
+           * <div class="norender">
+           * <code>
+           * function setup() {
+           *   let myDictionary = createStringDict('p5', 'js');
+           *   myDictionary.set('p5', 'JS');
+           *   myDictionary.print(); // logs "key: p5 - value: JS" to console
+           * }
+           * </code></div>
+           */
+
+          _main.default.TypedDict.prototype.set = function(key, value) {
+            if (this._validate(value)) {
+              this.data[key] = value;
+            } else {
+              console.log('Those values dont work for this dictionary type.');
+            }
+          };
+
+          /**
+           * private helper function to handle the user passing in objects
+           * during construction or calls to create()
+           */
+
+          _main.default.TypedDict.prototype._addObj = function(obj) {
+            for (var key in obj) {
+              this.set(key, obj[key]);
+            }
+          };
+
+          /**
+           * Creates a new key-value pair in the Dictionary.
+           *
+           * @method create
+           * @param {Number|String} key
+           * @param {Number|String} value
+           *
+           * @example
+           * <div class="norender">
+           * <code>
+           * function setup() {
+           *   let myDictionary = createStringDict('p5', 'js');
+           *   myDictionary.create('happy', 'coding');
+           *   myDictionary.print();
+           *   // above logs "key: p5 - value: js, key: happy - value: coding" to console
+           * }
