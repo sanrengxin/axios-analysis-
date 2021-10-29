@@ -60356,3 +60356,120 @@
            * @param {Number} Key for value you wish to divide
            * @param {Number} Amount to divide the value by
            * @example
+           * <div class='norender'>
+           * <code>
+           * function setup() {
+           *   let myDictionary = createNumberDict(2, 8);
+           *   myDictionary.div(2, 2);
+           *   print(myDictionary.get(2)); // logs 4 to console.
+           * }
+           * </code></div>
+           *
+           */
+
+          _main.default.NumberDict.prototype.div = function(key, amount) {
+            if (this.data.hasOwnProperty(key)) {
+              this.data[key] /= amount;
+            } else {
+              console.log('The key - '.concat(key, ' does not exist in this dictionary.'));
+            }
+          };
+
+          /**
+           * private helper function for finding lowest or highest value
+           * the argument 'flip' is used to flip the comparison arrow
+           * from 'less than' to 'greater than'
+           */
+
+          _main.default.NumberDict.prototype._valueTest = function(flip) {
+            if (Object.keys(this.data).length === 0) {
+              throw new Error(
+                'Unable to search for a minimum or maximum value on an empty NumberDict'
+              );
+            } else if (Object.keys(this.data).length === 1) {
+              return this.data[Object.keys(this.data)[0]];
+            } else {
+              var result = this.data[Object.keys(this.data)[0]];
+              for (var key in this.data) {
+                if (this.data[key] * flip < result * flip) {
+                  result = this.data[key];
+                }
+              }
+              return result;
+            }
+          };
+
+          /**
+           * Return the lowest number currently stored in the Dictionary.
+           *
+           * @method minValue
+           * @return {Number}
+           * @example
+           * <div class='norender'>
+           * <code>
+           * function setup() {
+           *   let myDictionary = createNumberDict({ 2: -10, 4: 0.65, 1.2: 3 });
+           *   let lowestValue = myDictionary.minValue(); // value is -10
+           *   print(lowestValue);
+           * }
+           * </code></div>
+           */
+
+          _main.default.NumberDict.prototype.minValue = function() {
+            return this._valueTest(1);
+          };
+
+          /**
+           * Return the highest number currently stored in the Dictionary.
+           *
+           * @method maxValue
+           * @return {Number}
+           * @example
+           * <div class='norender'>
+           * <code>
+           * function setup() {
+           *   let myDictionary = createNumberDict({ 2: -10, 4: 0.65, 1.2: 3 });
+           *   let highestValue = myDictionary.maxValue(); // value is 3
+           *   print(highestValue);
+           * }
+           * </code></div>
+           */
+
+          _main.default.NumberDict.prototype.maxValue = function() {
+            return this._valueTest(-1);
+          };
+
+          /**
+           * private helper function for finding lowest or highest key
+           * the argument 'flip' is used to flip the comparison arrow
+           * from 'less than' to 'greater than'
+           */
+
+          _main.default.NumberDict.prototype._keyTest = function(flip) {
+            if (Object.keys(this.data).length === 0) {
+              throw new Error('Unable to use minValue on an empty NumberDict');
+            } else if (Object.keys(this.data).length === 1) {
+              return Object.keys(this.data)[0];
+            } else {
+              var result = Object.keys(this.data)[0];
+              for (var i = 1; i < Object.keys(this.data).length; i++) {
+                if (Object.keys(this.data)[i] * flip < result * flip) {
+                  result = Object.keys(this.data)[i];
+                }
+              }
+              return result;
+            }
+          };
+
+          /**
+           * Return the lowest key currently used in the Dictionary.
+           *
+           * @method minKey
+           * @return {Number}
+           * @example
+           * <div class='norender'>
+           * <code>
+           * function setup() {
+           *   let myDictionary = createNumberDict({ 2: 4, 4: 6, 1.2: 3 });
+           *   let lowestKey = myDictionary.minKey(); // value is 1.2
+           *   print(lowestKey);
