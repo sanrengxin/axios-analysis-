@@ -60197,3 +60197,162 @@
            * </code>
            * </div>
            */
+
+          _main.default.TypedDict.prototype.saveJSON = function(filename, opt) {
+            _main.default.prototype.saveJSON(this.data, filename, opt);
+          };
+
+          /**
+           * private helper function to ensure that the user passed in valid
+           * values for the Dictionary type
+           */
+
+          _main.default.TypedDict.prototype._validate = function(value) {
+            return true;
+          };
+
+          /**
+           *
+           * A simple Dictionary class for Strings.
+           *
+           * @class p5.StringDict
+           * @extends p5.TypedDict
+           */
+
+          _main.default.StringDict = function() {
+            for (
+              var _len = arguments.length, args = new Array(_len), _key = 0;
+              _key < _len;
+              _key++
+            ) {
+              args[_key] = arguments[_key];
+            }
+            _main.default.TypedDict.apply(this, args);
+          };
+
+          _main.default.StringDict.prototype = Object.create(
+            _main.default.TypedDict.prototype
+          );
+
+          _main.default.StringDict.prototype._validate = function(value) {
+            return typeof value === 'string';
+          };
+
+          /**
+           *
+           * A simple Dictionary class for Numbers.
+           *
+           * @class p5.NumberDict
+           * @constructor
+           * @extends p5.TypedDict
+           */
+
+          _main.default.NumberDict = function() {
+            for (
+              var _len2 = arguments.length, args = new Array(_len2), _key2 = 0;
+              _key2 < _len2;
+              _key2++
+            ) {
+              args[_key2] = arguments[_key2];
+            }
+            _main.default.TypedDict.apply(this, args);
+          };
+
+          _main.default.NumberDict.prototype = Object.create(
+            _main.default.TypedDict.prototype
+          );
+
+          /**
+           * private helper function to ensure that the user passed in valid
+           * values for the Dictionary type
+           */
+
+          _main.default.NumberDict.prototype._validate = function(value) {
+            return typeof value === 'number';
+          };
+
+          /**
+           * Add the given number to the value currently stored at the given key.
+           * The sum then replaces the value previously stored in the Dictionary.
+           *
+           * @method add
+           * @param {Number} Key for the value you wish to add to
+           * @param {Number} Number to add to the value
+           * @example
+           * <div class='norender'>
+           * <code>
+           * function setup() {
+           *   let myDictionary = createNumberDict(2, 5);
+           *   myDictionary.add(2, 2);
+           *   print(myDictionary.get(2)); // logs 7 to console.
+           * }
+           * </code></div>
+           *
+           */
+
+          _main.default.NumberDict.prototype.add = function(key, amount) {
+            if (this.data.hasOwnProperty(key)) {
+              this.data[key] += amount;
+            } else {
+              console.log('The key - '.concat(key, ' does not exist in this dictionary.'));
+            }
+          };
+
+          /**
+           * Subtract the given number from the value currently stored at the given key.
+           * The difference then replaces the value previously stored in the Dictionary.
+           *
+           * @method sub
+           * @param {Number} Key for the value you wish to subtract from
+           * @param {Number} Number to subtract from the value
+           * @example
+           * <div class='norender'>
+           * <code>
+           * function setup() {
+           *   let myDictionary = createNumberDict(2, 5);
+           *   myDictionary.sub(2, 2);
+           *   print(myDictionary.get(2)); // logs 3 to console.
+           * }
+           * </code></div>
+           *
+           */
+
+          _main.default.NumberDict.prototype.sub = function(key, amount) {
+            this.add(key, -amount);
+          };
+
+          /**
+           * Multiply the given number with the value currently stored at the given key.
+           * The product then replaces the value previously stored in the Dictionary.
+           *
+           * @method mult
+           * @param {Number} Key for value you wish to multiply
+           * @param {Number} Amount to multiply the value by
+           * @example
+           * <div class='norender'>
+           * <code>
+           * function setup() {
+           *   let myDictionary = createNumberDict(2, 4);
+           *   myDictionary.mult(2, 2);
+           *   print(myDictionary.get(2)); // logs 8 to console.
+           * }
+           * </code></div>
+           *
+           */
+
+          _main.default.NumberDict.prototype.mult = function(key, amount) {
+            if (this.data.hasOwnProperty(key)) {
+              this.data[key] *= amount;
+            } else {
+              console.log('The key - '.concat(key, ' does not exist in this dictionary.'));
+            }
+          };
+
+          /**
+           * Divide the given number with the value currently stored at the given key.
+           * The quotient then replaces the value previously stored in the Dictionary.
+           *
+           * @method div
+           * @param {Number} Key for value you wish to divide
+           * @param {Number} Amount to divide the value by
+           * @example
