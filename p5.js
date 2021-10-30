@@ -60473,3 +60473,133 @@
            *   let myDictionary = createNumberDict({ 2: 4, 4: 6, 1.2: 3 });
            *   let lowestKey = myDictionary.minKey(); // value is 1.2
            *   print(lowestKey);
+           * }
+           * </code></div>
+           */
+
+          _main.default.NumberDict.prototype.minKey = function() {
+            return this._keyTest(1);
+          };
+
+          /**
+           * Return the highest key currently used in the Dictionary.
+           *
+           * @method maxKey
+           * @return {Number}
+           * @example
+           * <div class='norender'>
+           * <code>
+           * function setup() {
+           *   let myDictionary = createNumberDict({ 2: 4, 4: 6, 1.2: 3 });
+           *   let highestKey = myDictionary.maxKey(); // value is 4
+           *   print(highestKey);
+           * }
+           * </code></div>
+           */
+
+          _main.default.NumberDict.prototype.maxKey = function() {
+            return this._keyTest(-1);
+          };
+          var _default = _main.default.TypedDict;
+          exports.default = _default;
+        },
+        { '../core/main': 59 }
+      ],
+      75: [
+        function(_dereq_, module, exports) {
+          'use strict';
+          Object.defineProperty(exports, '__esModule', { value: true });
+          exports.default = void 0;
+
+          var _main = _interopRequireDefault(_dereq_('../core/main'));
+          function _interopRequireDefault(obj) {
+            return obj && obj.__esModule ? obj : { default: obj };
+          }
+          function _typeof(obj) {
+            if (typeof Symbol === 'function' && typeof Symbol.iterator === 'symbol') {
+              _typeof = function _typeof(obj) {
+                return typeof obj;
+              };
+            } else {
+              _typeof = function _typeof(obj) {
+                return obj &&
+                  typeof Symbol === 'function' &&
+                  obj.constructor === Symbol &&
+                  obj !== Symbol.prototype
+                  ? 'symbol'
+                  : typeof obj;
+              };
+            }
+            return _typeof(obj);
+          }
+
+          /**
+           * Searches the page for the first element that matches the given CSS selector string (can be an
+           * ID, class, tag name or a combination) and returns it as a <a href="#/p5.Element">p5.Element</a>.
+           * The DOM node itself can be accessed with .elt.
+           * Returns null if none found. You can also specify a container to search within.
+           *
+           * @method select
+           * @param  {String} selectors CSS selector string of element to search for
+           * @param  {String|p5.Element|HTMLElement} [container] CSS selector string, <a href="#/p5.Element">p5.Element</a>, or
+           *                                             HTML element to search within
+           * @return {p5.Element|null} <a href="#/p5.Element">p5.Element</a> containing node found
+           * @example
+           * <div><code>
+           * function setup() {
+           *   createCanvas(50, 50);
+           *   background(30);
+           *   // move canvas down and right
+           *   select('canvas').position(10, 30);
+           * }
+           * </code></div>
+           *
+           * <div class="norender"><code>
+           * // select using ID
+           * let a = select('#container');
+           * let b = select('#beep', '#container');
+           * let c;
+           * if (a) {
+           *   // select using class
+           *   c = select('.boop', a);
+           * }
+           * // select using CSS selector string
+           * let d = select('#container #bleep');
+           * let e = select('#container p');
+           * [a, b, c, d, e]; // unused
+           * </code></div>
+           */
+          _main.default.prototype.select = function(e, p) {
+            _main.default._validateParameters('select', arguments);
+            var container = this._getContainer(p);
+            var res = container.querySelector(e);
+            if (res) {
+              return this._wrapElement(res);
+            } else {
+              return null;
+            }
+          };
+
+          /**
+           * Searches the page for elements that match the given CSS selector string (can be an ID a class,
+           * tag name or a combination) and returns them as <a href="#/p5.Element">p5.Element</a>s in
+           * an array.
+           * The DOM node itself can be accessed with .elt.
+           * Returns an empty array if none found.
+           * You can also specify a container to search within.
+           *
+           * @method selectAll
+           * @param  {String} selectors CSS selector string of elements to search for
+           * @param  {String|p5.Element|HTMLElement} [container] CSS selector string, <a href="#/p5.Element">p5.Element</a>
+           *                                             , or HTML element to search within
+           * @return {p5.Element[]} Array of <a href="#/p5.Element">p5.Element</a>s containing nodes found
+           * @example
+           * <div class='norender'><code>
+           * function setup() {
+           *   createButton('btn');
+           *   createButton('2nd btn');
+           *   createButton('3rd btn');
+           *   let buttons = selectAll('button');
+           *
+           *   for (let i = 0; i < buttons.length; i++) {
+           *     buttons[i].size(100, 100);
