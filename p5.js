@@ -60603,3 +60603,137 @@
            *
            *   for (let i = 0; i < buttons.length; i++) {
            *     buttons[i].size(100, 100);
+           *   }
+           * }
+           * </code></div>
+           * <div class='norender'><code>
+           * // these are all valid calls to selectAll()
+           * let a = selectAll('.beep');
+           * a = selectAll('div');
+           * a = selectAll('button', '#container');
+           *
+           * let b = createDiv();
+           * b.id('container');
+           * let c = select('#container');
+           * a = selectAll('p', c);
+           * a = selectAll('#container p');
+           *
+           * let d = document.getElementById('container');
+           * a = selectAll('.boop', d);
+           * a = selectAll('#container .boop');
+           * console.log(a);
+           * </code></div>
+           */
+          _main.default.prototype.selectAll = function(e, p) {
+            _main.default._validateParameters('selectAll', arguments);
+            var arr = [];
+            var container = this._getContainer(p);
+            var res = container.querySelectorAll(e);
+            if (res) {
+              for (var j = 0; j < res.length; j++) {
+                var obj = this._wrapElement(res[j]);
+                arr.push(obj);
+              }
+            }
+            return arr;
+          };
+
+          /**
+           * Helper function for select and selectAll
+           */
+          _main.default.prototype._getContainer = function(p) {
+            var container = document;
+            if (typeof p === 'string') {
+              container = document.querySelector(p) || document;
+            } else if (p instanceof _main.default.Element) {
+              container = p.elt;
+            } else if (p instanceof HTMLElement) {
+              container = p;
+            }
+            return container;
+          };
+
+          /**
+           * Helper function for getElement and getElements.
+           */
+          _main.default.prototype._wrapElement = function(elt) {
+            var children = Array.prototype.slice.call(elt.children);
+            if (elt.tagName === 'INPUT' && elt.type === 'checkbox') {
+              var converted = new _main.default.Element(elt, this);
+              converted.checked = function() {
+                if (arguments.length === 0) {
+                  return this.elt.checked;
+                } else if (arguments[0]) {
+                  this.elt.checked = true;
+                } else {
+                  this.elt.checked = false;
+                }
+                return this;
+              };
+              return converted;
+            } else if (elt.tagName === 'VIDEO' || elt.tagName === 'AUDIO') {
+              return new _main.default.MediaElement(elt, this);
+            } else if (elt.tagName === 'SELECT') {
+              return this.createSelect(new _main.default.Element(elt, this));
+            } else if (
+              children.length > 0 &&
+              children.every(function(c) {
+                return c.tagName === 'INPUT' || c.tagName === 'LABEL';
+              })
+            ) {
+              return this.createRadio(new _main.default.Element(elt, this));
+            } else {
+              return new _main.default.Element(elt, this);
+            }
+          };
+
+          /**
+           * Removes all elements created by p5, except any canvas / graphics
+           * elements created by <a href="#/p5/createCanvas">createCanvas</a> or <a href="#/p5/createGraphics">createGraphics</a>.
+           * Event handlers are removed, and element is removed from the DOM.
+           * @method removeElements
+           * @example
+           * <div class='norender'><code>
+           * function setup() {
+           *   createCanvas(100, 100);
+           *   createDiv('this is some text');
+           *   createP('this is a paragraph');
+           * }
+           * function mousePressed() {
+           *   removeElements(); // this will remove the div and p, not canvas
+           * }
+           * </code></div>
+           */
+          _main.default.prototype.removeElements = function(e) {
+            _main.default._validateParameters('removeElements', arguments);
+            // el.remove splices from this._elements, so don't mix iteration with it
+            var isNotCanvasElement = function isNotCanvasElement(el) {
+              return !(el.elt instanceof HTMLCanvasElement);
+            };
+            var removeableElements = this._elements.filter(isNotCanvasElement);
+            removeableElements.map(function(el) {
+              return el.remove();
+            });
+          };
+
+          /**
+           * The .<a href="#/p5.Element/changed">changed()</a> function is called when the value of an
+           * element changes.
+           * This can be used to attach an element specific event listener.
+           *
+           * @method changed
+           * @param  {Function|Boolean} fxn function to be fired when the value of
+           *                                an element changes.
+           *                                if `false` is passed instead, the previously
+           *                                firing function will no longer fire.
+           * @chainable
+           * @example
+           * <div><code>
+           * let sel;
+           *
+           * function setup() {
+           *   textAlign(CENTER);
+           *   background(200);
+           *   sel = createSelect();
+           *   sel.position(10, 10);
+           *   sel.option('pear');
