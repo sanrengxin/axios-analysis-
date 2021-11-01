@@ -60737,3 +60737,156 @@
            *   sel = createSelect();
            *   sel.position(10, 10);
            *   sel.option('pear');
+           *   sel.option('kiwi');
+           *   sel.option('grape');
+           *   sel.changed(mySelectEvent);
+           * }
+           *
+           * function mySelectEvent() {
+           *   let item = sel.value();
+           *   background(200);
+           *   text("it's a " + item + '!', 50, 50);
+           * }
+           * </code></div>
+           *
+           * <div><code>
+           * let checkbox;
+           * let cnv;
+           *
+           * function setup() {
+           *   checkbox = createCheckbox(' fill');
+           *   checkbox.changed(changeFill);
+           *   cnv = createCanvas(100, 100);
+           *   cnv.position(0, 30);
+           *   noFill();
+           * }
+           *
+           * function draw() {
+           *   background(200);
+           *   ellipse(50, 50, 50, 50);
+           * }
+           *
+           * function changeFill() {
+           *   if (checkbox.checked()) {
+           *     fill(0);
+           *   } else {
+           *     noFill();
+           *   }
+           * }
+           * </code></div>
+           *
+           * @alt
+           * dropdown: pear, kiwi, grape. When selected text "its a" + selection shown.
+           */
+          _main.default.Element.prototype.changed = function(fxn) {
+            _main.default.Element._adjustListener('change', fxn, this);
+            return this;
+          };
+
+          /**
+           * The .<a href="#/p5.Element/input">input()</a> function is called when any user input is
+           * detected with an element. The input event is often used
+           * to detect keystrokes in a input element, or changes on a
+           * slider element. This can be used to attach an element specific
+           * event listener.
+           *
+           * @method input
+           * @param  {Function|Boolean} fxn function to be fired when any user input is
+           *                                detected within the element.
+           *                                if `false` is passed instead, the previously
+           *                                firing function will no longer fire.
+           * @chainable
+           * @example
+           * <div class='norender'><code>
+           * // Open your console to see the output
+           * function setup() {
+           *   let inp = createInput('');
+           *   inp.input(myInputEvent);
+           * }
+           *
+           * function myInputEvent() {
+           *   console.log('you are typing: ', this.value());
+           * }
+           * </code></div>
+           *
+           * @alt
+           * no display.
+           */
+          _main.default.Element.prototype.input = function(fxn) {
+            _main.default.Element._adjustListener('input', fxn, this);
+            return this;
+          };
+
+          /**
+           * Helpers for create methods.
+           */
+          function addElement(elt, pInst, media) {
+            var node = pInst._userNode ? pInst._userNode : document.body;
+            node.appendChild(elt);
+            var c = media
+              ? new _main.default.MediaElement(elt, pInst)
+              : new _main.default.Element(elt, pInst);
+            pInst._elements.push(c);
+            return c;
+          }
+
+          /**
+           * Creates a `&lt;div&gt;&lt;/div&gt;` element in the DOM with given inner HTML.
+           *
+           * @method createDiv
+           * @param  {String} [html] inner HTML for element created
+           * @return {p5.Element} pointer to <a href="#/p5.Element">p5.Element</a> holding created node
+           * @example
+           * <div class='norender'><code>
+           * createDiv('this is some text');
+           * </code></div>
+           */
+          _main.default.prototype.createDiv = function() {
+            var html =
+              arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+            var elt = document.createElement('div');
+            elt.innerHTML = html;
+            return addElement(elt, this);
+          };
+
+          /**
+           * Creates a `&lt;p&gt;&lt;/p&gt;` element in the DOM with given inner HTML. Used
+           * for paragraph length text.
+           *
+           * @method createP
+           * @param  {String} [html] inner HTML for element created
+           * @return {p5.Element} pointer to <a href="#/p5.Element">p5.Element</a> holding created node
+           * @example
+           * <div class='norender'><code>
+           * createP('this is some text');
+           * </code></div>
+           */
+          _main.default.prototype.createP = function() {
+            var html =
+              arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+            var elt = document.createElement('p');
+            elt.innerHTML = html;
+            return addElement(elt, this);
+          };
+
+          /**
+           * Creates a `&lt;span&gt;&lt;/span&gt;` element in the DOM with given inner HTML.
+           *
+           * @method createSpan
+           * @param  {String} [html] inner HTML for element created
+           * @return {p5.Element} pointer to <a href="#/p5.Element">p5.Element</a> holding created node
+           * @example
+           * <div class='norender'><code>
+           * createSpan('this is some text');
+           * </code></div>
+           */
+          _main.default.prototype.createSpan = function() {
+            var html =
+              arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+            var elt = document.createElement('span');
+            elt.innerHTML = html;
+            return addElement(elt, this);
+          };
+
+          /**
+           * Creates an `&lt;img&gt;` element in the DOM with given src and
