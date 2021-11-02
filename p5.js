@@ -61051,3 +61051,119 @@
           /**
            * Creates a checkbox `&lt;input&gt;&lt;/input&gt;` element in the DOM.
            * Calling .checked() on a checkbox returns if it is checked or not
+           *
+           * @method createCheckbox
+           * @param  {String} [label] label displayed after checkbox
+           * @param  {boolean} [value] value of the checkbox; checked is true, unchecked is false
+           * @return {p5.Element} pointer to <a href="#/p5.Element">p5.Element</a> holding created node
+           * @example
+           * <div class='norender'><code>
+           * let checkbox;
+           *
+           * function setup() {
+           *   checkbox = createCheckbox('label', false);
+           *   checkbox.changed(myCheckedEvent);
+           * }
+           *
+           * function myCheckedEvent() {
+           *   if (this.checked()) {
+           *     console.log('Checking!');
+           *   } else {
+           *     console.log('Unchecking!');
+           *   }
+           * }
+           * </code></div>
+           */
+          _main.default.prototype.createCheckbox = function() {
+            _main.default._validateParameters('createCheckbox', arguments);
+            var elt = document.createElement('div');
+            var checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            elt.appendChild(checkbox);
+            //checkbox must be wrapped in p5.Element before label so that label appears after
+            var self = addElement(elt, this);
+            self.checked = function() {
+              var cb = self.elt.getElementsByTagName('input')[0];
+              if (cb) {
+                if (arguments.length === 0) {
+                  return cb.checked;
+                } else if (arguments[0]) {
+                  cb.checked = true;
+                } else {
+                  cb.checked = false;
+                }
+              }
+              return self;
+            };
+            this.value = function(val) {
+              self.value = val;
+              return this;
+            };
+            if (arguments[0]) {
+              var ran = Math.random()
+                .toString(36)
+                .slice(2);
+              var label = document.createElement('label');
+              checkbox.setAttribute('id', ran);
+              label.htmlFor = ran;
+              self.value(arguments[0]);
+              label.appendChild(document.createTextNode(arguments[0]));
+              elt.appendChild(label);
+            }
+            if (arguments[1]) {
+              checkbox.checked = true;
+            }
+            return self;
+          };
+
+          /**
+           * Creates a dropdown menu `&lt;select&gt;&lt;/select&gt;` element in the DOM.
+           * It also helps to assign select-box methods to <a href="#/p5.Element">p5.Element</a> when selecting existing select box.
+           * - `.option(name, [value])` can be used to set options for the select after it is created.
+           * - `.value()` will return the currently selected option.
+           * - `.selected()` will return current dropdown element which is an instance of <a href="#/p5.Element">p5.Element</a>
+           * - `.selected(value)` can be used to make given option selected by default when the page first loads.
+           * - `.disable()` marks whole of dropdown element as disabled.
+           * - `.disable(value)` marks given option as disabled
+           *
+           * @method createSelect
+           * @param {boolean} [multiple] true if dropdown should support multiple selections
+           * @return {p5.Element}
+           * @example
+           * <div><code>
+           * let sel;
+           *
+           * function setup() {
+           *   textAlign(CENTER);
+           *   background(200);
+           *   sel = createSelect();
+           *   sel.position(10, 10);
+           *   sel.option('pear');
+           *   sel.option('kiwi');
+           *   sel.option('grape');
+           *   sel.selected('kiwi');
+           *   sel.changed(mySelectEvent);
+           * }
+           *
+           * function mySelectEvent() {
+           *   let item = sel.value();
+           *   background(200);
+           *   text('It is a ' + item + '!', 50, 50);
+           * }
+           * </code></div>
+           *
+           * <div><code>
+           * let sel;
+           *
+           * function setup() {
+           *   textAlign(CENTER);
+           *   background(200);
+           *   sel = createSelect();
+           *   sel.position(10, 10);
+           *   sel.option('oil');
+           *   sel.option('milk');
+           *   sel.option('bread');
+           *   sel.disable('milk');
+           * }
+           * </code></div>
+           */
