@@ -60890,3 +60890,164 @@
 
           /**
            * Creates an `&lt;img&gt;` element in the DOM with given src and
+           * alternate text.
+           *
+           * @method createImg
+           * @param  {String} src src path or url for image
+           * @param  {String} alt <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Img#Attributes">alternate text</a> to be used if image does not load. You can use also an empty string (`""`) if that an image is not intended to be viewed.
+           * @return {p5.Element} pointer to <a href="#/p5.Element">p5.Element</a> holding created node
+           * @example
+           * <div class='norender'><code>
+           * createImg(
+           *   'https://p5js.org/assets/img/asterisk-01.png',
+           *   'the p5 magenta asterisk'
+           * );
+           * </code></div>
+           */
+          /**
+           * @method createImg
+           * @param  {String} src
+           * @param  {String} alt
+           * @param  {String} crossOrigin <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/CORS_settings_attributes">crossOrigin property</a> of the `img` element; use either 'anonymous' or 'use-credentials' to retrieve the image with cross-origin access (for later use with `canvas`. if an empty string(`""`) is passed, CORS is not used
+           * @param  {Function} [successCallback] callback to be called once image data is loaded with the <a href="#/p5.Element">p5.Element</a> as argument
+           * @return {p5.Element} pointer to <a href="#/p5.Element">p5.Element</a> holding created node
+           */
+          _main.default.prototype.createImg = function() {
+            _main.default._validateParameters('createImg', arguments);
+            var elt = document.createElement('img');
+            var args = arguments;
+            var self;
+            if (args.length > 1 && typeof args[1] === 'string') {
+              elt.alt = args[1];
+            }
+            if (args.length > 2 && typeof args[2] === 'string') {
+              elt.crossOrigin = args[2];
+            }
+            elt.src = args[0];
+            self = addElement(elt, this);
+            elt.addEventListener('load', function() {
+              self.width = elt.offsetWidth || elt.width;
+              self.height = elt.offsetHeight || elt.height;
+              var last = args[args.length - 1];
+              if (typeof last === 'function') last(self);
+            });
+            return self;
+          };
+
+          /**
+           * Creates an `&lt;a&gt;&lt;/a&gt;` element in the DOM for including a hyperlink.
+           *
+           * @method createA
+           * @param  {String} href       url of page to link to
+           * @param  {String} html       inner html of link element to display
+           * @param  {String} [target]   target where new link should open,
+           *                             could be _blank, _self, _parent, _top.
+           * @return {p5.Element} pointer to <a href="#/p5.Element">p5.Element</a> holding created node
+           * @example
+           * <div class='norender'><code>
+           * createA('http://p5js.org/', 'this is a link');
+           * </code></div>
+           */
+          _main.default.prototype.createA = function(href, html, target) {
+            _main.default._validateParameters('createA', arguments);
+            var elt = document.createElement('a');
+            elt.href = href;
+            elt.innerHTML = html;
+            if (target) elt.target = target;
+            return addElement(elt, this);
+          };
+
+          /** INPUT **/
+
+          /**
+           * Creates a slider `&lt;input&gt;&lt;/input&gt;` element in the DOM.
+           * Use .size() to set the display length of the slider.
+           *
+           * @method createSlider
+           * @param  {Number} min minimum value of the slider
+           * @param  {Number} max maximum value of the slider
+           * @param  {Number} [value] default value of the slider
+           * @param  {Number} [step] step size for each tick of the slider (if step is set to 0, the slider will move continuously from the minimum to the maximum value)
+           * @return {p5.Element} pointer to <a href="#/p5.Element">p5.Element</a> holding created node
+           * @example
+           * <div><code>
+           * let slider;
+           * function setup() {
+           *   slider = createSlider(0, 255, 100);
+           *   slider.position(10, 10);
+           *   slider.style('width', '80px');
+           * }
+           *
+           * function draw() {
+           *   let val = slider.value();
+           *   background(val);
+           * }
+           * </code></div>
+           *
+           * <div><code>
+           * let slider;
+           * function setup() {
+           *   colorMode(HSB);
+           *   slider = createSlider(0, 360, 60, 40);
+           *   slider.position(10, 10);
+           *   slider.style('width', '80px');
+           * }
+           *
+           * function draw() {
+           *   let val = slider.value();
+           *   background(val, 100, 100, 1);
+           * }
+           * </code></div>
+           */
+          _main.default.prototype.createSlider = function(min, max, value, step) {
+            _main.default._validateParameters('createSlider', arguments);
+            var elt = document.createElement('input');
+            elt.type = 'range';
+            elt.min = min;
+            elt.max = max;
+            if (step === 0) {
+              elt.step = 0.000000000000000001; // smallest valid step
+            } else if (step) {
+              elt.step = step;
+            }
+            if (typeof value === 'number') elt.value = value;
+            return addElement(elt, this);
+          };
+
+          /**
+           * Creates a `&lt;button&gt;&lt;/button&gt;` element in the DOM.
+           * Use .size() to set the display size of the button.
+           * Use .mousePressed() to specify behavior on press.
+           *
+           * @method createButton
+           * @param  {String} label label displayed on the button
+           * @param  {String} [value] value of the button
+           * @return {p5.Element} pointer to <a href="#/p5.Element">p5.Element</a> holding created node
+           * @example
+           * <div class='norender'><code>
+           * let button;
+           * function setup() {
+           *   createCanvas(100, 100);
+           *   background(0);
+           *   button = createButton('click me');
+           *   button.position(19, 19);
+           *   button.mousePressed(changeBG);
+           * }
+           *
+           * function changeBG() {
+           *   let val = random(255);
+           *   background(val);
+           * }
+           * </code></div>
+           */
+          _main.default.prototype.createButton = function(label, value) {
+            _main.default._validateParameters('createButton', arguments);
+            var elt = document.createElement('button');
+            elt.innerHTML = label;
+            if (value) elt.value = value;
+            return addElement(elt, this);
+          };
+
+          /**
+           * Creates a checkbox `&lt;input&gt;&lt;/input&gt;` element in the DOM.
+           * Calling .checked() on a checkbox returns if it is checked or not
