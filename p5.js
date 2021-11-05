@@ -61167,3 +61167,151 @@
            * }
            * </code></div>
            */
+          /**
+           * @method createSelect
+           * @param {Object} existing DOM select element
+           * @return {p5.Element}
+           */
+
+          _main.default.prototype.createSelect = function() {
+            _main.default._validateParameters('createSelect', arguments);
+            var self;
+            var arg = arguments[0];
+            if (
+              arg instanceof _main.default.Element &&
+              arg.elt instanceof HTMLSelectElement
+            ) {
+              // If given argument is p5.Element of select type
+              self = arg;
+              this.elt = arg.elt;
+            } else if (arg instanceof HTMLSelectElement) {
+              self = addElement(arg, this);
+              this.elt = arg;
+            } else {
+              var elt = document.createElement('select');
+              if (arg && typeof arg === 'boolean') {
+                elt.setAttribute('multiple', 'true');
+              }
+              self = addElement(elt, this);
+              this.elt = elt;
+            }
+            self.option = function(name, value) {
+              var index;
+
+              // if no name is passed, return
+              if (name === undefined) {
+                return;
+              }
+              //see if there is already an option with this name
+              for (var i = 0; i < this.elt.length; i += 1) {
+                if (this.elt[i].innerHTML === name) {
+                  index = i;
+                  break;
+                }
+              }
+              //if there is an option with this name we will modify it
+              if (index !== undefined) {
+                //if the user passed in false then delete that option
+                if (value === false) {
+                  this.elt.remove(index);
+                } else {
+                  // Update the option at index with the value
+                  this.elt[index].value = value;
+                }
+              } else {
+                //if it doesn't exist create it
+                var opt = document.createElement('option');
+                opt.innerHTML = name;
+                opt.value = value === undefined ? name : value;
+                this.elt.appendChild(opt);
+                this._pInst._elements.push(opt);
+              }
+            };
+
+            self.selected = function(value) {
+              // Update selected status of option
+              if (value !== undefined) {
+                for (var i = 0; i < this.elt.length; i += 1) {
+                  if (this.elt[i].value.toString() === value.toString()) {
+                    this.elt.selectedIndex = i;
+                  }
+                }
+                return this;
+              } else {
+                if (this.elt.getAttribute('multiple')) {
+                  var arr = [];
+                  var _iteratorNormalCompletion = true;
+                  var _didIteratorError = false;
+                  var _iteratorError = undefined;
+                  try {
+                    for (
+                      var _iterator = this.elt.selectedOptions[Symbol.iterator](), _step;
+                      !(_iteratorNormalCompletion = (_step = _iterator.next()).done);
+                      _iteratorNormalCompletion = true
+                    ) {
+                      var selectedOption = _step.value;
+                      arr.push(selectedOption.value);
+                    }
+                  } catch (err) {
+                    _didIteratorError = true;
+                    _iteratorError = err;
+                  } finally {
+                    try {
+                      if (!_iteratorNormalCompletion && _iterator.return != null) {
+                        _iterator.return();
+                      }
+                    } finally {
+                      if (_didIteratorError) {
+                        throw _iteratorError;
+                      }
+                    }
+                  }
+                  return arr;
+                } else {
+                  return this.elt.value;
+                }
+              }
+            };
+
+            self.disable = function(value) {
+              if (typeof value === 'string') {
+                for (var i = 0; i < this.elt.length; i++) {
+                  if (this.elt[i].value.toString() === value) {
+                    this.elt[i].disabled = true;
+                    this.elt[i].selected = false;
+                  }
+                }
+              } else {
+                this.elt.disabled = true;
+              }
+              return this;
+            };
+
+            return self;
+          };
+
+          /**
+           * Creates a radio button element in the DOM.It also helps existing radio buttons
+           * assign methods of <a href="#/p5.Element/">p5.Element</a>.
+           * - `.option(value, [label])` can be used to create a new option for the
+           *   element. If an option with a value already exists, it will be returned.
+           *   Optionally, a label can be provided as second argument for the option.
+           * - `.remove(value)` can be used to remove an option for the element.
+           * - `.value()` method will return the currently selected value.
+           * - `.selected()` method will return the currently selected input element.
+           * - `.selected(value)` method will select the option and return it.
+           * - `.disable(Boolean)` method will enable/disable the whole radio button element.
+           *
+           * @method createRadio
+           * @param  {Object} containerElement An container HTML Element either a div
+           * or span inside which all existing radio inputs will be considered as options.
+           * @param {string} [name] A name parameter for each Input Element.
+           * @return {p5.Element} pointer to <a href="#/p5.Element">p5.Element</a> holding created node
+           * @example
+           * <div><code>
+           * let radio;
+           *
+           * function setup() {
+           *   radio = createRadio();
+           *   radio.option('black');
+           *   radio.option('white');
