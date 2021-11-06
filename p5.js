@@ -61315,3 +61315,246 @@
            *   radio = createRadio();
            *   radio.option('black');
            *   radio.option('white');
+           *   radio.option('gray');
+           *   radio.style('width', '60px');
+           *   textAlign(CENTER);
+           *   fill(255, 0, 0);
+           * }
+           *
+           * function draw() {
+           *   let val = radio.value();
+           *   background(val);
+           *   text(val, width / 2, height / 2);
+           * }
+           * </code></div>
+           * <div><code>
+           * let radio;
+           *
+           * function setup() {
+           *   radio = createRadio();
+           *   radio.option(1, 'apple');
+           *   radio.option(2, 'bread');
+           *   radio.option(3, 'juice');
+           *   radio.style('width', '30px');
+           *   textAlign(CENTER);
+           * }
+           *
+           * function draw() {
+           *   background(200);
+           *   let val = radio.value();
+           *   if (val) {
+           *     text('item cost is $' + val, width / 2, height / 2);
+           *   }
+           * }
+           * </code></div>
+           */
+          /**
+           * @method createRadio
+           * @param {String} name
+           * @return {p5.Element} pointer to <a href="#/p5.Element">p5.Element</a> holding created node
+           */
+          /**
+           * @method createRadio
+           * @return {p5.Element} pointer to <a href="#/p5.Element">p5.Element</a> holding created node
+           */
+          _main.default.prototype.createRadio = function() {
+            // Creates a div, adds each option as an individual input inside it.
+            // If already given with a containerEl, will search for all input[radio]
+            // it, create a p5.Element out of it, add options to it and return the p5.Element.
+
+            var radioElement;
+            var name;
+            var arg0 = arguments[0];
+            // If existing radio Element is provided as argument 0
+            if (arg0 instanceof HTMLDivElement || arg0 instanceof HTMLSpanElement) {
+              radioElement = arg0;
+              if (typeof arguments[1] === 'string') name = arguments[1];
+            } else {
+              if (typeof arg0 === 'string') name = arg0;
+              radioElement = document.createElement('div');
+            }
+            this.elt = radioElement;
+            var self = addElement(radioElement, this);
+            self._name = name || 'radioOption';
+
+            // setup member functions
+            var isRadioInput = function isRadioInput(el) {
+              return el instanceof HTMLInputElement && el.type === 'radio';
+            };
+            var isNextLabel = function isNextLabel(el) {
+              return el.nextElementSibling instanceof HTMLLabelElement;
+            };
+
+            self._getOptionsArray = function() {
+              return Array.from(this.elt.children).filter(isRadioInput);
+            };
+
+            self.option = function(value, label) {
+              // return an option with this value, create if not exists.
+              var optionEl;
+              var _iteratorNormalCompletion2 = true;
+              var _didIteratorError2 = false;
+              var _iteratorError2 = undefined;
+              try {
+                for (
+                  var _iterator2 = self._getOptionsArray()[Symbol.iterator](), _step2;
+                  !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done);
+                  _iteratorNormalCompletion2 = true
+                ) {
+                  var option = _step2.value;
+                  if (option.value === value) {
+                    optionEl = option;
+                    break;
+                  }
+                }
+
+                // Create a new option, add it to radioElement and return it.
+              } catch (err) {
+                _didIteratorError2 = true;
+                _iteratorError2 = err;
+              } finally {
+                try {
+                  if (!_iteratorNormalCompletion2 && _iterator2.return != null) {
+                    _iterator2.return();
+                  }
+                } finally {
+                  if (_didIteratorError2) {
+                    throw _iteratorError2;
+                  }
+                }
+              }
+              if (optionEl === undefined) {
+                optionEl = document.createElement('input');
+                optionEl.setAttribute('type', 'radio');
+                optionEl.setAttribute('value', value);
+                this.elt.appendChild(optionEl);
+              }
+
+              // Check if label element exists, else create it
+              var labelElement;
+              if (!isNextLabel(optionEl)) {
+                labelElement = document.createElement('label');
+                optionEl.insertAdjacentElement('afterend', labelElement);
+              } else {
+                labelElement = optionEl.nextElementSibling;
+              }
+
+              labelElement.innerHTML = label === undefined ? value : label;
+              optionEl.setAttribute('name', self._name);
+              return optionEl;
+            };
+
+            self.remove = function(value) {
+              var _iteratorNormalCompletion3 = true;
+              var _didIteratorError3 = false;
+              var _iteratorError3 = undefined;
+              try {
+                for (
+                  var _iterator3 = self._getOptionsArray()[Symbol.iterator](), _step3;
+                  !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done);
+                  _iteratorNormalCompletion3 = true
+                ) {
+                  var optionEl = _step3.value;
+                  if (optionEl.value === value) {
+                    if (isNextLabel(optionEl)) optionEl.nextElementSibling.remove();
+                    optionEl.remove();
+                    return;
+                  }
+                }
+              } catch (err) {
+                _didIteratorError3 = true;
+                _iteratorError3 = err;
+              } finally {
+                try {
+                  if (!_iteratorNormalCompletion3 && _iterator3.return != null) {
+                    _iterator3.return();
+                  }
+                } finally {
+                  if (_didIteratorError3) {
+                    throw _iteratorError3;
+                  }
+                }
+              }
+            };
+
+            self.value = function() {
+              var result = '';
+              var _iteratorNormalCompletion4 = true;
+              var _didIteratorError4 = false;
+              var _iteratorError4 = undefined;
+              try {
+                for (
+                  var _iterator4 = self._getOptionsArray()[Symbol.iterator](), _step4;
+                  !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done);
+                  _iteratorNormalCompletion4 = true
+                ) {
+                  var option = _step4.value;
+                  if (option.checked) {
+                    result = option.value;
+                    break;
+                  }
+                }
+              } catch (err) {
+                _didIteratorError4 = true;
+                _iteratorError4 = err;
+              } finally {
+                try {
+                  if (!_iteratorNormalCompletion4 && _iterator4.return != null) {
+                    _iterator4.return();
+                  }
+                } finally {
+                  if (_didIteratorError4) {
+                    throw _iteratorError4;
+                  }
+                }
+              }
+              return result;
+            };
+
+            self.selected = function(value) {
+              var result = null;
+              if (value === undefined) {
+                var _iteratorNormalCompletion5 = true;
+                var _didIteratorError5 = false;
+                var _iteratorError5 = undefined;
+                try {
+                  for (
+                    var _iterator5 = self._getOptionsArray()[Symbol.iterator](), _step5;
+                    !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done);
+                    _iteratorNormalCompletion5 = true
+                  ) {
+                    var option = _step5.value;
+                    if (option.checked) {
+                      result = option;
+                      break;
+                    }
+                  }
+                } catch (err) {
+                  _didIteratorError5 = true;
+                  _iteratorError5 = err;
+                } finally {
+                  try {
+                    if (!_iteratorNormalCompletion5 && _iterator5.return != null) {
+                      _iterator5.return();
+                    }
+                  } finally {
+                    if (_didIteratorError5) {
+                      throw _iteratorError5;
+                    }
+                  }
+                }
+              } else {
+                var _iteratorNormalCompletion6 = true;
+                var _didIteratorError6 = false;
+                var _iteratorError6 = undefined;
+                try {
+                  for (
+                    var _iterator6 = self._getOptionsArray()[Symbol.iterator](), _step6;
+                    !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done);
+                    _iteratorNormalCompletion6 = true
+                  ) {
+                    var _option = _step6.value;
+                    if (_option.value === value) {
+                      _option.setAttribute('checked', true);
+                      result = _option;
+                    }
