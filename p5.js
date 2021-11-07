@@ -61558,3 +61558,126 @@
                       _option.setAttribute('checked', true);
                       result = _option;
                     }
+                  }
+                } catch (err) {
+                  _didIteratorError6 = true;
+                  _iteratorError6 = err;
+                } finally {
+                  try {
+                    if (!_iteratorNormalCompletion6 && _iterator6.return != null) {
+                      _iterator6.return();
+                    }
+                  } finally {
+                    if (_didIteratorError6) {
+                      throw _iteratorError6;
+                    }
+                  }
+                }
+              }
+              return result;
+            };
+
+            self.disable = function() {
+              var shouldDisable =
+                arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+              var _iteratorNormalCompletion7 = true;
+              var _didIteratorError7 = false;
+              var _iteratorError7 = undefined;
+              try {
+                for (
+                  var _iterator7 = self._getOptionsArray()[Symbol.iterator](), _step7;
+                  !(_iteratorNormalCompletion7 = (_step7 = _iterator7.next()).done);
+                  _iteratorNormalCompletion7 = true
+                ) {
+                  var radioInput = _step7.value;
+                  radioInput.setAttribute('disabled', shouldDisable);
+                }
+              } catch (err) {
+                _didIteratorError7 = true;
+                _iteratorError7 = err;
+              } finally {
+                try {
+                  if (!_iteratorNormalCompletion7 && _iterator7.return != null) {
+                    _iterator7.return();
+                  }
+                } finally {
+                  if (_didIteratorError7) {
+                    throw _iteratorError7;
+                  }
+                }
+              }
+            };
+
+            return self;
+          };
+
+          /**
+           * Creates a colorPicker element in the DOM for color input.
+           * The .value() method will return a hex string (#rrggbb) of the color.
+           * The .color() method will return a p5.Color object with the current chosen color.
+           *
+           * @method createColorPicker
+           * @param {String|p5.Color} [value] default color of element
+           * @return {p5.Element} pointer to <a href="#/p5.Element">p5.Element</a> holding created node
+           * @example
+           * <div><code>
+           * let colorPicker;
+           * function setup() {
+           *   createCanvas(100, 100);
+           *   colorPicker = createColorPicker('#ed225d');
+           *   colorPicker.position(0, height + 5);
+           * }
+           *
+           * function draw() {
+           *   background(colorPicker.color());
+           * }
+           * </code></div>
+           * <div><code>
+           * let inp1, inp2;
+           * function setup() {
+           *   createCanvas(100, 100);
+           *   background('grey');
+           *   inp1 = createColorPicker('#ff0000');
+           *   inp1.position(0, height + 5);
+           *   inp1.input(setShade1);
+           *   inp2 = createColorPicker(color('yellow'));
+           *   inp2.position(0, height + 30);
+           *   inp2.input(setShade2);
+           *   setMidShade();
+           * }
+           *
+           * function setMidShade() {
+           *   // Finding a shade between the two
+           *   let commonShade = lerpColor(inp1.color(), inp2.color(), 0.5);
+           *   fill(commonShade);
+           *   rect(20, 20, 60, 60);
+           * }
+           *
+           * function setShade1() {
+           *   setMidShade();
+           *   console.log('You are choosing shade 1 to be : ', this.value());
+           * }
+           * function setShade2() {
+           *   setMidShade();
+           *   console.log('You are choosing shade 2 to be : ', this.value());
+           * }
+           * </code></div>
+           */
+          _main.default.prototype.createColorPicker = function(value) {
+            _main.default._validateParameters('createColorPicker', arguments);
+            var elt = document.createElement('input');
+            var self;
+            elt.type = 'color';
+            if (value) {
+              if (value instanceof _main.default.Color) {
+                elt.value = value.toString('#rrggbb');
+              } else {
+                _main.default.prototype._colorMode = 'rgb';
+                _main.default.prototype._colorMaxes = {
+                  rgb: [255, 255, 255, 255],
+                  hsb: [360, 100, 100, 1],
+                  hsl: [360, 100, 100, 1]
+                };
+
+                elt.value = _main.default.prototype.color(value).toString('#rrggbb');
+              }
