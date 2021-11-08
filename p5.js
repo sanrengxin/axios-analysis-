@@ -61681,3 +61681,154 @@
 
                 elt.value = _main.default.prototype.color(value).toString('#rrggbb');
               }
+            } else {
+              elt.value = '#000000';
+            }
+            self = addElement(elt, this);
+            // Method to return a p5.Color object for the given color.
+            self.color = function() {
+              if (value) {
+                if (value.mode) {
+                  _main.default.prototype._colorMode = value.mode;
+                }
+                if (value.maxes) {
+                  _main.default.prototype._colorMaxes = value.maxes;
+                }
+              }
+              return _main.default.prototype.color(this.elt.value);
+            };
+            return self;
+          };
+
+          /**
+           * Creates an `&lt;input&gt;&lt;/input&gt;` element in the DOM for text input.
+           * Use .<a href="#/p5.Element/size">size()</a> to set the display length of the box.
+           *
+           * @method createInput
+           * @param {String} value default value of the input box
+           * @param {String} [type] type of text, ie text, password etc. Defaults to text.
+           *   Needs a value to be specified first.
+           * @return {p5.Element} pointer to <a href="#/p5.Element">p5.Element</a> holding created node
+           * @example
+           * <div class='norender'><code>
+           * function setup() {
+           *   let inp = createInput('');
+           *   inp.input(myInputEvent);
+           * }
+           *
+           * function myInputEvent() {
+           *   console.log('you are typing: ', this.value());
+           * }
+           * </code></div>
+           */
+          /**
+           * @method createInput
+           * @param {String} [value]
+           * @return {p5.Element}
+           */
+          _main.default.prototype.createInput = function() {
+            var value =
+              arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+            var type =
+              arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'text';
+            _main.default._validateParameters('createInput', arguments);
+            var elt = document.createElement('input');
+            elt.setAttribute('value', value);
+            elt.setAttribute('type', type);
+            return addElement(elt, this);
+          };
+
+          /**
+           * Creates an `&lt;input&gt;&lt;/input&gt;` element in the DOM of type 'file'.
+           * This allows users to select local files for use in a sketch.
+           *
+           * @method createFileInput
+           * @param  {Function} callback callback function for when a file is loaded
+           * @param  {Boolean} [multiple] optional, to allow multiple files to be selected
+           * @return {p5.Element} pointer to <a href="#/p5.Element">p5.Element</a> holding created DOM element
+           * @example
+           * <div><code>
+           * let input;
+           * let img;
+           *
+           * function setup() {
+           *   input = createFileInput(handleFile);
+           *   input.position(0, 0);
+           * }
+           *
+           * function draw() {
+           *   background(255);
+           *   if (img) {
+           *     image(img, 0, 0, width, height);
+           *   }
+           * }
+           *
+           * function handleFile(file) {
+           *   print(file);
+           *   if (file.type === 'image') {
+           *     img = createImg(file.data, '');
+           *     img.hide();
+           *   } else {
+           *     img = null;
+           *   }
+           * }
+           * </code></div>
+           */
+          _main.default.prototype.createFileInput = function(callback) {
+            var multiple =
+              arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+            _main.default._validateParameters('createFileInput', arguments);
+
+            var handleFileSelect = function handleFileSelect(event) {
+              var _iteratorNormalCompletion8 = true;
+              var _didIteratorError8 = false;
+              var _iteratorError8 = undefined;
+              try {
+                for (
+                  var _iterator8 = event.target.files[Symbol.iterator](), _step8;
+                  !(_iteratorNormalCompletion8 = (_step8 = _iterator8.next()).done);
+                  _iteratorNormalCompletion8 = true
+                ) {
+                  var file = _step8.value;
+                  _main.default.File._load(file, callback);
+                }
+              } catch (err) {
+                _didIteratorError8 = true;
+                _iteratorError8 = err;
+              } finally {
+                try {
+                  if (!_iteratorNormalCompletion8 && _iterator8.return != null) {
+                    _iterator8.return();
+                  }
+                } finally {
+                  if (_didIteratorError8) {
+                    throw _iteratorError8;
+                  }
+                }
+              }
+            };
+
+            // If File API's are not supported, throw Error
+            if (!(window.File && window.FileReader && window.FileList && window.Blob)) {
+              console.log(
+                'The File APIs are not fully supported in this browser. Cannot create element.'
+              );
+
+              return;
+            }
+
+            var fileInput = document.createElement('input');
+            fileInput.setAttribute('type', 'file');
+            if (multiple) fileInput.setAttribute('multiple', true);
+            fileInput.addEventListener('change', handleFileSelect, false);
+            return addElement(fileInput, this);
+          };
+
+          /** VIDEO STUFF **/
+
+          // Helps perform similar tasks for media element methods.
+          function createMedia(pInst, type, src, callback) {
+            var elt = document.createElement(type);
+
+            // Create source elements from given sources
+            src = src || '';
