@@ -61832,3 +61832,154 @@
 
             // Create source elements from given sources
             src = src || '';
+            if (typeof src === 'string') {
+              src = [src];
+            }
+            var _iteratorNormalCompletion9 = true;
+            var _didIteratorError9 = false;
+            var _iteratorError9 = undefined;
+            try {
+              for (
+                var _iterator9 = src[Symbol.iterator](), _step9;
+                !(_iteratorNormalCompletion9 = (_step9 = _iterator9.next()).done);
+                _iteratorNormalCompletion9 = true
+              ) {
+                var mediaSource = _step9.value;
+                var sourceEl = document.createElement('source');
+                sourceEl.setAttribute('src', mediaSource);
+                elt.appendChild(sourceEl);
+              }
+
+              // If callback is provided, attach to element
+            } catch (err) {
+              _didIteratorError9 = true;
+              _iteratorError9 = err;
+            } finally {
+              try {
+                if (!_iteratorNormalCompletion9 && _iterator9.return != null) {
+                  _iterator9.return();
+                }
+              } finally {
+                if (_didIteratorError9) {
+                  throw _iteratorError9;
+                }
+              }
+            }
+            if (typeof callback === 'function') {
+              var callbackHandler = function callbackHandler() {
+                callback();
+                elt.removeEventListener('canplaythrough', callbackHandler);
+              };
+              elt.addEventListener('canplaythrough', callbackHandler);
+            }
+
+            var mediaEl = addElement(elt, pInst, true);
+            mediaEl.loadedmetadata = false;
+
+            // set width and height onload metadata
+            elt.addEventListener('loadedmetadata', function() {
+              mediaEl.width = elt.videoWidth;
+              mediaEl.height = elt.videoHeight;
+
+              // set elt width and height if not set
+              if (mediaEl.elt.width === 0) mediaEl.elt.width = elt.videoWidth;
+              if (mediaEl.elt.height === 0) mediaEl.elt.height = elt.videoHeight;
+              if (mediaEl.presetPlaybackRate) {
+                mediaEl.elt.playbackRate = mediaEl.presetPlaybackRate;
+                delete mediaEl.presetPlaybackRate;
+              }
+              mediaEl.loadedmetadata = true;
+            });
+
+            return mediaEl;
+          }
+
+          /**
+           * Creates an HTML5 `&lt;video&gt;` element in the DOM for simple playback
+           * of audio/video. Shown by default, can be hidden with .<a href="#/p5.Element/hide">hide()</a>
+           * and drawn into canvas using <a href="#/p5/image">image()</a>. The first parameter
+           * can be either a single string path to a video file, or an array of string
+           * paths to different formats of the same video. This is useful for ensuring
+           * that your video can play across different browsers, as each supports
+           * different formats. See <a href='https://developer.mozilla.org/en-US/docs/Web/HTML/Supported_media_formats'>this
+           * page</a> for further information about supported formats.
+           *
+           * @method createVideo
+           * @param  {String|String[]} src path to a video file, or array of paths for
+           *                             supporting different browsers
+           * @param  {Function} [callback] callback function to be called upon
+           *                             'canplaythrough' event fire, that is, when the
+           *                             browser can play the media, and estimates that
+           *                             enough data has been loaded to play the media
+           *                             up to its end without having to stop for
+           *                             further buffering of content
+           * @return {p5.MediaElement}   pointer to video <a href="#/p5.Element">p5.Element</a>
+           * @example
+           * <div><code>
+           * let vid;
+           * function setup() {
+           *   noCanvas();
+           *
+           *   vid = createVideo(
+           *     ['assets/small.mp4', 'assets/small.ogv', 'assets/small.webm'],
+           *     vidLoad
+           *   );
+           *
+           *   vid.size(100, 100);
+           * }
+           *
+           * // This function is called when the video loads
+           * function vidLoad() {
+           *   vid.loop();
+           *   vid.volume(0);
+           * }
+           * </code></div>
+           */
+          _main.default.prototype.createVideo = function(src, callback) {
+            _main.default._validateParameters('createVideo', arguments);
+            return createMedia(this, 'video', src, callback);
+          };
+
+          /** AUDIO STUFF **/
+
+          /**
+           * Creates a hidden HTML5 `&lt;audio&gt;` element in the DOM for simple audio
+           * playback. The first parameter can be either a single string path to a
+           * audio file, or an array of string paths to different formats of the same
+           * audio. This is useful for ensuring that your audio can play across
+           * different browsers, as each supports different formats.
+           * See <a href='https://developer.mozilla.org/en-US/docs/Web/HTML/Supported_media_formats'>this
+           * page for further information about supported formats</a>.
+           *
+           * @method createAudio
+           * @param  {String|String[]} [src] path to an audio file, or array of paths
+           *                             for supporting different browsers
+           * @param  {Function} [callback] callback function to be called upon
+           *                             'canplaythrough' event fire, that is, when the
+           *                             browser can play the media, and estimates that
+           *                             enough data has been loaded to play the media
+           *                             up to its end without having to stop for
+           *                             further buffering of content
+           * @return {p5.MediaElement}   pointer to audio <a href="#/p5.Element">p5.Element</a>
+           * @example
+           * <div><code>
+           * let ele;
+           * function setup() {
+           *   ele = createAudio('assets/beat.mp3');
+           *
+           *   // here we set the element to autoplay
+           *   // The element will play as soon
+           *   // as it is able to do so.
+           *   ele.autoplay(true);
+           * }
+           * </code></div>
+           */
+          _main.default.prototype.createAudio = function(src, callback) {
+            _main.default._validateParameters('createAudio', arguments);
+            return createMedia(this, 'audio', src, callback);
+          };
+
+          /** CAMERA STUFF **/
+
+          /**
+           * @property {String} VIDEO
