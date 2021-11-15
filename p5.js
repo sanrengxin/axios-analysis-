@@ -61983,3 +61983,149 @@
 
           /**
            * @property {String} VIDEO
+           * @final
+           * @category Constants
+           */
+          _main.default.prototype.VIDEO = 'video';
+          /**
+           * @property {String} AUDIO
+           * @final
+           * @category Constants
+           */
+          _main.default.prototype.AUDIO = 'audio';
+
+          // from: https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
+          // Older browsers might not implement mediaDevices at all, so we set an empty object first
+          if (navigator.mediaDevices === undefined) {
+            navigator.mediaDevices = {};
+          }
+
+          // Some browsers partially implement mediaDevices. We can't just assign an object
+          // with getUserMedia as it would overwrite existing properties.
+          // Here, we will just add the getUserMedia property if it's missing.
+          if (navigator.mediaDevices.getUserMedia === undefined) {
+            navigator.mediaDevices.getUserMedia = function(constraints) {
+              // First get ahold of the legacy getUserMedia, if present
+              var getUserMedia = navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+
+              // Some browsers just don't implement it - return a rejected promise with an error
+              // to keep a consistent interface
+              if (!getUserMedia) {
+                return Promise.reject(
+                  new Error('getUserMedia is not implemented in this browser')
+                );
+              }
+
+              // Otherwise, wrap the call to the old navigator.getUserMedia with a Promise
+              return new Promise(function(resolve, reject) {
+                getUserMedia.call(navigator, constraints, resolve, reject);
+              });
+            };
+          }
+
+          /**
+           * Creates a new HTML5 `&lt;video&gt;` element that contains the audio/video feed
+           * from a webcam. The element is separate from the canvas and is displayed by
+           * default. The element can be hidden using .<a href="#/p5.Element/hide">hide()</a>.
+           * The feed can be drawn onto the canvas using <a href="#/p5/image">image()</a>.
+           * The loadedmetadata property can be used to detect when the element has fully
+           * loaded (see second example).
+           *
+           * More specific properties of the feed can be passing in a Constraints object.
+           * See the <a href='http://w3c.github.io/mediacapture-main/getusermedia.html#media-track-constraints'>
+           * W3C spec</a> for possible properties. Note that not all of these are supported
+           * by all browsers.
+           *
+           * <em>Security note</em>: A new browser security specification requires that
+           * getUserMedia, which is behind <a href="#/p5/createCapture">createCapture()</a>,
+           * only works when you're running the code locally, or on HTTPS. Learn more
+           * <a href='http://stackoverflow.com/questions/34197653/getusermedia-in-chrome-47-without-using-https'>here</a>
+           * and <a href='https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia'>here</a>.
+           *
+           * @method createCapture
+           * @param  {String|Constant|Object}   type type of capture, either VIDEO or
+           *                                   AUDIO if none specified, default both,
+           *                                   or a Constraints object
+           * @param  {Function}                 [callback] function to be called once
+           *                                   stream has loaded
+           * @return {p5.Element} capture video <a href="#/p5.Element">p5.Element</a>
+           * @example
+           * <div class='norender notest'>
+           * <code>
+           * let capture;
+           *
+           * function setup() {
+           *   createCanvas(480, 480);
+           *   capture = createCapture(VIDEO);
+           *   capture.hide();
+           * }
+           *
+           * function draw() {
+           *   image(capture, 0, 0, width, width * capture.height / capture.width);
+           *   filter(INVERT);
+           * }
+           * </code>
+           * </div>
+           *
+           * <div class='norender notest'>
+           * <code>
+           * function setup() {
+           *   createCanvas(480, 120);
+           *   let constraints = {
+           *     video: {
+           *       mandatory: {
+           *         minWidth: 1280,
+           *         minHeight: 720
+           *       },
+           *       optional: [{ maxFrameRate: 10 }]
+           *     },
+           *     audio: true
+           *   };
+           *   createCapture(constraints, function(stream) {
+           *     console.log(stream);
+           *   });
+           * }
+           * </code>
+           * </div>
+           * <div class='norender notest'>
+           * <code>
+           * let capture;
+           *
+           * function setup() {
+           *   createCanvas(640, 480);
+           *   capture = createCapture(VIDEO);
+           * }
+           * function draw() {
+           *   background(0);
+           *   if (capture.loadedmetadata) {
+           *     let c = capture.get(0, 0, 100, 100);
+           *     image(c, 0, 0);
+           *   }
+           * }
+           * </code>
+           * </div>
+           */
+          _main.default.prototype.createCapture = function() {
+            _main.default._validateParameters('createCapture', arguments);
+
+            // return if getUserMedia is not supported by browser
+            if (!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia)) {
+              throw new DOMException('getUserMedia not supported in this browser');
+            }
+
+            var useVideo = true;
+            var useAudio = true;
+            var constraints;
+            var callback;
+            var _iteratorNormalCompletion10 = true;
+            var _didIteratorError10 = false;
+            var _iteratorError10 = undefined;
+            try {
+              for (
+                var _iterator10 = arguments[Symbol.iterator](), _step10;
+                !(_iteratorNormalCompletion10 = (_step10 = _iterator10.next()).done);
+                _iteratorNormalCompletion10 = true
+              ) {
+                var arg = _step10.value;
+                if (arg === _main.default.prototype.VIDEO) useAudio = false;
+                else if (arg === _main.default.prototype.AUDIO) useVideo = false;
