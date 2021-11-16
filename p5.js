@@ -62256,3 +62256,126 @@
            *   div.removeClass('myClass');
            * }
            * </code></div>
+           */
+          _main.default.Element.prototype.removeClass = function(c) {
+            // Note: Removing a class that does not exist does NOT throw an error in classList.remove method
+            this.elt.classList.remove(c);
+            return this;
+          };
+
+          /**
+           *
+           * Checks if specified class already set to element
+           *
+           * @method hasClass
+           * @returns {boolean} a boolean value if element has specified class
+           * @param c {String} class name of class to check
+           * @example
+           * <div class='norender'><code>
+           * let div;
+           *
+           * function setup() {
+           *   div = createDiv('div');
+           *   div.addClass('show');
+           * }
+           *
+           * function mousePressed() {
+           *   if (div.hasClass('show')) {
+           *     div.addClass('show');
+           *   } else {
+           *     div.removeClass('show');
+           *   }
+           * }
+           * </code></div>
+           */
+          _main.default.Element.prototype.hasClass = function(c) {
+            return this.elt.classList.contains(c);
+          };
+
+          /**
+           *
+           * Toggles element class
+           *
+           * @method toggleClass
+           * @param c {String} class name to toggle
+           * @chainable
+           * @example
+           * <div class='norender'><code>
+           * let div;
+           *
+           * function setup() {
+           *   div = createDiv('div');
+           *   div.addClass('show');
+           * }
+           *
+           * function mousePressed() {
+           *   div.toggleClass('show');
+           * }
+           * </code></div>
+           */
+          _main.default.Element.prototype.toggleClass = function(c) {
+            // classList also has a toggle() method, but we cannot use that yet as support is unclear.
+            // See https://github.com/processing/p5.js/issues/3631
+            // this.elt.classList.toggle(c);
+            if (this.elt.classList.contains(c)) {
+              this.elt.classList.remove(c);
+            } else {
+              this.elt.classList.add(c);
+            }
+            return this;
+          };
+
+          /**
+           *
+           * Attaches the element  as a child to the parent specified.
+           * Accepts either a string ID, DOM node, or <a href="#/p5.Element">p5.Element</a>.
+           * If no argument is specified, an array of children DOM nodes is returned.
+           *
+           * @method child
+           * @returns {Node[]} an array of child nodes
+           * @example
+           * <div class='norender'><code>
+           * let div0 = createDiv('this is the parent');
+           * let div1 = createDiv('this is the child');
+           * div0.child(div1); // use p5.Element
+           * </code></div>
+           * <div class='norender'><code>
+           * let div0 = createDiv('this is the parent');
+           * let div1 = createDiv('this is the child');
+           * div1.id('apples');
+           * div0.child('apples'); // use id
+           * </code></div>
+           * <div class='norender notest'><code>
+           * // this example assumes there is a div already on the page
+           * // with id "myChildDiv"
+           * let div0 = createDiv('this is the parent');
+           * let elt = document.getElementById('myChildDiv');
+           * div0.child(elt); // use element from page
+           * </code></div>
+           */
+          /**
+           * @method child
+           * @param  {String|p5.Element} [child] the ID, DOM node, or <a href="#/p5.Element">p5.Element</a>
+           *                         to add to the current element
+           * @chainable
+           */
+          _main.default.Element.prototype.child = function(childNode) {
+            if (typeof childNode === 'undefined') {
+              return this.elt.childNodes;
+            }
+            if (typeof childNode === 'string') {
+              if (childNode[0] === '#') {
+                childNode = childNode.substring(1);
+              }
+              childNode = document.getElementById(childNode);
+            } else if (childNode instanceof _main.default.Element) {
+              childNode = childNode.elt;
+            }
+
+            if (childNode instanceof HTMLElement) {
+              this.elt.appendChild(childNode);
+            }
+            return this;
+          };
+
+          /**
