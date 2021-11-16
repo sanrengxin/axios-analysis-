@@ -62129,3 +62129,130 @@
                 var arg = _step10.value;
                 if (arg === _main.default.prototype.VIDEO) useAudio = false;
                 else if (arg === _main.default.prototype.AUDIO) useVideo = false;
+                else if (_typeof(arg) === 'object') constraints = arg;
+                else if (typeof arg === 'function') callback = arg;
+              }
+            } catch (err) {
+              _didIteratorError10 = true;
+              _iteratorError10 = err;
+            } finally {
+              try {
+                if (!_iteratorNormalCompletion10 && _iterator10.return != null) {
+                  _iterator10.return();
+                }
+              } finally {
+                if (_didIteratorError10) {
+                  throw _iteratorError10;
+                }
+              }
+            }
+            if (!constraints) constraints = { video: useVideo, audio: useAudio };
+
+            var domElement = document.createElement('video');
+            // required to work in iOS 11 & up:
+            domElement.setAttribute('playsinline', '');
+
+            navigator.mediaDevices.getUserMedia(constraints).then(function(stream) {
+              try {
+                if ('srcObject' in domElement) {
+                  domElement.srcObject = stream;
+                } else {
+                  domElement.src = window.URL.createObjectURL(stream);
+                }
+              } catch (err) {
+                domElement.src = stream;
+              }
+            }, console.log);
+
+            var videoEl = addElement(domElement, this, true);
+            videoEl.loadedmetadata = false;
+            // set width and height onload metadata
+            domElement.addEventListener('loadedmetadata', function() {
+              domElement.play();
+              if (domElement.width) {
+                videoEl.width = domElement.width;
+                videoEl.height = domElement.height;
+              } else {
+                videoEl.width = videoEl.elt.width = domElement.videoWidth;
+                videoEl.height = videoEl.elt.height = domElement.videoHeight;
+              }
+              videoEl.loadedmetadata = true;
+
+              if (callback) callback(domElement.srcObject);
+            });
+            return videoEl;
+          };
+
+          /**
+           * Creates element with given tag in the DOM with given content.
+           *
+           * @method createElement
+           * @param  {String} tag tag for the new element
+           * @param  {String} [content] html content to be inserted into the element
+           * @return {p5.Element} pointer to <a href="#/p5.Element">p5.Element</a> holding created node
+           * @example
+           * <div class='norender'><code>
+           * createElement('h2', 'im an h2 p5.element!');
+           * </code></div>
+           */
+          _main.default.prototype.createElement = function(tag, content) {
+            _main.default._validateParameters('createElement', arguments);
+            var elt = document.createElement(tag);
+            if (typeof content !== 'undefined') {
+              elt.innerHTML = content;
+            }
+            return addElement(elt, this);
+          };
+
+          // =============================================================================
+          //                         p5.Element additions
+          // =============================================================================
+          /**
+           *
+           * Adds specified class to the element.
+           *
+           * @for p5.Element
+           * @method addClass
+           * @param  {String} class name of class to add
+           * @chainable
+           * @example
+           * <div class='norender'><code>
+           * let div = createDiv('div');
+           * div.addClass('myClass');
+           * </code></div>
+           */
+          _main.default.Element.prototype.addClass = function(c) {
+            if (this.elt.className) {
+              if (!this.hasClass(c)) {
+                this.elt.className = this.elt.className + ' ' + c;
+              }
+            } else {
+              this.elt.className = c;
+            }
+            return this;
+          };
+
+          /**
+           *
+           * Removes specified class from the element.
+           *
+           * @method removeClass
+           * @param  {String} class name of class to remove
+           * @chainable
+           * @example
+           * <div class='norender'><code>
+           * // In this example, a class is set when the div is created
+           * // and removed when mouse is pressed. This could link up
+           * // with a CSS style rule to toggle style properties.
+           *
+           * let div;
+           *
+           * function setup() {
+           *   div = createDiv('div');
+           *   div.addClass('myClass');
+           * }
+           *
+           * function mousePressed() {
+           *   div.removeClass('myClass');
+           * }
+           * </code></div>
