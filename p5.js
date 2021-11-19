@@ -62645,3 +62645,125 @@
                 val.levels[3] / 255 +
                 ')';
             }
+
+            if (typeof val === 'undefined') {
+              if (prop.indexOf(':') === -1) {
+                // no value set, so assume requesting a value
+                var styles = window.getComputedStyle(self.elt);
+                var style = styles.getPropertyValue(prop);
+                return style;
+              } else {
+                // value set using `:` in a single line string
+                var attrs = prop.split(';');
+                for (var i = 0; i < attrs.length; i++) {
+                  var parts = attrs[i].split(':');
+                  if (parts[0] && parts[1]) {
+                    this.elt.style[parts[0].trim()] = parts[1].trim();
+                  }
+                }
+              }
+            } else {
+              // input provided as key,val pair
+              this.elt.style[prop] = val;
+              if (
+                prop === 'width' ||
+                prop === 'height' ||
+                prop === 'left' ||
+                prop === 'top'
+              ) {
+                var _styles = window.getComputedStyle(self.elt);
+                var styleVal = _styles.getPropertyValue(prop);
+                var numVal = styleVal.replace(/\D+/g, '');
+                this[prop] = parseInt(numVal, 10);
+              }
+            }
+            return this;
+          };
+
+          /**
+           *
+           * Adds a new attribute or changes the value of an existing attribute
+           * on the specified element. If no value is specified, returns the
+           * value of the given attribute, or null if attribute is not set.
+           *
+           * @method attribute
+           * @return {String} value of attribute
+           *
+           * @example
+           * <div class='norender'><code>
+           * let myDiv = createDiv('I like pandas.');
+           * myDiv.attribute('align', 'center');
+           * </code></div>
+           */
+          /**
+           * @method attribute
+           * @param  {String} attr       attribute to set
+           * @param  {String} value      value to assign to attribute
+           * @chainable
+           */
+          _main.default.Element.prototype.attribute = function(attr, value) {
+            //handling for checkboxes and radios to ensure options get
+            //attributes not divs
+            if (
+              this.elt.firstChild != null &&
+              (this.elt.firstChild.type === 'checkbox' ||
+                this.elt.firstChild.type === 'radio')
+            ) {
+              if (typeof value === 'undefined') {
+                return this.elt.firstChild.getAttribute(attr);
+              } else {
+                for (var i = 0; i < this.elt.childNodes.length; i++) {
+                  this.elt.childNodes[i].setAttribute(attr, value);
+                }
+              }
+            } else if (typeof value === 'undefined') {
+              return this.elt.getAttribute(attr);
+            } else {
+              this.elt.setAttribute(attr, value);
+              return this;
+            }
+          };
+
+          /**
+           *
+           * Removes an attribute on the specified element.
+           *
+           * @method removeAttribute
+           * @param  {String} attr       attribute to remove
+           * @chainable
+           *
+           * @example
+           * <div><code>
+           * let button;
+           * let checkbox;
+           *
+           * function setup() {
+           *   checkbox = createCheckbox('enable', true);
+           *   checkbox.changed(enableButton);
+           *   button = createButton('button');
+           *   button.position(10, 10);
+           * }
+           *
+           * function enableButton() {
+           *   if (this.checked()) {
+           *     // Re-enable the button
+           *     button.removeAttribute('disabled');
+           *   } else {
+           *     // Disable the button
+           *     button.attribute('disabled', '');
+           *   }
+           * }
+           * </code></div>
+           */
+          _main.default.Element.prototype.removeAttribute = function(attr) {
+            if (
+              this.elt.firstChild != null &&
+              (this.elt.firstChild.type === 'checkbox' ||
+                this.elt.firstChild.type === 'radio')
+            ) {
+              for (var i = 0; i < this.elt.childNodes.length; i++) {
+                this.elt.childNodes[i].removeAttribute(attr);
+              }
+            }
+            this.elt.removeAttribute(attr);
+            return this;
