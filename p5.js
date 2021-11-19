@@ -62516,3 +62516,132 @@
               if (
                 arguments[2] === 'static' ||
                 arguments[2] === 'fixed' ||
+                arguments[2] === 'relative' ||
+                arguments[2] === 'sticky' ||
+                arguments[2] === 'initial' ||
+                arguments[2] === 'inherit'
+              ) {
+                positionType = arguments[2];
+              }
+              this.elt.style.position = positionType;
+              this.elt.style.left = arguments[0] + 'px';
+              this.elt.style.top = arguments[1] + 'px';
+              this.x = arguments[0];
+              this.y = arguments[1];
+              return this;
+            }
+          };
+
+          /* Helper method called by p5.Element.style() */
+          _main.default.Element.prototype._translate = function() {
+            this.elt.style.position = 'absolute';
+            // save out initial non-translate transform styling
+            var transform = '';
+            if (this.elt.style.transform) {
+              transform = this.elt.style.transform.replace(/translate3d\(.*\)/g, '');
+              transform = transform.replace(/translate[X-Z]?\(.*\)/g, '');
+            }
+            if (arguments.length === 2) {
+              this.elt.style.transform =
+                'translate(' + arguments[0] + 'px, ' + arguments[1] + 'px)';
+            } else if (arguments.length > 2) {
+              this.elt.style.transform =
+                'translate3d(' +
+                arguments[0] +
+                'px,' +
+                arguments[1] +
+                'px,' +
+                arguments[2] +
+                'px)';
+              if (arguments.length === 3) {
+                this.elt.parentElement.style.perspective = '1000px';
+              } else {
+                this.elt.parentElement.style.perspective = arguments[3] + 'px';
+              }
+            }
+            // add any extra transform styling back on end
+            this.elt.style.transform += transform;
+            return this;
+          };
+
+          /* Helper method called by p5.Element.style() */
+          _main.default.Element.prototype._rotate = function() {
+            // save out initial non-rotate transform styling
+            var transform = '';
+            if (this.elt.style.transform) {
+              transform = this.elt.style.transform.replace(/rotate3d\(.*\)/g, '');
+              transform = transform.replace(/rotate[X-Z]?\(.*\)/g, '');
+            }
+
+            if (arguments.length === 1) {
+              this.elt.style.transform = 'rotate(' + arguments[0] + 'deg)';
+            } else if (arguments.length === 2) {
+              this.elt.style.transform =
+                'rotate(' + arguments[0] + 'deg, ' + arguments[1] + 'deg)';
+            } else if (arguments.length === 3) {
+              this.elt.style.transform = 'rotateX(' + arguments[0] + 'deg)';
+              this.elt.style.transform += 'rotateY(' + arguments[1] + 'deg)';
+              this.elt.style.transform += 'rotateZ(' + arguments[2] + 'deg)';
+            }
+            // add remaining transform back on
+            this.elt.style.transform += transform;
+            return this;
+          };
+
+          /**
+           * Sets the given style (css) property (1st arg) of the element with the
+           * given value (2nd arg). If a single argument is given, .style()
+           * returns the value of the given property; however, if the single argument
+           * is given in css syntax ('text-align:center'), .style() sets the css
+           * appropriately.
+           *
+           * @method style
+           * @param  {String} property   property to be set
+           * @returns {String} value of property
+           * @example
+           * <div><code class='norender'>
+           * let myDiv = createDiv('I like pandas.');
+           * myDiv.style('font-size', '18px');
+           * myDiv.style('color', '#ff0000');
+           * </code></div>
+           * <div><code class='norender'>
+           * let col = color(25, 23, 200, 50);
+           * let button = createButton('button');
+           * button.style('background-color', col);
+           * button.position(10, 10);
+           * </code></div>
+           * <div><code class='norender'>
+           * let myDiv;
+           * function setup() {
+           *   background(200);
+           *   myDiv = createDiv('I like gray.');
+           *   myDiv.position(20, 20);
+           * }
+           *
+           * function draw() {
+           *   myDiv.style('font-size', mouseX + 'px');
+           * }
+           * </code></div>
+           */
+          /**
+           * @method style
+           * @param  {String} property
+           * @param  {String|p5.Color} value     value to assign to property
+           * @return {String} current value of property, if no value is given as second argument
+           * @chainable
+           */
+          _main.default.Element.prototype.style = function(prop, val) {
+            var self = this;
+
+            if (val instanceof _main.default.Color) {
+              val =
+                'rgba(' +
+                val.levels[0] +
+                ',' +
+                val.levels[1] +
+                ',' +
+                val.levels[2] +
+                ',' +
+                val.levels[3] / 255 +
+                ')';
+            }
