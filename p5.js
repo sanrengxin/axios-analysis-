@@ -62379,3 +62379,140 @@
           };
 
           /**
+           * Centers a p5 Element either vertically, horizontally,
+           * or both, relative to its parent or according to
+           * the body if the Element has no parent. If no argument is passed
+           * the Element is aligned both vertically and horizontally.
+           *
+           * @method center
+           * @param  {String} [align]       passing 'vertical', 'horizontal' aligns element accordingly
+           * @chainable
+           *
+           * @example
+           * <div><code>
+           * function setup() {
+           *   let div = createDiv('').size(10, 10);
+           *   div.style('background-color', 'orange');
+           *   div.center();
+           * }
+           * </code></div>
+           */
+          _main.default.Element.prototype.center = function(align) {
+            var style = this.elt.style.display;
+            var hidden = this.elt.style.display === 'none';
+            var parentHidden = this.parent().style.display === 'none';
+            var pos = { x: this.elt.offsetLeft, y: this.elt.offsetTop };
+
+            if (hidden) this.show();
+            if (parentHidden) this.parent().show();
+            this.elt.style.display = 'block';
+
+            this.position(0, 0);
+            var wOffset = Math.abs(this.parent().offsetWidth - this.elt.offsetWidth);
+            var hOffset = Math.abs(this.parent().offsetHeight - this.elt.offsetHeight);
+
+            if (align === 'both' || align === undefined) {
+              this.position(
+                wOffset / 2 + this.parent().offsetLeft,
+                hOffset / 2 + this.parent().offsetTop
+              );
+            } else if (align === 'horizontal') {
+              this.position(wOffset / 2 + this.parent().offsetLeft, pos.y);
+            } else if (align === 'vertical') {
+              this.position(pos.x, hOffset / 2 + this.parent().offsetTop);
+            }
+
+            this.style('display', style);
+            if (hidden) this.hide();
+            if (parentHidden) this.parent().hide();
+
+            return this;
+          };
+
+          /**
+           *
+           * If an argument is given, sets the inner HTML of the element,
+           * replacing any existing html. If true is included as a second
+           * argument, html is appended instead of replacing existing html.
+           * If no arguments are given, returns
+           * the inner HTML of the element.
+           *
+           * @for p5.Element
+           * @method html
+           * @returns {String} the inner HTML of the element
+           * @example
+           * <div class='norender'><code>
+           * let div = createDiv('').size(100, 100);
+           * div.html('hi');
+           * </code></div>
+           * <div class='norender'><code>
+           * let div = createDiv('Hello ').size(100, 100);
+           * div.html('World', true);
+           * </code></div>
+           */
+          /**
+           * @method html
+           * @param  {String} [html] the HTML to be placed inside the element
+           * @param  {boolean} [append] whether to append HTML to existing
+           * @chainable
+           */
+          _main.default.Element.prototype.html = function() {
+            if (arguments.length === 0) {
+              return this.elt.innerHTML;
+            } else if (arguments[1]) {
+              this.elt.insertAdjacentHTML('beforeend', arguments[0]);
+              return this;
+            } else {
+              this.elt.innerHTML = arguments[0];
+              return this;
+            }
+          };
+
+          /**
+           *
+           * Sets the position of the element. If no position type argument is given, the
+           * position will be relative to (0, 0) of the window.
+           * Essentially, this sets position:absolute and left and top
+           * properties of style. If an optional third argument specifying position type is given,
+           * the x and y coordinates will be interpreted based on the <a target="_blank"
+           * href="https://developer.mozilla.org/en-US/docs/Web/CSS/position">positioning scheme</a>.
+           * If no arguments given, the function returns the x and y position of the element.
+           *
+           * found documentation on how to be more specific with object type
+           * https://stackoverflow.com/questions/14714314/how-do-i-comment-object-literals-in-yuidoc
+           *
+           * @method position
+           * @returns {Object} object of form { x: 0, y: 0 } containing the position of the element in an object
+           * @example
+           * <div><code class='norender'>
+           * function setup() {
+           *   let cnv = createCanvas(100, 100);
+           *   // positions canvas 50px to the right and 100px
+           *   // below upper left corner of the window
+           *   cnv.position(50, 100);
+           * }
+           * </code></div>
+           * <div><code class='norender'>
+           * function setup() {
+           *   let cnv = createCanvas(100, 100);
+           *   // positions canvas 50px to the right and 100px
+           *   // below upper left corner of the window
+           *   cnv.position(0, 0, 'fixed');
+           * }
+           * </code></div>
+           */
+          /**
+           * @method position
+           * @param  {Number} [x] x-position relative to upper left of window (optional)
+           * @param  {Number} [y] y-position relative to upper left of window (optional)
+           * @param  {String} positionType it can be static, fixed, relative, sticky, initial or inherit (optional)
+           * @chainable
+           */
+          _main.default.Element.prototype.position = function() {
+            if (arguments.length === 0) {
+              return { x: this.elt.offsetLeft, y: this.elt.offsetTop };
+            } else {
+              var positionType = 'absolute';
+              if (
+                arguments[2] === 'static' ||
+                arguments[2] === 'fixed' ||
