@@ -62767,3 +62767,129 @@
             }
             this.elt.removeAttribute(attr);
             return this;
+          };
+
+          /**
+           * Either returns the value of the element if no arguments
+           * given, or sets the value of the element.
+           *
+           * @method value
+           * @return {String|Number} value of the element
+           * @example
+           * <div class='norender'><code>
+           * // gets the value
+           * let inp;
+           * function setup() {
+           *   inp = createInput('');
+           * }
+           *
+           * function mousePressed() {
+           *   print(inp.value());
+           * }
+           * </code></div>
+           * <div class='norender'><code>
+           * // sets the value
+           * let inp;
+           * function setup() {
+           *   inp = createInput('myValue');
+           * }
+           *
+           * function mousePressed() {
+           *   inp.value('myValue');
+           * }
+           * </code></div>
+           */
+          /**
+           * @method value
+           * @param  {String|Number}     value
+           * @chainable
+           */
+          _main.default.Element.prototype.value = function() {
+            if (arguments.length > 0) {
+              this.elt.value = arguments[0];
+              return this;
+            } else {
+              if (this.elt.type === 'range') {
+                return parseFloat(this.elt.value);
+              } else return this.elt.value;
+            }
+          };
+
+          /**
+           *
+           * Shows the current element. Essentially, setting display:block for the style.
+           *
+           * @method show
+           * @chainable
+           * @example
+           * <div class='norender'><code>
+           * let div = createDiv('div');
+           * div.style('display', 'none');
+           * div.show(); // turns display to block
+           * </code></div>
+           */
+          _main.default.Element.prototype.show = function() {
+            this.elt.style.display = 'block';
+            return this;
+          };
+
+          /**
+           * Hides the current element. Essentially, setting display:none for the style.
+           *
+           * @method hide
+           * @chainable
+           * @example
+           * <div class='norender'><code>
+           * let div = createDiv('this is a div');
+           * div.hide();
+           * </code></div>
+           */
+          _main.default.Element.prototype.hide = function() {
+            this.elt.style.display = 'none';
+            return this;
+          };
+
+          /**
+           *
+           * Sets the width and height of the element. AUTO can be used to
+           * only adjust one dimension at a time. If no arguments are given, it
+           * returns the width and height of the element in an object. In case of
+           * elements which need to be loaded, such as images, it is recommended
+           * to call the function after the element has finished loading.
+           *
+           * @method size
+           * @return {Object} the width and height of the element in an object
+           * @example
+           * <div class='norender'><code>
+           * let div = createDiv('this is a div');
+           * div.size(100, 100);
+           * let img = createImg(
+           *   'assets/rockies.jpg',
+           *   'A tall mountain with a small forest and field in front of it on a sunny day',
+           *   '',
+           *   () => {
+           *     img.size(10, AUTO);
+           *   }
+           * );
+           * </code></div>
+           */
+          /**
+           * @method size
+           * @param  {Number|Constant} w    width of the element, either AUTO, or a number
+           * @param  {Number|Constant} [h] height of the element, either AUTO, or a number
+           * @chainable
+           */
+          _main.default.Element.prototype.size = function(w, h) {
+            if (arguments.length === 0) {
+              return { width: this.elt.offsetWidth, height: this.elt.offsetHeight };
+            } else {
+              var aW = w;
+              var aH = h;
+              var AUTO = _main.default.prototype.AUTO;
+              if (aW !== AUTO || aH !== AUTO) {
+                if (aW === AUTO) {
+                  aW = h * this.width / this.height;
+                } else if (aH === AUTO) {
+                  aH = w * this.height / this.width;
+                }
+                // set diff for cnv vs normal div
