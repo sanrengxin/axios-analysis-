@@ -62893,3 +62893,126 @@
                   aH = w * this.height / this.width;
                 }
                 // set diff for cnv vs normal div
+                if (this.elt instanceof HTMLCanvasElement) {
+                  var j = {};
+                  var k = this.elt.getContext('2d');
+                  var prop;
+                  for (prop in k) {
+                    j[prop] = k[prop];
+                  }
+                  this.elt.setAttribute('width', aW * this._pInst._pixelDensity);
+                  this.elt.setAttribute('height', aH * this._pInst._pixelDensity);
+                  this.elt.style.width = aW + 'px';
+                  this.elt.style.height = aH + 'px';
+                  this._pInst.scale(this._pInst._pixelDensity, this._pInst._pixelDensity);
+                  for (prop in j) {
+                    this.elt.getContext('2d')[prop] = j[prop];
+                  }
+                } else {
+                  this.elt.style.width = aW + 'px';
+                  this.elt.style.height = aH + 'px';
+                  this.elt.width = aW;
+                  this.elt.height = aH;
+                }
+
+                this.width = this.elt.offsetWidth;
+                this.height = this.elt.offsetHeight;
+
+                if (this._pInst && this._pInst._curElement) {
+                  // main canvas associated with p5 instance
+                  if (this._pInst._curElement.elt === this.elt) {
+                    this._pInst._setProperty('width', this.elt.offsetWidth);
+                    this._pInst._setProperty('height', this.elt.offsetHeight);
+                  }
+                }
+              }
+              return this;
+            }
+          };
+
+          /**
+           * Removes the element, stops all media streams, and deregisters all listeners.
+           * @method remove
+           * @example
+           * <div class='norender'><code>
+           * let myDiv = createDiv('this is some text');
+           * myDiv.remove();
+           * </code></div>
+           */
+          _main.default.Element.prototype.remove = function() {
+            // stop all audios/videos and detach all devices like microphone/camera etc
+            // used as input/output for audios/videos.
+            if (this instanceof _main.default.MediaElement) {
+              this.stop();
+              var sources = this.elt.srcObject;
+              if (sources !== null) {
+                var tracks = sources.getTracks();
+                tracks.forEach(function(track) {
+                  track.stop();
+                });
+              }
+            }
+
+            // delete the reference in this._pInst._elements
+            var index = this._pInst._elements.indexOf(this);
+            if (index !== -1) {
+              this._pInst._elements.splice(index, 1);
+            }
+
+            // deregister events
+            for (var ev in this._events) {
+              this.elt.removeEventListener(ev, this._events[ev]);
+            }
+            if (this.elt && this.elt.parentNode) {
+              this.elt.parentNode.removeChild(this.elt);
+            }
+          };
+
+          /**
+           * Registers a callback that gets called every time a file that is
+           * dropped on the element has been loaded.
+           * p5 will load every dropped file into memory and pass it as a p5.File object to the callback.
+           * Multiple files dropped at the same time will result in multiple calls to the callback.
+           *
+           * You can optionally pass a second callback which will be registered to the raw
+           * <a href="https://developer.mozilla.org/en-US/docs/Web/Events/drop">drop</a> event.
+           * The callback will thus be provided the original
+           * <a href="https://developer.mozilla.org/en-US/docs/Web/API/DragEvent">DragEvent</a>.
+           * Dropping multiple files at the same time will trigger the second callback once per drop,
+           * whereas the first callback will trigger for each loaded file.
+           *
+           * @method drop
+           * @param  {Function} callback  callback to receive loaded file, called for each file dropped.
+           * @param  {Function} [fxn]     callback triggered once when files are dropped with the drop event.
+           * @chainable
+           * @example
+           * <div><code>
+           * function setup() {
+           *   let c = createCanvas(100, 100);
+           *   background(200);
+           *   textAlign(CENTER);
+           *   text('drop file', width / 2, height / 2);
+           *   c.drop(gotFile);
+           * }
+           *
+           * function gotFile(file) {
+           *   background(200);
+           *   text('received file:', width / 2, height / 2);
+           *   text(file.name, width / 2, height / 2 + 50);
+           * }
+           * </code></div>
+           *
+           * <div><code>
+           * let img;
+           *
+           * function setup() {
+           *   let c = createCanvas(100, 100);
+           *   background(200);
+           *   textAlign(CENTER);
+           *   text('drop image', width / 2, height / 2);
+           *   c.drop(gotFile);
+           * }
+           *
+           * function draw() {
+           *   if (img) {
+           *     image(img, 0, 0, width, height);
