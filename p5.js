@@ -63170,3 +63170,115 @@
           /**
            * Play an HTML5 media element.
            *
+           * @method play
+           * @chainable
+           * @example
+           * <div><code>
+           * let ele;
+           *
+           * function setup() {
+           *   //p5.MediaElement objects are usually created
+           *   //by calling the createAudio(), createVideo(),
+           *   //and createCapture() functions.
+           *
+           *   //In this example we create
+           *   //a new p5.MediaElement via createAudio().
+           *   ele = createAudio('assets/beat.mp3');
+           *
+           *   background(250);
+           *   textAlign(CENTER);
+           *   text('Click to Play!', width / 2, height / 2);
+           * }
+           *
+           * function mouseClicked() {
+           *   //here we test if the mouse is over the
+           *   //canvas element when it's clicked
+           *   if (mouseX >= 0 && mouseX <= width && mouseY >= 0 && mouseY <= height) {
+           *     //Here we call the play() function on
+           *     //the p5.MediaElement we created above.
+           *     //This will start the audio sample.
+           *     ele.play();
+           *
+           *     background(200);
+           *     text('You clicked Play!', width / 2, height / 2);
+           *   }
+           * }
+           * </code></div>
+           */
+          _main.default.MediaElement.prototype.play = function() {
+            var _this = this;
+            if (this.elt.currentTime === this.elt.duration) {
+              this.elt.currentTime = 0;
+            }
+            var promise;
+            if (this.elt.readyState > 1) {
+              promise = this.elt.play();
+            } else {
+              // in Chrome, playback cannot resume after being stopped and must reload
+              this.elt.load();
+              promise = this.elt.play();
+            }
+            if (promise && promise.catch) {
+              promise.catch(function(e) {
+                // if it's an autoplay failure error
+                if (e.name === 'NotAllowedError') {
+                  _main.default._friendlyAutoplayError(_this.src);
+                } else {
+                  // any other kind of error
+                  console.error('Media play method encountered an unexpected error', e);
+                }
+              });
+            }
+            return this;
+          };
+
+          /**
+           * Stops an HTML5 media element (sets current time to zero).
+           *
+           * @method stop
+           * @chainable
+           * @example
+           * <div><code>
+           * //This example both starts
+           * //and stops a sound sample
+           * //when the user clicks the canvas
+           *
+           * //We will store the p5.MediaElement
+           * //object in here
+           * let ele;
+           *
+           * //while our audio is playing,
+           * //this will be set to true
+           * let sampleIsPlaying = false;
+           *
+           * function setup() {
+           *   //Here we create a p5.MediaElement object
+           *   //using the createAudio() function.
+           *   ele = createAudio('assets/beat.mp3');
+           *   background(200);
+           *   textAlign(CENTER);
+           *   text('Click to play!', width / 2, height / 2);
+           * }
+           *
+           * function mouseClicked() {
+           *   //here we test if the mouse is over the
+           *   //canvas element when it's clicked
+           *   if (mouseX >= 0 && mouseX <= width && mouseY >= 0 && mouseY <= height) {
+           *     background(200);
+           *
+           *     if (sampleIsPlaying) {
+           *       //if the sample is currently playing
+           *       //calling the stop() function on
+           *       //our p5.MediaElement will stop
+           *       //it and reset its current
+           *       //time to 0 (i.e. it will start
+           *       //at the beginning the next time
+           *       //you play it)
+           *       ele.stop();
+           *
+           *       sampleIsPlaying = false;
+           *       text('Click to play!', width / 2, height / 2);
+           *     } else {
+           *       //loop our sound element until we
+           *       //call ele.stop() on it.
+           *       ele.loop();
