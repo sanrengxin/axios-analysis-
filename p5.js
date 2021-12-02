@@ -63016,3 +63016,157 @@
            * function draw() {
            *   if (img) {
            *     image(img, 0, 0, width, height);
+           *   }
+           * }
+           *
+           * function gotFile(file) {
+           *   img = createImg(file.data, '').hide();
+           * }
+           * </code></div>
+           *
+           * @alt
+           * Canvas turns into whatever image is dragged/dropped onto it.
+           */
+          _main.default.Element.prototype.drop = function(callback, fxn) {
+            // Is the file stuff supported?
+            if (window.File && window.FileReader && window.FileList && window.Blob) {
+              if (!this._dragDisabled) {
+                this._dragDisabled = true;
+
+                var preventDefault = function preventDefault(evt) {
+                  evt.preventDefault();
+                };
+
+                // If you want to be able to drop you've got to turn off
+                // a lot of default behavior.
+                // avoid `attachListener` here, since it overrides other handlers.
+                this.elt.addEventListener('dragover', preventDefault);
+
+                // If this is a drag area we need to turn off the default behavior
+                this.elt.addEventListener('dragleave', preventDefault);
+              }
+
+              // Deal with the files
+              _main.default.Element._attachListener(
+                'drop',
+                function(evt) {
+                  evt.preventDefault();
+                  // Call the second argument as a callback that receives the raw drop event
+                  if (typeof fxn === 'function') {
+                    fxn.call(this, evt);
+                  }
+                  // A FileList
+                  var files = evt.dataTransfer.files;
+
+                  // Load each one and trigger the callback
+                  for (var i = 0; i < files.length; i++) {
+                    var f = files[i];
+                    _main.default.File._load(f, callback);
+                  }
+                },
+                this
+              );
+            } else {
+              console.log('The File APIs are not fully supported in this browser.');
+            }
+
+            return this;
+          };
+
+          // =============================================================================
+          //                         p5.MediaElement additions
+          // =============================================================================
+
+          /**
+           * Extends <a href="#/p5.Element">p5.Element</a> to handle audio and video. In addition to the methods
+           * of <a href="#/p5.Element">p5.Element</a>, it also contains methods for controlling media. It is not
+           * called directly, but <a href="#/p5.MediaElement">p5.MediaElement</a>s are created by calling <a href="#/p5/createVideo">createVideo</a>,
+           * <a href="#/p5/createAudio">createAudio</a>, and <a href="#/p5/createCapture">createCapture</a>.
+           *
+           * @class p5.MediaElement
+           * @constructor
+           * @param {String} elt DOM node that is wrapped
+           */
+          _main.default.MediaElement = function(elt, pInst) {
+            _main.default.Element.call(this, elt, pInst);
+
+            var self = this;
+            this.elt.crossOrigin = 'anonymous';
+
+            this._prevTime = 0;
+            this._cueIDCounter = 0;
+            this._cues = [];
+            this._pixelsState = this;
+            this._pixelDensity = 1;
+            this._modified = false;
+
+            /**
+             * Path to the media element source.
+             *
+             * @property src
+             * @return {String} src
+             * @example
+             * <div><code>
+             * let ele;
+             *
+             * function setup() {
+             *   background(250);
+             *
+             *   //p5.MediaElement objects are usually created
+             *   //by calling the createAudio(), createVideo(),
+             *   //and createCapture() functions.
+             *
+             *   //In this example we create
+             *   //a new p5.MediaElement via createAudio().
+             *   ele = createAudio('assets/beat.mp3');
+             *
+             *   //We'll set up our example so that
+             *   //when you click on the text,
+             *   //an alert box displays the MediaElement's
+             *   //src field.
+             *   textAlign(CENTER);
+             *   text('Click Me!', width / 2, height / 2);
+             * }
+             *
+             * function mouseClicked() {
+             *   //here we test if the mouse is over the
+             *   //canvas element when it's clicked
+             *   if (mouseX >= 0 && mouseX <= width && mouseY >= 0 && mouseY <= height) {
+             *     //Show our p5.MediaElement's src field
+             *     alert(ele.src);
+             *   }
+             * }
+             * </code></div>
+             */
+            Object.defineProperty(self, 'src', {
+              get: function get() {
+                var firstChildSrc = self.elt.children[0].src;
+                var srcVal = self.elt.src === window.location.href ? '' : self.elt.src;
+                var ret = firstChildSrc === window.location.href ? srcVal : firstChildSrc;
+                return ret;
+              },
+              set: function set(newValue) {
+                for (var i = 0; i < self.elt.children.length; i++) {
+                  self.elt.removeChild(self.elt.children[i]);
+                }
+                var source = document.createElement('source');
+                source.src = newValue;
+                elt.appendChild(source);
+                self.elt.src = newValue;
+                self.modified = true;
+              }
+            });
+
+            // private _onended callback, set by the method: onended(callback)
+            self._onended = function() {};
+            self.elt.onended = function() {
+              self._onended(self);
+            };
+          };
+          _main.default.MediaElement.prototype = Object.create(
+            _main.default.Element.prototype
+          );
+
+          /**
+           * Play an HTML5 media element.
+           *
