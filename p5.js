@@ -63282,3 +63282,142 @@
            *       //loop our sound element until we
            *       //call ele.stop() on it.
            *       ele.loop();
+           *
+           *       sampleIsPlaying = true;
+           *       text('Click to stop!', width / 2, height / 2);
+           *     }
+           *   }
+           * }
+           * </code></div>
+           */
+          _main.default.MediaElement.prototype.stop = function() {
+            this.elt.pause();
+            this.elt.currentTime = 0;
+            return this;
+          };
+
+          /**
+           * Pauses an HTML5 media element.
+           *
+           * @method pause
+           * @chainable
+           * @example
+           * <div><code>
+           * //This example both starts
+           * //and pauses a sound sample
+           * //when the user clicks the canvas
+           *
+           * //We will store the p5.MediaElement
+           * //object in here
+           * let ele;
+           *
+           * //while our audio is playing,
+           * //this will be set to true
+           * let sampleIsPlaying = false;
+           *
+           * function setup() {
+           *   //Here we create a p5.MediaElement object
+           *   //using the createAudio() function.
+           *   ele = createAudio('assets/lucky_dragons.mp3');
+           *   background(200);
+           *   textAlign(CENTER);
+           *   text('Click to play!', width / 2, height / 2);
+           * }
+           *
+           * function mouseClicked() {
+           *   //here we test if the mouse is over the
+           *   //canvas element when it's clicked
+           *   if (mouseX >= 0 && mouseX <= width && mouseY >= 0 && mouseY <= height) {
+           *     background(200);
+           *
+           *     if (sampleIsPlaying) {
+           *       //Calling pause() on our
+           *       //p5.MediaElement will stop it
+           *       //playing, but when we call the
+           *       //loop() or play() functions
+           *       //the sample will start from
+           *       //where we paused it.
+           *       ele.pause();
+           *
+           *       sampleIsPlaying = false;
+           *       text('Click to resume!', width / 2, height / 2);
+           *     } else {
+           *       //loop our sound element until we
+           *       //call ele.pause() on it.
+           *       ele.loop();
+           *
+           *       sampleIsPlaying = true;
+           *       text('Click to pause!', width / 2, height / 2);
+           *     }
+           *   }
+           * }
+           * </code></div>
+           */
+          _main.default.MediaElement.prototype.pause = function() {
+            this.elt.pause();
+            return this;
+          };
+
+          /**
+           * Set 'loop' to true for an HTML5 media element, and starts playing.
+           *
+           * @method loop
+           * @chainable
+           * @example
+           * <div><code>
+           * //Clicking the canvas will loop
+           * //the audio sample until the user
+           * //clicks again to stop it
+           *
+           * //We will store the p5.MediaElement
+           * //object in here
+           * let ele;
+           *
+           * //while our audio is playing,
+           * //this will be set to true
+           * let sampleIsLooping = false;
+           *
+           * function setup() {
+           *   //Here we create a p5.MediaElement object
+           *   //using the createAudio() function.
+           *   ele = createAudio('assets/lucky_dragons.mp3');
+           *   background(200);
+           *   textAlign(CENTER);
+           *   text('Click to loop!', width / 2, height / 2);
+           * }
+           *
+           * function mouseClicked() {
+           *   //here we test if the mouse is over the
+           *   //canvas element when it's clicked
+           *   if (mouseX >= 0 && mouseX <= width && mouseY >= 0 && mouseY <= height) {
+           *     background(200);
+           *
+           *     if (!sampleIsLooping) {
+           *       //loop our sound element until we
+           *       //call ele.stop() on it.
+           *       ele.loop();
+           *
+           *       sampleIsLooping = true;
+           *       text('Click to stop!', width / 2, height / 2);
+           *     } else {
+           *       ele.stop();
+           *
+           *       sampleIsLooping = false;
+           *       text('Click to loop!', width / 2, height / 2);
+           *     }
+           *   }
+           * }
+           * </code></div>
+           */
+          _main.default.MediaElement.prototype.loop = function() {
+            this.elt.setAttribute('loop', true);
+            this.play();
+            return this;
+          };
+          /**
+           * Set 'loop' to false for an HTML5 media element. Element will stop
+           * when it reaches the end.
+           *
+           * @method noLoop
+           * @chainable
+           * @example
