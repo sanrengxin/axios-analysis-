@@ -63421,3 +63421,133 @@
            * @method noLoop
            * @chainable
            * @example
+           * <div><code>
+           * //This example both starts
+           * //and stops loop of sound sample
+           * //when the user clicks the canvas
+           *
+           * //We will store the p5.MediaElement
+           * //object in here
+           * let ele;
+           * //while our audio is playing,
+           * //this will be set to true
+           * let sampleIsPlaying = false;
+           *
+           * function setup() {
+           *   //Here we create a p5.MediaElement object
+           *   //using the createAudio() function.
+           *   ele = createAudio('assets/beat.mp3');
+           *   background(200);
+           *   textAlign(CENTER);
+           *   text('Click to play!', width / 2, height / 2);
+           * }
+           *
+           * function mouseClicked() {
+           *   //here we test if the mouse is over the
+           *   //canvas element when it's clicked
+           *   if (mouseX >= 0 && mouseX <= width && mouseY >= 0 && mouseY <= height) {
+           *     background(200);
+           *
+           *     if (sampleIsPlaying) {
+           *       ele.noLoop();
+           *       sampleIsPlaying = false;
+           *       text('No more Loops!', width / 2, height / 2);
+           *     } else {
+           *       ele.loop();
+           *       sampleIsPlaying = true;
+           *       text('Click to stop looping!', width / 2, height / 2);
+           *     }
+           *   }
+           * }
+           * </code></div>
+           */
+          _main.default.MediaElement.prototype.noLoop = function() {
+            this.elt.removeAttribute('loop');
+            return this;
+          };
+
+          /**
+           * Sets up logic to check that autoplay succeeded.
+           *
+           * @method setupAutoplayFailDetection
+           * @private
+           */
+          _main.default.MediaElement.prototype._setupAutoplayFailDetection = function() {
+            var _this2 = this;
+            var timeout = setTimeout(function() {
+              return _main.default._friendlyAutoplayError(_this2.src);
+            }, 500);
+            this.elt.addEventListener(
+              'play',
+              function() {
+                return clearTimeout(timeout);
+              },
+              {
+                passive: true,
+                once: true
+              }
+            );
+          };
+
+          /**
+           * Set HTML5 media element to autoplay or not. If no argument is specified, by
+           * default it will autoplay.
+           *
+           * @method autoplay
+           * @param {Boolean} shouldAutoplay whether the element should autoplay
+           * @chainable
+           * @example
+           * <div><code>
+           * let videoElement;
+           * function setup() {
+           *   noCanvas();
+           *   videoElement = createVideo(['assets/small.mp4'], onVideoLoad);
+           * }
+           * function onVideoLoad() {
+           *   // The media will play as soon as it is loaded.
+           *   videoElement.autoplay();
+           *   videoElement.volume(0);
+           *   videoElement.size(100, 100);
+           * }
+           * </code></div>
+           *
+           * <div><code>
+           * let videoElement;
+           * function setup() {
+           *   noCanvas();
+           *   videoElement = createVideo(['assets/small.mp4'], onVideoLoad);
+           * }
+           * function onVideoLoad() {
+           *   // The media will not play untill some explicitly triggered.
+           *   videoElement.autoplay(false);
+           *   videoElement.volume(0);
+           *   videoElement.size(100, 100);
+           * }
+           *
+           * function mouseClicked() {
+           *   videoElement.play();
+           * }
+           * </code></div>
+           *
+           * @alt
+           * An example of a video element which autoplays after it is loaded.
+           * An example of a video element which waits for a trigger for playing.
+           */
+
+          _main.default.MediaElement.prototype.autoplay = function(val) {
+            var _this3 = this;
+            var oldVal = this.elt.getAttribute('autoplay');
+            this.elt.setAttribute('autoplay', val);
+            // if we turned on autoplay
+            if (val && !oldVal) {
+              // bind method to this scope
+              var setupAutoplayFailDetection = function setupAutoplayFailDetection() {
+                return _this3._setupAutoplayFailDetection();
+              };
+              // if media is ready to play, schedule check now
+              if (this.elt.readyState === 4) {
+                setupAutoplayFailDetection();
+              } else {
+                // otherwise, schedule check whenever it is ready
+                this.elt.addEventListener('canplay', setupAutoplayFailDetection, {
+                  passive: true,
