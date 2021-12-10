@@ -63701,3 +63701,162 @@
            *
            * function half_speed() {
            *   ele.speed(0.5);
+           * }
+           *
+           * function reverse_speed() {
+           *   ele.speed(-1);
+           * }
+           *
+           * function stop_song() {
+           *   ele.stop();
+           * }
+           *
+           * function play_speed() {
+           *   ele.play();
+           * }
+           * </code></div>
+           */
+
+          /**
+           * @method speed
+           * @param {Number} speed  speed multiplier for element playback
+           * @chainable
+           */
+          _main.default.MediaElement.prototype.speed = function(val) {
+            if (typeof val === 'undefined') {
+              return this.presetPlaybackRate || this.elt.playbackRate;
+            } else {
+              if (this.loadedmetadata) {
+                this.elt.playbackRate = val;
+              } else {
+                this.presetPlaybackRate = val;
+              }
+            }
+          };
+
+          /**
+           * If no arguments are given, returns the current time of the element.
+           * If an argument is given the current time of the element is set to it.
+           *
+           * @method time
+           * @return {Number} current time (in seconds)
+           *
+           * @example
+           * <div><code>
+           * let ele;
+           * let beginning = true;
+           * function setup() {
+           *   //p5.MediaElement objects are usually created
+           *   //by calling the createAudio(), createVideo(),
+           *   //and createCapture() functions.
+           *
+           *   //In this example we create
+           *   //a new p5.MediaElement via createAudio().
+           *   ele = createAudio('assets/lucky_dragons.mp3');
+           *   background(250);
+           *   textAlign(CENTER);
+           *   text('start at beginning', width / 2, height / 2);
+           * }
+           *
+           * // this function fires with click anywhere
+           * function mousePressed() {
+           *   if (beginning === true) {
+           *     // here we start the sound at the beginning
+           *     // time(0) is not necessary here
+           *     // as this produces the same result as
+           *     // play()
+           *     ele.play().time(0);
+           *     background(200);
+           *     text('jump 2 sec in', width / 2, height / 2);
+           *     beginning = false;
+           *   } else {
+           *     // here we jump 2 seconds into the sound
+           *     ele.play().time(2);
+           *     background(250);
+           *     text('start at beginning', width / 2, height / 2);
+           *     beginning = true;
+           *   }
+           * }
+           * </code></div>
+           */
+          /**
+           * @method time
+           * @param {Number} time time to jump to (in seconds)
+           * @chainable
+           */
+          _main.default.MediaElement.prototype.time = function(val) {
+            if (typeof val === 'undefined') {
+              return this.elt.currentTime;
+            } else {
+              this.elt.currentTime = val;
+              return this;
+            }
+          };
+
+          /**
+           * Returns the duration of the HTML5 media element.
+           *
+           * @method duration
+           * @return {Number} duration
+           *
+           * @example
+           * <div><code>
+           * let ele;
+           * function setup() {
+           *   //p5.MediaElement objects are usually created
+           *   //by calling the createAudio(), createVideo(),
+           *   //and createCapture() functions.
+           *   //In this example we create
+           *   //a new p5.MediaElement via createAudio().
+           *   ele = createAudio('assets/doorbell.mp3');
+           *   background(250);
+           *   textAlign(CENTER);
+           *   text('Click to know the duration!', 10, 25, 70, 80);
+           * }
+           * function mouseClicked() {
+           *   ele.play();
+           *   background(200);
+           *   //ele.duration dislpays the duration
+           *   text(ele.duration() + ' seconds', width / 2, height / 2);
+           * }
+           * </code></div>
+           */
+          _main.default.MediaElement.prototype.duration = function() {
+            return this.elt.duration;
+          };
+          _main.default.MediaElement.prototype.pixels = [];
+          _main.default.MediaElement.prototype._ensureCanvas = function() {
+            if (!this.canvas) {
+              this.canvas = document.createElement('canvas');
+              this.drawingContext = this.canvas.getContext('2d');
+              this.setModified(true);
+            }
+            if (this.loadedmetadata) {
+              // wait for metadata for w/h
+              if (this.canvas.width !== this.elt.width) {
+                this.canvas.width = this.elt.width;
+                this.canvas.height = this.elt.height;
+                this.width = this.canvas.width;
+                this.height = this.canvas.height;
+              }
+
+              this.drawingContext.drawImage(
+                this.elt,
+                0,
+                0,
+                this.canvas.width,
+                this.canvas.height
+              );
+
+              this.setModified(true);
+            }
+          };
+          _main.default.MediaElement.prototype.loadPixels = function() {
+            this._ensureCanvas();
+            return _main.default.Renderer2D.prototype.loadPixels.apply(this, arguments);
+          };
+          _main.default.MediaElement.prototype.updatePixels = function(x, y, w, h) {
+            if (this.loadedmetadata) {
+              // wait for metadata
+              this._ensureCanvas();
+              _main.default.Renderer2D.prototype.updatePixels.call(this, x, y, w, h);
