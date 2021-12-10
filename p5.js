@@ -63551,3 +63551,153 @@
                 // otherwise, schedule check whenever it is ready
                 this.elt.addEventListener('canplay', setupAutoplayFailDetection, {
                   passive: true,
+                  once: true
+                });
+              }
+            }
+
+            return this;
+          };
+
+          /**
+           * Sets volume for this HTML5 media element. If no argument is given,
+           * returns the current volume.
+           *
+           * @method volume
+           * @return {Number} current volume
+           *
+           * @example
+           * <div><code>
+           * let ele;
+           * function setup() {
+           *   // p5.MediaElement objects are usually created
+           *   // by calling the createAudio(), createVideo(),
+           *   // and createCapture() functions.
+           *   // In this example we create
+           *   // a new p5.MediaElement via createAudio().
+           *   ele = createAudio('assets/lucky_dragons.mp3');
+           *   background(250);
+           *   textAlign(CENTER);
+           *   text('Click to Play!', width / 2, height / 2);
+           * }
+           * function mouseClicked() {
+           *   // Here we call the volume() function
+           *   // on the sound element to set its volume
+           *   // Volume must be between 0.0 and 1.0
+           *   ele.volume(0.2);
+           *   ele.play();
+           *   background(200);
+           *   text('You clicked Play!', width / 2, height / 2);
+           * }
+           * </code></div>
+           * <div><code>
+           * let audio;
+           * let counter = 0;
+           *
+           * function loaded() {
+           *   audio.play();
+           * }
+           *
+           * function setup() {
+           *   audio = createAudio('assets/lucky_dragons.mp3', loaded);
+           *   textAlign(CENTER);
+           * }
+           *
+           * function draw() {
+           *   if (counter === 0) {
+           *     background(0, 255, 0);
+           *     text('volume(0.9)', width / 2, height / 2);
+           *   } else if (counter === 1) {
+           *     background(255, 255, 0);
+           *     text('volume(0.5)', width / 2, height / 2);
+           *   } else if (counter === 2) {
+           *     background(255, 0, 0);
+           *     text('volume(0.1)', width / 2, height / 2);
+           *   }
+           * }
+           *
+           * function mousePressed() {
+           *   counter++;
+           *   if (counter === 0) {
+           *     audio.volume(0.9);
+           *   } else if (counter === 1) {
+           *     audio.volume(0.5);
+           *   } else if (counter === 2) {
+           *     audio.volume(0.1);
+           *   } else {
+           *     counter = 0;
+           *     audio.volume(0.9);
+           *   }
+           * }
+           * </code>
+           * </div>
+           */
+          /**
+           * @method volume
+           * @param {Number}            val volume between 0.0 and 1.0
+           * @chainable
+           */
+          _main.default.MediaElement.prototype.volume = function(val) {
+            if (typeof val === 'undefined') {
+              return this.elt.volume;
+            } else {
+              this.elt.volume = val;
+            }
+          };
+
+          /**
+           * If no arguments are given, returns the current playback speed of the
+           * element. The speed parameter sets the speed where 2.0 will play the
+           * element twice as fast, 0.5 will play at half the speed, and -1 will play
+           * the element in normal speed in reverse.(Note that not all browsers support
+           * backward playback and even if they do, playback might not be smooth.)
+           *
+           * @method speed
+           * @return {Number} current playback speed of the element
+           *
+           * @example
+           * <div class='norender notest'><code>
+           * //Clicking the canvas will loop
+           * //the audio sample until the user
+           * //clicks again to stop it
+           *
+           * //We will store the p5.MediaElement
+           * //object in here
+           * let ele;
+           * let button;
+           *
+           * function setup() {
+           *   createCanvas(710, 400);
+           *   //Here we create a p5.MediaElement object
+           *   //using the createAudio() function.
+           *   ele = createAudio('assets/beat.mp3');
+           *   ele.loop();
+           *   background(200);
+           *
+           *   button = createButton('2x speed');
+           *   button.position(100, 68);
+           *   button.mousePressed(twice_speed);
+           *
+           *   button = createButton('half speed');
+           *   button.position(200, 68);
+           *   button.mousePressed(half_speed);
+           *
+           *   button = createButton('reverse play');
+           *   button.position(300, 68);
+           *   button.mousePressed(reverse_speed);
+           *
+           *   button = createButton('STOP');
+           *   button.position(400, 68);
+           *   button.mousePressed(stop_song);
+           *
+           *   button = createButton('PLAY!');
+           *   button.position(500, 68);
+           *   button.mousePressed(play_speed);
+           * }
+           *
+           * function twice_speed() {
+           *   ele.speed(2);
+           * }
+           *
+           * function half_speed() {
+           *   ele.speed(0.5);
