@@ -63860,3 +63860,142 @@
               // wait for metadata
               this._ensureCanvas();
               _main.default.Renderer2D.prototype.updatePixels.call(this, x, y, w, h);
+            }
+            this.setModified(true);
+            return this;
+          };
+          _main.default.MediaElement.prototype.get = function() {
+            this._ensureCanvas();
+            return _main.default.Renderer2D.prototype.get.apply(this, arguments);
+          };
+          _main.default.MediaElement.prototype._getPixel = function() {
+            this.loadPixels();
+            return _main.default.Renderer2D.prototype._getPixel.apply(this, arguments);
+          };
+
+          _main.default.MediaElement.prototype.set = function(x, y, imgOrCol) {
+            if (this.loadedmetadata) {
+              // wait for metadata
+              this._ensureCanvas();
+              _main.default.Renderer2D.prototype.set.call(this, x, y, imgOrCol);
+              this.setModified(true);
+            }
+          };
+          _main.default.MediaElement.prototype.copy = function() {
+            this._ensureCanvas();
+            _main.default.prototype.copy.apply(this, arguments);
+          };
+          _main.default.MediaElement.prototype.mask = function() {
+            this.loadPixels();
+            this.setModified(true);
+            _main.default.Image.prototype.mask.apply(this, arguments);
+          };
+          /**
+           * helper method for web GL mode to figure out if the element
+           * has been modified and might need to be re-uploaded to texture
+           * memory between frames.
+           * @method isModified
+           * @private
+           * @return {boolean} a boolean indicating whether or not the
+           * image has been updated or modified since last texture upload.
+           */
+          _main.default.MediaElement.prototype.isModified = function() {
+            return this._modified;
+          };
+          /**
+           * helper method for web GL mode to indicate that an element has been
+           * changed or unchanged since last upload. gl texture upload will
+           * set this value to false after uploading the texture; or might set
+           * it to true if metadata has become available but there is no actual
+           * texture data available yet..
+           * @method setModified
+           * @param {boolean} val sets whether or not the element has been
+           * modified.
+           * @private
+           */
+          _main.default.MediaElement.prototype.setModified = function(value) {
+            this._modified = value;
+          };
+          /**
+           * Schedule an event to be called when the audio or video
+           * element reaches the end. If the element is looping,
+           * this will not be called. The element is passed in
+           * as the argument to the onended callback.
+           *
+           * @method  onended
+           * @param  {Function} callback function to call when the
+           *                             soundfile has ended. The
+           *                             media element will be passed
+           *                             in as the argument to the
+           *                             callback.
+           * @chainable
+           * @example
+           * <div><code>
+           * function setup() {
+           *   let audioEl = createAudio('assets/beat.mp3');
+           *   audioEl.showControls();
+           *   audioEl.onended(sayDone);
+           * }
+           *
+           * function sayDone(elt) {
+           *   alert('done playing ' + elt.src);
+           * }
+           * </code></div>
+           */
+          _main.default.MediaElement.prototype.onended = function(callback) {
+            this._onended = callback;
+            return this;
+          };
+
+          /*** CONNECT TO WEB AUDIO API / p5.sound.js ***/
+
+          /**
+           * Send the audio output of this element to a specified audioNode or
+           * p5.sound object. If no element is provided, connects to p5's main
+           * output. That connection is established when this method is first called.
+           * All connections are removed by the .disconnect() method.
+           *
+           * This method is meant to be used with the p5.sound.js addon library.
+           *
+           * @method  connect
+           * @param  {AudioNode|Object} audioNode AudioNode from the Web Audio API,
+           * or an object from the p5.sound library
+           */
+          _main.default.MediaElement.prototype.connect = function(obj) {
+            var audioContext, mainOutput;
+
+            // if p5.sound exists, same audio context
+            if (typeof _main.default.prototype.getAudioContext === 'function') {
+              audioContext = _main.default.prototype.getAudioContext();
+              mainOutput = _main.default.soundOut.input;
+            } else {
+              try {
+                audioContext = obj.context;
+                mainOutput = audioContext.destination;
+              } catch (e) {
+                throw 'connect() is meant to be used with Web Audio API or p5.sound.js';
+              }
+            }
+
+            // create a Web Audio MediaElementAudioSourceNode if none already exists
+            if (!this.audioSourceNode) {
+              this.audioSourceNode = audioContext.createMediaElementSource(this.elt);
+
+              // connect to main output when this method is first called
+              this.audioSourceNode.connect(mainOutput);
+            }
+
+            // connect to object if provided
+            if (obj) {
+              if (obj.input) {
+                this.audioSourceNode.connect(obj.input);
+              } else {
+                this.audioSourceNode.connect(obj);
+              }
+            } else {
+              // otherwise connect to main output of p5.sound / AudioContext
+              this.audioSourceNode.connect(mainOutput);
+            }
+          };
+
+          /**
