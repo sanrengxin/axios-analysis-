@@ -63999,3 +63999,118 @@
           };
 
           /**
+           * Disconnect all Web Audio routing, including to main output.
+           * This is useful if you want to re-route the output through
+           * audio effects, for example.
+           *
+           * @method  disconnect
+           */
+          _main.default.MediaElement.prototype.disconnect = function() {
+            if (this.audioSourceNode) {
+              this.audioSourceNode.disconnect();
+            } else {
+              throw 'nothing to disconnect';
+            }
+          };
+
+          /*** SHOW / HIDE CONTROLS ***/
+
+          /**
+           * Show the default MediaElement controls, as determined by the web browser.
+           *
+           * @method  showControls
+           * @example
+           * <div><code>
+           * let ele;
+           * function setup() {
+           *   //p5.MediaElement objects are usually created
+           *   //by calling the createAudio(), createVideo(),
+           *   //and createCapture() functions.
+           *   //In this example we create
+           *   //a new p5.MediaElement via createAudio()
+           *   ele = createAudio('assets/lucky_dragons.mp3');
+           *   background(200);
+           *   textAlign(CENTER);
+           *   text('Click to Show Controls!', 10, 25, 70, 80);
+           * }
+           * function mousePressed() {
+           *   ele.showControls();
+           *   background(200);
+           *   text('Controls Shown', width / 2, height / 2);
+           * }
+           * </code></div>
+           */
+          _main.default.MediaElement.prototype.showControls = function() {
+            // must set style for the element to show on the page
+            this.elt.style['text-align'] = 'inherit';
+            this.elt.controls = true;
+          };
+
+          /**
+           * Hide the default mediaElement controls.
+           * @method hideControls
+           * @example
+           * <div><code>
+           * let ele;
+           * function setup() {
+           *   //p5.MediaElement objects are usually created
+           *   //by calling the createAudio(), createVideo(),
+           *   //and createCapture() functions.
+           *   //In this example we create
+           *   //a new p5.MediaElement via createAudio()
+           *   ele = createAudio('assets/lucky_dragons.mp3');
+           *   ele.showControls();
+           *   background(200);
+           *   textAlign(CENTER);
+           *   text('Click to hide Controls!', 10, 25, 70, 80);
+           * }
+           * function mousePressed() {
+           *   ele.hideControls();
+           *   background(200);
+           *   text('Controls hidden', width / 2, height / 2);
+           * }
+           * </code></div>
+           */
+          _main.default.MediaElement.prototype.hideControls = function() {
+            this.elt.controls = false;
+          };
+
+          /*** SCHEDULE EVENTS ***/
+
+          // Cue inspired by JavaScript setTimeout, and the
+          // Tone.js Transport Timeline Event, MIT License Yotam Mann 2015 tonejs.org
+          var Cue = function Cue(callback, time, id, val) {
+            this.callback = callback;
+            this.time = time;
+            this.id = id;
+            this.val = val;
+          };
+
+          /**
+           * Schedule events to trigger every time a MediaElement
+           * (audio/video) reaches a playback cue point.
+           *
+           * Accepts a callback function, a time (in seconds) at which to trigger
+           * the callback, and an optional parameter for the callback.
+           *
+           * Time will be passed as the first parameter to the callback function,
+           * and param will be the second parameter.
+           *
+           * @method  addCue
+           * @param {Number}   time     Time in seconds, relative to this media
+           *                             element's playback. For example, to trigger
+           *                             an event every time playback reaches two
+           *                             seconds, pass in the number 2. This will be
+           *                             passed as the first parameter to
+           *                             the callback function.
+           * @param {Function} callback Name of a function that will be
+           *                             called at the given time. The callback will
+           *                             receive time and (optionally) param as its
+           *                             two parameters.
+           * @param {Object} [value]    An object to be passed as the
+           *                             second parameter to the
+           *                             callback function.
+           * @return {Number} id ID of this cue,
+           *                     useful for removeCue(id)
+           * @example
+           * <div><code>
