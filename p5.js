@@ -64238,3 +64238,144 @@
             for (var i = 0; i < this._cues.length; i++) {
               var callbackTime = this._cues[i].time;
               var val = this._cues[i].val;
+
+              if (this._prevTime < callbackTime && callbackTime <= playbackTime) {
+                // pass the scheduled callbackTime as parameter to the callback
+                this._cues[i].callback(val);
+              }
+            }
+
+            this._prevTime = playbackTime;
+          };
+
+          /**
+           * Base class for a file.
+           * Used for Element.drop and createFileInput.
+           *
+           * @class p5.File
+           * @constructor
+           * @param {File} file File that is wrapped
+           */
+          _main.default.File = function(file, pInst) {
+            /**
+             * Underlying File object. All normal File methods can be called on this.
+             *
+             * @property file
+             */
+            this.file = file;
+
+            this._pInst = pInst;
+
+            // Splitting out the file type into two components
+            // This makes determining if image or text etc simpler
+            var typeList = file.type.split('/');
+            /**
+             * File type (image, text, etc.)
+             *
+             * @property type
+             */
+            this.type = typeList[0];
+            /**
+             * File subtype (usually the file extension jpg, png, xml, etc.)
+             *
+             * @property subtype
+             */
+            this.subtype = typeList[1];
+            /**
+             * File name
+             *
+             * @property name
+             */
+            this.name = file.name;
+            /**
+             * File size
+             *
+             * @property size
+             */
+            this.size = file.size;
+
+            /**
+             * URL string containing either image data, the text contents of the file or
+             * a parsed object if file is JSON and p5.XML if XML
+             *
+             * @property data
+             */
+            this.data = undefined;
+          };
+
+          _main.default.File._createLoader = function(theFile, callback) {
+            var reader = new FileReader();
+            reader.onload = function(e) {
+              var p5file = new _main.default.File(theFile);
+              if (p5file.file.type === 'application/json') {
+                // Parse JSON and store the result in data
+                p5file.data = JSON.parse(e.target.result);
+              } else if (p5file.file.type === 'text/xml') {
+                // Parse XML, wrap it in p5.XML and store the result in data
+                var parser = new DOMParser();
+                var xml = parser.parseFromString(e.target.result, 'text/xml');
+                p5file.data = new _main.default.XML(xml.documentElement);
+              } else {
+                p5file.data = e.target.result;
+              }
+              callback(p5file);
+            };
+            return reader;
+          };
+
+          _main.default.File._load = function(f, callback) {
+            // Text or data?
+            // This should likely be improved
+            if (/^text\//.test(f.type) || f.type === 'application/json') {
+              _main.default.File._createLoader(f, callback).readAsText(f);
+            } else if (!/^(video|audio)\//.test(f.type)) {
+              _main.default.File._createLoader(f, callback).readAsDataURL(f);
+            } else {
+              var file = new _main.default.File(f);
+              file.data = URL.createObjectURL(f);
+              callback(file);
+            }
+          };
+          var _default = _main.default;
+          exports.default = _default;
+        },
+        { '../core/main': 59 }
+      ],
+      76: [
+        function(_dereq_, module, exports) {
+          'use strict';
+          function _typeof(obj) {
+            if (typeof Symbol === 'function' && typeof Symbol.iterator === 'symbol') {
+              _typeof = function _typeof(obj) {
+                return typeof obj;
+              };
+            } else {
+              _typeof = function _typeof(obj) {
+                return obj &&
+                  typeof Symbol === 'function' &&
+                  obj.constructor === Symbol &&
+                  obj !== Symbol.prototype
+                  ? 'symbol'
+                  : typeof obj;
+              };
+            }
+            return _typeof(obj);
+          }
+          Object.defineProperty(exports, '__esModule', { value: true });
+          exports.default = void 0;
+
+          var _main = _interopRequireDefault(_dereq_('../core/main'));
+          var constants = _interopRequireWildcard(_dereq_('../core/constants'));
+          function _getRequireWildcardCache() {
+            if (typeof WeakMap !== 'function') return null;
+            var cache = new WeakMap();
+            _getRequireWildcardCache = function _getRequireWildcardCache() {
+              return cache;
+            };
+            return cache;
+          }
+          function _interopRequireWildcard(obj) {
+            if (obj && obj.__esModule) {
+              return obj;
+            }
+            if (obj === null || (_typeof(obj) !== 'object' && typeof obj !== 'function')) {
