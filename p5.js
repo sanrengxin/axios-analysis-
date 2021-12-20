@@ -64379,3 +64379,135 @@
               return obj;
             }
             if (obj === null || (_typeof(obj) !== 'object' && typeof obj !== 'function')) {
+              return { default: obj };
+            }
+            var cache = _getRequireWildcardCache();
+            if (cache && cache.has(obj)) {
+              return cache.get(obj);
+            }
+            var newObj = {};
+            var hasPropertyDescriptor =
+              Object.defineProperty && Object.getOwnPropertyDescriptor;
+            for (var key in obj) {
+              if (Object.prototype.hasOwnProperty.call(obj, key)) {
+                var desc = hasPropertyDescriptor
+                  ? Object.getOwnPropertyDescriptor(obj, key)
+                  : null;
+                if (desc && (desc.get || desc.set)) {
+                  Object.defineProperty(newObj, key, desc);
+                } else {
+                  newObj[key] = obj[key];
+                }
+              }
+            }
+            newObj.default = obj;
+            if (cache) {
+              cache.set(obj, newObj);
+            }
+            return newObj;
+          }
+          function _interopRequireDefault(obj) {
+            return obj && obj.__esModule ? obj : { default: obj };
+          }
+          /**
+           * @module Events
+           * @submodule Acceleration
+           * @for p5
+           * @requires core
+           */ /**
+           * The system variable deviceOrientation always contains the orientation of
+           * the device. The value of this variable will either be set 'landscape'
+           * or 'portrait'. If no data is available it will be set to 'undefined'.
+           * either LANDSCAPE or PORTRAIT.
+           *
+           * @property {Constant} deviceOrientation
+           * @readOnly
+           */ _main.default.prototype.deviceOrientation =
+            window.innerWidth / window.innerHeight > 1.0 ? 'landscape' : 'portrait';
+          /**
+           * The system variable accelerationX always contains the acceleration of the
+           * device along the x axis. Value is represented as meters per second squared.
+           *
+           * @property {Number} accelerationX
+           * @readOnly
+           * @example
+           * <div>
+           * <code>
+           * // Move a touchscreen device to register
+           * // acceleration changes.
+           * function draw() {
+           *   background(220, 50);
+           *   fill('magenta');
+           *   ellipse(width / 2, height / 2, accelerationX);
+           * }
+           * </code>
+           * </div>
+           * @alt
+           * Magnitude of device acceleration is displayed as ellipse size
+           */
+          _main.default.prototype.accelerationX = 0;
+
+          /**
+           * The system variable accelerationY always contains the acceleration of the
+           * device along the y axis. Value is represented as meters per second squared.
+           *
+           * @property {Number} accelerationY
+           * @readOnly
+           * @example
+           * <div>
+           * <code>
+           * // Move a touchscreen device to register
+           * // acceleration changes.
+           * function draw() {
+           *   background(220, 50);
+           *   fill('magenta');
+           *   ellipse(width / 2, height / 2, accelerationY);
+           * }
+           * </code>
+           * </div>
+           * @alt
+           * Magnitude of device acceleration is displayed as ellipse size
+           */
+          _main.default.prototype.accelerationY = 0;
+
+          /**
+           * The system variable accelerationZ always contains the acceleration of the
+           * device along the z axis. Value is represented as meters per second squared.
+           *
+           * @property {Number} accelerationZ
+           * @readOnly
+           *
+           * @example
+           * <div>
+           * <code>
+           * // Move a touchscreen device to register
+           * // acceleration changes.
+           * function draw() {
+           *   background(220, 50);
+           *   fill('magenta');
+           *   ellipse(width / 2, height / 2, accelerationZ);
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * Magnitude of device acceleration is displayed as ellipse size
+           */
+          _main.default.prototype.accelerationZ = 0;
+
+          /**
+           * The system variable pAccelerationX always contains the acceleration of the
+           * device along the x axis in the frame previous to the current frame. Value
+           * is represented as meters per second squared.
+           *
+           * @property {Number} pAccelerationX
+           * @readOnly
+           */
+          _main.default.prototype.pAccelerationX = 0;
+
+          /**
+           * The system variable pAccelerationY always contains the acceleration of the
+           * device along the y axis in the frame previous to the current frame. Value
+           * is represented as meters per second squared.
+           *
+           * @property {Number} pAccelerationY
