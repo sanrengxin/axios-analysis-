@@ -64114,3 +64114,127 @@
            *                     useful for removeCue(id)
            * @example
            * <div><code>
+           * //
+           * //
+           * function setup() {
+           *   createCanvas(200, 200);
+           *
+           *   let audioEl = createAudio('assets/beat.mp3');
+           *   audioEl.showControls();
+           *
+           *   // schedule three calls to changeBackground
+           *   audioEl.addCue(0.5, changeBackground, color(255, 0, 0));
+           *   audioEl.addCue(1.0, changeBackground, color(0, 255, 0));
+           *   audioEl.addCue(2.5, changeBackground, color(0, 0, 255));
+           *   audioEl.addCue(3.0, changeBackground, color(0, 255, 255));
+           *   audioEl.addCue(4.2, changeBackground, color(255, 255, 0));
+           *   audioEl.addCue(5.0, changeBackground, color(255, 255, 0));
+           * }
+           *
+           * function changeBackground(val) {
+           *   background(val);
+           * }
+           * </code></div>
+           */
+          _main.default.MediaElement.prototype.addCue = function(time, callback, val) {
+            var id = this._cueIDCounter++;
+
+            var cue = new Cue(callback, time, id, val);
+            this._cues.push(cue);
+
+            if (!this.elt.ontimeupdate) {
+              this.elt.ontimeupdate = this._onTimeUpdate.bind(this);
+            }
+
+            return id;
+          };
+
+          /**
+           * Remove a callback based on its ID. The ID is returned by the
+           * addCue method.
+           * @method removeCue
+           * @param  {Number} id ID of the cue, as returned by addCue
+           * @example
+           * <div><code>
+           * let audioEl, id1, id2;
+           * function setup() {
+           *   background(255, 255, 255);
+           *   audioEl = createAudio('assets/beat.mp3');
+           *   audioEl.showControls();
+           *   // schedule five calls to changeBackground
+           *   id1 = audioEl.addCue(0.5, changeBackground, color(255, 0, 0));
+           *   audioEl.addCue(1.0, changeBackground, color(0, 255, 0));
+           *   audioEl.addCue(2.5, changeBackground, color(0, 0, 255));
+           *   audioEl.addCue(3.0, changeBackground, color(0, 255, 255));
+           *   id2 = audioEl.addCue(4.2, changeBackground, color(255, 255, 0));
+           *   text('Click to remove first and last Cue!', 10, 25, 70, 80);
+           * }
+           * function mousePressed() {
+           *   audioEl.removeCue(id1);
+           *   audioEl.removeCue(id2);
+           * }
+           * function changeBackground(val) {
+           *   background(val);
+           * }
+           * </code></div>
+           */
+          _main.default.MediaElement.prototype.removeCue = function(id) {
+            for (var i = 0; i < this._cues.length; i++) {
+              if (this._cues[i].id === id) {
+                console.log(id);
+                this._cues.splice(i, 1);
+              }
+            }
+
+            if (this._cues.length === 0) {
+              this.elt.ontimeupdate = null;
+            }
+          };
+
+          /**
+           * Remove all of the callbacks that had originally been scheduled
+           * via the addCue method.
+           * @method  clearCues
+           * @param  {Number} id ID of the cue, as returned by addCue
+           * @example
+           * <div><code>
+           * let audioEl;
+           * function setup() {
+           *   background(255, 255, 255);
+           *   audioEl = createAudio('assets/beat.mp3');
+           *   //Show the default MediaElement controls, as determined by the web browser
+           *   audioEl.showControls();
+           *   // schedule calls to changeBackground
+           *   background(200);
+           *   text('Click to change Cue!', 10, 25, 70, 80);
+           *   audioEl.addCue(0.5, changeBackground, color(255, 0, 0));
+           *   audioEl.addCue(1.0, changeBackground, color(0, 255, 0));
+           *   audioEl.addCue(2.5, changeBackground, color(0, 0, 255));
+           *   audioEl.addCue(3.0, changeBackground, color(0, 255, 255));
+           *   audioEl.addCue(4.2, changeBackground, color(255, 255, 0));
+           * }
+           * function mousePressed() {
+           *   // here we clear the scheduled callbacks
+           *   audioEl.clearCues();
+           *   // then we add some more callbacks
+           *   audioEl.addCue(1, changeBackground, color(2, 2, 2));
+           *   audioEl.addCue(3, changeBackground, color(255, 255, 0));
+           * }
+           * function changeBackground(val) {
+           *   background(val);
+           * }
+           * </code></div>
+           */
+          _main.default.MediaElement.prototype.clearCues = function() {
+            this._cues = [];
+            this.elt.ontimeupdate = null;
+          };
+
+          // private method that checks for cues to be fired if events
+          // have been scheduled using addCue(callback, time).
+          _main.default.MediaElement.prototype._onTimeUpdate = function() {
+            var playbackTime = this.time();
+
+            for (var i = 0; i < this._cues.length; i++) {
+              var callbackTime = this._cues[i].time;
+              var val = this._cues[i].val;
