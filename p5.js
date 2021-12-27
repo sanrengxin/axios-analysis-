@@ -64625,3 +64625,144 @@
            * function draw() {
            *   background(200);
            *   rotateZ(radians(rotationZ));
+           *   //rotateX(radians(rotationX));
+           *   //rotateY(radians(rotationY));
+           *   box(200, 200, 200);
+           * }
+           * </code>
+           * </div>
+           *
+           * @property {Number} rotationZ
+           * @readOnly
+           *
+           * @alt
+           * red horizontal line right, green vertical line bottom. black background.
+           */
+          _main.default.prototype.rotationZ = 0;
+
+          /**
+           * The system variable pRotationX always contains the rotation of the
+           * device along the x axis in the frame previous to the current frame.
+           * If the sketch <a href="#/p5/angleMode"> angleMode()</a> is set to DEGREES,
+           * the value will be -180 to 180. If it is set to RADIANS, the value will
+           * be -PI to PI.
+           *
+           * pRotationX can also be used with rotationX to determine the rotate
+           * direction of the device along the X-axis.
+           * @example
+           * <div class='norender'>
+           * <code>
+           * // A simple if statement looking at whether
+           * // rotationX - pRotationX < 0 is true or not will be
+           * // sufficient for determining the rotate direction
+           * // in most cases.
+           *
+           * // Some extra logic is needed to account for cases where
+           * // the angles wrap around.
+           * let rotateDirection = 'clockwise';
+           *
+           * // Simple range conversion to make things simpler.
+           * // This is not absolutely necessary but the logic
+           * // will be different in that case.
+           *
+           * let rX = rotationX + 180;
+           * let pRX = pRotationX + 180;
+           *
+           * if ((rX - pRX > 0 && rX - pRX < 270) || rX - pRX < -270) {
+           *   rotateDirection = 'clockwise';
+           * } else if (rX - pRX < 0 || rX - pRX > 270) {
+           *   rotateDirection = 'counter-clockwise';
+           * }
+           *
+           * print(rotateDirection);
+           * </code>
+           * </div>
+           *
+           * @alt
+           * no image to display.
+           *
+           * @property {Number} pRotationX
+           * @readOnly
+           */
+          _main.default.prototype.pRotationX = 0;
+
+          /**
+           * The system variable pRotationY always contains the rotation of the
+           * device along the y axis in the frame previous to the current frame.
+           * If the sketch <a href="#/p5/angleMode"> angleMode()</a> is set to DEGREES,
+           * the value will be -90 to 90. If it is set to RADIANS, the value will
+           * be -PI/2 to PI/2.
+           *
+           * pRotationY can also be used with rotationY to determine the rotate
+           * direction of the device along the Y-axis.
+           * @example
+           * <div class='norender'>
+           * <code>
+           * // A simple if statement looking at whether
+           * // rotationY - pRotationY < 0 is true or not will be
+           * // sufficient for determining the rotate direction
+           * // in most cases.
+           *
+           * // Some extra logic is needed to account for cases where
+           * // the angles wrap around.
+           * let rotateDirection = 'clockwise';
+           *
+           * // Simple range conversion to make things simpler.
+           * // This is not absolutely necessary but the logic
+           * // will be different in that case.
+           *
+           * let rY = rotationY + 180;
+           * let pRY = pRotationY + 180;
+           *
+           * if ((rY - pRY > 0 && rY - pRY < 270) || rY - pRY < -270) {
+           *   rotateDirection = 'clockwise';
+           * } else if (rY - pRY < 0 || rY - pRY > 270) {
+           *   rotateDirection = 'counter-clockwise';
+           * }
+           * print(rotateDirection);
+           * </code>
+           * </div>
+           *
+           * @alt
+           * no image to display.
+           *
+           * @property {Number} pRotationY
+           * @readOnly
+           */
+          _main.default.prototype.pRotationY = 0;
+
+          /**
+           * The system variable pRotationZ always contains the rotation of the
+           * device along the z axis in the frame previous to the current frame.
+           * If the sketch <a href="#/p5/angleMode"> angleMode()</a> is set to DEGREES,
+           * the value will be 0 to 360. If it is set to RADIANS, the value will
+           * be 0 to 2*PI.
+           *
+           * pRotationZ can also be used with rotationZ to determine the rotate
+           * direction of the device along the Z-axis.
+           * @example
+           * <div class='norender'>
+           * <code>
+           * // A simple if statement looking at whether
+           * // rotationZ - pRotationZ < 0 is true or not will be
+           * // sufficient for determining the rotate direction
+           * // in most cases.
+           *
+           * // Some extra logic is needed to account for cases where
+           * // the angles wrap around.
+           * let rotateDirection = 'clockwise';
+           *
+           * if (
+           *   (rotationZ - pRotationZ > 0 && rotationZ - pRotationZ < 270) ||
+           *   rotationZ - pRotationZ < -270
+           * ) {
+           *   rotateDirection = 'clockwise';
+           * } else if (rotationZ - pRotationZ < 0 || rotationZ - pRotationZ > 270) {
+           *   rotateDirection = 'counter-clockwise';
+           * }
+           * print(rotateDirection);
+           * </code>
+           * </div>
+           *
+           * @alt
+           * no image to display.
