@@ -64511,3 +64511,117 @@
            * is represented as meters per second squared.
            *
            * @property {Number} pAccelerationY
+           * @readOnly
+           */
+          _main.default.prototype.pAccelerationY = 0;
+
+          /**
+           * The system variable pAccelerationZ always contains the acceleration of the
+           * device along the z axis in the frame previous to the current frame. Value
+           * is represented as meters per second squared.
+           *
+           * @property {Number} pAccelerationZ
+           * @readOnly
+           */
+          _main.default.prototype.pAccelerationZ = 0;
+
+          /**
+           * _updatePAccelerations updates the pAcceleration values
+           *
+           * @private
+           */
+          _main.default.prototype._updatePAccelerations = function() {
+            this._setProperty('pAccelerationX', this.accelerationX);
+            this._setProperty('pAccelerationY', this.accelerationY);
+            this._setProperty('pAccelerationZ', this.accelerationZ);
+          };
+
+          /**
+           * The system variable rotationX always contains the rotation of the
+           * device along the x axis. If the sketch <a href="#/p5/angleMode">
+           * angleMode()</a> is set to DEGREES, the value will be -180 to 180. If
+           * it is set to RADIANS, the value will be -PI to PI.
+           *
+           * Note: The order the rotations are called is important, ie. if used
+           * together, it must be called in the order Z-X-Y or there might be
+           * unexpected behaviour.
+           *
+           * @property {Number} rotationX
+           * @readOnly
+           * @example
+           * <div>
+           * <code>
+           * function setup() {
+           *   createCanvas(100, 100, WEBGL);
+           * }
+           *
+           * function draw() {
+           *   background(200);
+           *   //rotateZ(radians(rotationZ));
+           *   rotateX(radians(rotationX));
+           *   //rotateY(radians(rotationY));
+           *   box(200, 200, 200);
+           * }
+           * </code>
+           * </div>
+           * @alt
+           * red horizontal line right, green vertical line bottom. black background.
+           */
+          _main.default.prototype.rotationX = 0;
+
+          /**
+           * The system variable rotationY always contains the rotation of the
+           * device along the y axis. If the sketch <a href="#/p5/angleMode">
+           * angleMode()</a> is set to DEGREES, the value will be -90 to 90. If
+           * it is set to RADIANS, the value will be -PI/2 to PI/2.
+           *
+           * Note: The order the rotations are called is important, ie. if used
+           * together, it must be called in the order Z-X-Y or there might be
+           * unexpected behaviour.
+           *
+           * @property {Number} rotationY
+           * @readOnly
+           * @example
+           * <div>
+           * <code>
+           * function setup() {
+           *   createCanvas(100, 100, WEBGL);
+           * }
+           *
+           * function draw() {
+           *   background(200);
+           *   //rotateZ(radians(rotationZ));
+           *   //rotateX(radians(rotationX));
+           *   rotateY(radians(rotationY));
+           *   box(200, 200, 200);
+           * }
+           * </code>
+           * </div>
+           * @alt
+           * red horizontal line right, green vertical line bottom. black background.
+           */
+          _main.default.prototype.rotationY = 0;
+
+          /**
+           * The system variable rotationZ always contains the rotation of the
+           * device along the z axis. If the sketch <a href="#/p5/angleMode">
+           * angleMode()</a> is set to DEGREES, the value will be 0 to 360. If
+           * it is set to RADIANS, the value will be 0 to 2*PI.
+           *
+           * Unlike rotationX and rotationY, this variable is available for devices
+           * with a built-in compass only.
+           *
+           * Note: The order the rotations are called is important, ie. if used
+           * together, it must be called in the order Z-X-Y or there might be
+           * unexpected behaviour.
+           *
+           * @example
+           * <div>
+           * <code>
+           * function setup() {
+           *   createCanvas(100, 100, WEBGL);
+           * }
+           *
+           * function draw() {
+           *   background(200);
+           *   rotateZ(radians(rotationZ));
