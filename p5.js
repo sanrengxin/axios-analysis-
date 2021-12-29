@@ -64766,3 +64766,117 @@
            *
            * @alt
            * no image to display.
+           *
+           * @property {Number} pRotationZ
+           * @readOnly
+           */
+          _main.default.prototype.pRotationZ = 0;
+
+          var startAngleX = 0;
+          var startAngleY = 0;
+          var startAngleZ = 0;
+
+          var rotateDirectionX = 'clockwise';
+          var rotateDirectionY = 'clockwise';
+          var rotateDirectionZ = 'clockwise';
+
+          _main.default.prototype.pRotateDirectionX = undefined;
+          _main.default.prototype.pRotateDirectionY = undefined;
+          _main.default.prototype.pRotateDirectionZ = undefined;
+
+          _main.default.prototype._updatePRotations = function() {
+            this._setProperty('pRotationX', this.rotationX);
+            this._setProperty('pRotationY', this.rotationY);
+            this._setProperty('pRotationZ', this.rotationZ);
+          };
+
+          /**
+           * When a device is rotated, the axis that triggers the <a href="#/p5/deviceTurned">deviceTurned()</a>
+           * method is stored in the turnAxis variable. The turnAxis variable is only defined within
+           * the scope of deviceTurned().
+           * @property {String} turnAxis
+           * @readOnly
+           * @example
+           * <div>
+           * <code>
+           * // Run this example on a mobile device
+           * // Rotate the device by 90 degrees in the
+           * // X-axis to change the value.
+           *
+           * let value = 0;
+           * function draw() {
+           *   fill(value);
+           *   rect(25, 25, 50, 50);
+           * }
+           * function deviceTurned() {
+           *   if (turnAxis === 'X') {
+           *     if (value === 0) {
+           *       value = 255;
+           *     } else if (value === 255) {
+           *       value = 0;
+           *     }
+           *   }
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * 50x50 black rect in center of canvas. turns white on mobile when device turns
+           * 50x50 black rect in center of canvas. turns white on mobile when x-axis turns
+           */
+          _main.default.prototype.turnAxis = undefined;
+
+          var move_threshold = 0.5;
+          var shake_threshold = 30;
+
+          /**
+           * The <a href="#/p5/setMoveThreshold">setMoveThreshold()</a> function is used to set the movement threshold for
+           * the <a href="#/p5/deviceMoved">deviceMoved()</a> function. The default threshold is set to 0.5.
+           *
+           * @method setMoveThreshold
+           * @param {number} value The threshold value
+           * @example
+           * <div class="norender">
+           * <code>
+           * // Run this example on a mobile device
+           * // You will need to move the device incrementally further
+           * // the closer the square's color gets to white in order to change the value.
+           *
+           * let value = 0;
+           * let threshold = 0.5;
+           * function setup() {
+           *   setMoveThreshold(threshold);
+           * }
+           * function draw() {
+           *   fill(value);
+           *   rect(25, 25, 50, 50);
+           * }
+           * function deviceMoved() {
+           *   value = value + 5;
+           *   threshold = threshold + 0.1;
+           *   if (value > 255) {
+           *     value = 0;
+           *     threshold = 30;
+           *   }
+           *   setMoveThreshold(threshold);
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * 50x50 black rect in center of canvas. turns white on mobile when device moves
+           */
+
+          _main.default.prototype.setMoveThreshold = function(val) {
+            _main.default._validateParameters('setMoveThreshold', arguments);
+            move_threshold = val;
+          };
+
+          /**
+           * The <a href="#/p5/setShakeThreshold">setShakeThreshold()</a> function is used to set the movement threshold for
+           * the <a href="#/p5/deviceShaken">deviceShaken()</a> function. The default threshold is set to 30.
+           *
+           * @method setShakeThreshold
+           * @param {number} value The threshold value
+           * @example
+           * <div class="norender">
