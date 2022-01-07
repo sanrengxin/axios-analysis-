@@ -65132,3 +65132,145 @@
               ) {
                 rotateDirectionZ = 'counter-clockwise';
               }
+              if (rotateDirectionZ !== this.pRotateDirectionZ) {
+                startAngleZ = this.rotationZ;
+              }
+              if (
+                Math.abs(this.rotationZ - startAngleZ) > 90 &&
+                Math.abs(this.rotationZ - startAngleZ) < 270
+              ) {
+                startAngleZ = this.rotationZ;
+                this._setProperty('turnAxis', 'Z');
+                context.deviceTurned();
+              }
+              this.pRotateDirectionZ = rotateDirectionZ;
+              this._setProperty('turnAxis', undefined);
+            }
+            if (typeof context.deviceShaken === 'function') {
+              var accelerationChangeX;
+              var accelerationChangeY;
+              // Add accelerationChangeZ if acceleration change on Z is needed
+              if (this.pAccelerationX !== null) {
+                accelerationChangeX = Math.abs(this.accelerationX - this.pAccelerationX);
+                accelerationChangeY = Math.abs(this.accelerationY - this.pAccelerationY);
+              }
+              if (accelerationChangeX + accelerationChangeY > shake_threshold) {
+                context.deviceShaken();
+              }
+            }
+          };
+          var _default = _main.default;
+          exports.default = _default;
+        },
+        { '../core/constants': 48, '../core/main': 59 }
+      ],
+      77: [
+        function(_dereq_, module, exports) {
+          'use strict';
+          Object.defineProperty(exports, '__esModule', { value: true });
+          exports.default = void 0;
+
+          var _main = _interopRequireDefault(_dereq_('../core/main'));
+          function _interopRequireDefault(obj) {
+            return obj && obj.__esModule ? obj : { default: obj };
+          }
+          /**
+           * @module Events
+           * @submodule Keyboard
+           * @for p5
+           * @requires core
+           */ /**
+           * The boolean system variable <a href="#/p5/keyIsPressed">keyIsPressed</a> is true if any key is pressed
+           * and false if no keys are pressed.
+           *
+           * @property {Boolean} keyIsPressed
+           * @readOnly
+           * @example
+           * <div>
+           * <code>
+           * function draw() {
+           *   if (keyIsPressed === true) {
+           *     fill(0);
+           *   } else {
+           *     fill(255);
+           *   }
+           *   rect(25, 25, 50, 50);
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * 50x50 white rect that turns black on keypress.
+           */ _main.default.prototype.isKeyPressed = false;
+          _main.default.prototype.keyIsPressed = false; // khan
+          /**
+           * The system variable key always contains the value of the most recent
+           * key on the keyboard that was typed. To get the proper capitalization, it
+           * is best to use it within <a href="#/p5/keyTyped">keyTyped()</a>. For non-ASCII keys, use the <a href="#/p5/keyCode">keyCode</a>
+           * variable.
+           *
+           * @property {String} key
+           * @readOnly
+           * @example
+           * <div><code>
+           * // Click any key to display it!
+           * // (Not Guaranteed to be Case Sensitive)
+           * function setup() {
+           *   fill(245, 123, 158);
+           *   textSize(50);
+           * }
+           *
+           * function draw() {
+           *   background(200);
+           *   text(key, 33, 65); // Display last key pressed.
+           * }
+           * </code></div>
+           *
+           * @alt
+           * canvas displays any key value that is pressed in pink font.
+           */
+          _main.default.prototype.key = '';
+
+          /**
+           * The variable keyCode is used to detect special keys such as BACKSPACE,
+           * DELETE, ENTER, RETURN, TAB, ESCAPE, SHIFT, CONTROL, OPTION, ALT, UP_ARROW,
+           * DOWN_ARROW, LEFT_ARROW, RIGHT_ARROW.
+           * You can also check for custom keys by looking up the keyCode of any key
+           * on a site like this: <a href="http://keycode.info/">keycode.info</a>.
+           *
+           * @property {Integer} keyCode
+           * @readOnly
+           * @example
+           * <div><code>
+           * let fillVal = 126;
+           * function draw() {
+           *   fill(fillVal);
+           *   rect(25, 25, 50, 50);
+           * }
+           *
+           * function keyPressed() {
+           *   if (keyCode === UP_ARROW) {
+           *     fillVal = 255;
+           *   } else if (keyCode === DOWN_ARROW) {
+           *     fillVal = 0;
+           *   }
+           * }
+           * </code></div>
+           * <div><code>
+           * function draw() {}
+           * function keyPressed() {
+           *   background('yellow');
+           *   text(`${key} ${keyCode}`, 10, 40);
+           *   print(key, ' ', keyCode);
+           * }
+           * </code></div>
+           * @alt
+           * Grey rect center. turns white when up arrow pressed and black when down
+           * Display key pressed and its keyCode in a yellow box
+           */
+          _main.default.prototype.keyCode = 0;
+
+          /**
+           * The <a href="#/p5/keyPressed">keyPressed()</a> function is called once every time a key is pressed. The
+           * keyCode for the key that was pressed is stored in the <a href="#/p5/keyCode">keyCode</a> variable.
+           *
