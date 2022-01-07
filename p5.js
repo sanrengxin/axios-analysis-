@@ -64880,3 +64880,111 @@
            * @param {number} value The threshold value
            * @example
            * <div class="norender">
+           * <code>
+           * // Run this example on a mobile device
+           * // You will need to shake the device more firmly
+           * // the closer the box's fill gets to white in order to change the value.
+           *
+           * let value = 0;
+           * let threshold = 30;
+           * function setup() {
+           *   setShakeThreshold(threshold);
+           * }
+           * function draw() {
+           *   fill(value);
+           *   rect(25, 25, 50, 50);
+           * }
+           * function deviceMoved() {
+           *   value = value + 5;
+           *   threshold = threshold + 5;
+           *   if (value > 255) {
+           *     value = 0;
+           *     threshold = 30;
+           *   }
+           *   setShakeThreshold(threshold);
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * 50x50 black rect in center of canvas. turns white on mobile when device
+           * is being shaked
+           */
+
+          _main.default.prototype.setShakeThreshold = function(val) {
+            _main.default._validateParameters('setShakeThreshold', arguments);
+            shake_threshold = val;
+          };
+
+          /**
+           * The <a href="#/p5/deviceMoved">deviceMoved()</a> function is called when the device is moved by more than
+           * the threshold value along X, Y or Z axis. The default threshold is set to 0.5.
+           * The threshold value can be changed using <a href="https://p5js.org/reference/#/p5/setMoveThreshold">setMoveThreshold()</a>.
+           *
+           * @method deviceMoved
+           * @example
+           * <div class="norender">
+           * <code>
+           * // Run this example on a mobile device
+           * // Move the device around
+           * // to change the value.
+           *
+           * let value = 0;
+           * function draw() {
+           *   fill(value);
+           *   rect(25, 25, 50, 50);
+           * }
+           * function deviceMoved() {
+           *   value = value + 5;
+           *   if (value > 255) {
+           *     value = 0;
+           *   }
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * 50x50 black rect in center of canvas. turns white on mobile when device moves
+           */
+
+          /**
+           * The <a href="#/p5/deviceTurned">deviceTurned()</a> function is called when the device rotates by
+           * more than 90 degrees continuously.
+           *
+           * The axis that triggers the <a href="#/p5/deviceTurned">deviceTurned()</a> method is stored in the turnAxis
+           * variable. The <a href="#/p5/deviceTurned">deviceTurned()</a> method can be locked to trigger on any axis:
+           * X, Y or Z by comparing the turnAxis variable to 'X', 'Y' or 'Z'.
+           *
+           * @method deviceTurned
+           * @example
+           * <div class="norender">
+           * <code>
+           * // Run this example on a mobile device
+           * // Rotate the device by 90 degrees
+           * // to change the value.
+           *
+           * let value = 0;
+           * function draw() {
+           *   fill(value);
+           *   rect(25, 25, 50, 50);
+           * }
+           * function deviceTurned() {
+           *   if (value === 0) {
+           *     value = 255;
+           *   } else if (value === 255) {
+           *     value = 0;
+           *   }
+           * }
+           * </code>
+           * </div>
+           * <div>
+           * <code>
+           * // Run this example on a mobile device
+           * // Rotate the device by 90 degrees in the
+           * // X-axis to change the value.
+           *
+           * let value = 0;
+           * function draw() {
+           *   fill(value);
+           *   rect(25, 25, 50, 50);
+           * }
