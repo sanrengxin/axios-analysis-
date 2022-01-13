@@ -65401,3 +65401,144 @@
 
             var context = this._isGlobal ? window : this;
             if (typeof context.keyReleased === 'function') {
+              var executeDefault = context.keyReleased(e);
+              if (executeDefault === false) {
+                e.preventDefault();
+              }
+            }
+          };
+
+          /**
+           * The <a href="#/p5/keyTyped">keyTyped()</a> function is called once every time a key is pressed, but
+           * action keys such as Backspace, Delete, Ctrl, Shift, and Alt are ignored. If you are trying to detect
+           * a keyCode for one of these keys, use the <a href="#/p5/keyPressed">keyPressed()</a> function instead.
+           * The most recent key typed will be stored in the key variable.
+           *
+           * Because of how operating systems handle key repeats, holding down a key
+           * will cause multiple calls to <a href="#/p5/keyTyped">keyTyped()</a> (and <a href="#/p5/keyReleased">keyReleased()</a> as well). The
+           * rate of repeat is set by the operating system and how each computer is
+           * configured.<br><br>
+           * Browsers may have different default behaviors attached to various key
+           * events. To prevent any default behavior for this event, add "return false"
+           * to the end of the method.
+           *
+           * @method keyTyped
+           * @example
+           * <div>
+           * <code>
+           * let value = 0;
+           * function draw() {
+           *   fill(value);
+           *   rect(25, 25, 50, 50);
+           * }
+           * function keyTyped() {
+           *   if (key === 'a') {
+           *     value = 255;
+           *   } else if (key === 'b') {
+           *     value = 0;
+           *   }
+           *   // uncomment to prevent any default behavior
+           *   // return false;
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * black rect center. turns white when 'a' key typed and black when 'b' pressed
+           */
+          _main.default.prototype._onkeypress = function(e) {
+            if (e.which === this._lastKeyCodeTyped) {
+              // prevent multiple firings
+              return;
+            }
+            this._setProperty('_lastKeyCodeTyped', e.which); // track last keyCode
+            this._setProperty('key', e.key || String.fromCharCode(e.which) || e.which);
+
+            var context = this._isGlobal ? window : this;
+            if (typeof context.keyTyped === 'function') {
+              var executeDefault = context.keyTyped(e);
+              if (executeDefault === false) {
+                e.preventDefault();
+              }
+            }
+          };
+          /**
+           * The onblur function is called when the user is no longer focused
+           * on the p5 element. Because the keyup events will not fire if the user is
+           * not focused on the element we must assume all keys currently down have
+           * been released.
+           */
+          _main.default.prototype._onblur = function(e) {
+            this._downKeys = {};
+          };
+
+          /**
+           * The <a href="#/p5/keyIsDown">keyIsDown()</a> function checks if the key is currently down, i.e. pressed.
+           * It can be used if you have an object that moves, and you want several keys
+           * to be able to affect its behaviour simultaneously, such as moving a
+           * sprite diagonally. You can put in any number representing the keyCode of
+           * the key, or use any of the variable <a href="#/p5/keyCode">keyCode</a> names listed
+           * <a href="http://p5js.org/reference/#p5/keyCode">here</a>.
+           *
+           * @method keyIsDown
+           * @param {Number}          code The key to check for.
+           * @return {Boolean}        whether key is down or not
+           * @example
+           * <div><code>
+           * let x = 100;
+           * let y = 100;
+           *
+           * function setup() {
+           *   createCanvas(512, 512);
+           *   fill(255, 0, 0);
+           * }
+           *
+           * function draw() {
+           *   if (keyIsDown(LEFT_ARROW)) {
+           *     x -= 5;
+           *   }
+           *
+           *   if (keyIsDown(RIGHT_ARROW)) {
+           *     x += 5;
+           *   }
+           *
+           *   if (keyIsDown(UP_ARROW)) {
+           *     y -= 5;
+           *   }
+           *
+           *   if (keyIsDown(DOWN_ARROW)) {
+           *     y += 5;
+           *   }
+           *
+           *   clear();
+           *   ellipse(x, y, 50, 50);
+           * }
+           * </code></div>
+           *
+           * <div><code>
+           * let diameter = 50;
+           *
+           * function setup() {
+           *   createCanvas(512, 512);
+           * }
+           *
+           * function draw() {
+           *   // 107 and 187 are keyCodes for "+"
+           *   if (keyIsDown(107) || keyIsDown(187)) {
+           *     diameter += 1;
+           *   }
+           *
+           *   // 109 and 189 are keyCodes for "-"
+           *   if (keyIsDown(109) || keyIsDown(189)) {
+           *     diameter -= 1;
+           *   }
+           *
+           *   clear();
+           *   fill(255, 0, 0);
+           *   ellipse(50, 50, diameter, diameter);
+           * }
+           * </code></div>
+           *
+           * @alt
+           * 50x50 red ellipse moves left, right, up and down with arrow presses.
+           * 50x50 red ellipse gets bigger or smaller when + or - are pressed.
