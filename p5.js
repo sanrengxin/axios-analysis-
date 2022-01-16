@@ -65542,3 +65542,129 @@
            * @alt
            * 50x50 red ellipse moves left, right, up and down with arrow presses.
            * 50x50 red ellipse gets bigger or smaller when + or - are pressed.
+           */
+          _main.default.prototype.keyIsDown = function(code) {
+            _main.default._validateParameters('keyIsDown', arguments);
+            return this._downKeys[code] || false;
+          };
+
+          /**
+    * The _areDownKeys function returns a boolean true if any keys pressed
+    * and a false if no keys are currently pressed.
+   
+    * Helps avoid instances where multiple keys are pressed simultaneously and
+    * releasing a single key will then switch the
+    * keyIsPressed property to true.
+    * @private
+   **/
+          _main.default.prototype._areDownKeys = function() {
+            for (var key in this._downKeys) {
+              if (this._downKeys.hasOwnProperty(key) && this._downKeys[key] === true) {
+                return true;
+              }
+            }
+            return false;
+          };
+          var _default = _main.default;
+          exports.default = _default;
+        },
+        { '../core/main': 59 }
+      ],
+      78: [
+        function(_dereq_, module, exports) {
+          'use strict';
+          function _typeof(obj) {
+            if (typeof Symbol === 'function' && typeof Symbol.iterator === 'symbol') {
+              _typeof = function _typeof(obj) {
+                return typeof obj;
+              };
+            } else {
+              _typeof = function _typeof(obj) {
+                return obj &&
+                  typeof Symbol === 'function' &&
+                  obj.constructor === Symbol &&
+                  obj !== Symbol.prototype
+                  ? 'symbol'
+                  : typeof obj;
+              };
+            }
+            return _typeof(obj);
+          }
+          Object.defineProperty(exports, '__esModule', { value: true });
+          exports.default = void 0;
+
+          var _main = _interopRequireDefault(_dereq_('../core/main'));
+          var constants = _interopRequireWildcard(_dereq_('../core/constants'));
+          function _getRequireWildcardCache() {
+            if (typeof WeakMap !== 'function') return null;
+            var cache = new WeakMap();
+            _getRequireWildcardCache = function _getRequireWildcardCache() {
+              return cache;
+            };
+            return cache;
+          }
+          function _interopRequireWildcard(obj) {
+            if (obj && obj.__esModule) {
+              return obj;
+            }
+            if (obj === null || (_typeof(obj) !== 'object' && typeof obj !== 'function')) {
+              return { default: obj };
+            }
+            var cache = _getRequireWildcardCache();
+            if (cache && cache.has(obj)) {
+              return cache.get(obj);
+            }
+            var newObj = {};
+            var hasPropertyDescriptor =
+              Object.defineProperty && Object.getOwnPropertyDescriptor;
+            for (var key in obj) {
+              if (Object.prototype.hasOwnProperty.call(obj, key)) {
+                var desc = hasPropertyDescriptor
+                  ? Object.getOwnPropertyDescriptor(obj, key)
+                  : null;
+                if (desc && (desc.get || desc.set)) {
+                  Object.defineProperty(newObj, key, desc);
+                } else {
+                  newObj[key] = obj[key];
+                }
+              }
+            }
+            newObj.default = obj;
+            if (cache) {
+              cache.set(obj, newObj);
+            }
+            return newObj;
+          }
+          function _interopRequireDefault(obj) {
+            return obj && obj.__esModule ? obj : { default: obj };
+          }
+          /**
+           * @module Events
+           * @submodule Mouse
+           * @for p5
+           * @requires core
+           * @requires constants
+           */ /**
+           *
+           * The variable movedX contains the horizontal movement of the mouse since the last frame
+           * @property {Number} movedX
+           * @readOnly
+           * @example
+           * <div class="notest">
+           * <code>
+           * let x = 50;
+           * function setup() {
+           *   rectMode(CENTER);
+           * }
+           *
+           * function draw() {
+           *   if (x > 48) {
+           *     x -= 2;
+           *   } else if (x < 48) {
+           *     x += 2;
+           *   }
+           *   x += floor(movedX / 5);
+           *   background(237, 34, 93);
+           *   fill(0);
+           *   rect(x, 50, 50, 50);
+           * }
