@@ -65668,3 +65668,134 @@
            *   fill(0);
            *   rect(x, 50, 50, 50);
            * }
+           * </code>
+           * </div>
+           * @alt
+           * box moves left and right according to mouse movement then slowly back towards the center
+           */ _main.default.prototype.movedX = 0;
+          /**
+           * The variable movedY contains the vertical movement of the mouse since the last frame
+           * @property {Number} movedY
+           * @readOnly
+           * @example
+           * <div class="notest">
+           * <code>
+           * let y = 50;
+           * function setup() {
+           *   rectMode(CENTER);
+           * }
+           *
+           * function draw() {
+           *   if (y > 48) {
+           *     y -= 2;
+           *   } else if (y < 48) {
+           *     y += 2;
+           *   }
+           *   y += floor(movedY / 5);
+           *   background(237, 34, 93);
+           *   fill(0);
+           *   rect(y, 50, 50, 50);
+           * }
+           * </code>
+           * </div>
+           * @alt
+           * box moves up and down according to mouse movement then slowly back towards the center
+           */ _main.default.prototype.movedY = 0;
+          /*
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               * This is a flag which is false until the first time
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               * we receive a mouse event. The pmouseX and pmouseY
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               * values will match the mouseX and mouseY values until
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               * this interaction takes place.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               */
+          _main.default.prototype._hasMouseInteracted = false;
+
+          /**
+           * The system variable mouseX always contains the current horizontal
+           * position of the mouse, relative to (0, 0) of the canvas. The value at
+           * the top-left corner is (0, 0) for 2-D and (-width/2, -height/2) for WebGL.
+           * If touch is used instead of mouse input, mouseX will hold the x value
+           * of the most recent touch point.
+           *
+           * @property {Number} mouseX
+           * @readOnly
+           *
+           * @example
+           * <div>
+           * <code>
+           * // Move the mouse across the canvas
+           * function draw() {
+           *   background(244, 248, 252);
+           *   line(mouseX, 0, mouseX, 100);
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * horizontal black line moves left and right with mouse x-position
+           */
+          _main.default.prototype.mouseX = 0;
+
+          /**
+           * The system variable mouseY always contains the current vertical
+           * position of the mouse, relative to (0, 0) of the canvas. The value at
+           * the top-left corner is (0, 0) for 2-D and (-width/2, -height/2) for WebGL.
+           * If touch is used instead of mouse input, mouseY will hold the y value
+           * of the most recent touch point.
+           *
+           * @property {Number} mouseY
+           * @readOnly
+           *
+           * @example
+           * <div>
+           * <code>
+           * // Move the mouse across the canvas
+           * function draw() {
+           *   background(244, 248, 252);
+           *   line(0, mouseY, 100, mouseY);
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * vertical black line moves up and down with mouse y-position
+           */
+          _main.default.prototype.mouseY = 0;
+
+          /**
+           * The system variable pmouseX always contains the horizontal position of
+           * the mouse or finger in the frame previous to the current frame, relative to
+           * (0, 0) of the canvas. The value at the top-left corner is (0, 0) for 2-D and
+           * (-width/2, -height/2) for WebGL. Note: pmouseX will be reset to the current mouseX
+           * value at the start of each touch event.
+           *
+           * @property {Number} pmouseX
+           * @readOnly
+           *
+           * @example
+           * <div>
+           * <code>
+           * // Move the mouse across the canvas to leave a trail
+           * function setup() {
+           *   //slow down the frameRate to make it more visible
+           *   frameRate(10);
+           * }
+           *
+           * function draw() {
+           *   background(244, 248, 252);
+           *   line(mouseX, mouseY, pmouseX, pmouseY);
+           *   print(pmouseX + ' -> ' + mouseX);
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * line trail is created from cursor movements. faster movement make longer line.
+           */
+          _main.default.prototype.pmouseX = 0;
+
+          /**
+           * The system variable pmouseY always contains the vertical position of
+           * the mouse or finger in the frame previous to the current frame, relative to
+           * (0, 0) of the canvas. The value at the top-left corner is (0, 0) for 2-D and
+           * (-width/2, -height/2) for WebGL. Note: pmouseY will be reset to the current mouseY
+           * value at the start of each touch event.
