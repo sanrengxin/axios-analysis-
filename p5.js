@@ -65799,3 +65799,138 @@
            * (0, 0) of the canvas. The value at the top-left corner is (0, 0) for 2-D and
            * (-width/2, -height/2) for WebGL. Note: pmouseY will be reset to the current mouseY
            * value at the start of each touch event.
+           *
+           * @property {Number} pmouseY
+           * @readOnly
+           *
+           * @example
+           * <div>
+           * <code>
+           * function draw() {
+           *   background(237, 34, 93);
+           *   fill(0);
+           *   //draw a square only if the mouse is not moving
+           *   if (mouseY === pmouseY && mouseX === pmouseX) {
+           *     rect(20, 20, 60, 60);
+           *   }
+           *
+           *   print(pmouseY + ' -> ' + mouseY);
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * 60x60 black rect center, fuchsia background. rect flickers on mouse movement
+           */
+          _main.default.prototype.pmouseY = 0;
+
+          /**
+           * The system variable winMouseX always contains the current horizontal
+           * position of the mouse, relative to (0, 0) of the window.
+           *
+           * @property {Number} winMouseX
+           * @readOnly
+           *
+           * @example
+           * <div>
+           * <code>
+           * let myCanvas;
+           *
+           * function setup() {
+           *   //use a variable to store a pointer to the canvas
+           *   myCanvas = createCanvas(100, 100);
+           *   let body = document.getElementsByTagName('body')[0];
+           *   myCanvas.parent(body);
+           * }
+           *
+           * function draw() {
+           *   background(237, 34, 93);
+           *   fill(0);
+           *
+           *   //move the canvas to the horizontal mouse position
+           *   //relative to the window
+           *   myCanvas.position(winMouseX + 1, windowHeight / 2);
+           *
+           *   //the y of the square is relative to the canvas
+           *   rect(20, mouseY, 60, 60);
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * 60x60 black rect y moves with mouse y and fuchsia canvas moves with mouse x
+           */
+          _main.default.prototype.winMouseX = 0;
+
+          /**
+           * The system variable winMouseY always contains the current vertical
+           * position of the mouse, relative to (0, 0) of the window.
+           *
+           * @property {Number} winMouseY
+           * @readOnly
+           *
+           * @example
+           * <div>
+           * <code>
+           * let myCanvas;
+           *
+           * function setup() {
+           *   //use a variable to store a pointer to the canvas
+           *   myCanvas = createCanvas(100, 100);
+           *   let body = document.getElementsByTagName('body')[0];
+           *   myCanvas.parent(body);
+           * }
+           *
+           * function draw() {
+           *   background(237, 34, 93);
+           *   fill(0);
+           *
+           *   //move the canvas to the vertical mouse position
+           *   //relative to the window
+           *   myCanvas.position(windowWidth / 2, winMouseY + 1);
+           *
+           *   //the x of the square is relative to the canvas
+           *   rect(mouseX, 20, 60, 60);
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * 60x60 black rect x moves with mouse x and fuchsia canvas y moves with mouse y
+           */
+          _main.default.prototype.winMouseY = 0;
+
+          /**
+           * The system variable pwinMouseX always contains the horizontal position
+           * of the mouse in the frame previous to the current frame, relative to
+           * (0, 0) of the window. Note: pwinMouseX will be reset to the current winMouseX
+           * value at the start of each touch event.
+           *
+           * @property {Number} pwinMouseX
+           * @readOnly
+           *
+           * @example
+           * <div>
+           * <code>
+           * let myCanvas;
+           *
+           * function setup() {
+           *   //use a variable to store a pointer to the canvas
+           *   myCanvas = createCanvas(100, 100);
+           *   noStroke();
+           *   fill(237, 34, 93);
+           * }
+           *
+           * function draw() {
+           *   clear();
+           *   //the difference between previous and
+           *   //current x position is the horizontal mouse speed
+           *   let speed = abs(winMouseX - pwinMouseX);
+           *   //change the size of the circle
+           *   //according to the horizontal speed
+           *   ellipse(50, 50, 10 + speed * 5, 10 + speed * 5);
+           *   //move the canvas to the mouse position
+           *   myCanvas.position(winMouseX + 1, winMouseY + 1);
+           * }
+           * </code>
+           * </div>
