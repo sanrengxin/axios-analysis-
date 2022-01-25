@@ -65934,3 +65934,143 @@
            * }
            * </code>
            * </div>
+           *
+           * @alt
+           * fuchsia ellipse moves with mouse x and y. Grows and shrinks with mouse speed
+           */
+          _main.default.prototype.pwinMouseX = 0;
+
+          /**
+           * The system variable pwinMouseY always contains the vertical position of
+           * the mouse in the frame previous to the current frame, relative to (0, 0)
+           * of the window. Note: pwinMouseY will be reset to the current winMouseY
+           * value at the start of each touch event.
+           *
+           * @property {Number} pwinMouseY
+           * @readOnly
+           *
+           * @example
+           * <div>
+           * <code>
+           * let myCanvas;
+           *
+           * function setup() {
+           *   //use a variable to store a pointer to the canvas
+           *   myCanvas = createCanvas(100, 100);
+           *   noStroke();
+           *   fill(237, 34, 93);
+           * }
+           *
+           * function draw() {
+           *   clear();
+           *   //the difference between previous and
+           *   //current y position is the vertical mouse speed
+           *   let speed = abs(winMouseY - pwinMouseY);
+           *   //change the size of the circle
+           *   //according to the vertical speed
+           *   ellipse(50, 50, 10 + speed * 5, 10 + speed * 5);
+           *   //move the canvas to the mouse position
+           *   myCanvas.position(winMouseX + 1, winMouseY + 1);
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * fuchsia ellipse moves with mouse x and y. Grows and shrinks with mouse speed
+           */
+          _main.default.prototype.pwinMouseY = 0;
+
+          /**
+           * Processing automatically tracks if the mouse button is pressed and which
+           * button is pressed. The value of the system variable mouseButton is either
+           * LEFT, RIGHT, or CENTER depending on which button was pressed last.
+           * Warning: different browsers may track mouseButton differently.
+           *
+           * @property {Constant} mouseButton
+           * @readOnly
+           *
+           * @example
+           * <div>
+           * <code>
+           * function draw() {
+           *   background(237, 34, 93);
+           *   fill(0);
+           *
+           *   if (mouseIsPressed) {
+           *     if (mouseButton === LEFT) {
+           *       ellipse(50, 50, 50, 50);
+           *     }
+           *     if (mouseButton === RIGHT) {
+           *       rect(25, 25, 50, 50);
+           *     }
+           *     if (mouseButton === CENTER) {
+           *       triangle(23, 75, 50, 20, 78, 75);
+           *     }
+           *   }
+           *
+           *   print(mouseButton);
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * 50x50 black ellipse appears on center of fuchsia canvas on mouse click/press.
+           */
+          _main.default.prototype.mouseButton = 0;
+
+          /**
+           * The boolean system variable mouseIsPressed is true if the mouse is pressed
+           * and false if not.
+           *
+           * @property {Boolean} mouseIsPressed
+           * @readOnly
+           *
+           * @example
+           * <div>
+           * <code>
+           * function draw() {
+           *   background(237, 34, 93);
+           *   fill(0);
+           *
+           *   if (mouseIsPressed) {
+           *     ellipse(50, 50, 50, 50);
+           *   } else {
+           *     rect(25, 25, 50, 50);
+           *   }
+           *
+           *   print(mouseIsPressed);
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * black 50x50 rect becomes ellipse with mouse click/press. fuchsia background.
+           */
+          _main.default.prototype.mouseIsPressed = false;
+
+          _main.default.prototype._updateNextMouseCoords = function(e) {
+            if (this._curElement !== null && (!e.touches || e.touches.length > 0)) {
+              var mousePos = getMousePos(this._curElement.elt, this.width, this.height, e);
+
+              this._setProperty('movedX', e.movementX);
+              this._setProperty('movedY', e.movementY);
+              this._setProperty('mouseX', mousePos.x);
+              this._setProperty('mouseY', mousePos.y);
+              this._setProperty('winMouseX', mousePos.winX);
+              this._setProperty('winMouseY', mousePos.winY);
+            }
+            if (!this._hasMouseInteracted) {
+              // For first draw, make previous and next equal
+              this._updateMouseCoords();
+              this._setProperty('_hasMouseInteracted', true);
+            }
+          };
+
+          _main.default.prototype._updateMouseCoords = function() {
+            this._setProperty('pmouseX', this.mouseX);
+            this._setProperty('pmouseY', this.mouseY);
+            this._setProperty('pwinMouseX', this.winMouseX);
+            this._setProperty('pwinMouseY', this.winMouseY);
+
+            this._setProperty('_pmouseWheelDeltaY', this._mouseWheelDeltaY);
+          };
