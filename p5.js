@@ -66215,3 +66215,159 @@
            * no image displayed
            */
           _main.default.prototype._onmousemove = function(e) {
+            var context = this._isGlobal ? window : this;
+            var executeDefault;
+            this._updateNextMouseCoords(e);
+            if (!this.mouseIsPressed) {
+              if (typeof context.mouseMoved === 'function') {
+                executeDefault = context.mouseMoved(e);
+                if (executeDefault === false) {
+                  e.preventDefault();
+                }
+              }
+            } else {
+              if (typeof context.mouseDragged === 'function') {
+                executeDefault = context.mouseDragged(e);
+                if (executeDefault === false) {
+                  e.preventDefault();
+                }
+              } else if (typeof context.touchMoved === 'function') {
+                executeDefault = context.touchMoved(e);
+                if (executeDefault === false) {
+                  e.preventDefault();
+                }
+              }
+            }
+          };
+
+          /**
+           * The <a href="#/p5/mousePressed">mousePressed()</a> function is called once after every time a mouse button
+           * is pressed. The mouseButton variable (see the related reference entry)
+           * can be used to determine which button has been pressed. If no
+           * <a href="#/p5/mousePressed">mousePressed()</a> function is defined, the <a href="#/p5/touchStarted">touchStarted()</a> function will be
+           * called instead if it is defined.<br><br>
+           * Browsers may have different default
+           * behaviors attached to various mouse events. To prevent any default
+           * behavior for this event, add "return false" to the end of the method.
+           *
+           * @method mousePressed
+           * @param  {Object} [event] optional MouseEvent callback argument.
+           * @example
+           * <div>
+           * <code>
+           * // Click within the image to change
+           * // the value of the rectangle
+           *
+           * let value = 0;
+           * function draw() {
+           *   fill(value);
+           *   rect(25, 25, 50, 50);
+           * }
+           * function mousePressed() {
+           *   if (value === 0) {
+           *     value = 255;
+           *   } else {
+           *     value = 0;
+           *   }
+           * }
+           * </code>
+           * </div>
+           *
+           * <div class="norender">
+           * <code>
+           * function mousePressed() {
+           *   ellipse(mouseX, mouseY, 5, 5);
+           *   // prevent default
+           *   return false;
+           * }
+           * </code>
+           * </div>
+           *
+           * <div class="norender">
+           * <code>
+           * // returns a MouseEvent object
+           * // as a callback argument
+           * function mousePressed(event) {
+           *   console.log(event);
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * black 50x50 rect turns white with mouse click/press.
+           * no image displayed
+           */
+          _main.default.prototype._onmousedown = function(e) {
+            var context = this._isGlobal ? window : this;
+            var executeDefault;
+            this._setProperty('mouseIsPressed', true);
+            this._setMouseButton(e);
+            this._updateNextMouseCoords(e);
+
+            if (typeof context.mousePressed === 'function') {
+              executeDefault = context.mousePressed(e);
+              if (executeDefault === false) {
+                e.preventDefault();
+              }
+              // only safari needs this manual fallback for consistency
+            } else if (
+              navigator.userAgent.toLowerCase().includes('safari') &&
+              typeof context.touchStarted === 'function'
+            ) {
+              executeDefault = context.touchStarted(e);
+              if (executeDefault === false) {
+                e.preventDefault();
+              }
+            }
+          };
+
+          /**
+           * The <a href="#/p5/mouseReleased">mouseReleased()</a> function is called every time a mouse button is
+           * released. If no <a href="#/p5/mouseReleased">mouseReleased()</a> function is defined, the <a href="#/p5/touchEnded">touchEnded()</a>
+           * function will be called instead if it is defined.<br><br>
+           * Browsers may have different default
+           * behaviors attached to various mouse events. To prevent any default
+           * behavior for this event, add "return false" to the end of the method.
+           *
+           * @method mouseReleased
+           * @param  {Object} [event] optional MouseEvent callback argument.
+           * @example
+           * <div>
+           * <code>
+           * // Click within the image to change
+           * // the value of the rectangle
+           * // after the mouse has been clicked
+           *
+           * let value = 0;
+           * function draw() {
+           *   fill(value);
+           *   rect(25, 25, 50, 50);
+           * }
+           * function mouseReleased() {
+           *   if (value === 0) {
+           *     value = 255;
+           *   } else {
+           *     value = 0;
+           *   }
+           * }
+           * </code>
+           * </div>
+           *
+           * <div class="norender">
+           * <code>
+           * function mouseReleased() {
+           *   ellipse(mouseX, mouseY, 5, 5);
+           *   // prevent default
+           *   return false;
+           * }
+           * </code>
+           * </div>
+           *
+           * <div class="norender">
+           * <code>
+           * // returns a MouseEvent object
+           * // as a callback argument
+           * function mouseReleased(event) {
+           *   console.log(event);
+           * }
+           * </code>
