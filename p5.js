@@ -66074,3 +66074,144 @@
 
             this._setProperty('_pmouseWheelDeltaY', this._mouseWheelDeltaY);
           };
+
+          function getMousePos(canvas, w, h, evt) {
+            if (evt && !evt.clientX) {
+              // use touches if touch and not mouse
+              if (evt.touches) {
+                evt = evt.touches[0];
+              } else if (evt.changedTouches) {
+                evt = evt.changedTouches[0];
+              }
+            }
+            var rect = canvas.getBoundingClientRect();
+            var sx = canvas.scrollWidth / w || 1;
+            var sy = canvas.scrollHeight / h || 1;
+            return {
+              x: (evt.clientX - rect.left) / sx,
+              y: (evt.clientY - rect.top) / sy,
+              winX: evt.clientX,
+              winY: evt.clientY,
+              id: evt.identifier
+            };
+          }
+
+          _main.default.prototype._setMouseButton = function(e) {
+            if (e.button === 1) {
+              this._setProperty('mouseButton', constants.CENTER);
+            } else if (e.button === 2) {
+              this._setProperty('mouseButton', constants.RIGHT);
+            } else {
+              this._setProperty('mouseButton', constants.LEFT);
+            }
+          };
+
+          /**
+           * The <a href="#/p5/mouseMoved">mouseMoved()</a> function is called every time the mouse moves and a mouse
+           * button is not pressed.<br><br>
+           * Browsers may have different default
+           * behaviors attached to various mouse events. To prevent any default
+           * behavior for this event, add "return false" to the end of the method.
+           *
+           * @method mouseMoved
+           * @param  {Object} [event] optional MouseEvent callback argument.
+           * @example
+           * <div>
+           * <code>
+           * // Move the mouse across the page
+           * // to change its value
+           *
+           * let value = 0;
+           * function draw() {
+           *   fill(value);
+           *   rect(25, 25, 50, 50);
+           * }
+           * function mouseMoved() {
+           *   value = value + 5;
+           *   if (value > 255) {
+           *     value = 0;
+           *   }
+           * }
+           * </code>
+           * </div>
+           *
+           * <div class="norender">
+           * <code>
+           * function mouseMoved() {
+           *   ellipse(mouseX, mouseY, 5, 5);
+           *   // prevent default
+           *   return false;
+           * }
+           * </code>
+           * </div>
+           *
+           * <div class="norender">
+           * <code>
+           * // returns a MouseEvent object
+           * // as a callback argument
+           * function mouseMoved(event) {
+           *   console.log(event);
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * black 50x50 rect becomes lighter with mouse movements until white then resets
+           * no image displayed
+           */
+
+          /**
+           * The <a href="#/p5/mouseDragged">mouseDragged()</a> function is called once every time the mouse moves and
+           * a mouse button is pressed. If no <a href="#/p5/mouseDragged">mouseDragged()</a> function is defined, the
+           * <a href="#/p5/touchMoved">touchMoved()</a> function will be called instead if it is defined.<br><br>
+           * Browsers may have different default
+           * behaviors attached to various mouse events. To prevent any default
+           * behavior for this event, add "return false" to the end of the method.
+           *
+           * @method mouseDragged
+           * @param  {Object} [event] optional MouseEvent callback argument.
+           * @example
+           * <div>
+           * <code>
+           * // Drag the mouse across the page
+           * // to change its value
+           *
+           * let value = 0;
+           * function draw() {
+           *   fill(value);
+           *   rect(25, 25, 50, 50);
+           * }
+           * function mouseDragged() {
+           *   value = value + 5;
+           *   if (value > 255) {
+           *     value = 0;
+           *   }
+           * }
+           * </code>
+           * </div>
+           *
+           * <div class="norender">
+           * <code>
+           * function mouseDragged() {
+           *   ellipse(mouseX, mouseY, 5, 5);
+           *   // prevent default
+           *   return false;
+           * }
+           * </code>
+           * </div>
+           *
+           * <div class="norender">
+           * <code>
+           * // returns a MouseEvent object
+           * // as a callback argument
+           * function mouseDragged(event) {
+           *   console.log(event);
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * black 50x50 rect turns lighter with mouse click and drag until white, resets
+           * no image displayed
+           */
+          _main.default.prototype._onmousemove = function(e) {
