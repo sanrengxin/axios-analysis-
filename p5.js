@@ -66371,3 +66371,136 @@
            *   console.log(event);
            * }
            * </code>
+           * </div>
+           *
+           * @alt
+           * black 50x50 rect turns white with mouse click/press.
+           * no image displayed
+           */
+          _main.default.prototype._onmouseup = function(e) {
+            var context = this._isGlobal ? window : this;
+            var executeDefault;
+            this._setProperty('mouseIsPressed', false);
+            if (typeof context.mouseReleased === 'function') {
+              executeDefault = context.mouseReleased(e);
+              if (executeDefault === false) {
+                e.preventDefault();
+              }
+            } else if (typeof context.touchEnded === 'function') {
+              executeDefault = context.touchEnded(e);
+              if (executeDefault === false) {
+                e.preventDefault();
+              }
+            }
+          };
+
+          _main.default.prototype._ondragend = _main.default.prototype._onmouseup;
+          _main.default.prototype._ondragover = _main.default.prototype._onmousemove;
+
+          /**
+           * The <a href="#/p5/mouseClicked">mouseClicked()</a> function is called once after a mouse button has been
+           * pressed and then released.<br><br>
+           * Browsers handle clicks differently, so this function is only guaranteed to be
+           * run when the left mouse button is clicked. To handle other mouse buttons
+           * being pressed or released, see <a href="#/p5/mousePressed">mousePressed()</a> or <a href="#/p5/mouseReleased">mouseReleased()</a>.<br><br>
+           * Browsers may have different default
+           * behaviors attached to various mouse events. To prevent any default
+           * behavior for this event, add "return false" to the end of the method.
+           *
+           * @method mouseClicked
+           * @param  {Object} [event] optional MouseEvent callback argument.
+           * @example
+           * <div>
+           * <code>
+           * // Click within the image to change
+           * // the value of the rectangle
+           * // after the mouse has been clicked
+           *
+           * let value = 0;
+           * function draw() {
+           *   fill(value);
+           *   rect(25, 25, 50, 50);
+           * }
+           *
+           * function mouseClicked() {
+           *   if (value === 0) {
+           *     value = 255;
+           *   } else {
+           *     value = 0;
+           *   }
+           * }
+           * </code>
+           * </div>
+           *
+           * <div class="norender">
+           * <code>
+           * function mouseClicked() {
+           *   ellipse(mouseX, mouseY, 5, 5);
+           *   // prevent default
+           *   return false;
+           * }
+           * </code>
+           * </div>
+           *
+           * <div class="norender">
+           * <code>
+           * // returns a MouseEvent object
+           * // as a callback argument
+           * function mouseClicked(event) {
+           *   console.log(event);
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * black 50x50 rect turns white with mouse click/press.
+           * no image displayed
+           */
+          _main.default.prototype._onclick = function(e) {
+            var context = this._isGlobal ? window : this;
+            if (typeof context.mouseClicked === 'function') {
+              var executeDefault = context.mouseClicked(e);
+              if (executeDefault === false) {
+                e.preventDefault();
+              }
+            }
+          };
+
+          /**
+           * The <a href="#/p5/doubleClicked">doubleClicked()</a> function is executed every time a event
+           * listener has detected a dblclick event which is a part of the
+           * DOM L3 specification. The doubleClicked event is fired when a
+           * pointing device button (usually a mouse's primary button)
+           * is clicked twice on a single element. For more info on the
+           * dblclick event refer to mozilla's documentation here:
+           * https://developer.mozilla.org/en-US/docs/Web/Events/dblclick
+           *
+           * @method doubleClicked
+           * @param  {Object} [event] optional MouseEvent callback argument.
+           * @example
+           * <div>
+           * <code>
+           * // Click within the image to change
+           * // the value of the rectangle
+           * // after the mouse has been double clicked
+           *
+           * let value = 0;
+           * function draw() {
+           *   fill(value);
+           *   rect(25, 25, 50, 50);
+           * }
+           *
+           * function doubleClicked() {
+           *   if (value === 0) {
+           *     value = 255;
+           *   } else {
+           *     value = 0;
+           *   }
+           * }
+           * </code>
+           * </div>
+           *
+           * <div class="norender">
+           * <code>
+           * function doubleClicked() {
+           *   ellipse(mouseX, mouseY, 5, 5);
