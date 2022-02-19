@@ -66504,3 +66504,156 @@
            * <code>
            * function doubleClicked() {
            *   ellipse(mouseX, mouseY, 5, 5);
+           *   // prevent default
+           *   return false;
+           * }
+           * </code>
+           * </div>
+           *
+           * <div class="norender">
+           * <code>
+           * // returns a MouseEvent object
+           * // as a callback argument
+           * function doubleClicked(event) {
+           *   console.log(event);
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * black 50x50 rect turns white with mouse doubleClick/press.
+           * no image displayed
+           */
+
+          _main.default.prototype._ondblclick = function(e) {
+            var context = this._isGlobal ? window : this;
+            if (typeof context.doubleClicked === 'function') {
+              var executeDefault = context.doubleClicked(e);
+              if (executeDefault === false) {
+                e.preventDefault();
+              }
+            }
+          };
+
+          /**
+           * For use with WebGL orbitControl.
+           * @property {Number} _mouseWheelDeltaY
+           * @readOnly
+           * @private
+           */
+          _main.default.prototype._mouseWheelDeltaY = 0;
+
+          /**
+           * For use with WebGL orbitControl.
+           * @property {Number} _pmouseWheelDeltaY
+           * @readOnly
+           * @private
+           */
+          _main.default.prototype._pmouseWheelDeltaY = 0;
+
+          /**
+           * The function <a href="#/p5/mouseWheel">mouseWheel()</a> is executed every time a vertical mouse wheel
+           * event is detected either triggered by an actual mouse wheel or by a
+           * touchpad.<br><br>
+           * The event.delta property returns the amount the mouse wheel
+           * have scrolled. The values can be positive or negative depending on the
+           * scroll direction (on OS X with "natural" scrolling enabled, the signs
+           * are inverted).<br><br>
+           * Browsers may have different default behaviors attached to various
+           * mouse events. To prevent any default behavior for this event, add
+           * "return false" to the end of the method.<br><br>
+           * Due to the current support of the "wheel" event on Safari, the function
+           * may only work as expected if "return false" is included while using Safari.
+           *
+           * @method mouseWheel
+           * @param  {Object} [event] optional WheelEvent callback argument.
+           *
+           * @example
+           * <div>
+           * <code>
+           * let pos = 25;
+           *
+           * function draw() {
+           *   background(237, 34, 93);
+           *   fill(0);
+           *   rect(25, pos, 50, 50);
+           * }
+           *
+           * function mouseWheel(event) {
+           *   print(event.delta);
+           *   //move the square according to the vertical scroll amount
+           *   pos += event.delta;
+           *   //uncomment to block page scrolling
+           *   //return false;
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * black 50x50 rect moves up and down with vertical scroll. fuchsia background
+           */
+          _main.default.prototype._onwheel = function(e) {
+            var context = this._isGlobal ? window : this;
+            this._setProperty('_mouseWheelDeltaY', e.deltaY);
+            if (typeof context.mouseWheel === 'function') {
+              e.delta = e.deltaY;
+              var executeDefault = context.mouseWheel(e);
+              if (executeDefault === false) {
+                e.preventDefault();
+              }
+            }
+          };
+
+          /**
+           * The function <a href="#/p5/requestPointerLock">requestPointerLock()</a>
+           * locks the pointer to its current position and makes it invisible.
+           * Use <a href="#/p5/movedX">movedX</a> and <a href="#/p5/movedY">movedY</a> to get the difference the mouse was moved since
+           * the last call of draw.
+           * Note that not all browsers support this feature.
+           * This enables you to create experiences that aren't limited by the mouse moving out of the screen
+           * even if it is repeatedly moved into one direction.
+           * For example, a first person perspective experience.
+           *
+           * @method requestPointerLock
+           * @example
+           * <div class="notest">
+           * <code>
+           * let cam;
+           * function setup() {
+           *   createCanvas(100, 100, WEBGL);
+           *   requestPointerLock();
+           *   cam = createCamera();
+           * }
+           *
+           * function draw() {
+           *   background(255);
+           *   cam.pan(-movedX * 0.001);
+           *   cam.tilt(movedY * 0.001);
+           *   sphere(25);
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * 3D scene moves according to mouse mouse movement in a first person perspective
+           */
+          _main.default.prototype.requestPointerLock = function() {
+            // pointer lock object forking for cross browser
+            var canvas = this._curElement.elt;
+            canvas.requestPointerLock =
+              canvas.requestPointerLock || canvas.mozRequestPointerLock;
+            if (!canvas.requestPointerLock) {
+              console.log('requestPointerLock is not implemented in this browser');
+              return false;
+            }
+            canvas.requestPointerLock();
+            return true;
+          };
+
+          /**
+           * The function <a href="#/p5/exitPointerLock">exitPointerLock()</a>
+           * exits a previously triggered <a href="#/p5/requestPointerLock">pointer Lock</a>
+           * for example to make ui elements usable etc
+           *
+           * @method exitPointerLock
+           * @example
