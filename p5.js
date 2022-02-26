@@ -66780,3 +66780,142 @@
            * // the value of the rectangle
            *
            * let value = 0;
+           * function draw() {
+           *   fill(value);
+           *   rect(25, 25, 50, 50);
+           * }
+           * function touchStarted() {
+           *   if (value === 0) {
+           *     value = 255;
+           *   } else {
+           *     value = 0;
+           *   }
+           * }
+           * </code>
+           * </div>
+           *
+           * <div class="norender">
+           * <code>
+           * function touchStarted() {
+           *   ellipse(mouseX, mouseY, 5, 5);
+           *   // prevent default
+           *   return false;
+           * }
+           * </code>
+           * </div>
+           *
+           * <div class="norender">
+           * <code>
+           * // returns a TouchEvent object
+           * // as a callback argument
+           * function touchStarted(event) {
+           *   console.log(event);
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * 50x50 black rect turns white with touch event.
+           * no image displayed
+           */
+          _main.default.prototype._ontouchstart = function(e) {
+            var context = this._isGlobal ? window : this;
+            var executeDefault;
+            this._setProperty('mouseIsPressed', true);
+            this._updateTouchCoords(e);
+            this._updateNextMouseCoords(e);
+            this._updateMouseCoords(); // reset pmouseXY at the start of each touch event
+
+            if (typeof context.touchStarted === 'function') {
+              executeDefault = context.touchStarted(e);
+              if (executeDefault === false) {
+                e.preventDefault();
+              }
+              // only safari needs this manual fallback for consistency
+            } else if (
+              navigator.userAgent.toLowerCase().includes('safari') &&
+              typeof context.mousePressed === 'function'
+            ) {
+              executeDefault = context.mousePressed(e);
+              if (executeDefault === false) {
+                e.preventDefault();
+              }
+            }
+          };
+
+          /**
+           * The <a href="#/p5/touchMoved">touchMoved()</a> function is called every time a touch move is registered.
+           * If no <a href="#/p5/touchMoved">touchMoved()</a> function is defined, the <a href="#/p5/mouseDragged">mouseDragged()</a> function will
+           * be called instead if it is defined.<br><br>
+           * Browsers may have different default behaviors attached to various touch
+           * events. To prevent any default behavior for this event, add "return false"
+           * to the end of the method.
+           *
+           * @method touchMoved
+           * @param  {Object} [event] optional TouchEvent callback argument.
+           * @example
+           * <div>
+           * <code>
+           * // Move your finger across the page
+           * // to change its value
+           *
+           * let value = 0;
+           * function draw() {
+           *   fill(value);
+           *   rect(25, 25, 50, 50);
+           * }
+           * function touchMoved() {
+           *   value = value + 5;
+           *   if (value > 255) {
+           *     value = 0;
+           *   }
+           * }
+           * </code>
+           * </div>
+           *
+           * <div class="norender">
+           * <code>
+           * function touchMoved() {
+           *   ellipse(mouseX, mouseY, 5, 5);
+           *   // prevent default
+           *   return false;
+           * }
+           * </code>
+           * </div>
+           *
+           * <div class="norender">
+           * <code>
+           * // returns a TouchEvent object
+           * // as a callback argument
+           * function touchMoved(event) {
+           *   console.log(event);
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * 50x50 black rect turns lighter with touch until white. resets
+           * no image displayed
+           */
+          _main.default.prototype._ontouchmove = function(e) {
+            var context = this._isGlobal ? window : this;
+            var executeDefault;
+            this._updateTouchCoords(e);
+            this._updateNextMouseCoords(e);
+            if (typeof context.touchMoved === 'function') {
+              executeDefault = context.touchMoved(e);
+              if (executeDefault === false) {
+                e.preventDefault();
+              }
+            } else if (typeof context.mouseDragged === 'function') {
+              executeDefault = context.mouseDragged(e);
+              if (executeDefault === false) {
+                e.preventDefault();
+              }
+            }
+          };
+
+          /**
+           * The <a href="#/p5/touchEnded">touchEnded()</a> function is called every time a touch ends. If no
+           * <a href="#/p5/touchEnded">touchEnded()</a> function is defined, the <a href="#/p5/mouseReleased">mouseReleased()</a> function will be
+           * called instead if it is defined.<br><br>
