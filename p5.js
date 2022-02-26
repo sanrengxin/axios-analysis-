@@ -66919,3 +66919,159 @@
            * The <a href="#/p5/touchEnded">touchEnded()</a> function is called every time a touch ends. If no
            * <a href="#/p5/touchEnded">touchEnded()</a> function is defined, the <a href="#/p5/mouseReleased">mouseReleased()</a> function will be
            * called instead if it is defined.<br><br>
+           * Browsers may have different default behaviors attached to various touch
+           * events. To prevent any default behavior for this event, add "return false"
+           * to the end of the method.
+           *
+           * @method touchEnded
+           * @param  {Object} [event] optional TouchEvent callback argument.
+           * @example
+           * <div>
+           * <code>
+           * // Release touch within the image to
+           * // change the value of the rectangle
+           *
+           * let value = 0;
+           * function draw() {
+           *   fill(value);
+           *   rect(25, 25, 50, 50);
+           * }
+           * function touchEnded() {
+           *   if (value === 0) {
+           *     value = 255;
+           *   } else {
+           *     value = 0;
+           *   }
+           * }
+           * </code>
+           * </div>
+           *
+           * <div class="norender">
+           * <code>
+           * function touchEnded() {
+           *   ellipse(mouseX, mouseY, 5, 5);
+           *   // prevent default
+           *   return false;
+           * }
+           * </code>
+           * </div>
+           *
+           * <div class="norender">
+           * <code>
+           * // returns a TouchEvent object
+           * // as a callback argument
+           * function touchEnded(event) {
+           *   console.log(event);
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * 50x50 black rect turns white with touch.
+           * no image displayed
+           */
+          _main.default.prototype._ontouchend = function(e) {
+            this._setProperty('mouseIsPressed', false);
+            this._updateTouchCoords(e);
+            this._updateNextMouseCoords(e);
+            var context = this._isGlobal ? window : this;
+            var executeDefault;
+            if (typeof context.touchEnded === 'function') {
+              executeDefault = context.touchEnded(e);
+              if (executeDefault === false) {
+                e.preventDefault();
+              }
+            } else if (typeof context.mouseReleased === 'function') {
+              executeDefault = context.mouseReleased(e);
+              if (executeDefault === false) {
+                e.preventDefault();
+              }
+            }
+          };
+          var _default = _main.default;
+          exports.default = _default;
+        },
+        { '../core/main': 59 }
+      ],
+      80: [
+        function(_dereq_, module, exports) {
+          'use strict';
+          Object.defineProperty(exports, '__esModule', { value: true });
+          exports.default = void 0; /*global ImageData:false */
+
+          /**
+           * This module defines the filters for use with image buffers.
+           *
+           * This module is basically a collection of functions stored in an object
+           * as opposed to modules. The functions are destructive, modifying
+           * the passed in canvas rather than creating a copy.
+           *
+           * Generally speaking users of this module will use the Filters.apply method
+           * on a canvas to create an effect.
+           *
+           * A number of functions are borrowed/adapted from
+           * http://www.html5rocks.com/en/tutorials/canvas/imagefilters/
+           * or the java processing implementation.
+           */
+
+          var Filters = {};
+
+          /*
+                   * Helper functions
+                   */
+
+          /**
+           * Returns the pixel buffer for a canvas
+           *
+           * @private
+           *
+           * @param  {Canvas|ImageData} canvas the canvas to get pixels from
+           * @return {Uint8ClampedArray}       a one-dimensional array containing
+           *                                   the data in thc RGBA order, with integer
+           *                                   values between 0 and 255
+           */
+          Filters._toPixels = function(canvas) {
+            if (canvas instanceof ImageData) {
+              return canvas.data;
+            } else {
+              return canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height)
+                .data;
+            }
+          };
+
+          /**
+           * Returns a 32 bit number containing ARGB data at ith pixel in the
+           * 1D array containing pixels data.
+           *
+           * @private
+           *
+           * @param  {Uint8ClampedArray} data array returned by _toPixels()
+           * @param  {Integer}           i    index of a 1D Image Array
+           * @return {Integer}                32 bit integer value representing
+           *                                  ARGB value.
+           */
+          Filters._getARGB = function(data, i) {
+            var offset = i * 4;
+            return (
+              ((data[offset + 3] << 24) & 0xff000000) |
+              ((data[offset] << 16) & 0x00ff0000) |
+              ((data[offset + 1] << 8) & 0x0000ff00) |
+              (data[offset + 2] & 0x000000ff)
+            );
+          };
+
+          /**
+           * Modifies pixels RGBA values to values contained in the data object.
+           *
+           * @private
+           *
+           * @param {Uint8ClampedArray} pixels array returned by _toPixels()
+           * @param {Int32Array}        data   source 1D array where each value
+           *                                   represents ARGB values
+           */
+          Filters._setPixels = function(pixels, data) {
+            var offset = 0;
+            for (var i = 0, al = pixels.length; i < al; i++) {
+              offset = i * 4;
+              pixels[offset + 0] = (data[i] & 0x00ff0000) >>> 16;
+              pixels[offset + 1] = (data[i] & 0x0000ff00) >>> 8;
