@@ -67075,3 +67075,156 @@
               offset = i * 4;
               pixels[offset + 0] = (data[i] & 0x00ff0000) >>> 16;
               pixels[offset + 1] = (data[i] & 0x0000ff00) >>> 8;
+              pixels[offset + 2] = data[i] & 0x000000ff;
+              pixels[offset + 3] = (data[i] & 0xff000000) >>> 24;
+            }
+          };
+
+          /**
+           * Returns the ImageData object for a canvas
+           * https://developer.mozilla.org/en-US/docs/Web/API/ImageData
+           *
+           * @private
+           *
+           * @param  {Canvas|ImageData} canvas canvas to get image data from
+           * @return {ImageData}               Holder of pixel data (and width and
+           *                                   height) for a canvas
+           */
+          Filters._toImageData = function(canvas) {
+            if (canvas instanceof ImageData) {
+              return canvas;
+            } else {
+              return canvas
+                .getContext('2d')
+                .getImageData(0, 0, canvas.width, canvas.height);
+            }
+          };
+
+          /**
+           * Returns a blank ImageData object.
+           *
+           * @private
+           *
+           * @param  {Integer} width
+           * @param  {Integer} height
+           * @return {ImageData}
+           */
+          Filters._createImageData = function(width, height) {
+            Filters._tmpCanvas = document.createElement('canvas');
+            Filters._tmpCtx = Filters._tmpCanvas.getContext('2d');
+            return this._tmpCtx.createImageData(width, height);
+          };
+
+          /**
+           * Applys a filter function to a canvas.
+           *
+           * The difference between this and the actual filter functions defined below
+           * is that the filter functions generally modify the pixel buffer but do
+           * not actually put that data back to the canvas (where it would actually
+           * update what is visible). By contrast this method does make the changes
+           * actually visible in the canvas.
+           *
+           * The apply method is the method that callers of this module would generally
+           * use. It has been separated from the actual filters to support an advanced
+           * use case of creating a filter chain that executes without actually updating
+           * the canvas in between everystep.
+           *
+           * @private
+           * @param  {HTMLCanvasElement} canvas [description]
+           * @param  {function(ImageData,Object)} func   [description]
+           * @param  {Object} filterParam  [description]
+           */
+          Filters.apply = function(canvas, func, filterParam) {
+            var pixelsState = canvas.getContext('2d');
+            var imageData = pixelsState.getImageData(0, 0, canvas.width, canvas.height);
+
+            //Filters can either return a new ImageData object, or just modify
+            //the one they received.
+            var newImageData = func(imageData, filterParam);
+            if (newImageData instanceof ImageData) {
+              pixelsState.putImageData(
+                newImageData,
+                0,
+                0,
+                0,
+                0,
+                canvas.width,
+                canvas.height
+              );
+            } else {
+              pixelsState.putImageData(imageData, 0, 0, 0, 0, canvas.width, canvas.height);
+            }
+          };
+
+          /*
+    * Filters
+    */
+
+          /**
+           * Converts the image to black and white pixels depending if they are above or
+           * below the threshold defined by the level parameter. The parameter must be
+           * between 0.0 (black) and 1.0 (white). If no level is specified, 0.5 is used.
+           *
+           * Borrowed from http://www.html5rocks.com/en/tutorials/canvas/imagefilters/
+           *
+           * @private
+           * @param  {Canvas} canvas
+           * @param  {Float} level
+           */
+          Filters.threshold = function(canvas, level) {
+            var pixels = Filters._toPixels(canvas);
+
+            if (level === undefined) {
+              level = 0.5;
+            }
+            var thresh = Math.floor(level * 255);
+
+            for (var i = 0; i < pixels.length; i += 4) {
+              var r = pixels[i];
+              var g = pixels[i + 1];
+              var b = pixels[i + 2];
+              var gray = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+              var val = void 0;
+              if (gray >= thresh) {
+                val = 255;
+              } else {
+                val = 0;
+              }
+              pixels[i] = pixels[i + 1] = pixels[i + 2] = val;
+            }
+          };
+
+          /**
+           * Converts any colors in the image to grayscale equivalents.
+           * No parameter is used.
+           *
+           * Borrowed from http://www.html5rocks.com/en/tutorials/canvas/imagefilters/
+           *
+           * @private
+           * @param {Canvas} canvas
+           */
+          Filters.gray = function(canvas) {
+            var pixels = Filters._toPixels(canvas);
+
+            for (var i = 0; i < pixels.length; i += 4) {
+              var r = pixels[i];
+              var g = pixels[i + 1];
+              var b = pixels[i + 2];
+
+              // CIE luminance for RGB
+              var gray = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+              pixels[i] = pixels[i + 1] = pixels[i + 2] = gray;
+            }
+          };
+
+          /**
+           * Sets the alpha channel to entirely opaque. No parameter is used.
+           *
+           * @private
+           * @param {Canvas} canvas
+           */
+          Filters.opaque = function(canvas) {
+            var pixels = Filters._toPixels(canvas);
+
+            for (var i = 0; i < pixels.length; i += 4) {
+              pixels[i + 3] = 255;
