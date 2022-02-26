@@ -66657,3 +66657,126 @@
            *
            * @method exitPointerLock
            * @example
+           * <div class="notest">
+           * <code>
+           * //click the canvas to lock the pointer
+           * //click again to exit (otherwise escape)
+           * let locked = false;
+           * function draw() {
+           *   background(237, 34, 93);
+           * }
+           * function mouseClicked() {
+           *   if (!locked) {
+           *     locked = true;
+           *     requestPointerLock();
+           *   } else {
+           *     exitPointerLock();
+           *     locked = false;
+           *   }
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * cursor gets locked / unlocked on mouse-click
+           */
+          _main.default.prototype.exitPointerLock = function() {
+            document.exitPointerLock();
+          };
+          var _default = _main.default;
+          exports.default = _default;
+        },
+        { '../core/constants': 48, '../core/main': 59 }
+      ],
+      79: [
+        function(_dereq_, module, exports) {
+          'use strict';
+          Object.defineProperty(exports, '__esModule', { value: true });
+          exports.default = void 0;
+
+          var _main = _interopRequireDefault(_dereq_('../core/main'));
+          function _interopRequireDefault(obj) {
+            return obj && obj.__esModule ? obj : { default: obj };
+          }
+          /**
+           * @module Events
+           * @submodule Touch
+           * @for p5
+           * @requires core
+           */ /**
+           * The system variable touches[] contains an array of the positions of all
+           * current touch points, relative to (0, 0) of the canvas, and IDs identifying a
+           * unique touch as it moves. Each element in the array is an object with x, y,
+           * and id properties.
+           *
+           * The touches[] array is not supported on Safari and IE on touch-based
+           * desktops (laptops).
+           *
+           * @property {Object[]} touches
+           * @readOnly
+           *
+           * @example
+           * <div>
+           * <code>
+           * // On a touchscreen device, touch
+           * // the canvas using one or more fingers
+           * // at the same time
+           * function draw() {
+           *   clear();
+           *   let display = touches.length + ' touches';
+           *   text(display, 5, 10);
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * Number of touches currently registered are displayed on the canvas
+           */ _main.default.prototype.touches = [];
+          _main.default.prototype._updateTouchCoords = function(e) {
+            if (this._curElement !== null) {
+              var touches = [];
+              for (var i = 0; i < e.touches.length; i++) {
+                touches[i] = getTouchInfo(
+                  this._curElement.elt,
+                  this.width,
+                  this.height,
+                  e,
+                  i
+                );
+              }
+              this._setProperty('touches', touches);
+            }
+          };
+
+          function getTouchInfo(canvas, w, h, e) {
+            var i = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 0;
+            var rect = canvas.getBoundingClientRect();
+            var sx = canvas.scrollWidth / w || 1;
+            var sy = canvas.scrollHeight / h || 1;
+            var touch = e.touches[i] || e.changedTouches[i];
+            return {
+              x: (touch.clientX - rect.left) / sx,
+              y: (touch.clientY - rect.top) / sy,
+              winX: touch.clientX,
+              winY: touch.clientY,
+              id: touch.identifier
+            };
+          }
+
+          /**
+           * The touchStarted() function is called once after every time a touch is
+           * registered. If no <a href="#/p5/touchStarted">touchStarted()</a> function is defined, the <a href="#/p5/mousePressed">mousePressed()</a>
+           * function will be called instead if it is defined.<br><br>
+           * Browsers may have different default behaviors attached to various touch
+           * events. To prevent any default behavior for this event, add "return false"
+           * to the end of the method.
+           *
+           * @method touchStarted
+           * @param  {Object} [event] optional TouchEvent callback argument.
+           * @example
+           * <div>
+           * <code>
+           * // Touch within the image to change
+           * // the value of the rectangle
+           *
+           * let value = 0;
