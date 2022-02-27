@@ -67228,3 +67228,131 @@
 
             for (var i = 0; i < pixels.length; i += 4) {
               pixels[i + 3] = 255;
+            }
+
+            return pixels;
+          };
+
+          /**
+           * Sets each pixel to its inverse value. No parameter is used.
+           * @private
+           * @param  {Canvas} canvas
+           */
+          Filters.invert = function(canvas) {
+            var pixels = Filters._toPixels(canvas);
+
+            for (var i = 0; i < pixels.length; i += 4) {
+              pixels[i] = 255 - pixels[i];
+              pixels[i + 1] = 255 - pixels[i + 1];
+              pixels[i + 2] = 255 - pixels[i + 2];
+            }
+          };
+
+          /**
+           * Limits each channel of the image to the number of colors specified as
+           * the parameter. The parameter can be set to values between 2 and 255, but
+           * results are most noticeable in the lower ranges.
+           *
+           * Adapted from java based processing implementation
+           *
+           * @private
+           * @param  {Canvas} canvas
+           * @param  {Integer} level
+           */
+          Filters.posterize = function(canvas, level) {
+            var pixels = Filters._toPixels(canvas);
+
+            if (level < 2 || level > 255) {
+              throw new Error(
+                'Level must be greater than 2 and less than 255 for posterize'
+              );
+            }
+
+            var levels1 = level - 1;
+            for (var i = 0; i < pixels.length; i += 4) {
+              var rlevel = pixels[i];
+              var glevel = pixels[i + 1];
+              var blevel = pixels[i + 2];
+
+              pixels[i] = ((rlevel * level) >> 8) * 255 / levels1;
+              pixels[i + 1] = ((glevel * level) >> 8) * 255 / levels1;
+              pixels[i + 2] = ((blevel * level) >> 8) * 255 / levels1;
+            }
+          };
+
+          /**
+           * reduces the bright areas in an image
+           * @private
+           * @param  {Canvas} canvas
+           */
+          Filters.dilate = function(canvas) {
+            var pixels = Filters._toPixels(canvas);
+            var currIdx = 0;
+            var maxIdx = pixels.length ? pixels.length / 4 : 0;
+            var out = new Int32Array(maxIdx);
+            var currRowIdx, maxRowIdx, colOrig, colOut, currLum;
+
+            var idxRight, idxLeft, idxUp, idxDown;
+            var colRight, colLeft, colUp, colDown;
+            var lumRight, lumLeft, lumUp, lumDown;
+
+            while (currIdx < maxIdx) {
+              currRowIdx = currIdx;
+              maxRowIdx = currIdx + canvas.width;
+              while (currIdx < maxRowIdx) {
+                colOrig = colOut = Filters._getARGB(pixels, currIdx);
+                idxLeft = currIdx - 1;
+                idxRight = currIdx + 1;
+                idxUp = currIdx - canvas.width;
+                idxDown = currIdx + canvas.width;
+
+                if (idxLeft < currRowIdx) {
+                  idxLeft = currIdx;
+                }
+                if (idxRight >= maxRowIdx) {
+                  idxRight = currIdx;
+                }
+                if (idxUp < 0) {
+                  idxUp = 0;
+                }
+                if (idxDown >= maxIdx) {
+                  idxDown = currIdx;
+                }
+                colUp = Filters._getARGB(pixels, idxUp);
+                colLeft = Filters._getARGB(pixels, idxLeft);
+                colDown = Filters._getARGB(pixels, idxDown);
+                colRight = Filters._getARGB(pixels, idxRight);
+
+                //compute luminance
+                currLum =
+                  77 * ((colOrig >> 16) & 0xff) +
+                  151 * ((colOrig >> 8) & 0xff) +
+                  28 * (colOrig & 0xff);
+                lumLeft =
+                  77 * ((colLeft >> 16) & 0xff) +
+                  151 * ((colLeft >> 8) & 0xff) +
+                  28 * (colLeft & 0xff);
+                lumRight =
+                  77 * ((colRight >> 16) & 0xff) +
+                  151 * ((colRight >> 8) & 0xff) +
+                  28 * (colRight & 0xff);
+                lumUp =
+                  77 * ((colUp >> 16) & 0xff) +
+                  151 * ((colUp >> 8) & 0xff) +
+                  28 * (colUp & 0xff);
+                lumDown =
+                  77 * ((colDown >> 16) & 0xff) +
+                  151 * ((colDown >> 8) & 0xff) +
+                  28 * (colDown & 0xff);
+
+                if (lumLeft > currLum) {
+                  colOut = colLeft;
+                  currLum = lumLeft;
+                }
+                if (lumRight > currLum) {
+                  colOut = colRight;
+                  currLum = lumRight;
+                }
+                if (lumUp > currLum) {
+                  colOut = colUp;
+                  currLum = lumUp;
