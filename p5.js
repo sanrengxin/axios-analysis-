@@ -67356,3 +67356,121 @@
                 if (lumUp > currLum) {
                   colOut = colUp;
                   currLum = lumUp;
+                }
+                if (lumDown > currLum) {
+                  colOut = colDown;
+                  currLum = lumDown;
+                }
+                out[currIdx++] = colOut;
+              }
+            }
+            Filters._setPixels(pixels, out);
+          };
+
+          /**
+           * increases the bright areas in an image
+           * @private
+           * @param  {Canvas} canvas
+           */
+          Filters.erode = function(canvas) {
+            var pixels = Filters._toPixels(canvas);
+            var currIdx = 0;
+            var maxIdx = pixels.length ? pixels.length / 4 : 0;
+            var out = new Int32Array(maxIdx);
+            var currRowIdx, maxRowIdx, colOrig, colOut, currLum;
+            var idxRight, idxLeft, idxUp, idxDown;
+            var colRight, colLeft, colUp, colDown;
+            var lumRight, lumLeft, lumUp, lumDown;
+
+            while (currIdx < maxIdx) {
+              currRowIdx = currIdx;
+              maxRowIdx = currIdx + canvas.width;
+              while (currIdx < maxRowIdx) {
+                colOrig = colOut = Filters._getARGB(pixels, currIdx);
+                idxLeft = currIdx - 1;
+                idxRight = currIdx + 1;
+                idxUp = currIdx - canvas.width;
+                idxDown = currIdx + canvas.width;
+
+                if (idxLeft < currRowIdx) {
+                  idxLeft = currIdx;
+                }
+                if (idxRight >= maxRowIdx) {
+                  idxRight = currIdx;
+                }
+                if (idxUp < 0) {
+                  idxUp = 0;
+                }
+                if (idxDown >= maxIdx) {
+                  idxDown = currIdx;
+                }
+                colUp = Filters._getARGB(pixels, idxUp);
+                colLeft = Filters._getARGB(pixels, idxLeft);
+                colDown = Filters._getARGB(pixels, idxDown);
+                colRight = Filters._getARGB(pixels, idxRight);
+
+                //compute luminance
+                currLum =
+                  77 * ((colOrig >> 16) & 0xff) +
+                  151 * ((colOrig >> 8) & 0xff) +
+                  28 * (colOrig & 0xff);
+                lumLeft =
+                  77 * ((colLeft >> 16) & 0xff) +
+                  151 * ((colLeft >> 8) & 0xff) +
+                  28 * (colLeft & 0xff);
+                lumRight =
+                  77 * ((colRight >> 16) & 0xff) +
+                  151 * ((colRight >> 8) & 0xff) +
+                  28 * (colRight & 0xff);
+                lumUp =
+                  77 * ((colUp >> 16) & 0xff) +
+                  151 * ((colUp >> 8) & 0xff) +
+                  28 * (colUp & 0xff);
+                lumDown =
+                  77 * ((colDown >> 16) & 0xff) +
+                  151 * ((colDown >> 8) & 0xff) +
+                  28 * (colDown & 0xff);
+
+                if (lumLeft < currLum) {
+                  colOut = colLeft;
+                  currLum = lumLeft;
+                }
+                if (lumRight < currLum) {
+                  colOut = colRight;
+                  currLum = lumRight;
+                }
+                if (lumUp < currLum) {
+                  colOut = colUp;
+                  currLum = lumUp;
+                }
+                if (lumDown < currLum) {
+                  colOut = colDown;
+                  currLum = lumDown;
+                }
+
+                out[currIdx++] = colOut;
+              }
+            }
+            Filters._setPixels(pixels, out);
+          };
+
+          // BLUR
+
+          // internal kernel stuff for the gaussian blur filter
+          var blurRadius;
+          var blurKernelSize;
+          var blurKernel;
+          var blurMult;
+
+          /*
+               * Port of https://github.com/processing/processing/blob/
+               * main/core/src/processing/core/PImage.java#L1250
+               *
+               * Optimized code for building the blur kernel.
+               * further optimized blur code (approx. 15% for radius=20)
+               * bigger speed gains for larger radii (~30%)
+               * added support for various image types (ALPHA, RGB, ARGB)
+               * [toxi 050728]
+               */
+          function buildBlurKernel(r) {
+            var radius = (r * 3.5) | 0;
