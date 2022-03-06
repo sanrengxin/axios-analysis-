@@ -67965,3 +67965,136 @@
               for (var _k = 0; _k < allFramesPixelColors[_i3].length; _k++) {
                 var _color = allFramesPixelColors[_i3][_k];
                 if (localPaletteRequired) {
+                  if (colorIndicesLookup[_color] === undefined) {
+                    colorIndicesLookup[_color] = palette.length;
+                    palette.push(_color);
+                  }
+                  pixelPaletteIndex[_k] = colorIndicesLookup[_color];
+                } else {
+                  pixelPaletteIndex[_k] = globalIndicesLookup[_color];
+                }
+
+                if (_i3 > 0) {
+                  // If even one pixel of this color has changed in this frame
+                  // from the previous frame, we cannot mark it as transparent
+                  if (allFramesPixelColors[_i3 - 1][_k] !== _color) {
+                    cannotBeTransparent.add(_color);
+                  }
+                }
+              }
+
+              var frameOpts = {};
+
+              // Transparency optimization
+              var canBeTransparent = palette.filter(function(a) {
+                return !cannotBeTransparent.has(a);
+              });
+              if (canBeTransparent.length > 0) {
+                // Select a color to mark as transparent
+                var transparent = canBeTransparent[0];
+                var transparentIndex = localPaletteRequired
+                  ? colorIndicesLookup[transparent]
+                  : globalIndicesLookup[transparent];
+                if (_i3 > 0) {
+                  for (var _k2 = 0; _k2 < allFramesPixelColors[_i3].length; _k2++) {
+                    // If this pixel in this frame has the same color in previous frame
+                    if (
+                      allFramesPixelColors[_i3 - 1][_k2] === allFramesPixelColors[_i3][_k2]
+                    ) {
+                      pixelPaletteIndex[_k2] = transparentIndex;
+                    }
+                  }
+                  frameOpts.transparent = transparentIndex;
+                  // If this frame has any transparency, do not dispose the previous frame
+                  previousFrame.frameOpts.disposal = 1;
+                }
+              }
+              frameOpts.delay = props.frames[_i3].delay / 10; // Move timing back into GIF formatting
+              if (localPaletteRequired) {
+                // force palette to be power of 2
+                var _powof = 1;
+                while (_powof < palette.length) {
+                  _powof <<= 1;
+                }
+                palette.length = _powof;
+                frameOpts.palette = new Uint32Array(palette);
+              }
+              if (_i3 > 0) {
+                // add the frame that came before the current one
+                gifWriter.addFrame(
+                  0,
+                  0,
+                  pImg.width,
+                  pImg.height,
+                  previousFrame.pixelPaletteIndex,
+                  previousFrame.frameOpts
+                );
+              }
+              // previous frame object should now have details of this frame
+              previousFrame = {
+                pixelPaletteIndex: pixelPaletteIndex,
+                frameOpts: frameOpts
+              };
+            };
+            for (var _i3 = 0; _i3 < props.numFrames; _i3++) {
+              _loop(_i3);
+            }
+
+            previousFrame.frameOpts.disposal = 1;
+            // add the last frame
+            gifWriter.addFrame(
+              0,
+              0,
+              pImg.width,
+              pImg.height,
+              previousFrame.pixelPaletteIndex,
+              previousFrame.frameOpts
+            );
+
+            var extension = 'gif';
+            var blob = new Blob([buffer.slice(0, gifWriter.end())], {
+              type: 'image/gif'
+            });
+
+            _main.default.prototype.downloadFile(blob, filename, extension);
+          };
+
+          /**
+    *  Capture a sequence of frames that can be used to create a movie.
+    *  Accepts a callback. For example, you may wish to send the frames
+    *  to a server where they can be stored or converted into a movie.
+    *  If no callback is provided, the browser will pop up save dialogues in an
+    *  attempt to download all of the images that have just been created. With the
+    *  callback provided the image data isn't saved by default but instead passed
+    *  as an argument to the callback function as an array of objects, with the
+    *  size of array equal to the total number of frames.
+    *
+    *  Note that <a href="#/p5.Image/saveFrames">saveFrames()</a> will only save the first 15 frames of an animation.
+    *  To export longer animations, you might look into a library like
+    *  <a href="https://github.com/spite/ccapture.js/">ccapture.js</a>.
+    *
+    *  @method saveFrames
+    *  @param  {String}   filename
+    *  @param  {String}   extension 'jpg' or 'png'
+    *  @param  {Number}   duration  Duration in seconds to save the frames for.
+    *  @param  {Number}   framerate  Framerate to save the frames in.
+    *  @param  {function(Array)} [callback] A callback function that will be executed
+                                     to handle the image data. This function
+                                     should accept an array as argument. The
+                                     array will contain the specified number of
+                                     frames of objects. Each object has three
+                                     properties: imageData - an
+                                     image/octet-stream, filename and extension.
+    *  @example
+    *  <div><code>
+    * function draw() {
+    *   background(mouseX);
+    * }
+    *
+    * function mousePressed() {
+    *   saveFrames('out', 'png', 1, 25, data => {
+    *     print(data);
+    *   });
+    * }
+   </code></div>
+    *
