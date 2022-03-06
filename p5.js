@@ -67592,3 +67592,129 @@
                 }
                 argb[x + yi] =
                   ((ca / sum) << 24) | ((cr / sum) << 16) | ((cg / sum) << 8) | (cb / sum);
+              }
+              yi += width;
+              ymi += width;
+              ym++;
+            }
+            Filters._setPixels(pixels, argb);
+          }
+
+          Filters.blur = function(canvas, radius) {
+            blurARGB(canvas, radius);
+          };
+          var _default = Filters;
+          exports.default = _default;
+        },
+        {}
+      ],
+      81: [
+        function(_dereq_, module, exports) {
+          'use strict';
+          Object.defineProperty(exports, '__esModule', { value: true });
+          exports.default = void 0;
+
+          var _main = _interopRequireDefault(_dereq_('../core/main'));
+          var _omggif = _interopRequireDefault(_dereq_('omggif'));
+          function _interopRequireDefault(obj) {
+            return obj && obj.__esModule ? obj : { default: obj };
+          }
+          function _toConsumableArray(arr) {
+            return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread();
+          }
+          function _nonIterableSpread() {
+            throw new TypeError('Invalid attempt to spread non-iterable instance');
+          }
+          function _iterableToArray(iter) {
+            if (
+              Symbol.iterator in Object(iter) ||
+              Object.prototype.toString.call(iter) === '[object Arguments]'
+            )
+              return Array.from(iter);
+          }
+          function _arrayWithoutHoles(arr) {
+            if (Array.isArray(arr)) {
+              for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) {
+                arr2[i] = arr[i];
+              }
+              return arr2;
+            }
+          }
+
+          /**
+           * Creates a new <a href="#/p5.Image">p5.Image</a> (the datatype for storing images). This provides a
+           * fresh buffer of pixels to play with. Set the size of the buffer with the
+           * width and height parameters.
+           *
+           * .<a href="#/p5.Image/pixels">pixels</a> gives access to an array containing the values for all the pixels
+           * in the display window.
+           * These values are numbers. This array is the size (including an appropriate
+           * factor for the <a href="#/p5/pixelDensity">pixelDensity</a>) of the display window x4,
+           * representing the R, G, B, A values in order for each pixel, moving from
+           * left to right across each row, then down each column. See .<a href="#/p5.Image/pixels">pixels</a> for
+           * more info. It may also be simpler to use <a href="#/p5.Image/set">set()</a> or <a href="#/p5.Image/get">get()</a>.
+           *
+           * Before accessing the pixels of an image, the data must loaded with the
+           * <a href="#/p5.Image/loadPixels">loadPixels()</a> function. After the array data has been modified, the
+           * <a href="#/p5.Image/updatePixels">updatePixels()</a> function must be run to update the changes.
+           *
+           * @method createImage
+           * @param  {Integer} width  width in pixels
+           * @param  {Integer} height height in pixels
+           * @return {p5.Image}       the <a href="#/p5.Image">p5.Image</a> object
+           * @example
+           * <div>
+           * <code>
+           * let img = createImage(66, 66);
+           * img.loadPixels();
+           * for (let i = 0; i < img.width; i++) {
+           *   for (let j = 0; j < img.height; j++) {
+           *     img.set(i, j, color(0, 90, 102));
+           *   }
+           * }
+           * img.updatePixels();
+           * image(img, 17, 17);
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * let img = createImage(66, 66);
+           * img.loadPixels();
+           * for (let i = 0; i < img.width; i++) {
+           *   for (let j = 0; j < img.height; j++) {
+           *     img.set(i, j, color(0, 90, 102, (i % img.width) * 2));
+           *   }
+           * }
+           * img.updatePixels();
+           * image(img, 17, 17);
+           * image(img, 34, 34);
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * let pink = color(255, 102, 204);
+           * let img = createImage(66, 66);
+           * img.loadPixels();
+           * let d = pixelDensity();
+           * let halfImage = 4 * (img.width * d) * (img.height / 2 * d);
+           * for (let i = 0; i < halfImage; i += 4) {
+           *   img.pixels[i] = red(pink);
+           *   img.pixels[i + 1] = green(pink);
+           *   img.pixels[i + 2] = blue(pink);
+           *   img.pixels[i + 3] = alpha(pink);
+           * }
+           * img.updatePixels();
+           * image(img, 17, 17);
+           * </code>
+           * </div>
+           *
+           * @alt
+           * 66x66 dark turquoise rect in center of canvas.
+           * 2 gradated dark turquoise rects fade left. 1 center 1 bottom right of canvas
+           * no image displayed
+           */
+          _main.default.prototype.createImage = function(width, height) {
+            _main.default._validateParameters('createImage', arguments);
+            return new _main.default.Image(width, height);
