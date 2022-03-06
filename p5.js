@@ -67840,3 +67840,128 @@
               // The color for each pixel in this frame ( for easier lookup later )
               var pixelColors = new Uint32Array(pImg.width * pImg.height);
               for (var j = 0, k = 0; j < dataLength; j += 4, k++) {
+                var r = data[j + 0];
+                var g = data[j + 1];
+                var b = data[j + 2];
+                var color = (r << 16) | (g << 8) | (b << 0);
+                paletteSet.add(color);
+
+                // What color does this pixel have in this frame ?
+                pixelColors[k] = color;
+              }
+
+              // A way to put use the entire palette as an object key
+              var paletteStr = _toConsumableArray(paletteSet)
+                .sort()
+                .toString();
+              if (paletteFreqsAndFrames[paletteStr] === undefined) {
+                paletteFreqsAndFrames[paletteStr] = { freq: 1, frames: [i] };
+              } else {
+                paletteFreqsAndFrames[paletteStr].freq += 1;
+                paletteFreqsAndFrames[paletteStr].frames.push(i);
+              }
+
+              allFramesPixelColors.push(pixelColors);
+            }
+
+            var framesUsingGlobalPalette = [];
+
+            // Now to build the global palette
+            // Sort all the unique palettes in descending order of their occurence
+            var palettesSortedByFreq = Object.keys(paletteFreqsAndFrames).sort(function(
+              a,
+              b
+            ) {
+              return paletteFreqsAndFrames[b].freq - paletteFreqsAndFrames[a].freq;
+            });
+
+            // The initial global palette is the one with the most occurence
+            var globalPalette = palettesSortedByFreq[0].split(',').map(function(a) {
+              return parseInt(a);
+            });
+
+            framesUsingGlobalPalette = framesUsingGlobalPalette.concat(
+              paletteFreqsAndFrames[globalPalette].frames
+            );
+
+            var globalPaletteSet = new Set(globalPalette);
+
+            // Build a more complete global palette
+            // Iterate over the remaining palettes in the order of
+            // their occurence and see if the colors in this palette which are
+            // not in the global palette can be added there, while keeping the length
+            // of the global palette <= 256
+            for (var _i = 1; _i < palettesSortedByFreq.length; _i++) {
+              var palette = palettesSortedByFreq[_i].split(',').map(function(a) {
+                return parseInt(a);
+              });
+
+              var difference = palette.filter(function(x) {
+                return !globalPaletteSet.has(x);
+              });
+              if (globalPalette.length + difference.length <= 256) {
+                for (var _j = 0; _j < difference.length; _j++) {
+                  globalPalette.push(difference[_j]);
+                  globalPaletteSet.add(difference[_j]);
+                }
+
+                // All frames using this palette now use the global palette
+                framesUsingGlobalPalette = framesUsingGlobalPalette.concat(
+                  paletteFreqsAndFrames[palettesSortedByFreq[_i]].frames
+                );
+              }
+            }
+
+            framesUsingGlobalPalette = new Set(framesUsingGlobalPalette);
+
+            // Build a lookup table of the index of each color in the global palette
+            // Maps a color to its index
+            var globalIndicesLookup = {};
+            for (var _i2 = 0; _i2 < globalPalette.length; _i2++) {
+              if (!globalIndicesLookup[globalPalette[_i2]]) {
+                globalIndicesLookup[globalPalette[_i2]] = _i2;
+              }
+            }
+
+            // force palette to be power of 2
+            var powof2 = 1;
+            while (powof2 < globalPalette.length) {
+              powof2 <<= 1;
+            }
+            globalPalette.length = powof2;
+
+            // global opts
+            var opts = {
+              loop: loopLimit,
+              palette: new Uint32Array(globalPalette)
+            };
+
+            var gifWriter = new _omggif.default.GifWriter(
+              buffer,
+              pImg.width,
+              pImg.height,
+              opts
+            );
+            var previousFrame = {};
+
+            // Pass 2
+            // Determine if the frame needs a local palette
+            // Also apply transparency optimization. This function will often blow up
+            // the size of a GIF if not for transparency. If a pixel in one frame has
+            // the same color in the previous frame, that pixel can be marked as
+            // transparent. We decide one particular color as transparent and make all
+            // transparent pixels take this color. This helps in later in compression.
+            var _loop = function _loop(_i3) {
+              var localPaletteRequired = !framesUsingGlobalPalette.has(_i3);
+              var palette = localPaletteRequired ? [] : globalPalette;
+              var pixelPaletteIndex = new Uint8Array(pImg.width * pImg.height);
+
+              // Lookup table mapping color to its indices
+              var colorIndicesLookup = {};
+
+              // All the colors that cannot be marked transparent in this frame
+              var cannotBeTransparent = new Set();
+
+              for (var _k = 0; _k < allFramesPixelColors[_i3].length; _k++) {
+                var _color = allFramesPixelColors[_i3][_k];
+                if (localPaletteRequired) {
