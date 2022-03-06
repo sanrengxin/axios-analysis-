@@ -67718,3 +67718,125 @@
           _main.default.prototype.createImage = function(width, height) {
             _main.default._validateParameters('createImage', arguments);
             return new _main.default.Image(width, height);
+          };
+
+          /**
+           *  Save the current canvas as an image. The browser will either save the
+           *  file immediately, or prompt the user with a dialogue window.
+           *
+           *  @method saveCanvas
+           *  @param  {p5.Element|HTMLCanvasElement} selectedCanvas   a variable
+           *                                  representing a specific html5 canvas (optional)
+           *  @param  {String} [filename]
+           *  @param  {String} [extension]      'jpg' or 'png'
+           *
+           *  @example
+           * <div class='norender notest'><code>
+           * function setup() {
+           *   let c = createCanvas(100, 100);
+           *   background(255, 0, 0);
+           *   saveCanvas(c, 'myCanvas', 'jpg');
+           * }
+           * </code></div>
+           * <div class='norender notest'><code>
+           * // note that this example has the same result as above
+           * // if no canvas is specified, defaults to main canvas
+           * function setup() {
+           *   let c = createCanvas(100, 100);
+           *   background(255, 0, 0);
+           *   saveCanvas('myCanvas', 'jpg');
+           *
+           *   // all of the following are valid
+           *   saveCanvas(c, 'myCanvas', 'jpg');
+           *   saveCanvas(c, 'myCanvas.jpg');
+           *   saveCanvas(c, 'myCanvas');
+           *   saveCanvas(c);
+           *   saveCanvas('myCanvas', 'png');
+           *   saveCanvas('myCanvas');
+           *   saveCanvas();
+           * }
+           * </code></div>
+           *
+           * @alt
+           * no image displayed
+           * no image displayed
+           * no image displayed
+           */
+          /**
+           *  @method saveCanvas
+           *  @param  {String} [filename]
+           *  @param  {String} [extension]
+           */
+          _main.default.prototype.saveCanvas = function() {
+            _main.default._validateParameters('saveCanvas', arguments);
+
+            // copy arguments to array
+            var args = [].slice.call(arguments);
+            var htmlCanvas, filename, extension;
+
+            if (arguments[0] instanceof HTMLCanvasElement) {
+              htmlCanvas = arguments[0];
+              args.shift();
+            } else if (arguments[0] instanceof _main.default.Element) {
+              htmlCanvas = arguments[0].elt;
+              args.shift();
+            } else {
+              htmlCanvas = this._curElement && this._curElement.elt;
+            }
+
+            if (args.length >= 1) {
+              filename = args[0];
+            }
+            if (args.length >= 2) {
+              extension = args[1];
+            }
+
+            extension =
+              extension ||
+              _main.default.prototype._checkFileExtension(filename, extension)[1] ||
+              'png';
+
+            var mimeType;
+            switch (extension) {
+              default:
+                //case 'png':
+                mimeType = 'image/png';
+                break;
+              case 'jpeg':
+              case 'jpg':
+                mimeType = 'image/jpeg';
+                break;
+            }
+
+            htmlCanvas.toBlob(function(blob) {
+              _main.default.prototype.downloadFile(blob, filename, extension);
+            }, mimeType);
+          };
+
+          _main.default.prototype.saveGif = function(pImg, filename) {
+            var props = pImg.gifProperties;
+
+            //convert loopLimit back into Netscape Block formatting
+            var loopLimit = props.loopLimit;
+            if (loopLimit === 1) {
+              loopLimit = null;
+            } else if (loopLimit === null) {
+              loopLimit = 0;
+            }
+            var buffer = new Uint8Array(pImg.width * pImg.height * props.numFrames);
+
+            var allFramesPixelColors = [];
+
+            // Used to determine the occurrence of unique palettes and the frames
+            // which use them
+            var paletteFreqsAndFrames = {};
+
+            // Pass 1:
+            //loop over frames and get the frequency of each palette
+            for (var i = 0; i < props.numFrames; i++) {
+              var paletteSet = new Set();
+              var data = props.frames[i].image.data;
+              var dataLength = data.length;
+              // The color for each pixel in this frame ( for easier lookup later )
+              var pixelColors = new Uint32Array(pImg.width * pImg.height);
+              for (var j = 0, k = 0; j < dataLength; j += 4, k++) {
