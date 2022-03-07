@@ -68098,3 +68098,135 @@
     * }
    </code></div>
     *
+    * @alt
+    * canvas background goes from light to dark with mouse x.
+    */
+          _main.default.prototype.saveFrames = function(
+            fName,
+            ext,
+            _duration,
+            _fps,
+            callback
+          ) {
+            _main.default._validateParameters('saveFrames', arguments);
+            var duration = _duration || 3;
+            duration = _main.default.prototype.constrain(duration, 0, 15);
+            duration = duration * 1000;
+            var fps = _fps || 15;
+            fps = _main.default.prototype.constrain(fps, 0, 22);
+            var count = 0;
+
+            var makeFrame = _main.default.prototype._makeFrame;
+            var cnv = this._curElement.elt;
+            var frames = [];
+            var frameFactory = setInterval(function() {
+              frames.push(makeFrame(fName + count, ext, cnv));
+              count++;
+            }, 1000 / fps);
+
+            setTimeout(function() {
+              clearInterval(frameFactory);
+              if (callback) {
+                callback(frames);
+              } else {
+                var _iteratorNormalCompletion = true;
+                var _didIteratorError = false;
+                var _iteratorError = undefined;
+                try {
+                  for (
+                    var _iterator = frames[Symbol.iterator](), _step;
+                    !(_iteratorNormalCompletion = (_step = _iterator.next()).done);
+                    _iteratorNormalCompletion = true
+                  ) {
+                    var f = _step.value;
+                    _main.default.prototype.downloadFile(f.imageData, f.filename, f.ext);
+                  }
+                } catch (err) {
+                  _didIteratorError = true;
+                  _iteratorError = err;
+                } finally {
+                  try {
+                    if (!_iteratorNormalCompletion && _iterator.return != null) {
+                      _iterator.return();
+                    }
+                  } finally {
+                    if (_didIteratorError) {
+                      throw _iteratorError;
+                    }
+                  }
+                }
+              }
+              frames = []; // clear frames
+            }, duration + 0.01);
+          };
+
+          _main.default.prototype._makeFrame = function(filename, extension, _cnv) {
+            var cnv;
+            if (this) {
+              cnv = this._curElement.elt;
+            } else {
+              cnv = _cnv;
+            }
+            var mimeType;
+            if (!extension) {
+              extension = 'png';
+              mimeType = 'image/png';
+            } else {
+              switch (extension.toLowerCase()) {
+                case 'png':
+                  mimeType = 'image/png';
+                  break;
+                case 'jpeg':
+                  mimeType = 'image/jpeg';
+                  break;
+                case 'jpg':
+                  mimeType = 'image/jpeg';
+                  break;
+                default:
+                  mimeType = 'image/png';
+                  break;
+              }
+            }
+            var downloadMime = 'image/octet-stream';
+            var imageData = cnv.toDataURL(mimeType);
+            imageData = imageData.replace(mimeType, downloadMime);
+
+            var thisFrame = {};
+            thisFrame.imageData = imageData;
+            thisFrame.filename = filename;
+            thisFrame.ext = extension;
+            return thisFrame;
+          };
+          var _default = _main.default;
+          exports.default = _default;
+        },
+        { '../core/main': 59, omggif: 33 }
+      ],
+      82: [
+        function(_dereq_, module, exports) {
+          'use strict';
+          function _typeof(obj) {
+            if (typeof Symbol === 'function' && typeof Symbol.iterator === 'symbol') {
+              _typeof = function _typeof(obj) {
+                return typeof obj;
+              };
+            } else {
+              _typeof = function _typeof(obj) {
+                return obj &&
+                  typeof Symbol === 'function' &&
+                  obj.constructor === Symbol &&
+                  obj !== Symbol.prototype
+                  ? 'symbol'
+                  : typeof obj;
+              };
+            }
+            return _typeof(obj);
+          }
+          Object.defineProperty(exports, '__esModule', { value: true });
+          exports.default = void 0;
+
+          var _main = _interopRequireDefault(_dereq_('../core/main'));
+          var _filters = _interopRequireDefault(_dereq_('./filters'));
+          var _helpers = _interopRequireDefault(_dereq_('../core/helpers'));
+          var constants = _interopRequireWildcard(_dereq_('../core/constants'));
+          var _omggif = _interopRequireDefault(_dereq_('omggif'));
