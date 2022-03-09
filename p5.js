@@ -68626,3 +68626,152 @@
            * @param  {Number}   sy     the y-coordinate of the subsection of the source
            * image to draw into the destination rectangle
            * @param {Number}    [sWidth] the width of the subsection of the
+           *                           source image to draw into the destination
+           *                           rectangle
+           * @param {Number}    [sHeight] the height of the subsection of the
+           *                            source image to draw into the destination rectangle
+           */
+          _main.default.prototype.image = function(
+            img,
+            dx,
+            dy,
+            dWidth,
+            dHeight,
+            sx,
+            sy,
+            sWidth,
+            sHeight
+          ) {
+            // set defaults per spec: https://goo.gl/3ykfOq
+
+            _main.default._validateParameters('image', arguments);
+
+            var defW = img.width;
+            var defH = img.height;
+
+            if (img.elt && img.elt.videoWidth && !img.canvas) {
+              // video no canvas
+              defW = img.elt.videoWidth;
+              defH = img.elt.videoHeight;
+            }
+
+            var _dx = dx;
+            var _dy = dy;
+            var _dw = dWidth || defW;
+            var _dh = dHeight || defH;
+            var _sx = sx || 0;
+            var _sy = sy || 0;
+            var _sw = sWidth || defW;
+            var _sh = sHeight || defH;
+
+            _sw = _sAssign(_sw, defW);
+            _sh = _sAssign(_sh, defH);
+
+            // This part needs cleanup and unit tests
+            // see issues https://github.com/processing/p5.js/issues/1741
+            // and https://github.com/processing/p5.js/issues/1673
+            var pd = 1;
+
+            if (img.elt && !img.canvas && img.elt.style.width) {
+              //if img is video and img.elt.size() has been used and
+              //no width passed to image()
+              if (img.elt.videoWidth && !dWidth) {
+                pd = img.elt.videoWidth;
+              } else {
+                //all other cases
+                pd = img.elt.width;
+              }
+              pd /= parseInt(img.elt.style.width, 10);
+            }
+
+            _sx *= pd;
+            _sy *= pd;
+            _sh *= pd;
+            _sw *= pd;
+
+            var vals = _helpers.default.modeAdjust(
+              _dx,
+              _dy,
+              _dw,
+              _dh,
+              this._renderer._imageMode
+            );
+
+            // tint the image if there is a tint
+            this._renderer.image(img, _sx, _sy, _sw, _sh, vals.x, vals.y, vals.w, vals.h);
+          };
+
+          /**
+           * Sets the fill value for displaying images. Images can be tinted to
+           * specified colors or made transparent by including an alpha value.
+           *
+           * To apply transparency to an image without affecting its color, use
+           * white as the tint color and specify an alpha value. For instance,
+           * tint(255, 128) will make an image 50% transparent (assuming the default
+           * alpha range of 0-255, which can be changed with <a href="#/p5/colorMode">colorMode()</a>).
+           *
+           * The value for the gray parameter must be less than or equal to the current
+           * maximum value as specified by <a href="#/p5/colorMode">colorMode()</a>. The default maximum value is
+           * 255.
+           *
+           * @method tint
+           * @param  {Number}        v1      red or hue value relative to
+           *                                 the current color range
+           * @param  {Number}        v2      green or saturation value
+           *                                 relative to the current color range
+           * @param  {Number}        v3      blue or brightness value
+           *                                 relative to the current color range
+           * @param  {Number}        [alpha]
+           *
+           * @example
+           * <div>
+           * <code>
+           * let img;
+           * function preload() {
+           *   img = loadImage('assets/laDefense.jpg');
+           * }
+           * function setup() {
+           *   image(img, 0, 0);
+           *   tint(0, 153, 204); // Tint blue
+           *   image(img, 50, 0);
+           * }
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * let img;
+           * function preload() {
+           *   img = loadImage('assets/laDefense.jpg');
+           * }
+           * function setup() {
+           *   image(img, 0, 0);
+           *   tint(0, 153, 204, 126); // Tint blue and set transparency
+           *   image(img, 50, 0);
+           * }
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * let img;
+           * function preload() {
+           *   img = loadImage('assets/laDefense.jpg');
+           * }
+           * function setup() {
+           *   image(img, 0, 0);
+           *   tint(255, 126); // Apply transparency without changing color
+           *   image(img, 50, 0);
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * 2 side by side images of umbrella and ceiling, one image with blue tint
+           * Images of umbrella and ceiling, one half of image with blue tint
+           * 2 side by side images of umbrella and ceiling, one image translucent
+           */
+
+          /**
+           * @method tint
+           * @param  {String}        value   a color string
