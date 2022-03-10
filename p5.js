@@ -69046,3 +69046,149 @@
            * @param {Number} width
            * @param {Number} height
            */ _main.default.Image = function(width, height) {
+            /**
+             * Image width.
+             * @property {Number} width
+             * @readOnly
+             * @example
+             * <div><code>
+             * let img;
+             * function preload() {
+             *   img = loadImage('assets/rockies.jpg');
+             * }
+             *
+             * function setup() {
+             *   createCanvas(100, 100);
+             *   image(img, 0, 0);
+             *   for (let i = 0; i < img.width; i++) {
+             *     let c = img.get(i, img.height / 2);
+             *     stroke(c);
+             *     line(i, height / 2, i, height);
+             *   }
+             * }
+             * </code></div>
+             *
+             * @alt
+             * rocky mountains in top and horizontal lines in corresponding colors in bottom.
+             *
+             */ this.width = width;
+            /**
+             * Image height.
+             * @property {Number} height
+             * @readOnly
+             * @example
+             * <div><code>
+             * let img;
+             * function preload() {
+             *   img = loadImage('assets/rockies.jpg');
+             * }
+             *
+             * function setup() {
+             *   createCanvas(100, 100);
+             *   image(img, 0, 0);
+             *   for (let i = 0; i < img.height; i++) {
+             *     let c = img.get(img.width / 2, i);
+             *     stroke(c);
+             *     line(0, i, width / 2, i);
+             *   }
+             * }
+             * </code></div>
+             *
+             * @alt
+             * rocky mountains on right and vertical lines in corresponding colors on left.
+             *
+             */ this.height = height;
+            this.canvas = document.createElement('canvas');
+            this.canvas.width = this.width;
+            this.canvas.height = this.height;
+            this.drawingContext = this.canvas.getContext('2d');
+            this._pixelsState = this;
+            this._pixelDensity = 1;
+            //Object for working with GIFs, defaults to null
+            this.gifProperties = null;
+            //For WebGL Texturing only: used to determine whether to reupload texture to GPU
+            this._modified = false;
+            /**
+             * Array containing the values for all the pixels in the display window.
+             * These values are numbers. This array is the size (include an appropriate
+             * factor for pixelDensity) of the display window x4,
+             * representing the R, G, B, A values in order for each pixel, moving from
+             * left to right across each row, then down each column. Retina and other
+             * high density displays may have more pixels (by a factor of
+             * pixelDensity^2).
+             * For example, if the image is 100x100 pixels, there will be 40,000. With
+             * pixelDensity = 2, there will be 160,000. The first four values
+             * (indices 0-3) in the array will be the R, G, B, A values of the pixel at
+             * (0, 0). The second four values (indices 4-7) will contain the R, G, B, A
+             * values of the pixel at (1, 0). More generally, to set values for a pixel
+             * at (x, y):
+             * ```javascript
+             * let d = pixelDensity();
+             * for (let i = 0; i < d; i++) {
+             *   for (let j = 0; j < d; j++) {
+             *     // loop over
+             *     index = 4 * ((y * d + j) * width * d + (x * d + i));
+             *     pixels[index] = r;
+             *     pixels[index+1] = g;
+             *     pixels[index+2] = b;
+             *     pixels[index+3] = a;
+             *   }
+             * }
+             * ```
+             *
+             * Before accessing this array, the data must loaded with the <a href="#/p5.Image/loadPixels">loadPixels()</a>
+             * function. After the array data has been modified, the <a href="#/p5.Image/updatePixels">updatePixels()</a>
+             * function must be run to update the changes.
+             * @property {Number[]} pixels
+             * @example
+             * <div>
+             * <code>
+             * let img = createImage(66, 66);
+             * img.loadPixels();
+             * for (let i = 0; i < img.width; i++) {
+             *   for (let j = 0; j < img.height; j++) {
+             *     img.set(i, j, color(0, 90, 102));
+             *   }
+             * }
+             * img.updatePixels();
+             * image(img, 17, 17);
+             * </code>
+             * </div>
+             * <div>
+             * <code>
+             * let pink = color(255, 102, 204);
+             * let img = createImage(66, 66);
+             * img.loadPixels();
+             * for (let i = 0; i < 4 * (width * height / 2); i += 4) {
+             *   img.pixels[i] = red(pink);
+             *   img.pixels[i + 1] = green(pink);
+             *   img.pixels[i + 2] = blue(pink);
+             *   img.pixels[i + 3] = alpha(pink);
+             * }
+             * img.updatePixels();
+             * image(img, 17, 17);
+             * </code>
+             * </div>
+             *
+             * @alt
+             * 66x66 turquoise rect in center of canvas
+             * 66x66 pink rect in center of canvas
+             *
+             */
+            this.pixels = [];
+          };
+
+          /**
+           * Helper function for animating GIF-based images with time
+           */
+          _main.default.Image.prototype._animateGif = function(pInst) {
+            var props = this.gifProperties;
+            var curTime = pInst._lastFrameTime + pInst.deltaTime;
+            if (props.lastChangeTime === 0) {
+              props.lastChangeTime = curTime;
+            }
+            if (props.playing) {
+              props.timeDisplayed = curTime - props.lastChangeTime;
+              var curDelay = props.frames[props.displayIndex].delay;
+              if (props.timeDisplayed >= curDelay) {
+                //GIF is bound to 'realtime' so can skip frames
