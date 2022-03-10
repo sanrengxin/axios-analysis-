@@ -68775,3 +68775,140 @@
           /**
            * @method tint
            * @param  {String}        value   a color string
+           */
+
+          /**
+           * @method tint
+           * @param  {Number}        gray   a gray value
+           * @param  {Number}        [alpha]
+           */
+
+          /**
+           * @method tint
+           * @param  {Number[]}      values  an array containing the red,green,blue &
+           *                                 and alpha components of the color
+           */
+
+          /**
+           * @method tint
+           * @param  {p5.Color}      color   the tint color
+           */
+          _main.default.prototype.tint = function() {
+            for (
+              var _len = arguments.length, args = new Array(_len), _key = 0;
+              _key < _len;
+              _key++
+            ) {
+              args[_key] = arguments[_key];
+            }
+            _main.default._validateParameters('tint', args);
+            var c = this.color.apply(this, args);
+            this._renderer._tint = c.levels;
+          };
+
+          /**
+           * Removes the current fill value for displaying images and reverts to
+           * displaying images with their original hues.
+           *
+           * @method noTint
+           * @example
+           * <div>
+           * <code>
+           * let img;
+           * function preload() {
+           *   img = loadImage('assets/bricks.jpg');
+           * }
+           * function setup() {
+           *   tint(0, 153, 204); // Tint blue
+           *   image(img, 0, 0);
+           *   noTint(); // Disable tint
+           *   image(img, 50, 0);
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * 2 side by side images of bricks, left image with blue tint
+           */
+          _main.default.prototype.noTint = function() {
+            this._renderer._tint = null;
+          };
+
+          /**
+           * Apply the current tint color to the input image, return the resulting
+           * canvas.
+           *
+           * @private
+           * @param {p5.Image} The image to be tinted
+           * @return {canvas} The resulting tinted canvas
+           */
+          _main.default.prototype._getTintedImageCanvas = function(img) {
+            if (!img.canvas) {
+              return img;
+            }
+            var pixels = _filters.default._toPixels(img.canvas);
+            var tmpCanvas = document.createElement('canvas');
+            tmpCanvas.width = img.canvas.width;
+            tmpCanvas.height = img.canvas.height;
+            var tmpCtx = tmpCanvas.getContext('2d');
+            var id = tmpCtx.createImageData(img.canvas.width, img.canvas.height);
+            var newPixels = id.data;
+
+            for (var i = 0; i < pixels.length; i += 4) {
+              var r = pixels[i];
+              var g = pixels[i + 1];
+              var b = pixels[i + 2];
+              var a = pixels[i + 3];
+
+              newPixels[i] = r * this._renderer._tint[0] / 255;
+              newPixels[i + 1] = g * this._renderer._tint[1] / 255;
+              newPixels[i + 2] = b * this._renderer._tint[2] / 255;
+              newPixels[i + 3] = a * this._renderer._tint[3] / 255;
+            }
+
+            tmpCtx.putImageData(id, 0, 0);
+            return tmpCanvas;
+          };
+
+          /**
+           * Set image mode. Modifies the location from which images are drawn by
+           * changing the way in which parameters given to <a href="#/p5/image">image()</a> are interpreted.
+           * The default mode is imageMode(CORNER), which interprets the second and
+           * third parameters of <a href="#/p5/image">image()</a> as the upper-left corner of the image. If
+           * two additional parameters are specified, they are used to set the image's
+           * width and height.
+           *
+           * imageMode(CORNERS) interprets the second and third parameters of <a href="#/p5/image">image()</a>
+           * as the location of one corner, and the fourth and fifth parameters as the
+           * opposite corner.
+           *
+           * imageMode(CENTER) interprets the second and third parameters of <a href="#/p5/image">image()</a>
+           * as the image's center point. If two additional parameters are specified,
+           * they are used to set the image's width and height.
+           *
+           * @method imageMode
+           * @param {Constant} mode either CORNER, CORNERS, or CENTER
+           * @example
+           *
+           * <div>
+           * <code>
+           * let img;
+           * function preload() {
+           *   img = loadImage('assets/bricks.jpg');
+           * }
+           * function setup() {
+           *   imageMode(CORNER);
+           *   image(img, 10, 10, 50, 50);
+           * }
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * let img;
+           * function preload() {
+           *   img = loadImage('assets/bricks.jpg');
+           * }
+           * function setup() {
+           *   imageMode(CORNERS);
+           *   image(img, 10, 10, 90, 40);
