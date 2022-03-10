@@ -68912,3 +68912,137 @@
            * function setup() {
            *   imageMode(CORNERS);
            *   image(img, 10, 10, 90, 40);
+           * }
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * let img;
+           * function preload() {
+           *   img = loadImage('assets/bricks.jpg');
+           * }
+           * function setup() {
+           *   imageMode(CENTER);
+           *   image(img, 50, 50, 80, 80);
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * small square image of bricks
+           * horizontal rectangle image of bricks
+           * large square image of bricks
+           */
+          _main.default.prototype.imageMode = function(m) {
+            _main.default._validateParameters('imageMode', arguments);
+            if (
+              m === constants.CORNER ||
+              m === constants.CORNERS ||
+              m === constants.CENTER
+            ) {
+              this._renderer._imageMode = m;
+            }
+          };
+          var _default = _main.default;
+          exports.default = _default;
+        },
+        {
+          '../core/constants': 48,
+          '../core/friendly_errors/fes_core': 51,
+          '../core/friendly_errors/file_errors': 52,
+          '../core/friendly_errors/validate_params': 54,
+          '../core/helpers': 55,
+          '../core/main': 59,
+          './filters': 80,
+          omggif: 33
+        }
+      ],
+      83: [
+        function(_dereq_, module, exports) {
+          'use strict';
+          Object.defineProperty(exports, '__esModule', { value: true });
+          exports.default = void 0;
+
+          var _main = _interopRequireDefault(_dereq_('../core/main'));
+          var _filters = _interopRequireDefault(_dereq_('./filters'));
+          function _interopRequireDefault(obj) {
+            return obj && obj.__esModule ? obj : { default: obj };
+          }
+          /**
+           * @module Image
+           * @submodule Image
+           * @requires core
+           * @requires constants
+           * @requires filters
+           */ /**
+           * This module defines the <a href="#/p5.Image">p5.Image</a> class and P5 methods for
+           * drawing images to the main display canvas.
+           */ /*
+                                                                                                                                                                   * Class methods
+                                                                                                                                                                   */ /**
+           * Creates a new <a href="#/p5.Image">p5.Image</a>. A <a href="#/p5.Image">p5.Image</a> is a canvas backed representation of an
+           * image.
+           *
+           * p5 can display .gif, .jpg and .png images. Images may be displayed
+           * in 2D and 3D space. Before an image is used, it must be loaded with the
+           * <a href="#/p5/loadImage">loadImage()</a> function. The <a href="#/p5.Image">p5.Image</a> class contains fields for the width and
+           * height of the image, as well as an array called <a href="#/p5.Image/pixels">pixels[]</a> that contains the
+           * values for every pixel in the image.
+           *
+           * The methods described below allow easy access to the image's pixels and
+           * alpha channel and simplify the process of compositing.
+           *
+           * Before using the <a href="#/p5.Image/pixels">pixels[]</a> array, be sure to use the <a href="#/p5.Image/loadPixels">loadPixels()</a> method on
+           * the image to make sure that the pixel data is properly loaded.
+           * @example
+           * <div><code>
+           * function setup() {
+           *   let img = createImage(100, 100); // same as new p5.Image(100, 100);
+           *   img.loadPixels();
+           *   createCanvas(100, 100);
+           *   background(0);
+           *
+           *   // helper for writing color to array
+           *   function writeColor(image, x, y, red, green, blue, alpha) {
+           *     let index = (x + y * width) * 4;
+           *     image.pixels[index] = red;
+           *     image.pixels[index + 1] = green;
+           *     image.pixels[index + 2] = blue;
+           *     image.pixels[index + 3] = alpha;
+           *   }
+           *
+           *   let x, y;
+           *   // fill with random colors
+           *   for (y = 0; y < img.height; y++) {
+           *     for (x = 0; x < img.width; x++) {
+           *       let red = random(255);
+           *       let green = random(255);
+           *       let blue = random(255);
+           *       let alpha = 255;
+           *       writeColor(img, x, y, red, green, blue, alpha);
+           *     }
+           *   }
+           *
+           *   // draw a red line
+           *   y = 0;
+           *   for (x = 0; x < img.width; x++) {
+           *     writeColor(img, x, y, 255, 0, 0, 255);
+           *   }
+           *
+           *   // draw a green line
+           *   y = img.height - 1;
+           *   for (x = 0; x < img.width; x++) {
+           *     writeColor(img, x, y, 0, 255, 0, 255);
+           *   }
+           *
+           *   img.updatePixels();
+           *   image(img, 0, 0);
+           * }
+           * </code></div>
+           *
+           * @class p5.Image
+           * @constructor
+           * @param {Number} width
+           * @param {Number} height
+           */ _main.default.Image = function(width, height) {
