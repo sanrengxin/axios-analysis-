@@ -69332,3 +69332,135 @@
            *   fill(c);
            *   rect(25, 25, 50, 50);
            * }
+           *
+           * //get() returns color here
+           * </code></div>
+           *
+           * @alt
+           * image of rocky mountains with 50x50 green rect in front
+           */
+          /**
+           * @method get
+           * @return {p5.Image}      the whole <a href="#/p5.Image">p5.Image</a>
+           */
+          /**
+           * @method get
+           * @param  {Number}        x
+           * @param  {Number}        y
+           * @return {Number[]}      color of pixel at x,y in array format [R, G, B, A]
+           */
+          _main.default.Image.prototype.get = function(x, y, w, h) {
+            _main.default._validateParameters('p5.Image.get', arguments);
+            return _main.default.Renderer2D.prototype.get.apply(this, arguments);
+          };
+
+          _main.default.Image.prototype._getPixel =
+            _main.default.Renderer2D.prototype._getPixel;
+
+          /**
+           * Set the color of a single pixel or write an image into
+           * this <a href="#/p5.Image">p5.Image</a>.
+           *
+           * Note that for a large number of pixels this will
+           * be slower than directly manipulating the pixels array
+           * and then calling <a href="#/p5.Image/updatePixels">updatePixels()</a>.
+           *
+           * @method set
+           * @param {Number}              x x-coordinate of the pixel
+           * @param {Number}              y y-coordinate of the pixel
+           * @param {Number|Number[]|Object}   a grayscale value | pixel array |
+           *                                a <a href="#/p5.Color">p5.Color</a> | image to copy
+           * @example
+           * <div>
+           * <code>
+           * let img = createImage(66, 66);
+           * img.loadPixels();
+           * for (let i = 0; i < img.width; i++) {
+           *   for (let j = 0; j < img.height; j++) {
+           *     img.set(i, j, color(0, 90, 102, (i % img.width) * 2));
+           *   }
+           * }
+           * img.updatePixels();
+           * image(img, 17, 17);
+           * image(img, 34, 34);
+           * </code>
+           * </div>
+           *
+           * @alt
+           * 2 gradated dark turquoise rects fade left. 1 center 1 bottom right of canvas
+           */
+          _main.default.Image.prototype.set = function(x, y, imgOrCol) {
+            _main.default.Renderer2D.prototype.set.call(this, x, y, imgOrCol);
+            this.setModified(true);
+          };
+
+          /**
+    * Resize the image to a new width and height. To make the image scale
+    * proportionally, use 0 as the value for the wide or high parameter.
+    * For instance, to make the width of an image 150 pixels, and change
+    * the height using the same proportion, use resize(150, 0).
+    *
+    * @method resize
+    * @param {Number} width the resized image width
+    * @param {Number} height the resized image height
+    * @example
+    * <div><code>
+    * let img;
+    *
+    * function preload() {
+    *   img = loadImage('assets/rockies.jpg');
+    * }
+   
+    * function draw() {
+    *   image(img, 0, 0);
+    * }
+    *
+    * function mousePressed() {
+    *   img.resize(50, 100);
+    * }
+    * </code></div>
+    *
+    * @alt
+    * image of rocky mountains. zoomed in
+    */
+          _main.default.Image.prototype.resize = function(width, height) {
+            // Copy contents to a temporary canvas, resize the original
+            // and then copy back.
+            //
+            // There is a faster approach that involves just one copy and swapping the
+            // this.canvas reference. We could switch to that approach if (as i think
+            // is the case) there an expectation that the user would not hold a
+            // reference to the backing canvas of a p5.Image. But since we do not
+            // enforce that at the moment, I am leaving in the slower, but safer
+            // implementation.
+
+            // auto-resize
+            if (width === 0 && height === 0) {
+              width = this.canvas.width;
+              height = this.canvas.height;
+            } else if (width === 0) {
+              width = this.canvas.width * height / this.canvas.height;
+            } else if (height === 0) {
+              height = this.canvas.height * width / this.canvas.width;
+            }
+
+            width = Math.floor(width);
+            height = Math.floor(height);
+
+            var tempCanvas = document.createElement('canvas');
+            tempCanvas.width = width;
+            tempCanvas.height = height;
+
+            if (this.gifProperties) {
+              var props = this.gifProperties;
+              //adapted from github.com/LinusU/resize-image-data
+              var nearestNeighbor = function nearestNeighbor(src, dst) {
+                var pos = 0;
+                for (var y = 0; y < dst.height; y++) {
+                  for (var x = 0; x < dst.width; x++) {
+                    var srcX = Math.floor(x * src.width / dst.width);
+                    var srcY = Math.floor(y * src.height / dst.height);
+                    var srcPos = (srcY * src.width + srcX) * 4;
+                    dst.data[pos++] = src.data[srcPos++]; // R
+                    dst.data[pos++] = src.data[srcPos++]; // G
+                    dst.data[pos++] = src.data[srcPos++]; // B
