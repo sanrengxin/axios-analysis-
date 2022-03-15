@@ -69192,3 +69192,143 @@
               var curDelay = props.frames[props.displayIndex].delay;
               if (props.timeDisplayed >= curDelay) {
                 //GIF is bound to 'realtime' so can skip frames
+                var skips = Math.floor(props.timeDisplayed / curDelay);
+                props.timeDisplayed = 0;
+                props.lastChangeTime = curTime;
+                props.displayIndex += skips;
+                props.loopCount = Math.floor(props.displayIndex / props.numFrames);
+                if (props.loopLimit !== null && props.loopCount >= props.loopLimit) {
+                  props.playing = false;
+                } else {
+                  var ind = props.displayIndex % props.numFrames;
+                  this.drawingContext.putImageData(props.frames[ind].image, 0, 0);
+                  props.displayIndex = ind;
+                  this.setModified(true);
+                }
+              }
+            }
+          };
+
+          /**
+           * Helper fxn for sharing pixel methods
+           */
+          _main.default.Image.prototype._setProperty = function(prop, value) {
+            this[prop] = value;
+            this.setModified(true);
+          };
+
+          /**
+           * Loads the pixels data for this image into the [pixels] attribute.
+           *
+           * @method loadPixels
+           * @example
+           * <div><code>
+           * let myImage;
+           * let halfImage;
+           *
+           * function preload() {
+           *   myImage = loadImage('assets/rockies.jpg');
+           * }
+           *
+           * function setup() {
+           *   myImage.loadPixels();
+           *   halfImage = 4 * myImage.width * myImage.height / 2;
+           *   for (let i = 0; i < halfImage; i++) {
+           *     myImage.pixels[i + halfImage] = myImage.pixels[i];
+           *   }
+           *   myImage.updatePixels();
+           * }
+           *
+           * function draw() {
+           *   image(myImage, 0, 0, width, height);
+           * }
+           * </code></div>
+           *
+           * @alt
+           * 2 images of rocky mountains vertically stacked
+           */
+          _main.default.Image.prototype.loadPixels = function() {
+            _main.default.Renderer2D.prototype.loadPixels.call(this);
+            this.setModified(true);
+          };
+
+          /**
+           * Updates the backing canvas for this image with the contents of
+           * the [pixels] array.
+           *
+           * If this image is an animated GIF then the pixels will be updated
+           * in the frame that is currently displayed.
+           *
+           * @method updatePixels
+           * @param {Integer} x x-offset of the target update area for the
+           *                              underlying canvas
+           * @param {Integer} y y-offset of the target update area for the
+           *                              underlying canvas
+           * @param {Integer} w height of the target update area for the
+           *                              underlying canvas
+           * @param {Integer} h height of the target update area for the
+           *                              underlying canvas
+           * @example
+           * <div><code>
+           * let myImage;
+           * let halfImage;
+           *
+           * function preload() {
+           *   myImage = loadImage('assets/rockies.jpg');
+           * }
+           *
+           * function setup() {
+           *   myImage.loadPixels();
+           *   halfImage = 4 * myImage.width * myImage.height / 2;
+           *   for (let i = 0; i < halfImage; i++) {
+           *     myImage.pixels[i + halfImage] = myImage.pixels[i];
+           *   }
+           *   myImage.updatePixels();
+           * }
+           *
+           * function draw() {
+           *   image(myImage, 0, 0, width, height);
+           * }
+           * </code></div>
+           *
+           * @alt
+           * 2 images of rocky mountains vertically stacked
+           */
+          /**
+           * @method updatePixels
+           */
+          _main.default.Image.prototype.updatePixels = function(x, y, w, h) {
+            _main.default.Renderer2D.prototype.updatePixels.call(this, x, y, w, h);
+            this.setModified(true);
+          };
+
+          /**
+           * Get a region of pixels from an image.
+           *
+           * If no params are passed, the whole image is returned.
+           * If x and y are the only params passed a single pixel is extracted.
+           * If all params are passed a rectangle region is extracted and a <a href="#/p5.Image">p5.Image</a>
+           * is returned.
+           *
+           * @method get
+           * @param  {Number}               x x-coordinate of the pixel
+           * @param  {Number}               y y-coordinate of the pixel
+           * @param  {Number}               w width
+           * @param  {Number}               h height
+           * @return {p5.Image}             the rectangle <a href="#/p5.Image">p5.Image</a>
+           * @example
+           * <div><code>
+           * let myImage;
+           * let c;
+           *
+           * function preload() {
+           *   myImage = loadImage('assets/rockies.jpg');
+           * }
+           *
+           * function setup() {
+           *   background(myImage);
+           *   noStroke();
+           *   c = myImage.get(60, 90);
+           *   fill(c);
+           *   rect(25, 25, 50, 50);
+           * }
