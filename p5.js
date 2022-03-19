@@ -69464,3 +69464,136 @@
                     dst.data[pos++] = src.data[srcPos++]; // R
                     dst.data[pos++] = src.data[srcPos++]; // G
                     dst.data[pos++] = src.data[srcPos++]; // B
+                    dst.data[pos++] = src.data[srcPos++]; // A
+                  }
+                }
+              };
+              for (var i = 0; i < props.numFrames; i++) {
+                var resizedImageData = this.drawingContext.createImageData(width, height);
+
+                nearestNeighbor(props.frames[i].image, resizedImageData);
+                props.frames[i].image = resizedImageData;
+              }
+            }
+
+            // prettier-ignore
+            tempCanvas.getContext('2d').drawImage(
+  this.canvas,
+  0, 0, this.canvas.width, this.canvas.height,
+  0, 0, tempCanvas.width, tempCanvas.height);
+
+            // Resize the original canvas, which will clear its contents
+            this.canvas.width = this.width = width;
+            this.canvas.height = this.height = height;
+
+            //Copy the image back
+
+            // prettier-ignore
+            this.drawingContext.drawImage(
+  tempCanvas,
+  0, 0, width, height,
+  0, 0, width, height);
+
+            if (this.pixels.length > 0) {
+              this.loadPixels();
+            }
+
+            this.setModified(true);
+          };
+
+          /**
+           * Copies a region of pixels from one image to another. If no
+           * srcImage is specified this is used as the source. If the source
+           * and destination regions aren't the same size, it will
+           * automatically resize source pixels to fit the specified
+           * target region.
+           *
+           * @method copy
+           * @param  {p5.Image|p5.Element} srcImage source image
+           * @param  {Integer} sx X coordinate of the source's upper left corner
+           * @param  {Integer} sy Y coordinate of the source's upper left corner
+           * @param  {Integer} sw source image width
+           * @param  {Integer} sh source image height
+           * @param  {Integer} dx X coordinate of the destination's upper left corner
+           * @param  {Integer} dy Y coordinate of the destination's upper left corner
+           * @param  {Integer} dw destination image width
+           * @param  {Integer} dh destination image height
+           * @example
+           * <div><code>
+           * let photo;
+           * let bricks;
+           * let x;
+           * let y;
+           *
+           * function preload() {
+           *   photo = loadImage('assets/rockies.jpg');
+           *   bricks = loadImage('assets/bricks.jpg');
+           * }
+           *
+           * function setup() {
+           *   x = bricks.width / 2;
+           *   y = bricks.height / 2;
+           *   photo.copy(bricks, 0, 0, x, y, 0, 0, x, y);
+           *   image(photo, 0, 0);
+           * }
+           * </code></div>
+           *
+           * @alt
+           * image of rocky mountains and smaller image on top of bricks at top left
+           */
+          /**
+           * @method copy
+           * @param  {Integer} sx
+           * @param  {Integer} sy
+           * @param  {Integer} sw
+           * @param  {Integer} sh
+           * @param  {Integer} dx
+           * @param  {Integer} dy
+           * @param  {Integer} dw
+           * @param  {Integer} dh
+           */
+          _main.default.Image.prototype.copy = function() {
+            for (
+              var _len = arguments.length, args = new Array(_len), _key = 0;
+              _key < _len;
+              _key++
+            ) {
+              args[_key] = arguments[_key];
+            }
+            _main.default.prototype.copy.apply(this, args);
+          };
+
+          /**
+           * Masks part of an image from displaying by loading another
+           * image and using its alpha channel as an alpha channel for
+           * this image.
+           *
+           * @method mask
+           * @param {p5.Image} srcImage source image
+           * @example
+           * <div><code>
+           * let photo, maskImage;
+           * function preload() {
+           *   photo = loadImage('assets/rockies.jpg');
+           *   maskImage = loadImage('assets/mask2.png');
+           * }
+           *
+           * function setup() {
+           *   createCanvas(100, 100);
+           *   photo.mask(maskImage);
+           *   image(photo, 0, 0);
+           * }
+           * </code></div>
+           *
+           * @alt
+           * image of rocky mountains with white at right
+           *
+           * http://blogs.adobe.com/webplatform/2013/01/28/blending-features-in-canvas/
+           */
+          // TODO: - Accept an array of alpha values.
+          //       - Use other channels of an image. p5 uses the
+          //       blue channel (which feels kind of arbitrary). Note: at the
+          //       moment this method does not match native processing's original
+          //       functionality exactly.
+          _main.default.Image.prototype.mask = function(p5Image) {
+            if (p5Image === undefined) {
