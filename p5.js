@@ -69743,3 +69743,128 @@
            * @param  {Integer} sw
            * @param  {Integer} sh
            * @param  {Integer} dx
+           * @param  {Integer} dy
+           * @param  {Integer} dw
+           * @param  {Integer} dh
+           * @param  {Constant} blendMode
+           */
+          _main.default.Image.prototype.blend = function() {
+            for (
+              var _len2 = arguments.length, args = new Array(_len2), _key2 = 0;
+              _key2 < _len2;
+              _key2++
+            ) {
+              args[_key2] = arguments[_key2];
+            }
+            _main.default._validateParameters('p5.Image.blend', arguments);
+            _main.default.prototype.blend.apply(this, args);
+            this.setModified(true);
+          };
+
+          /**
+           * helper method for web GL mode to indicate that an image has been
+           * changed or unchanged since last upload. gl texture upload will
+           * set this value to false after uploading the texture.
+           * @method setModified
+           * @param {boolean} val sets whether or not the image has been
+           * modified.
+           * @private
+           */
+          _main.default.Image.prototype.setModified = function(val) {
+            this._modified = val; //enforce boolean?
+          };
+
+          /**
+           * helper method for web GL mode to figure out if the image
+           * has been modified and might need to be re-uploaded to texture
+           * memory between frames.
+           * @method isModified
+           * @private
+           * @return {boolean} a boolean indicating whether or not the
+           * image has been updated or modified since last texture upload.
+           */
+          _main.default.Image.prototype.isModified = function() {
+            return this._modified;
+          };
+
+          /**
+           * Saves the image to a file and force the browser to download it.
+           * Accepts two strings for filename and file extension
+           * Supports png (default), jpg, and gif
+           *<br><br>
+           * Note that the file will only be downloaded as an animated GIF
+           * if the p5.Image was loaded from a GIF file.
+           * @method save
+           * @param {String} filename give your file a name
+           * @param  {String} extension 'png' or 'jpg'
+           * @example
+           * <div><code>
+           * let photo;
+           *
+           * function preload() {
+           *   photo = loadImage('assets/rockies.jpg');
+           * }
+           *
+           * function draw() {
+           *   image(photo, 0, 0);
+           * }
+           *
+           * function keyTyped() {
+           *   if (key === 's') {
+           *     photo.save('photo', 'png');
+           *   }
+           * }
+           * </code></div>
+           *
+           * @alt
+           * image of rocky mountains.
+           */
+          _main.default.Image.prototype.save = function(filename, extension) {
+            if (this.gifProperties) {
+              _main.default.prototype.saveGif(this, filename);
+            } else {
+              _main.default.prototype.saveCanvas(this.canvas, filename, extension);
+            }
+          };
+
+          // GIF Section
+          /**
+           * Starts an animated GIF over at the beginning state.
+           *
+           * @method reset
+           * @example
+           * <div><code>
+           * let gif;
+           *
+           * function preload() {
+           *   gif = loadImage('assets/arnott-wallace-wink-loop-once.gif');
+           * }
+           *
+           * function draw() {
+           *   background(255);
+           *   // The GIF file that we loaded only loops once
+           *   // so it freezes on the last frame after playing through
+           *   image(gif, 0, 0);
+           * }
+           *
+           * function mousePressed() {
+           *   // Click to reset the GIF and begin playback from start
+           *   gif.reset();
+           * }
+           * </code></div>
+           * @alt
+           * Animated image of a cartoon face that winks once and then freezes
+           * When you click it animates again, winks once and freezes
+           */
+          _main.default.Image.prototype.reset = function() {
+            if (this.gifProperties) {
+              var props = this.gifProperties;
+              props.playing = true;
+              props.timeSinceStart = 0;
+              props.timeDisplayed = 0;
+              props.lastChangeTime = 0;
+              props.loopCount = 0;
+              props.displayIndex = 0;
+              this.drawingContext.putImageData(props.frames[0].image, 0, 0);
+            }
+          };
