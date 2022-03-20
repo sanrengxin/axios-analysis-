@@ -69868,3 +69868,151 @@
               this.drawingContext.putImageData(props.frames[0].image, 0, 0);
             }
           };
+
+          /**
+           * Gets the index for the frame that is currently visible in an animated GIF.
+           *
+           * @method getCurrentFrame
+           * @return {Number}       The index for the currently displaying frame in animated GIF
+           * @example
+           * <div><code>
+           * let gif;
+           *
+           * function preload() {
+           *   gif = loadImage('assets/arnott-wallace-eye-loop-forever.gif');
+           * }
+           *
+           * function draw() {
+           *   let frame = gif.getCurrentFrame();
+           *   image(gif, 0, 0);
+           *   text(frame, 10, 90);
+           * }
+           * </code></div>
+           * @alt
+           * Animated image of a cartoon eye looking around and then
+           * looking outwards, in the lower-left hand corner a number counts
+           * up quickly to 124 and then starts back over at 0
+           */
+          _main.default.Image.prototype.getCurrentFrame = function() {
+            if (this.gifProperties) {
+              var props = this.gifProperties;
+              return props.displayIndex % props.numFrames;
+            }
+          };
+
+          /**
+           * Sets the index of the frame that is currently visible in an animated GIF
+           *
+           * @method setFrame
+           * @param {Number}       index the index for the frame that should be displayed
+           * @example
+           * <div><code>
+           * let gif;
+           *
+           * function preload() {
+           *   gif = loadImage('assets/arnott-wallace-eye-loop-forever.gif');
+           * }
+           *
+           * // Move your mouse up and down over canvas to see the GIF
+           * // frames animate
+           * function draw() {
+           *   gif.pause();
+           *   image(gif, 0, 0);
+           *   // Get the highest frame number which is the number of frames - 1
+           *   let maxFrame = gif.numFrames() - 1;
+           *   // Set the current frame that is mapped to be relative to mouse position
+           *   let frameNumber = floor(map(mouseY, 0, height, 0, maxFrame, true));
+           *   gif.setFrame(frameNumber);
+           * }
+           * </code></div>
+           * @alt
+           * A still image of a cartoon eye that looks around when you move your mouse
+           * up and down over the canvas
+           */
+          _main.default.Image.prototype.setFrame = function(index) {
+            if (this.gifProperties) {
+              var props = this.gifProperties;
+              if (index < props.numFrames && index >= 0) {
+                props.timeDisplayed = 0;
+                props.lastChangeTime = 0;
+                props.displayIndex = index;
+                this.drawingContext.putImageData(props.frames[index].image, 0, 0);
+              } else {
+                console.log(
+                  'Cannot set GIF to a frame number that is higher than total number of frames or below zero.'
+                );
+              }
+            }
+          };
+
+          /**
+           * Returns the number of frames in an animated GIF
+           *
+           * @method numFrames
+           * @return {Number}
+           * @example     The number of frames in the animated GIF
+           * <div><code>
+           * let gif;
+           *
+           * function preload() {
+           *   gif = loadImage('assets/arnott-wallace-eye-loop-forever.gif');
+           * }
+           *
+           * // Move your mouse up and down over canvas to see the GIF
+           * // frames animate
+           * function draw() {
+           *   gif.pause();
+           *   image(gif, 0, 0);
+           *   // Get the highest frame number which is the number of frames - 1
+           *   let maxFrame = gif.numFrames() - 1;
+           *   // Set the current frame that is mapped to be relative to mouse position
+           *   let frameNumber = floor(map(mouseY, 0, height, 0, maxFrame, true));
+           *   gif.setFrame(frameNumber);
+           * }
+           * </code></div>
+           * @alt
+           * A still image of a cartoon eye that looks around when you move your mouse
+           * up and down over the canvas
+           */
+          _main.default.Image.prototype.numFrames = function() {
+            if (this.gifProperties) {
+              return this.gifProperties.numFrames;
+            }
+          };
+
+          /**
+           * Plays an animated GIF that was paused with
+           * <a href="#/p5.Image/pause">pause()</a>
+           *
+           * @method play
+           * @example
+           * <div><code>
+           * let gif;
+           *
+           * function preload() {
+           *   gif = loadImage('assets/nancy-liang-wind-loop-forever.gif');
+           * }
+           *
+           * function draw() {
+           *   background(255);
+           *   image(gif, 0, 0);
+           * }
+           *
+           * function mousePressed() {
+           *   gif.pause();
+           * }
+           *
+           * function mouseReleased() {
+           *   gif.play();
+           * }
+           * </code></div>
+           * @alt
+           * An animated GIF of a drawing of small child with
+           * hair blowing in the wind, when you click the image
+           * freezes when you release it animates again
+           */
+          _main.default.Image.prototype.play = function() {
+            if (this.gifProperties) {
+              this.gifProperties.playing = true;
+            }
+          };
