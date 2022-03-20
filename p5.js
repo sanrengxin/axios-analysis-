@@ -69597,3 +69597,149 @@
           //       functionality exactly.
           _main.default.Image.prototype.mask = function(p5Image) {
             if (p5Image === undefined) {
+              p5Image = this;
+            }
+            var currBlend = this.drawingContext.globalCompositeOperation;
+
+            var scaleFactor = 1;
+            if (p5Image instanceof _main.default.Renderer) {
+              scaleFactor = p5Image._pInst._pixelDensity;
+            }
+
+            var copyArgs = [
+              p5Image,
+              0,
+              0,
+              scaleFactor * p5Image.width,
+              scaleFactor * p5Image.height,
+              0,
+              0,
+              this.width,
+              this.height
+            ];
+
+            this.drawingContext.globalCompositeOperation = 'destination-in';
+            _main.default.Image.prototype.copy.apply(this, copyArgs);
+            this.drawingContext.globalCompositeOperation = currBlend;
+            this.setModified(true);
+          };
+
+          /**
+           * Applies an image filter to a <a href="#/p5.Image">p5.Image</a>
+           *
+           * @method filter
+           * @param  {Constant} filterType  either THRESHOLD, GRAY, OPAQUE, INVERT,
+           *                                POSTERIZE, ERODE, DILATE or BLUR.
+           *                                See Filters.js for docs on
+           *                                each available filter
+           * @param  {Number} [filterParam] an optional parameter unique
+           *                                to each filter, see above
+           * @example
+           * <div><code>
+           * let photo1;
+           * let photo2;
+           *
+           * function preload() {
+           *   photo1 = loadImage('assets/rockies.jpg');
+           *   photo2 = loadImage('assets/rockies.jpg');
+           * }
+           *
+           * function setup() {
+           *   photo2.filter(GRAY);
+           *   image(photo1, 0, 0);
+           *   image(photo2, width / 2, 0);
+           * }
+           * </code></div>
+           *
+           * @alt
+           * 2 images of rocky mountains left one in color, right in black and white
+           */
+          _main.default.Image.prototype.filter = function(operation, value) {
+            _filters.default.apply(this.canvas, _filters.default[operation], value);
+            this.setModified(true);
+          };
+
+          /**
+           * Copies a region of pixels from one image to another, using a specified
+           * blend mode to do the operation.
+           *
+           * @method blend
+           * @param  {p5.Image} srcImage source image
+           * @param  {Integer} sx X coordinate of the source's upper left corner
+           * @param  {Integer} sy Y coordinate of the source's upper left corner
+           * @param  {Integer} sw source image width
+           * @param  {Integer} sh source image height
+           * @param  {Integer} dx X coordinate of the destination's upper left corner
+           * @param  {Integer} dy Y coordinate of the destination's upper left corner
+           * @param  {Integer} dw destination image width
+           * @param  {Integer} dh destination image height
+           * @param  {Constant} blendMode the blend mode. either
+           *     BLEND, DARKEST, LIGHTEST, DIFFERENCE,
+           *     MULTIPLY, EXCLUSION, SCREEN, REPLACE, OVERLAY, HARD_LIGHT,
+           *     SOFT_LIGHT, DODGE, BURN, ADD or NORMAL.
+           *
+           * Available blend modes are: normal | multiply | screen | overlay |
+           *            darken | lighten | color-dodge | color-burn | hard-light |
+           *            soft-light | difference | exclusion | hue | saturation |
+           *            color | luminosity
+           *
+           * http://blogs.adobe.com/webplatform/2013/01/28/blending-features-in-canvas/
+           * @example
+           * <div><code>
+           * let mountains;
+           * let bricks;
+           *
+           * function preload() {
+           *   mountains = loadImage('assets/rockies.jpg');
+           *   bricks = loadImage('assets/bricks_third.jpg');
+           * }
+           *
+           * function setup() {
+           *   mountains.blend(bricks, 0, 0, 33, 100, 67, 0, 33, 100, ADD);
+           *   image(mountains, 0, 0);
+           *   image(bricks, 0, 0);
+           * }
+           * </code></div>
+           * <div><code>
+           * let mountains;
+           * let bricks;
+           *
+           * function preload() {
+           *   mountains = loadImage('assets/rockies.jpg');
+           *   bricks = loadImage('assets/bricks_third.jpg');
+           * }
+           *
+           * function setup() {
+           *   mountains.blend(bricks, 0, 0, 33, 100, 67, 0, 33, 100, DARKEST);
+           *   image(mountains, 0, 0);
+           *   image(bricks, 0, 0);
+           * }
+           * </code></div>
+           * <div><code>
+           * let mountains;
+           * let bricks;
+           *
+           * function preload() {
+           *   mountains = loadImage('assets/rockies.jpg');
+           *   bricks = loadImage('assets/bricks_third.jpg');
+           * }
+           *
+           * function setup() {
+           *   mountains.blend(bricks, 0, 0, 33, 100, 67, 0, 33, 100, LIGHTEST);
+           *   image(mountains, 0, 0);
+           *   image(bricks, 0, 0);
+           * }
+           * </code></div>
+           *
+           * @alt
+           * image of rocky mountains. Brick images on left and right. Right overexposed
+           * image of rockies. Brickwall images on left and right. Right mortar transparent
+           * image of rockies. Brickwall images on left and right. Right translucent
+           */
+          /**
+           * @method blend
+           * @param  {Integer} sx
+           * @param  {Integer} sy
+           * @param  {Integer} sw
+           * @param  {Integer} sh
+           * @param  {Integer} dx
