@@ -70016,3 +70016,114 @@
               this.gifProperties.playing = true;
             }
           };
+
+          /**
+           * Pauses an animated GIF.
+           *
+           * @method pause
+           * @example
+           * <div><code>
+           * let gif;
+           *
+           * function preload() {
+           *   gif = loadImage('assets/nancy-liang-wind-loop-forever.gif');
+           * }
+           *
+           * function draw() {
+           *   background(255);
+           *   image(gif, 0, 0);
+           * }
+           *
+           * function mousePressed() {
+           *   gif.pause();
+           * }
+           *
+           * function mouseReleased() {
+           *   gif.play();
+           * }
+           * </code></div>
+           * @alt
+           * An animated GIF of a drawing of small child with
+           * hair blowing in the wind, when you click the image
+           * freezes when you release it animates again
+           */
+          _main.default.Image.prototype.pause = function() {
+            if (this.gifProperties) {
+              this.gifProperties.playing = false;
+            }
+          };
+
+          /**
+           * Changes the delay between frames in an animated GIF. There is an optional second parameter that
+           * indicates an index for a specific frame that should have its delay modified. If no index is given, all frames
+           * will have the new delay.
+           *
+           * @method delay
+           * @param {Number}    d the amount in milliseconds to delay between switching frames
+           * @param {Number}    [index] the index of the frame that should have the new delay value {optional}
+           * @example
+           * <div><code>
+           * let gifFast, gifSlow;
+           *
+           * function preload() {
+           *   gifFast = loadImage('assets/arnott-wallace-eye-loop-forever.gif');
+           *   gifSlow = loadImage('assets/arnott-wallace-eye-loop-forever.gif');
+           * }
+           *
+           * function setup() {
+           *   gifFast.resize(width / 2, height / 2);
+           *   gifSlow.resize(width / 2, height / 2);
+           *
+           *   //Change the delay here
+           *   gifFast.delay(10);
+           *   gifSlow.delay(100);
+           * }
+           *
+           * function draw() {
+           *   background(255);
+           *   image(gifFast, 0, 0);
+           *   image(gifSlow, width / 2, 0);
+           * }
+           * </code></div>
+           * @alt
+           * Two animated gifs of cartoon eyes looking around
+           * The gif on the left animates quickly, on the right
+           * the animation is much slower
+           */
+          _main.default.Image.prototype.delay = function(d, index) {
+            if (this.gifProperties) {
+              var props = this.gifProperties;
+              if (index < props.numFrames && index >= 0) {
+                props.frames[index].delay = d;
+              } else {
+                // change all frames
+                var _iteratorNormalCompletion = true;
+                var _didIteratorError = false;
+                var _iteratorError = undefined;
+                try {
+                  for (
+                    var _iterator = props.frames[Symbol.iterator](), _step;
+                    !(_iteratorNormalCompletion = (_step = _iterator.next()).done);
+                    _iteratorNormalCompletion = true
+                  ) {
+                    var frame = _step.value;
+                    frame.delay = d;
+                  }
+                } catch (err) {
+                  _didIteratorError = true;
+                  _iteratorError = err;
+                } finally {
+                  try {
+                    if (!_iteratorNormalCompletion && _iterator.return != null) {
+                      _iterator.return();
+                    }
+                  } finally {
+                    if (_didIteratorError) {
+                      throw _iteratorError;
+                    }
+                  }
+                }
+              }
+            }
+          };
+          var _default = _main.default.Image;
