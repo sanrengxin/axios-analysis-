@@ -70259,3 +70259,133 @@
            *
            * function setup() {
            *   background(img0);
+           *   image(img1, 0, 0);
+           *   blend(img1, 0, 0, 33, 100, 67, 0, 33, 100, DARKEST);
+           * }
+           * </code></div>
+           * <div><code>
+           * let img0;
+           * let img1;
+           *
+           * function preload() {
+           *   img0 = loadImage('assets/rockies.jpg');
+           *   img1 = loadImage('assets/bricks_third.jpg');
+           * }
+           *
+           * function setup() {
+           *   background(img0);
+           *   image(img1, 0, 0);
+           *   blend(img1, 0, 0, 33, 100, 67, 0, 33, 100, ADD);
+           * }
+           * </code></div>
+           *
+           * @alt
+           * image of rocky mountains. Brick images on left and right. Right overexposed
+           * image of rockies. Brickwall images on left and right. Right mortar transparent
+           * image of rockies. Brickwall images on left and right. Right translucent
+           *
+           */
+          /**
+           * @method blend
+           * @param  {Integer} sx
+           * @param  {Integer} sy
+           * @param  {Integer} sw
+           * @param  {Integer} sh
+           * @param  {Integer} dx
+           * @param  {Integer} dy
+           * @param  {Integer} dw
+           * @param  {Integer} dh
+           * @param  {Constant} blendMode
+           */
+          _main.default.prototype.blend = function() {
+            for (
+              var _len = arguments.length, args = new Array(_len), _key = 0;
+              _key < _len;
+              _key++
+            ) {
+              args[_key] = arguments[_key];
+            }
+            _main.default._validateParameters('blend', args);
+            if (this._renderer) {
+              var _this$_renderer;
+              (_this$_renderer = this._renderer).blend.apply(_this$_renderer, args);
+            } else {
+              _main.default.Renderer2D.prototype.blend.apply(this, args);
+            }
+          };
+
+          /**
+           * Copies a region of the canvas to another region of the canvas
+           * and copies a region of pixels from an image used as the srcImg parameter
+           * into the canvas srcImage is specified this is used as the source. If
+           * the source and destination regions aren't the same size, it will
+           * automatically resize source pixels to fit the specified
+           * target region.
+           *
+           * @method copy
+           * @param  {p5.Image|p5.Element} srcImage source image
+           * @param  {Integer} sx X coordinate of the source's upper left corner
+           * @param  {Integer} sy Y coordinate of the source's upper left corner
+           * @param  {Integer} sw source image width
+           * @param  {Integer} sh source image height
+           * @param  {Integer} dx X coordinate of the destination's upper left corner
+           * @param  {Integer} dy Y coordinate of the destination's upper left corner
+           * @param  {Integer} dw destination image width
+           * @param  {Integer} dh destination image height
+           *
+           * @example
+           * <div><code>
+           * let img;
+           *
+           * function preload() {
+           *   img = loadImage('assets/rockies.jpg');
+           * }
+           *
+           * function setup() {
+           *   background(img);
+           *   copy(img, 7, 22, 10, 10, 35, 25, 50, 50);
+           *   stroke(255);
+           *   noFill();
+           *   // Rectangle shows area being copied
+           *   rect(7, 22, 10, 10);
+           * }
+           * </code></div>
+           *
+           * @alt
+           * image of rocky mountains. Brick images on left and right. Right overexposed
+           * image of rockies. Brickwall images on left and right. Right mortar transparent
+           * image of rockies. Brickwall images on left and right. Right translucent
+           */
+          /**
+           * @method copy
+           * @param  {Integer} sx
+           * @param  {Integer} sy
+           * @param  {Integer} sw
+           * @param  {Integer} sh
+           * @param  {Integer} dx
+           * @param  {Integer} dy
+           * @param  {Integer} dw
+           * @param  {Integer} dh
+           */
+          _main.default.prototype.copy = function() {
+            for (
+              var _len2 = arguments.length, args = new Array(_len2), _key2 = 0;
+              _key2 < _len2;
+              _key2++
+            ) {
+              args[_key2] = arguments[_key2];
+            }
+            _main.default._validateParameters('copy', args);
+
+            var srcImage, sx, sy, sw, sh, dx, dy, dw, dh;
+            if (args.length === 9) {
+              srcImage = args[0];
+              sx = args[1];
+              sy = args[2];
+              sw = args[3];
+              sh = args[4];
+              dx = args[5];
+              dy = args[6];
+              dw = args[7];
+              dh = args[8];
+            } else if (args.length === 8) {
