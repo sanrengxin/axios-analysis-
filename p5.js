@@ -70127,3 +70127,135 @@
             }
           };
           var _default = _main.default.Image;
+          exports.default = _default;
+        },
+        { '../core/main': 59, './filters': 80 }
+      ],
+      84: [
+        function(_dereq_, module, exports) {
+          'use strict';
+          Object.defineProperty(exports, '__esModule', { value: true });
+          exports.default = void 0;
+
+          var _main = _interopRequireDefault(_dereq_('../core/main'));
+          var _filters = _interopRequireDefault(_dereq_('./filters'));
+          _dereq_('../color/p5.Color');
+          function _interopRequireDefault(obj) {
+            return obj && obj.__esModule ? obj : { default: obj };
+          }
+          /**
+           * @module Image
+           * @submodule Pixels
+           * @for p5
+           * @requires core
+           */ /**
+           * <a href='https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference
+           * /Global_Objects/Uint8ClampedArray' target='_blank'>Uint8ClampedArray</a>
+           * containing the values for all the pixels in the display window.
+           * These values are numbers. This array is the size (include an appropriate
+           * factor for <a href="#/p5/pixelDensity">pixelDensity</a>) of the display window x4,
+           * representing the R, G, B, A values in order for each pixel, moving from
+           * left to right across each row, then down each column. Retina and other
+           * high density displays will have more pixels[] (by a factor of
+           * pixelDensity^2).
+           * For example, if the image is 100x100 pixels, there will be 40,000. On a
+           * retina display, there will be 160,000.
+           *
+           * The first four values (indices 0-3) in the array will be the R, G, B, A
+           * values of the pixel at (0, 0). The second four values (indices 4-7) will
+           * contain the R, G, B, A values of the pixel at (1, 0). More generally, to
+           * set values for a pixel at (x, y):
+           * ```javascript
+           * let d = pixelDensity();
+           * for (let i = 0; i < d; i++) {
+           *   for (let j = 0; j < d; j++) {
+           *     // loop over
+           *     index = 4 * ((y * d + j) * width * d + (x * d + i));
+           *     pixels[index] = r;
+           *     pixels[index+1] = g;
+           *     pixels[index+2] = b;
+           *     pixels[index+3] = a;
+           *   }
+           * }
+           * ```
+           * While the above method is complex, it is flexible enough to work with
+           * any pixelDensity. Note that <a href="#/p5/set">set()</a> will automatically take care of
+           * setting all the appropriate values in <a href="#/p5/pixels">pixels[]</a> for a given (x, y) at
+           * any pixelDensity, but the performance may not be as fast when lots of
+           * modifications are made to the pixel array.
+           *
+           * Before accessing this array, the data must loaded with the <a href="#/p5/loadPixels">loadPixels()</a>
+           * function. After the array data has been modified, the <a href="#/p5/updatePixels">updatePixels()</a>
+           * function must be run to update the changes.
+           *
+           * Note that this is not a standard javascript array.  This means that
+           * standard javascript functions such as <a href="#/p5/slice">slice()</a> or
+           * <a href="#/p5/arrayCopy">arrayCopy()</a> do not
+           * work.
+           *
+           * @property {Number[]} pixels
+           * @example
+           * <div>
+           * <code>
+           * let pink = color(255, 102, 204);
+           * loadPixels();
+           * let d = pixelDensity();
+           * let halfImage = 4 * (width * d) * (height / 2 * d);
+           * for (let i = 0; i < halfImage; i += 4) {
+           *   pixels[i] = red(pink);
+           *   pixels[i + 1] = green(pink);
+           *   pixels[i + 2] = blue(pink);
+           *   pixels[i + 3] = alpha(pink);
+           * }
+           * updatePixels();
+           * </code>
+           * </div>
+           *
+           * @alt
+           * top half of canvas pink, bottom grey
+           */ _main.default.prototype.pixels = []; /**
+           * Copies a region of pixels from one image to another, using a specified
+           * blend mode to do the operation.
+           *
+           * @method blend
+           * @param  {p5.Image} srcImage source image
+           * @param  {Integer} sx X coordinate of the source's upper left corner
+           * @param  {Integer} sy Y coordinate of the source's upper left corner
+           * @param  {Integer} sw source image width
+           * @param  {Integer} sh source image height
+           * @param  {Integer} dx X coordinate of the destination's upper left corner
+           * @param  {Integer} dy Y coordinate of the destination's upper left corner
+           * @param  {Integer} dw destination image width
+           * @param  {Integer} dh destination image height
+           * @param  {Constant} blendMode the blend mode. either
+           *     BLEND, DARKEST, LIGHTEST, DIFFERENCE,
+           *     MULTIPLY, EXCLUSION, SCREEN, REPLACE, OVERLAY, HARD_LIGHT,
+           *     SOFT_LIGHT, DODGE, BURN, ADD or NORMAL.
+           *
+           * @example
+           * <div><code>
+           * let img0;
+           * let img1;
+           *
+           * function preload() {
+           *   img0 = loadImage('assets/rockies.jpg');
+           *   img1 = loadImage('assets/bricks_third.jpg');
+           * }
+           *
+           * function setup() {
+           *   background(img0);
+           *   image(img1, 0, 0);
+           *   blend(img1, 0, 0, 33, 100, 67, 0, 33, 100, LIGHTEST);
+           * }
+           * </code></div>
+           * <div><code>
+           * let img0;
+           * let img1;
+           *
+           * function preload() {
+           *   img0 = loadImage('assets/rockies.jpg');
+           *   img1 = loadImage('assets/bricks_third.jpg');
+           * }
+           *
+           * function setup() {
+           *   background(img0);
