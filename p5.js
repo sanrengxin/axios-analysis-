@@ -70389,3 +70389,163 @@
               dw = args[7];
               dh = args[8];
             } else if (args.length === 8) {
+              srcImage = this;
+              sx = args[0];
+              sy = args[1];
+              sw = args[2];
+              sh = args[3];
+              dx = args[4];
+              dy = args[5];
+              dw = args[6];
+              dh = args[7];
+            } else {
+              throw new Error('Signature not supported');
+            }
+
+            _main.default.prototype._copyHelper(
+              this,
+              srcImage,
+              sx,
+              sy,
+              sw,
+              sh,
+              dx,
+              dy,
+              dw,
+              dh
+            );
+          };
+
+          _main.default.prototype._copyHelper = function(
+            dstImage,
+            srcImage,
+            sx,
+            sy,
+            sw,
+            sh,
+            dx,
+            dy,
+            dw,
+            dh
+          ) {
+            srcImage.loadPixels();
+            var s = srcImage.canvas.width / srcImage.width;
+            // adjust coord system for 3D when renderer
+            // ie top-left = -width/2, -height/2
+            var sxMod = 0;
+            var syMod = 0;
+            if (srcImage._renderer && srcImage._renderer.isP3D) {
+              sxMod = srcImage.width / 2;
+              syMod = srcImage.height / 2;
+            }
+            if (dstImage._renderer && dstImage._renderer.isP3D) {
+              _main.default.RendererGL.prototype.image.call(
+                dstImage._renderer,
+                srcImage,
+                sx + sxMod,
+                sy + syMod,
+                sw,
+                sh,
+                dx,
+                dy,
+                dw,
+                dh
+              );
+            } else {
+              dstImage.drawingContext.drawImage(
+                srcImage.canvas,
+                s * (sx + sxMod),
+                s * (sy + syMod),
+                s * sw,
+                s * sh,
+                dx,
+                dy,
+                dw,
+                dh
+              );
+            }
+          };
+
+          /**
+           * Applies a filter to the canvas. The presets options are:
+           *
+           * THRESHOLD
+           * Converts the image to black and white pixels depending if they are above or
+           * below the threshold defined by the level parameter. The parameter must be
+           * between 0.0 (black) and 1.0 (white). If no level is specified, 0.5 is used.
+           *
+           * GRAY
+           * Converts any colors in the image to grayscale equivalents. No parameter
+           * is used.
+           *
+           * OPAQUE
+           * Sets the alpha channel to entirely opaque. No parameter is used.
+           *
+           * INVERT
+           * Sets each pixel to its inverse value. No parameter is used.
+           *
+           * POSTERIZE
+           * Limits each channel of the image to the number of colors specified as the
+           * parameter. The parameter can be set to values between 2 and 255, but
+           * results are most noticeable in the lower ranges.
+           *
+           * BLUR
+           * Executes a Gaussian blur with the level parameter specifying the extent
+           * of the blurring. If no parameter is used, the blur is equivalent to
+           * Gaussian blur of radius 1. Larger values increase the blur.
+           *
+           * ERODE
+           * Reduces the light areas. No parameter is used.
+           *
+           * DILATE
+           * Increases the light areas. No parameter is used.
+           *
+           * filter() does not work in WEBGL mode.
+           * A similar effect can be achieved in WEBGL mode using custom
+           * shaders. Adam Ferriss has written
+           * a <a href="https://github.com/aferriss/p5jsShaderExamples"
+           * target='_blank'>selection of shader examples</a> that contains many
+           * of the effects present in the filter examples.
+           *
+           * @method filter
+           * @param  {Constant} filterType  either THRESHOLD, GRAY, OPAQUE, INVERT,
+           *                                POSTERIZE, BLUR, ERODE, DILATE or BLUR.
+           *                                See Filters.js for docs on
+           *                                each available filter
+           * @param  {Number} [filterParam] an optional parameter unique
+           *                                to each filter, see above
+           *
+           * @example
+           * <div>
+           * <code>
+           * let img;
+           * function preload() {
+           *   img = loadImage('assets/bricks.jpg');
+           * }
+           * function setup() {
+           *   image(img, 0, 0);
+           *   filter(THRESHOLD);
+           * }
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * let img;
+           * function preload() {
+           *   img = loadImage('assets/bricks.jpg');
+           * }
+           * function setup() {
+           *   image(img, 0, 0);
+           *   filter(GRAY);
+           * }
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * let img;
+           * function preload() {
+           *   img = loadImage('assets/bricks.jpg');
+           * }
+           * function setup() {
