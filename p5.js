@@ -70549,3 +70549,142 @@
            *   img = loadImage('assets/bricks.jpg');
            * }
            * function setup() {
+           *   image(img, 0, 0);
+           *   filter(OPAQUE);
+           * }
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * let img;
+           * function preload() {
+           *   img = loadImage('assets/bricks.jpg');
+           * }
+           * function setup() {
+           *   image(img, 0, 0);
+           *   filter(INVERT);
+           * }
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * let img;
+           * function preload() {
+           *   img = loadImage('assets/bricks.jpg');
+           * }
+           * function setup() {
+           *   image(img, 0, 0);
+           *   filter(POSTERIZE, 3);
+           * }
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * let img;
+           * function preload() {
+           *   img = loadImage('assets/bricks.jpg');
+           * }
+           * function setup() {
+           *   image(img, 0, 0);
+           *   filter(DILATE);
+           * }
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * let img;
+           * function preload() {
+           *   img = loadImage('assets/bricks.jpg');
+           * }
+           * function setup() {
+           *   image(img, 0, 0);
+           *   filter(BLUR, 3);
+           * }
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * let img;
+           * function preload() {
+           *   img = loadImage('assets/bricks.jpg');
+           * }
+           * function setup() {
+           *   image(img, 0, 0);
+           *   filter(ERODE);
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * black and white image of a brick wall.
+           * greyscale image of a brickwall
+           * image of a brickwall
+           * jade colored image of a brickwall
+           * red and pink image of a brickwall
+           * image of a brickwall
+           * blurry image of a brickwall
+           * image of a brickwall
+           * image of a brickwall with less detail
+           */
+          _main.default.prototype.filter = function(operation, value) {
+            _main.default._validateParameters('filter', arguments);
+            if (this.canvas !== undefined) {
+              _filters.default.apply(this.canvas, _filters.default[operation], value);
+            } else {
+              _filters.default.apply(this.elt, _filters.default[operation], value);
+            }
+          };
+
+          /**
+           * Get a region of pixels, or a single pixel, from the canvas.
+           *
+           * Returns an array of [R,G,B,A] values for any pixel or grabs a section of
+           * an image. If no parameters are specified, the entire image is returned.
+           * Use the x and y parameters to get the value of one pixel. Get a section of
+           * the display window by specifying additional w and h parameters. When
+           * getting an image, the x and y parameters define the coordinates for the
+           * upper-left corner of the image, regardless of the current <a href="#/p5/imageMode">imageMode()</a>.
+           *
+           * Getting the color of a single pixel with get(x, y) is easy, but not as fast
+           * as grabbing the data directly from <a href="#/p5/pixels">pixels[]</a>. The equivalent statement to
+           * get(x, y) using <a href="#/p5/pixels">pixels[]</a> with pixel density d is
+           * ```javascript
+           * let x, y, d; // set these to the coordinates
+           * let off = (y * width + x) * d * 4;
+           * let components = [
+           *   pixels[off],
+           *   pixels[off + 1],
+           *   pixels[off + 2],
+           *   pixels[off + 3]
+           * ];
+           * print(components);
+           * ```
+           * See the reference for <a href="#/p5/pixels">pixels[]</a> for more information.
+           *
+           * If you want to extract an array of colors or a subimage from an p5.Image object,
+           * take a look at <a href="#/p5.Image/get">p5.Image.get()</a>
+           *
+           * @method get
+           * @param  {Number}         x x-coordinate of the pixel
+           * @param  {Number}         y y-coordinate of the pixel
+           * @param  {Number}         w width
+           * @param  {Number}         h height
+           * @return {p5.Image}       the rectangle <a href="#/p5.Image">p5.Image</a>
+           * @example
+           * <div>
+           * <code>
+           * let img;
+           * function preload() {
+           *   img = loadImage('assets/rockies.jpg');
+           * }
+           * function setup() {
+           *   image(img, 0, 0);
+           *   let c = get();
+           *   image(c, width / 2, 0);
+           * }
+           * </code>
