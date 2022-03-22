@@ -70688,3 +70688,130 @@
            *   image(c, width / 2, 0);
            * }
            * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * let img;
+           * function preload() {
+           *   img = loadImage('assets/rockies.jpg');
+           * }
+           * function setup() {
+           *   image(img, 0, 0);
+           *   let c = get(50, 90);
+           *   fill(c);
+           *   noStroke();
+           *   rect(25, 25, 50, 50);
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * 2 images of the rocky mountains, side-by-side
+           * Image of the rocky mountains with 50x50 green rect in center of canvas
+           */
+          /**
+           * @method get
+           * @return {p5.Image}      the whole <a href="#/p5.Image">p5.Image</a>
+           */
+          /**
+           * @method get
+           * @param  {Number}        x
+           * @param  {Number}        y
+           * @return {Number[]}      color of pixel at x,y in array format [R, G, B, A]
+           */
+          _main.default.prototype.get = function(x, y, w, h) {
+            var _this$_renderer2;
+            _main.default._validateParameters('get', arguments);
+            return (_this$_renderer2 = this._renderer).get.apply(
+              _this$_renderer2,
+              arguments
+            );
+          };
+
+          /**
+           * Loads the pixel data for the display window into the <a href="#/p5/pixels">pixels[]</a> array. This
+           * function must always be called before reading from or writing to <a href="#/p5/pixels">pixels[]</a>.
+           * Note that only changes made with <a href="#/p5/set">set()</a> or direct manipulation of <a href="#/p5/pixels">pixels[]</a>
+           * will occur.
+           *
+           * @method loadPixels
+           * @example
+           * <div>
+           * <code>
+           * let img;
+           * function preload() {
+           *   img = loadImage('assets/rockies.jpg');
+           * }
+           *
+           * function setup() {
+           *   image(img, 0, 0, width, height);
+           *   let d = pixelDensity();
+           *   let halfImage = 4 * (width * d) * (height * d / 2);
+           *   loadPixels();
+           *   for (let i = 0; i < halfImage; i++) {
+           *     pixels[i + halfImage] = pixels[i];
+           *   }
+           *   updatePixels();
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * two images of the rocky mountains. one on top, one on bottom of canvas.
+           */
+          _main.default.prototype.loadPixels = function() {
+            for (
+              var _len3 = arguments.length, args = new Array(_len3), _key3 = 0;
+              _key3 < _len3;
+              _key3++
+            ) {
+              args[_key3] = arguments[_key3];
+            }
+            _main.default._validateParameters('loadPixels', args);
+            this._renderer.loadPixels();
+          };
+
+          /**
+           * Changes the color of any pixel, or writes an image directly to the
+           * display window.
+           * The x and y parameters specify the pixel to change and the c parameter
+           * specifies the color value. This can be a <a href="#/p5.Color">p5.Color</a> object, or [R, G, B, A]
+           * pixel array. It can also be a single grayscale value.
+           * When setting an image, the x and y parameters define the coordinates for
+           * the upper-left corner of the image, regardless of the current <a href="#/p5/imageMode">imageMode()</a>.
+           *
+           * After using <a href="#/p5/set">set()</a>, you must call <a href="#/p5/updatePixels">updatePixels()</a> for your changes to appear.
+           * This should be called once all pixels have been set, and must be called before
+           * calling .<a href="#/p5/get">get()</a> or drawing the image.
+           *
+           * Setting the color of a single pixel with set(x, y) is easy, but not as
+           * fast as putting the data directly into <a href="#/p5/pixels">pixels[]</a>. Setting the <a href="#/p5/pixels">pixels[]</a>
+           * values directly may be complicated when working with a retina display,
+           * but will perform better when lots of pixels need to be set directly on
+           * every loop. See the reference for <a href="#/p5/pixels">pixels[]</a> for more information.
+           *
+           * @method set
+           * @param {Number}              x x-coordinate of the pixel
+           * @param {Number}              y y-coordinate of the pixel
+           * @param {Number|Number[]|Object} c insert a grayscale value | a pixel array |
+           *                                a <a href="#/p5.Color">p5.Color</a> object | a <a href="#/p5.Image">p5.Image</a> to copy
+           * @example
+           * <div>
+           * <code>
+           * let black = color(0);
+           * set(30, 20, black);
+           * set(85, 20, black);
+           * set(85, 75, black);
+           * set(30, 75, black);
+           * updatePixels();
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * for (let i = 30; i < width - 15; i++) {
+           *   for (let j = 20; j < height - 25; j++) {
+           *     let c = color(204 - j, 153 - i, 0);
+           *     set(i, j, c);
+           *   }
