@@ -71208,3 +71208,146 @@
                 }
 
                 if (typeof callback !== 'undefined') {
+                  callback(ret);
+                }
+
+                self._decrementPreload();
+              },
+              function(err) {
+                // Error handling
+                _main.default._friendlyFileLoadError(3, arguments[0]);
+
+                if (errorCallback) {
+                  errorCallback(err);
+                } else {
+                  throw err;
+                }
+              }
+            );
+
+            return ret;
+          };
+
+          /**
+           * Reads the contents of a file or URL and creates a <a href="#/p5.Table">p5.Table</a> object with
+           * its values. If a file is specified, it must be located in the sketch's
+           * "data" folder. The filename parameter can also be a URL to a file found
+           * online. By default, the file is assumed to be comma-separated (in CSV
+           * format). Table only looks for a header row if the 'header' option is
+           * included.
+           *
+           * This method is asynchronous, meaning it may not finish before the next
+           * line in your sketch is executed. Calling <a href="#/p5/loadTable">loadTable()</a> inside <a href="#/p5/preload">preload()</a>
+           * guarantees to complete the operation before <a href="#/p5/setup">setup()</a> and <a href="#/p5/draw">draw()</a> are called.
+           * Outside of <a href="#/p5/preload">preload()</a>, you may supply a callback function to handle the
+           * object:
+           *
+           * All files loaded and saved use UTF-8 encoding. This method is suitable for fetching files up to size of 64MB.
+           * @method loadTable
+           * @param  {String}         filename    name of the file or URL to load
+           * @param  {String}         [extension] parse the table by comma-separated values "csv", semicolon-separated
+           *                                      values "ssv", or tab-separated values "tsv"
+           * @param  {String}         [header]    "header" to indicate table has header row
+           * @param  {function}       [callback]  function to be executed after
+           *                                      <a href="#/p5/loadTable">loadTable()</a> completes. On success, the
+           *                                      <a href="#/p5.Table">Table</a> object is passed in as the
+           *                                      first argument.
+           * @param  {function}  [errorCallback]  function to be executed if
+           *                                      there is an error, response is passed
+           *                                      in as first argument
+           * @return {Object}                     <a href="#/p5.Table">Table</a> object containing data
+           *
+           * @example
+           * <div class='norender'>
+           * <code>
+           * // Given the following CSV file called "mammals.csv"
+           * // located in the project's "assets" folder:
+           * //
+           * // id,species,name
+           * // 0,Capra hircus,Goat
+           * // 1,Panthera pardus,Leopard
+           * // 2,Equus zebra,Zebra
+           *
+           * let table;
+           *
+           * function preload() {
+           *   //my table is comma separated value "csv"
+           *   //and has a header specifying the columns labels
+           *   table = loadTable('assets/mammals.csv', 'csv', 'header');
+           *   //the file can be remote
+           *   //table = loadTable("http://p5js.org/reference/assets/mammals.csv",
+           *   //                  "csv", "header");
+           * }
+           *
+           * function setup() {
+           *   //count the columns
+           *   print(table.getRowCount() + ' total rows in table');
+           *   print(table.getColumnCount() + ' total columns in table');
+           *
+           *   print(table.getColumn('name'));
+           *   //["Goat", "Leopard", "Zebra"]
+           *
+           *   //cycle through the table
+           *   for (let r = 0; r < table.getRowCount(); r++)
+           *     for (let c = 0; c < table.getColumnCount(); c++) {
+           *       print(table.getString(r, c));
+           *     }
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * randomly generated text from a file, for example "i smell like butter"
+           * randomly generated text from a file, for example "i have three feet"
+           */
+          _main.default.prototype.loadTable = function(path) {
+            // p5._validateParameters('loadTable', arguments);
+            var callback;
+            var errorCallback;
+            var options = [];
+            var header = false;
+            var ext = path.substring(path.lastIndexOf('.') + 1, path.length);
+
+            var sep;
+            if (ext === 'csv') {
+              sep = ',';
+            } else if (ext === 'ssv') {
+              sep = ';';
+            } else if (ext === 'tsv') {
+              sep = '\t';
+            }
+
+            for (var i = 1; i < arguments.length; i++) {
+              if (typeof arguments[i] === 'function') {
+                if (typeof callback === 'undefined') {
+                  callback = arguments[i];
+                } else if (typeof errorCallback === 'undefined') {
+                  errorCallback = arguments[i];
+                }
+              } else if (typeof arguments[i] === 'string') {
+                options.push(arguments[i]);
+                if (arguments[i] === 'header') {
+                  header = true;
+                }
+                if (arguments[i] === 'csv') {
+                  sep = ',';
+                } else if (arguments[i] === 'ssv') {
+                  sep = ';';
+                } else if (arguments[i] === 'tsv') {
+                  sep = '\t';
+                }
+              }
+            }
+
+            var t = new _main.default.Table();
+
+            var self = this;
+            this.httpDo(
+              path,
+              'GET',
+              'table',
+              function(resp) {
+                var state = {};
+
+                // define constants
+                var PRE_TOKEN = 0,
