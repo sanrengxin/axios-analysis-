@@ -71072,3 +71072,139 @@
 
             var self = this;
             this.httpDo(
+              path,
+              'GET',
+              options,
+              t,
+              function(resp) {
+                for (var k in resp) {
+                  ret[k] = resp[k];
+                }
+                if (typeof callback !== 'undefined') {
+                  callback(resp);
+                }
+
+                self._decrementPreload();
+              },
+              function(err) {
+                // Error handling
+                _main.default._friendlyFileLoadError(5, path);
+
+                if (errorCallback) {
+                  errorCallback(err);
+                } else {
+                  throw err;
+                }
+              }
+            );
+
+            return ret;
+          };
+
+          /**
+    * Reads the contents of a file and creates a String array of its individual
+    * lines. If the name of the file is used as the parameter, as in the above
+    * example, the file must be located in the sketch directory/folder.
+    *
+    * Alternatively, the file maybe be loaded from anywhere on the local
+    * computer using an absolute path (something that starts with / on Unix and
+    * Linux, or a drive letter on Windows), or the filename parameter can be a
+    * URL for a file found on a network.
+    *
+    * This method is asynchronous, meaning it may not finish before the next
+    * line in your sketch is executed.
+    *
+    * This method is suitable for fetching files up to size of 64MB.
+    * @method loadStrings
+    * @param  {String}   filename   name of the file or url to load
+    * @param  {function} [callback] function to be executed after <a href="#/p5/loadStrings">loadStrings()</a>
+    *                               completes, Array is passed in as first
+    *                               argument
+    * @param  {function} [errorCallback] function to be executed if
+    *                               there is an error, response is passed
+    *                               in as first argument
+    * @return {String[]}            Array of Strings
+    * @example
+    *
+    * Calling loadStrings() inside <a href="#/p5/preload">preload()</a> guarantees to complete the
+    * operation before <a href="#/p5/setup">setup()</a> and <a href="#/p5/draw">draw()</a> are called.
+    *
+    * <div><code>
+    * let result;
+    * function preload() {
+    *   result = loadStrings('assets/test.txt');
+    * }
+   
+    * function setup() {
+    *   background(200);
+    *   text(random(result), 10, 10, 80, 80);
+    * }
+    * </code></div>
+    *
+    * Outside of preload(), you may supply a callback function to handle the
+    * object:
+    *
+    * <div><code>
+    * function setup() {
+    *   loadStrings('assets/test.txt', pickString);
+    * }
+    *
+    * function pickString(result) {
+    *   background(200);
+    *   text(random(result), 10, 10, 80, 80);
+    * }
+    * </code></div>
+    *
+    * @alt
+    * randomly generated text from a file, for example "i smell like butter"
+    * randomly generated text from a file, for example "i have three feet"
+    */
+          _main.default.prototype.loadStrings = function() {
+            for (
+              var _len2 = arguments.length, args = new Array(_len2), _key2 = 0;
+              _key2 < _len2;
+              _key2++
+            ) {
+              args[_key2] = arguments[_key2];
+            }
+            _main.default._validateParameters('loadStrings', args);
+
+            var ret = [];
+            var callback, errorCallback;
+
+            for (var i = 1; i < args.length; i++) {
+              var arg = args[i];
+              if (typeof arg === 'function') {
+                if (typeof callback === 'undefined') {
+                  callback = arg;
+                } else if (typeof errorCallback === 'undefined') {
+                  errorCallback = arg;
+                }
+              }
+            }
+
+            var self = this;
+            _main.default.prototype.httpDo.call(
+              this,
+              args[0],
+              'GET',
+              'text',
+              function(data) {
+                // split lines handling mac/windows/linux endings
+                var lines = data
+                  .replace(/\r\n/g, '\r')
+                  .replace(/\n/g, '\r')
+                  .split(/\r/);
+
+                // safe insert approach which will not blow up stack when inserting
+                // >100k lines, but still be faster than iterating line-by-line. based on
+                // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/apply#Examples
+                var QUANTUM = 32768;
+                for (var _i = 0, len = lines.length; _i < len; _i += QUANTUM) {
+                  Array.prototype.push.apply(
+                    ret,
+                    lines.slice(_i, Math.min(_i + QUANTUM, len))
+                  );
+                }
+
+                if (typeof callback !== 'undefined') {
