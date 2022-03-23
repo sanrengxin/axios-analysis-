@@ -70815,3 +70815,133 @@
            *     let c = color(204 - j, 153 - i, 0);
            *     set(i, j, c);
            *   }
+           * }
+           * updatePixels();
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * let img;
+           * function preload() {
+           *   img = loadImage('assets/rockies.jpg');
+           * }
+           *
+           * function setup() {
+           *   set(0, 0, img);
+           *   updatePixels();
+           *   line(0, 0, width, height);
+           *   line(0, height, width, 0);
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * 4 black points in the shape of a square middle-right of canvas.
+           * square with orangey-brown gradient lightening at bottom right.
+           * image of the rocky mountains. with lines like an 'x' through the center.
+           */
+          _main.default.prototype.set = function(x, y, imgOrCol) {
+            this._renderer.set(x, y, imgOrCol);
+          };
+          /**
+           * Updates the display window with the data in the <a href="#/p5/pixels">pixels[]</a> array.
+           * Use in conjunction with <a href="#/p5/loadPixels">loadPixels()</a>. If you're only reading pixels from
+           * the array, there's no need to call <a href="#/p5/updatePixels">updatePixels()</a> — updating is only
+           * necessary to apply changes. <a href="#/p5/updatePixels">updatePixels()</a> should be called anytime the
+           * pixels array is manipulated or <a href="#/p5/set">set()</a> is called, and only changes made with
+           * <a href="#/p5/set">set()</a> or direct changes to <a href="#/p5/pixels">pixels[]</a> will occur.
+           *
+           * @method updatePixels
+           * @param  {Number} [x]    x-coordinate of the upper-left corner of region
+           *                         to update
+           * @param  {Number} [y]    y-coordinate of the upper-left corner of region
+           *                         to update
+           * @param  {Number} [w]    width of region to update
+           * @param  {Number} [h]    height of region to update
+           * @example
+           * <div>
+           * <code>
+           * let img;
+           * function preload() {
+           *   img = loadImage('assets/rockies.jpg');
+           * }
+           *
+           * function setup() {
+           *   image(img, 0, 0, width, height);
+           *   let d = pixelDensity();
+           *   let halfImage = 4 * (width * d) * (height * d / 2);
+           *   loadPixels();
+           *   for (let i = 0; i < halfImage; i++) {
+           *     pixels[i + halfImage] = pixels[i];
+           *   }
+           *   updatePixels();
+           * }
+           * </code>
+           * </div>
+           * @alt
+           * two images of the rocky mountains. one on top, one on bottom of canvas.
+           */
+          _main.default.prototype.updatePixels = function(x, y, w, h) {
+            _main.default._validateParameters('updatePixels', arguments);
+            // graceful fail - if loadPixels() or set() has not been called, pixel
+            // array will be empty, ignore call to updatePixels()
+            if (this.pixels.length === 0) {
+              return;
+            }
+            this._renderer.updatePixels(x, y, w, h);
+          };
+          var _default = _main.default;
+          exports.default = _default;
+        },
+        { '../color/p5.Color': 46, '../core/main': 59, './filters': 80 }
+      ],
+      85: [
+        function(_dereq_, module, exports) {
+          'use strict';
+          Object.defineProperty(exports, '__esModule', { value: true });
+          exports.default = void 0;
+
+          var _main = _interopRequireDefault(_dereq_('../core/main'));
+          _dereq_('whatwg-fetch');
+          _dereq_('es6-promise/auto');
+          var _fetchJsonp = _interopRequireDefault(_dereq_('fetch-jsonp'));
+          var _fileSaver = _interopRequireDefault(_dereq_('file-saver'));
+          _dereq_('../core/friendly_errors/validate_params');
+          _dereq_('../core/friendly_errors/file_errors');
+          _dereq_('../core/friendly_errors/fes_core');
+          function _interopRequireDefault(obj) {
+            return obj && obj.__esModule ? obj : { default: obj };
+          }
+          function _typeof(obj) {
+            if (typeof Symbol === 'function' && typeof Symbol.iterator === 'symbol') {
+              _typeof = function _typeof(obj) {
+                return typeof obj;
+              };
+            } else {
+              _typeof = function _typeof(obj) {
+                return obj &&
+                  typeof Symbol === 'function' &&
+                  obj.constructor === Symbol &&
+                  obj !== Symbol.prototype
+                  ? 'symbol'
+                  : typeof obj;
+              };
+            }
+            return _typeof(obj);
+          }
+
+          /**
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               * Loads a JSON file from a file or a URL, and returns an Object.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               * Note that even if the JSON file contains an Array, an Object will be
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               * returned with index numbers as keys.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               *
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               * This method is asynchronous, meaning it may not finish before the next
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               * line in your sketch is executed. JSONP is supported via a polyfill and you
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               * can pass in as the second argument an object with definitions of the json
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               * callback following the syntax specified <a href="https://github.com/camsong/
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               * fetch-jsonp">here</a>.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               *
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               * This method is suitable for fetching files up to size of 64MB.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               * @method loadJSON
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               * @param  {String}        path       name of the file or url to load
