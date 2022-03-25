@@ -71351,3 +71351,151 @@
 
                 // define constants
                 var PRE_TOKEN = 0,
+                  MID_TOKEN = 1,
+                  POST_TOKEN = 2,
+                  POST_RECORD = 4;
+
+                var QUOTE = '"',
+                  CR = '\r',
+                  LF = '\n';
+
+                var records = [];
+                var offset = 0;
+                var currentRecord = null;
+                var currentChar;
+
+                var tokenBegin = function tokenBegin() {
+                  state.currentState = PRE_TOKEN;
+                  state.token = '';
+                };
+
+                var tokenEnd = function tokenEnd() {
+                  currentRecord.push(state.token);
+                  tokenBegin();
+                };
+
+                var recordBegin = function recordBegin() {
+                  state.escaped = false;
+                  currentRecord = [];
+                  tokenBegin();
+                };
+
+                var recordEnd = function recordEnd() {
+                  state.currentState = POST_RECORD;
+                  records.push(currentRecord);
+                  currentRecord = null;
+                };
+
+                for (;;) {
+                  currentChar = resp[offset++];
+
+                  // EOF
+                  if (currentChar == null) {
+                    if (state.escaped) {
+                      throw new Error('Unclosed quote in file.');
+                    }
+                    if (currentRecord) {
+                      tokenEnd();
+                      recordEnd();
+                      break;
+                    }
+                  }
+                  if (currentRecord === null) {
+                    recordBegin();
+                  }
+
+                  // Handle opening quote
+                  if (state.currentState === PRE_TOKEN) {
+                    if (currentChar === QUOTE) {
+                      state.escaped = true;
+                      state.currentState = MID_TOKEN;
+                      continue;
+                    }
+                    state.currentState = MID_TOKEN;
+                  }
+
+                  // mid-token and escaped, look for sequences and end quote
+                  if (state.currentState === MID_TOKEN && state.escaped) {
+                    if (currentChar === QUOTE) {
+                      if (resp[offset] === QUOTE) {
+                        state.token += QUOTE;
+                        offset++;
+                      } else {
+                        state.escaped = false;
+                        state.currentState = POST_TOKEN;
+                      }
+                    } else if (currentChar === CR) {
+                      continue;
+                    } else {
+                      state.token += currentChar;
+                    }
+                    continue;
+                  }
+
+                  // fall-through: mid-token or post-token, not escaped
+                  if (currentChar === CR) {
+                    if (resp[offset] === LF) {
+                      offset++;
+                    }
+                    tokenEnd();
+                    recordEnd();
+                  } else if (currentChar === LF) {
+                    tokenEnd();
+                    recordEnd();
+                  } else if (currentChar === sep) {
+                    tokenEnd();
+                  } else if (state.currentState === MID_TOKEN) {
+                    state.token += currentChar;
+                  }
+                }
+
+                // set up column names
+                if (header) {
+                  t.columns = records.shift();
+                } else {
+                  for (var _i2 = 0; _i2 < records[0].length; _i2++) {
+                    t.columns[_i2] = 'null';
+                  }
+                }
+                var row;
+                for (var _i3 = 0; _i3 < records.length; _i3++) {
+                  //Handles row of 'undefined' at end of some CSVs
+                  if (records[_i3].length === 1) {
+                    if (records[_i3][0] === 'undefined' || records[_i3][0] === '') {
+                      continue;
+                    }
+                  }
+                  row = new _main.default.TableRow();
+                  row.arr = records[_i3];
+                  row.obj = makeObject(records[_i3], t.columns);
+                  t.addRow(row);
+                }
+                if (typeof callback === 'function') {
+                  callback(t);
+                }
+
+                self._decrementPreload();
+              },
+              function(err) {
+                // Error handling
+                _main.default._friendlyFileLoadError(2, path);
+
+                if (errorCallback) {
+                  errorCallback(err);
+                } else {
+                  console.error(err);
+                }
+              }
+            );
+
+            return t;
+          };
+
+          // helper function to turn a row into a JSON object
+          function makeObject(row, headers) {
+            var ret = {};
+            headers = headers || [];
+            if (typeof headers === 'undefined') {
+              for (var j = 0; j < row.length; j++) {
+                headers[j.toString()] = j;
+              }
