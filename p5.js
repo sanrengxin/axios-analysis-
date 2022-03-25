@@ -71499,3 +71499,148 @@
               for (var j = 0; j < row.length; j++) {
                 headers[j.toString()] = j;
               }
+            }
+            for (var i = 0; i < headers.length; i++) {
+              var key = headers[i];
+              var val = row[i];
+              ret[key] = val;
+            }
+            return ret;
+          }
+
+          /**
+           * Reads the contents of a file and creates an XML object with its values.
+           * If the name of the file is used as the parameter, as in the above example,
+           * the file must be located in the sketch directory/folder.
+           *
+           * Alternatively, the file maybe be loaded from anywhere on the local
+           * computer using an absolute path (something that starts with / on Unix and
+           * Linux, or a drive letter on Windows), or the filename parameter can be a
+           * URL for a file found on a network.
+           *
+           * This method is asynchronous, meaning it may not finish before the next
+           * line in your sketch is executed. Calling <a href="#/p5/loadXML">loadXML()</a> inside <a href="#/p5/preload">preload()</a>
+           * guarantees to complete the operation before <a href="#/p5/setup">setup()</a> and <a href="#/p5/draw">draw()</a> are called.
+           *
+           * Outside of <a href="#/p5/preload">preload()</a>, you may supply a callback function to handle the
+           * object.
+           *
+           * This method is suitable for fetching files up to size of 64MB.
+           * @method loadXML
+           * @param  {String}   filename   name of the file or URL to load
+           * @param  {function} [callback] function to be executed after <a href="#/p5/loadXML">loadXML()</a>
+           *                               completes, XML object is passed in as
+           *                               first argument
+           * @param  {function} [errorCallback] function to be executed if
+           *                               there is an error, response is passed
+           *                               in as first argument
+           * @return {Object}              XML object containing data
+           * @example
+           * <div class='norender'><code>
+           * // The following short XML file called "mammals.xml" is parsed
+           * // in the code below.
+           * //
+           * // <?xml version="1.0"?>
+           * // &lt;mammals&gt;
+           * //   &lt;animal id="0" species="Capra hircus">Goat&lt;/animal&gt;
+           * //   &lt;animal id="1" species="Panthera pardus">Leopard&lt;/animal&gt;
+           * //   &lt;animal id="2" species="Equus zebra">Zebra&lt;/animal&gt;
+           * // &lt;/mammals&gt;
+           *
+           * let xml;
+           *
+           * function preload() {
+           *   xml = loadXML('assets/mammals.xml');
+           * }
+           *
+           * function setup() {
+           *   let children = xml.getChildren('animal');
+           *
+           *   for (let i = 0; i < children.length; i++) {
+           *     let id = children[i].getNum('id');
+           *     let coloring = children[i].getString('species');
+           *     let name = children[i].getContent();
+           *     print(id + ', ' + coloring + ', ' + name);
+           *   }
+           * }
+           *
+           * // Sketch prints:
+           * // 0, Capra hircus, Goat
+           * // 1, Panthera pardus, Leopard
+           * // 2, Equus zebra, Zebra
+           * </code></div>
+           *
+           * @alt
+           * no image displayed
+           */
+          _main.default.prototype.loadXML = function() {
+            for (
+              var _len3 = arguments.length, args = new Array(_len3), _key3 = 0;
+              _key3 < _len3;
+              _key3++
+            ) {
+              args[_key3] = arguments[_key3];
+            }
+            var ret = new _main.default.XML();
+            var callback, errorCallback;
+
+            for (var i = 1; i < args.length; i++) {
+              var arg = args[i];
+              if (typeof arg === 'function') {
+                if (typeof callback === 'undefined') {
+                  callback = arg;
+                } else if (typeof errorCallback === 'undefined') {
+                  errorCallback = arg;
+                }
+              }
+            }
+
+            var self = this;
+            this.httpDo(
+              args[0],
+              'GET',
+              'xml',
+              function(xml) {
+                for (var key in xml) {
+                  ret[key] = xml[key];
+                }
+                if (typeof callback !== 'undefined') {
+                  callback(ret);
+                }
+
+                self._decrementPreload();
+              },
+              function(err) {
+                // Error handling
+                _main.default._friendlyFileLoadError(1, arguments[0]);
+
+                if (errorCallback) {
+                  errorCallback(err);
+                } else {
+                  throw err;
+                }
+              }
+            );
+
+            return ret;
+          };
+
+          /**
+           * This method is suitable for fetching files up to size of 64MB.
+           * @method loadBytes
+           * @param {string}   file            name of the file or URL to load
+           * @param {function} [callback]      function to be executed after <a href="#/p5/loadBytes">loadBytes()</a>
+           *                                    completes
+           * @param {function} [errorCallback] function to be executed if there
+           *                                    is an error
+           * @returns {Object} an object whose 'bytes' property will be the loaded buffer
+           *
+           * @example
+           * <div class='norender'><code>
+           * let data;
+           *
+           * function preload() {
+           *   data = loadBytes('assets/mammals.xml');
+           * }
+           *
+           * function setup() {
