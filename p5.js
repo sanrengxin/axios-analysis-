@@ -71644,3 +71644,150 @@
            * }
            *
            * function setup() {
+           *   for (let i = 0; i < 5; i++) {
+           *     console.log(data.bytes[i].toString(16));
+           *   }
+           * }
+           * </code></div>
+           *
+           * @alt
+           * no image displayed
+           */
+          _main.default.prototype.loadBytes = function(file, callback, errorCallback) {
+            var ret = {};
+
+            var self = this;
+            this.httpDo(
+              file,
+              'GET',
+              'arrayBuffer',
+              function(arrayBuffer) {
+                ret.bytes = new Uint8Array(arrayBuffer);
+
+                if (typeof callback === 'function') {
+                  callback(ret);
+                }
+
+                self._decrementPreload();
+              },
+              function(err) {
+                // Error handling
+                _main.default._friendlyFileLoadError(6, file);
+
+                if (errorCallback) {
+                  errorCallback(err);
+                } else {
+                  throw err;
+                }
+              }
+            );
+
+            return ret;
+          };
+
+          /**
+    * Method for executing an HTTP GET request. If data type is not specified,
+    * p5 will try to guess based on the URL, defaulting to text. This is equivalent to
+    * calling <code>httpDo(path, 'GET')</code>. The 'binary' datatype will return
+    * a Blob object, and the 'arrayBuffer' datatype will return an ArrayBuffer
+    * which can be used to initialize typed arrays (such as Uint8Array).
+    *
+    * @method httpGet
+    * @param  {String}        path       name of the file or url to load
+    * @param  {String}        [datatype] "json", "jsonp", "binary", "arrayBuffer",
+    *                                    "xml", or "text"
+    * @param  {Object|Boolean} [data]    param data passed sent with request
+    * @param  {function}      [callback] function to be executed after
+    *                                    <a href="#/p5/httpGet">httpGet()</a> completes, data is passed in
+    *                                    as first argument
+    * @param  {function}      [errorCallback] function to be executed if
+    *                                    there is an error, response is passed
+    *                                    in as first argument
+    * @return {Promise} A promise that resolves with the data when the operation
+    *                   completes successfully or rejects with the error after
+    *                   one occurs.
+    * @example
+    * <div class='norender'><code>
+    * // Examples use USGS Earthquake API:
+    * //   https://earthquake.usgs.gov/fdsnws/event/1/#methods
+    * let earthquakes;
+    * function preload() {
+    *   // Get the most recent earthquake in the database
+    *   let url =
+       'https://earthquake.usgs.gov/fdsnws/event/1/query?' +
+    *     'format=geojson&limit=1&orderby=time';
+    *   httpGet(url, 'jsonp', false, function(response) {
+    *     // when the HTTP request completes, populate the variable that holds the
+    *     // earthquake data used in the visualization.
+    *     earthquakes = response;
+    *   });
+    * }
+    *
+    * function draw() {
+    *   if (!earthquakes) {
+    *     // Wait until the earthquake data has loaded before drawing.
+    *     return;
+    *   }
+    *   background(200);
+    *   // Get the magnitude and name of the earthquake out of the loaded JSON
+    *   let earthquakeMag = earthquakes.features[0].properties.mag;
+    *   let earthquakeName = earthquakes.features[0].properties.place;
+    *   ellipse(width / 2, height / 2, earthquakeMag * 10, earthquakeMag * 10);
+    *   textAlign(CENTER);
+    *   text(earthquakeName, 0, height - 30, width, 30);
+    *   noLoop();
+    * }
+    * </code></div>
+    */
+          /**
+           * @method httpGet
+           * @param  {String}        path
+           * @param  {Object|Boolean} data
+           * @param  {function}      [callback]
+           * @param  {function}      [errorCallback]
+           * @return {Promise}
+           */
+          /**
+           * @method httpGet
+           * @param  {String}        path
+           * @param  {function}      callback
+           * @param  {function}      [errorCallback]
+           * @return {Promise}
+           */
+          _main.default.prototype.httpGet = function() {
+            _main.default._validateParameters('httpGet', arguments);
+
+            var args = Array.prototype.slice.call(arguments);
+            args.splice(1, 0, 'GET');
+            return _main.default.prototype.httpDo.apply(this, args);
+          };
+
+          /**
+           * Method for executing an HTTP POST request. If data type is not specified,
+           * p5 will try to guess based on the URL, defaulting to text. This is equivalent to
+           * calling <code>httpDo(path, 'POST')</code>.
+           *
+           * @method httpPost
+           * @param  {String}        path       name of the file or url to load
+           * @param  {String}        [datatype] "json", "jsonp", "xml", or "text".
+           *                                    If omitted, <a href="#/p5/httpPost">httpPost()</a> will guess.
+           * @param  {Object|Boolean} [data]    param data passed sent with request
+           * @param  {function}      [callback] function to be executed after
+           *                                    <a href="#/p5/httpPost">httpPost()</a> completes, data is passed in
+           *                                    as first argument
+           * @param  {function}      [errorCallback] function to be executed if
+           *                                    there is an error, response is passed
+           *                                    in as first argument
+           * @return {Promise} A promise that resolves with the data when the operation
+           *                   completes successfully or rejects with the error after
+           *                   one occurs.
+           *
+           * @example
+           * <div>
+           * <code>
+           * // Examples use jsonplaceholder.typicode.com for a Mock Data API
+           *
+           * let url = 'https://jsonplaceholder.typicode.com/posts';
+           * let postData = { userId: 1, title: 'p5 Clicked!', body: 'p5.js is very cool.' };
+           *
+           * function setup() {
