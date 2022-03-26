@@ -71791,3 +71791,151 @@
            * let postData = { userId: 1, title: 'p5 Clicked!', body: 'p5.js is very cool.' };
            *
            * function setup() {
+           *   createCanvas(100, 100);
+           *   background(200);
+           * }
+           *
+           * function mousePressed() {
+           *   httpPost(url, 'json', postData, function(result) {
+           *     strokeWeight(2);
+           *     text(result.body, mouseX, mouseY);
+           *   });
+           * }
+           * </code>
+           * </div>
+           *
+           * <div><code>
+           * let url = 'ttps://invalidURL'; // A bad URL that will cause errors
+           * let postData = { title: 'p5 Clicked!', body: 'p5.js is very cool.' };
+           *
+           * function setup() {
+           *   createCanvas(100, 100);
+           *   background(200);
+           * }
+           *
+           * function mousePressed() {
+           *   httpPost(
+           *     url,
+           *     'json',
+           *     postData,
+           *     function(result) {
+           *       // ... won't be called
+           *     },
+           *     function(error) {
+           *       strokeWeight(2);
+           *       text(error.toString(), mouseX, mouseY);
+           *     }
+           *   );
+           * }
+           * </code></div>
+           */
+          /**
+           * @method httpPost
+           * @param  {String}        path
+           * @param  {Object|Boolean} data
+           * @param  {function}      [callback]
+           * @param  {function}      [errorCallback]
+           * @return {Promise}
+           */
+          /**
+           * @method httpPost
+           * @param  {String}        path
+           * @param  {function}      callback
+           * @param  {function}      [errorCallback]
+           * @return {Promise}
+           */
+          _main.default.prototype.httpPost = function() {
+            _main.default._validateParameters('httpPost', arguments);
+
+            var args = Array.prototype.slice.call(arguments);
+            args.splice(1, 0, 'POST');
+            return _main.default.prototype.httpDo.apply(this, args);
+          };
+
+          /**
+           * Method for executing an HTTP request. If data type is not specified,
+           * p5 will try to guess based on the URL, defaulting to text.<br><br>
+           * For more advanced use, you may also pass in the path as the first argument
+           * and a object as the second argument, the signature follows the one specified
+           * in the Fetch API specification.
+           * This method is suitable for fetching files up to size of 64MB when "GET" is used.
+           *
+           * @method httpDo
+           * @param  {String}        path       name of the file or url to load
+           * @param  {String}        [method]   either "GET", "POST", or "PUT",
+           *                                    defaults to "GET"
+           * @param  {String}        [datatype] "json", "jsonp", "xml", or "text"
+           * @param  {Object}        [data]     param data passed sent with request
+           * @param  {function}      [callback] function to be executed after
+           *                                    <a href="#/p5/httpGet">httpGet()</a> completes, data is passed in
+           *                                    as first argument
+           * @param  {function}      [errorCallback] function to be executed if
+           *                                    there is an error, response is passed
+           *                                    in as first argument
+           * @return {Promise} A promise that resolves with the data when the operation
+           *                   completes successfully or rejects with the error after
+           *                   one occurs.
+           *
+           * @example
+           * <div>
+           * <code>
+           * // Examples use USGS Earthquake API:
+           * // https://earthquake.usgs.gov/fdsnws/event/1/#methods
+           *
+           * // displays an animation of all USGS earthquakes
+           * let earthquakes;
+           * let eqFeatureIndex = 0;
+           *
+           * function preload() {
+           *   let url = 'https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson';
+           *   httpDo(
+           *     url,
+           *     {
+           *       method: 'GET',
+           *       // Other Request options, like special headers for apis
+           *       headers: { authorization: 'Bearer secretKey' }
+           *     },
+           *     function(res) {
+           *       earthquakes = res;
+           *     }
+           *   );
+           * }
+           *
+           * function draw() {
+           *   // wait until the data is loaded
+           *   if (!earthquakes || !earthquakes.features[eqFeatureIndex]) {
+           *     return;
+           *   }
+           *   clear();
+           *
+           *   let feature = earthquakes.features[eqFeatureIndex];
+           *   let mag = feature.properties.mag;
+           *   let rad = mag / 11 * ((width + height) / 2);
+           *   fill(255, 0, 0, 100);
+           *   ellipse(width / 2 + random(-2, 2), height / 2 + random(-2, 2), rad, rad);
+           *
+           *   if (eqFeatureIndex >= earthquakes.features.length) {
+           *     eqFeatureIndex = 0;
+           *   } else {
+           *     eqFeatureIndex += 1;
+           *   }
+           * }
+           * </code>
+           * </div>
+           */
+          /**
+           * @method httpDo
+           * @param  {String}        path
+           * @param  {Object}        options   Request object options as documented in the
+           *                                    "fetch" API
+           * <a href="https://developer.mozilla.org/en/docs/Web/API/Fetch_API">reference</a>
+           * @param  {function}      [callback]
+           * @param  {function}      [errorCallback]
+           * @return {Promise}
+           */
+          _main.default.prototype.httpDo = function() {
+            var type;
+            var callback;
+            var errorCallback;
+            var request;
+            var promise;
