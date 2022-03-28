@@ -72186,3 +72186,154 @@
              * <code>
              * function setup() {
              *   createCanvas(100, 100);
+             *   button = createButton('SAVE FILE');
+             *   button.position(21, 40);
+             *   button.mousePressed(createFile);
+             * }
+             *
+             * function createFile() {
+             *   // creates a file called 'newFile.txt'
+             *   let writer = createWriter('newFile.txt');
+             *   // write 'Hello world!'' to the file
+             *   writer.write(['Hello world!']);
+             *   // close the PrintWriter and save the file
+             *   writer.close();
+             * }
+             * </code>
+             * </div>
+             */
+            this.write = function(data) {
+              this.content += data;
+            };
+            /**
+             * Writes data to the PrintWriter stream, and adds a new line at the end
+             * @method print
+             * @param {Array} data all data to be printed by the PrintWriter
+             * @example
+             * <div class='norender notest'>
+             * <code>
+             * // creates a file called 'newFile.txt'
+             * let writer = createWriter('newFile.txt');
+             * // creates a file containing
+             * //  My name is:
+             * //  Teddy
+             * writer.print('My name is:');
+             * writer.print('Teddy');
+             * // close the PrintWriter and save the file
+             * writer.close();
+             * </code>
+             * </div>
+             * <div class='norender notest'>
+             * <code>
+             * let writer;
+             *
+             * function setup() {
+             *   createCanvas(400, 400);
+             *   // create a PrintWriter
+             *   writer = createWriter('newFile.txt');
+             * }
+             *
+             * function draw() {
+             *   writer.print([mouseX, mouseY]);
+             * }
+             *
+             * function mouseClicked() {
+             *   writer.close();
+             * }
+             * </code>
+             * </div>
+             */
+            this.print = function(data) {
+              this.content += ''.concat(data, '\n');
+            };
+            /**
+             * Clears the data already written to the PrintWriter object
+             * @method clear
+             * @example
+             * <div class ="norender notest"><code>
+             * // create writer object
+             * let writer = createWriter('newFile.txt');
+             * writer.write(['clear me']);
+             * // clear writer object here
+             * writer.clear();
+             * // close writer
+             * writer.close();
+             * </code></div>
+             * <div>
+             * <code>
+             * function setup() {
+             *   button = createButton('CLEAR ME');
+             *   button.position(21, 40);
+             *   button.mousePressed(createFile);
+             * }
+             *
+             * function createFile() {
+             *   let writer = createWriter('newFile.txt');
+             *   writer.write(['clear me']);
+             *   writer.clear();
+             *   writer.close();
+             * }
+             * </code>
+             * </div>
+             *
+             */
+            this.clear = function() {
+              this.content = '';
+            };
+            /**
+             * Closes the PrintWriter
+             * @method close
+             * @example
+             * <div class="norender notest">
+             * <code>
+             * // create a file called 'newFile.txt'
+             * let writer = createWriter('newFile.txt');
+             * // close the PrintWriter and save the file
+             * writer.close();
+             * </code>
+             * </div>
+             * <div class='norender notest'>
+             * <code>
+             * // create a file called 'newFile2.txt'
+             * let writer = createWriter('newFile2.txt');
+             * // write some data to the file
+             * writer.write([100, 101, 102]);
+             * // close the PrintWriter and save the file
+             * writer.close();
+             * </code>
+             * </div>
+             */
+            this.close = function() {
+              // convert String to Array for the writeFile Blob
+              var arr = [];
+              arr.push(this.content);
+              _main.default.prototype.writeFile(arr, filename, extension);
+              // remove from _pWriters array and delete self
+              for (var i in _main.default.prototype._pWriters) {
+                if (_main.default.prototype._pWriters[i].name === this.name) {
+                  // remove from _pWriters array
+                  _main.default.prototype._pWriters.splice(i, 1);
+                }
+              }
+              self.clear();
+              self = {};
+            };
+          };
+
+          /**
+           * @module IO
+           * @submodule Output
+           * @for p5
+           */
+
+          // object, filename, options --> saveJSON, saveStrings,
+          // filename, [extension] [canvas] --> saveImage
+
+          /**
+           *  Saves a given element(image, text, json, csv, wav, or html) to the client's
+           *  computer. The first parameter can be a pointer to element we want to save.
+           *  The element can be one of <a href="#/p5.Element">p5.Element</a>,an Array of
+           *  Strings, an Array of JSON, a JSON object, a <a href="#/p5.Table">p5.Table
+           *  </a>, a <a href="#/p5.Image">p5.Image</a>, or a p5.SoundFile (requires
+           *  p5.sound). The second parameter is a filename (including extension).The
+           *  third parameter is for options specific to this type of object. This method
