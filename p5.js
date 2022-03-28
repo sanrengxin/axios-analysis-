@@ -71939,3 +71939,131 @@
             var errorCallback;
             var request;
             var promise;
+            var jsonpOptions = {};
+            var cbCount = 0;
+            var contentType = 'text/plain';
+            // Trim the callbacks off the end to get an idea of how many arguments are passed
+            for (var i = arguments.length - 1; i > 0; i--) {
+              if (
+                typeof (i < 0 || arguments.length <= i ? undefined : arguments[i]) ===
+                'function'
+              ) {
+                cbCount++;
+              } else {
+                break;
+              }
+            }
+            // The number of arguments minus callbacks
+            var argsCount = arguments.length - cbCount;
+            var path = arguments.length <= 0 ? undefined : arguments[0];
+            if (
+              argsCount === 2 &&
+              typeof path === 'string' &&
+              _typeof(arguments.length <= 1 ? undefined : arguments[1]) === 'object'
+            ) {
+              // Intended for more advanced use, pass in Request parameters directly
+              request = new Request(path, arguments.length <= 1 ? undefined : arguments[1]);
+              callback = arguments.length <= 2 ? undefined : arguments[2];
+              errorCallback = arguments.length <= 3 ? undefined : arguments[3];
+            } else {
+              // Provided with arguments
+              var method = 'GET';
+              var data;
+
+              for (var j = 1; j < arguments.length; j++) {
+                var a = j < 0 || arguments.length <= j ? undefined : arguments[j];
+                if (typeof a === 'string') {
+                  if (a === 'GET' || a === 'POST' || a === 'PUT' || a === 'DELETE') {
+                    method = a;
+                  } else if (
+                    a === 'json' ||
+                    a === 'jsonp' ||
+                    a === 'binary' ||
+                    a === 'arrayBuffer' ||
+                    a === 'xml' ||
+                    a === 'text' ||
+                    a === 'table'
+                  ) {
+                    type = a;
+                  } else {
+                    data = a;
+                  }
+                } else if (typeof a === 'number') {
+                  data = a.toString();
+                } else if (_typeof(a) === 'object') {
+                  if (
+                    a.hasOwnProperty('jsonpCallback') ||
+                    a.hasOwnProperty('jsonpCallbackFunction')
+                  ) {
+                    for (var attr in a) {
+                      jsonpOptions[attr] = a[attr];
+                    }
+                  } else if (a instanceof _main.default.XML) {
+                    data = a.serialize();
+                    contentType = 'application/xml';
+                  } else {
+                    data = JSON.stringify(a);
+                    contentType = 'application/json';
+                  }
+                } else if (typeof a === 'function') {
+                  if (!callback) {
+                    callback = a;
+                  } else {
+                    errorCallback = a;
+                  }
+                }
+              }
+
+              var headers =
+                method === 'GET'
+                  ? new Headers()
+                  : new Headers({ 'Content-Type': contentType });
+
+              request = new Request(path, {
+                method: method,
+                mode: 'cors',
+                body: data,
+                headers: headers
+              });
+            }
+            // do some sort of smart type checking
+            if (!type) {
+              if (path.includes('json')) {
+                type = 'json';
+              } else if (path.includes('xml')) {
+                type = 'xml';
+              } else {
+                type = 'text';
+              }
+            }
+
+            if (type === 'jsonp') {
+              promise = (0, _fetchJsonp.default)(path, jsonpOptions);
+            } else {
+              promise = fetch(request);
+            }
+            promise = promise.then(function(res) {
+              if (!res.ok) {
+                var err = new Error(res.body);
+                err.status = res.status;
+                err.ok = false;
+                throw err;
+              } else {
+                var fileSize = 0;
+                if (type !== 'jsonp') {
+                  fileSize = res.headers.get('content-length');
+                }
+                if (fileSize && fileSize > 64000000) {
+                  _main.default._friendlyFileLoadError(7, path);
+                }
+                switch (type) {
+                  case 'json':
+                  case 'jsonp':
+                    return res.json();
+                  case 'binary':
+                    return res.blob();
+                  case 'arrayBuffer':
+                    return res.arrayBuffer();
+                  case 'xml':
+                    return res.text().then(function(text) {
+                      var parser = new DOMParser();
