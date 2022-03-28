@@ -72067,3 +72067,122 @@
                   case 'xml':
                     return res.text().then(function(text) {
                       var parser = new DOMParser();
+                      var xml = parser.parseFromString(text, 'text/xml');
+                      return new _main.default.XML(xml.documentElement);
+                    });
+                  default:
+                    return res.text();
+                }
+              }
+            });
+            promise.then(callback || function() {});
+            promise.catch(errorCallback || console.error);
+            return promise;
+          };
+
+          /**
+           * @module IO
+           * @submodule Output
+           * @for p5
+           */
+
+          window.URL = window.URL || window.webkitURL;
+
+          // private array of p5.PrintWriter objects
+          _main.default.prototype._pWriters = [];
+
+          /**
+           * @method createWriter
+           * @param {String} name name of the file to be created
+           * @param {String} [extension]
+           * @return {p5.PrintWriter}
+           * @example
+           * <div>
+           * <code>
+           * function setup() {
+           *   createCanvas(100, 100);
+           *   background(200);
+           *   text('click here to save', 10, 10, 70, 80);
+           * }
+           *
+           * function mousePressed() {
+           *   if (mouseX > 0 && mouseX < width && mouseY > 0 && mouseY < height) {
+           *     const writer = createWriter('squares.txt');
+           *     for (let i = 0; i < 10; i++) {
+           *       writer.print(i * i);
+           *     }
+           *     writer.close();
+           *     writer.clear();
+           *   }
+           * }
+           * </code>
+           * </div>
+           */
+          _main.default.prototype.createWriter = function(name, extension) {
+            var newPW;
+            // check that it doesn't already exist
+            for (var i in _main.default.prototype._pWriters) {
+              if (_main.default.prototype._pWriters[i].name === name) {
+                // if a p5.PrintWriter w/ this name already exists...
+                // return p5.prototype._pWriters[i]; // return it w/ contents intact.
+                // or, could return a new, empty one with a unique name:
+                newPW = new _main.default.PrintWriter(name + this.millis(), extension);
+                _main.default.prototype._pWriters.push(newPW);
+                return newPW;
+              }
+            }
+            newPW = new _main.default.PrintWriter(name, extension);
+            _main.default.prototype._pWriters.push(newPW);
+            return newPW;
+          };
+
+          /**
+           *  @class p5.PrintWriter
+           *  @param  {String}     filename
+           *  @param  {String}     [extension]
+           */
+          _main.default.PrintWriter = function(filename, extension) {
+            var self = this;
+            this.name = filename;
+            this.content = '';
+            //Changed to write because it was being overloaded by function below.
+            /**
+             * Writes data to the PrintWriter stream
+             * @method write
+             * @param {Array} data all data to be written by the PrintWriter
+             * @example
+             * <div class="norender notest">
+             * <code>
+             * // creates a file called 'newFile.txt'
+             * let writer = createWriter('newFile.txt');
+             * // write 'Hello world!'' to the file
+             * writer.write(['Hello world!']);
+             * // close the PrintWriter and save the file
+             * writer.close();
+             * </code>
+             * </div>
+             * <div class='norender notest'>
+             * <code>
+             * // creates a file called 'newFile2.txt'
+             * let writer = createWriter('newFile2.txt');
+             * // write 'apples,bananas,123' to the file
+             * writer.write(['apples', 'bananas', 123]);
+             * // close the PrintWriter and save the file
+             * writer.close();
+             * </code>
+             * </div>
+             * <div class='norender notest'>
+             * <code>
+             * // creates a file called 'newFile3.txt'
+             * let writer = createWriter('newFile3.txt');
+             * // write 'My name is: Teddy' to the file
+             * writer.write('My name is:');
+             * writer.write(' Teddy');
+             * // close the PrintWriter and save the file
+             * writer.close();
+             * </code>
+             * </div>
+             * <div>
+             * <code>
+             * function setup() {
+             *   createCanvas(100, 100);
