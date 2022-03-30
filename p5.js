@@ -72464,3 +72464,138 @@
                   if (args[0] instanceof Array) {
                     _main.default.prototype.saveStrings(args[0], args[1], args[2]);
                   } else if (args[0] instanceof _main.default.Table) {
+                    _main.default.prototype.saveTable(args[0], args[1], args[2]);
+                  } else if (args[0] instanceof _main.default.Image) {
+                    _main.default.prototype.saveCanvas(args[0].canvas, args[1]);
+                  } else if (args[0] instanceof _main.default.SoundFile) {
+                    _main.default.prototype.saveSound(args[0], args[1], args[2], args[3]);
+                  }
+              }
+            }
+          };
+
+          /**
+           *  Writes the contents of an Array or a JSON object to a .json file.
+           *  The file saving process and location of the saved file will
+           *  vary between web browsers.
+           *
+           *  @method saveJSON
+           *  @param  {Array|Object} json
+           *  @param  {String} filename
+           *  @param  {Boolean} [optimize]   If true, removes line breaks
+           *                                 and spaces from the output
+           *                                 file to optimize filesize
+           *                                 (but not readability).
+           *  @example
+           * <div><code>
+           * let json = {}; // new  JSON Object
+           *
+           * json.id = 0;
+           * json.species = 'Panthera leo';
+           * json.name = 'Lion';
+           *
+           * function setup() {
+           *   createCanvas(100, 100);
+           *   background(200);
+           *   text('click here to save', 10, 10, 70, 80);
+           * }
+           *
+           * function mousePressed() {
+           *   if (mouseX > 0 && mouseX < width && mouseY > 0 && mouseY < height) {
+           *     saveJSON(json, 'lion.json');
+           *   }
+           * }
+           *
+           * // saves the following to a file called "lion.json":
+           * // {
+           * //   "id": 0,
+           * //   "species": "Panthera leo",
+           * //   "name": "Lion"
+           * // }
+           * </code></div>
+           *
+           * @alt
+           * no image displayed
+           */
+          _main.default.prototype.saveJSON = function(json, filename, opt) {
+            _main.default._validateParameters('saveJSON', arguments);
+            var stringify;
+            if (opt) {
+              stringify = JSON.stringify(json);
+            } else {
+              stringify = JSON.stringify(json, undefined, 2);
+            }
+            this.saveStrings(stringify.split('\n'), filename, 'json');
+          };
+
+          _main.default.prototype.saveJSONObject = _main.default.prototype.saveJSON;
+          _main.default.prototype.saveJSONArray = _main.default.prototype.saveJSON;
+
+          /**
+           *  Writes an array of Strings to a text file, one line per String.
+           *  The file saving process and location of the saved file will
+           *  vary between web browsers.
+           *
+           *  @method saveStrings
+           *  @param  {String[]} list   string array to be written
+           *  @param  {String} filename filename for output
+           *  @param  {String} [extension] the filename's extension
+           *  @param  {Boolean} [isCRLF] if true, change line-break to CRLF
+           *  @example
+           * <div><code>
+           * let words = 'apple bear cat dog';
+           *
+           * // .split() outputs an Array
+           * let list = split(words, ' ');
+           *
+           * function setup() {
+           *   createCanvas(100, 100);
+           *   background(200);
+           *   text('click here to save', 10, 10, 70, 80);
+           * }
+           *
+           * function mousePressed() {
+           *   if (mouseX > 0 && mouseX < width && mouseY > 0 && mouseY < height) {
+           *     saveStrings(list, 'nouns.txt');
+           *   }
+           * }
+           *
+           * // Saves the following to a file called 'nouns.txt':
+           * //
+           * // apple
+           * // bear
+           * // cat
+           * // dog
+           * </code></div>
+           *
+           * @alt
+           * no image displayed
+           */
+          _main.default.prototype.saveStrings = function(
+            list,
+            filename,
+            extension,
+            isCRLF
+          ) {
+            _main.default._validateParameters('saveStrings', arguments);
+            var ext = extension || 'txt';
+            var pWriter = this.createWriter(filename, ext);
+            for (var i = 0; i < list.length; i++) {
+              isCRLF ? pWriter.write(list[i] + '\r\n') : pWriter.write(list[i] + '\n');
+            }
+            pWriter.close();
+            pWriter.clear();
+          };
+
+          // =======
+          // HELPERS
+          // =======
+
+          function escapeHelper(content) {
+            return content
+              .replace(/&/g, '&amp;')
+              .replace(/</g, '&lt;')
+              .replace(/>/g, '&gt;')
+              .replace(/"/g, '&quot;')
+              .replace(/'/g, '&#039;');
+          }
