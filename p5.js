@@ -72337,3 +72337,130 @@
            *  </a>, a <a href="#/p5.Image">p5.Image</a>, or a p5.SoundFile (requires
            *  p5.sound). The second parameter is a filename (including extension).The
            *  third parameter is for options specific to this type of object. This method
+           *  will save a file that fits the given parameters.
+           *  If it is called without specifying an element, by default it will save the
+           *  whole canvas as an image file. You can optionally specify a filename as
+           *  the first parameter in such a case.
+           *  **Note that it is not recommended to
+           *  call this method within draw, as it will open a new save dialog on every
+           *  render.**
+           *
+           * @method save
+           * @param  {Object|String} [objectOrFilename]  If filename is provided, will
+           *                                             save canvas as an image with
+           *                                             either png or jpg extension
+           *                                             depending on the filename.
+           *                                             If object is provided, will
+           *                                             save depending on the object
+           *                                             and filename (see examples
+           *                                             above).
+           * @param  {String} [filename] If an object is provided as the first
+           *                               parameter, then the second parameter
+           *                               indicates the filename,
+           *                               and should include an appropriate
+           *                               file extension (see examples above).
+           * @param  {Boolean|String} [options]  Additional options depend on
+           *                            filetype. For example, when saving JSON,
+           *                            <code>true</code> indicates that the
+           *                            output will be optimized for filesize,
+           *                            rather than readability.
+           *
+           * @example
+           * <div class="norender"><code>
+           * // Saves the canvas as an image
+           * cnv = createCanvas(300, 300);
+           * save(cnv, 'myCanvas.jpg');
+           *
+           * // Saves the canvas as an image by default
+           * save('myCanvas.jpg');
+           * </code></div>
+           *
+           *  <div class="norender"><code>
+           * // Saves p5.Image as an image
+           * img = createImage(10, 10);
+           * save(img, 'myImage.png');
+           * </code></div>
+           *
+           * <div class="norender"><code>
+           * // Saves p5.Renderer object as an image
+           * obj = createGraphics(100, 100);
+           * save(obj, 'myObject.png');
+           * </code></div>
+           *
+           * <div class="norender"><code>
+           * let myTable = new p5.Table();
+           * // Saves table as html file
+           * save(myTable, 'myTable.html');
+           *
+           * // Comma Separated Values
+           * save(myTable, 'myTable.csv');
+           *
+           * // Tab Separated Values
+           * save(myTable, 'myTable.tsv');
+           * </code></div>
+           *
+           * <div class="norender"><code>
+           * let myJSON = { a: 1, b: true };
+           *
+           * // Saves pretty JSON
+           * save(myJSON, 'my.json');
+           *
+           * // Optimizes JSON filesize
+           * save(myJSON, 'my.json', true);
+           * </code></div>
+           *
+           * <div class="norender"><code>
+           * // Saves array of strings to text file with line breaks after each item
+           * let arrayOfStrings = ['a', 'b'];
+           * save(arrayOfStrings, 'my.txt');
+           * </code></div>
+           *
+           * @alt
+           * An example for saving a canvas as an image.
+           * An example for saving a p5.Image element as an image.
+           * An example for saving a p5.Renderer element.
+           * An example showing how to save a table in formats of HTML, CSV and TSV.
+           * An example for saving JSON to a txt file with some extra arguments.
+           * An example for saving an array of strings to text file with line breaks.
+           */
+
+          _main.default.prototype.save = function(object, _filename, _options) {
+            // parse the arguments and figure out which things we are saving
+            var args = arguments;
+            // =================================================
+            // OPTION 1: saveCanvas...
+
+            // if no arguments are provided, save canvas
+            var cnv = this._curElement ? this._curElement.elt : this.elt;
+            if (args.length === 0) {
+              _main.default.prototype.saveCanvas(cnv);
+              return;
+            } else if (
+              args[0] instanceof _main.default.Renderer ||
+              args[0] instanceof _main.default.Graphics
+            ) {
+              // otherwise, parse the arguments
+
+              // if first param is a p5Graphics, then saveCanvas
+              _main.default.prototype.saveCanvas(args[0].elt, args[1], args[2]);
+              return;
+            } else if (args.length === 1 && typeof args[0] === 'string') {
+              // if 1st param is String and only one arg, assume it is canvas filename
+              _main.default.prototype.saveCanvas(cnv, args[0]);
+            } else {
+              // =================================================
+              // OPTION 2: extension clarifies saveStrings vs. saveJSON
+              var extension = _checkFileExtension(args[1], args[2])[1];
+              switch (extension) {
+                case 'json':
+                  _main.default.prototype.saveJSON(args[0], args[1], args[2]);
+                  return;
+                case 'txt':
+                  _main.default.prototype.saveStrings(args[0], args[1], args[2]);
+                  return;
+                // =================================================
+                // OPTION 3: decide based on object...
+                default:
+                  if (args[0] instanceof Array) {
+                    _main.default.prototype.saveStrings(args[0], args[1], args[2]);
+                  } else if (args[0] instanceof _main.default.Table) {
