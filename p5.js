@@ -72599,3 +72599,143 @@
               .replace(/"/g, '&quot;')
               .replace(/'/g, '&#039;');
           }
+
+          /**
+           *  Writes the contents of a <a href="#/p5.Table">Table</a> object to a file. Defaults to a
+           *  text file with comma-separated-values ('csv') but can also
+           *  use tab separation ('tsv'), or generate an HTML table ('html').
+           *  The file saving process and location of the saved file will
+           *  vary between web browsers.
+           *
+           *  @method saveTable
+           *  @param  {p5.Table} Table  the <a href="#/p5.Table">Table</a> object to save to a file
+           *  @param  {String} filename the filename to which the Table should be saved
+           *  @param  {String} [options]  can be one of "tsv", "csv", or "html"
+           *  @example
+           *  <div><code>
+           * let table;
+           *
+           * function setup() {
+           *   table = new p5.Table();
+           *
+           *   table.addColumn('id');
+           *   table.addColumn('species');
+           *   table.addColumn('name');
+           *
+           *   let newRow = table.addRow();
+           *   newRow.setNum('id', table.getRowCount() - 1);
+           *   newRow.setString('species', 'Panthera leo');
+           *   newRow.setString('name', 'Lion');
+           *
+           *   // To save, un-comment next line then click 'run'
+           *   // saveTable(table, 'new.csv');
+           * }
+           *
+           * // Saves the following to a file called 'new.csv':
+           * // id,species,name
+           * // 0,Panthera leo,Lion
+           * </code></div>
+           *
+           * @alt
+           * no image displayed
+           */
+          _main.default.prototype.saveTable = function(table, filename, options) {
+            _main.default._validateParameters('saveTable', arguments);
+            var ext;
+            if (options === undefined) {
+              ext = filename.substring(filename.lastIndexOf('.') + 1, filename.length);
+            } else {
+              ext = options;
+            }
+            var pWriter = this.createWriter(filename, ext);
+
+            var header = table.columns;
+
+            var sep = ','; // default to CSV
+            if (ext === 'tsv') {
+              sep = '\t';
+            }
+            if (ext !== 'html') {
+              // make header if it has values
+              if (header[0] !== '0') {
+                for (var h = 0; h < header.length; h++) {
+                  if (h < header.length - 1) {
+                    pWriter.write(header[h] + sep);
+                  } else {
+                    pWriter.write(header[h]);
+                  }
+                }
+                pWriter.write('\n');
+              }
+
+              // make rows
+              for (var i = 0; i < table.rows.length; i++) {
+                var j = void 0;
+                for (j = 0; j < table.rows[i].arr.length; j++) {
+                  if (j < table.rows[i].arr.length - 1) {
+                    //double quotes should be inserted in csv only if contains comma separated single value
+                    if (ext === 'csv' && table.rows[i].arr[j].includes(',')) {
+                      pWriter.write('"' + table.rows[i].arr[j] + '"' + sep);
+                    } else {
+                      pWriter.write(table.rows[i].arr[j] + sep);
+                    }
+                  } else {
+                    //double quotes should be inserted in csv only if contains comma separated single value
+                    if (ext === 'csv' && table.rows[i].arr[j].includes(',')) {
+                      pWriter.write('"' + table.rows[i].arr[j] + '"');
+                    } else {
+                      pWriter.write(table.rows[i].arr[j]);
+                    }
+                  }
+                }
+                pWriter.write('\n');
+              }
+            } else {
+              // otherwise, make HTML
+              pWriter.print('<html>');
+              pWriter.print('<head>');
+              var str = '  <meta http-equiv="content-type" content';
+              str += '="text/html;charset=utf-8" />';
+              pWriter.print(str);
+              pWriter.print('</head>');
+
+              pWriter.print('<body>');
+              pWriter.print('  <table>');
+
+              // make header if it has values
+              if (header[0] !== '0') {
+                pWriter.print('    <tr>');
+                for (var k = 0; k < header.length; k++) {
+                  var e = escapeHelper(header[k]);
+                  pWriter.print('      <td>'.concat(e));
+                  pWriter.print('      </td>');
+                }
+                pWriter.print('    </tr>');
+              }
+
+              // make rows
+              for (var row = 0; row < table.rows.length; row++) {
+                pWriter.print('    <tr>');
+                for (var col = 0; col < table.columns.length; col++) {
+                  var entry = table.rows[row].getString(col);
+                  var htmlEntry = escapeHelper(entry);
+                  pWriter.print('      <td>'.concat(htmlEntry));
+                  pWriter.print('      </td>');
+                }
+                pWriter.print('    </tr>');
+              }
+              pWriter.print('  </table>');
+              pWriter.print('</body>');
+              pWriter.print('</html>');
+            }
+            // close and clear the pWriter
+            pWriter.close();
+            pWriter.clear();
+          }; // end saveTable()
+
+          /**
+           *  Generate a blob of file data as a url to prepare for download.
+           *  Accepts an array of data, a filename, and an extension (optional).
+           *  This is a private function because it does not do any formatting,
+           *  but it is used by <a href="#/p5/saveStrings">saveStrings</a>, <a href="#/p5/saveJSON">saveJSON</a>, <a href="#/p5/saveTable">saveTable</a> etc.
+           *
