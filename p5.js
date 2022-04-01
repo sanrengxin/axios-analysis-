@@ -72999,3 +72999,131 @@
            *   let newRow = table.addRow();
            *   newRow.setString('id', table.getRowCount() - 1);
            *   newRow.setString('species', 'Canis Lupus');
+           *   newRow.setString('name', 'Wolf');
+           *
+           *   //print the results
+           *   for (let r = 0; r < table.getRowCount(); r++)
+           *     for (let c = 0; c < table.getColumnCount(); c++)
+           *       print(table.getString(r, c));
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * no image displayed
+           */
+          _main.default.Table.prototype.addRow = function(row) {
+            // make sure it is a valid TableRow
+            var r = row || new _main.default.TableRow();
+
+            if (typeof r.arr === 'undefined' || typeof r.obj === 'undefined') {
+              //r = new p5.prototype.TableRow(r);
+              throw new Error('invalid TableRow: '.concat(r));
+            }
+            r.table = this;
+            this.rows.push(r);
+            return r;
+          };
+
+          /**
+           * Removes a row from the table object.
+           *
+           * @method  removeRow
+           * @param   {Integer} id ID number of the row to remove
+           *
+           * @example
+           * <div class="norender">
+           * <code>
+           * // Given the CSV file "mammals.csv"
+           * // in the project's "assets" folder:
+           * //
+           * // id,species,name
+           * // 0,Capra hircus,Goat
+           * // 1,Panthera pardus,Leopard
+           * // 2,Equus zebra,Zebra
+           *
+           * let table;
+           *
+           * function preload() {
+           *   //my table is comma separated value "csv"
+           *   //and has a header specifying the columns labels
+           *   table = loadTable('assets/mammals.csv', 'csv', 'header');
+           * }
+           *
+           * function setup() {
+           *   //remove the first row
+           *   table.removeRow(0);
+           *
+           *   //print the results
+           *   for (let r = 0; r < table.getRowCount(); r++)
+           *     for (let c = 0; c < table.getColumnCount(); c++)
+           *       print(table.getString(r, c));
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * no image displayed
+           */
+          _main.default.Table.prototype.removeRow = function(id) {
+            this.rows[id].table = null; // remove reference to table
+            var chunk = this.rows.splice(id + 1, this.rows.length);
+            this.rows.pop();
+            this.rows = this.rows.concat(chunk);
+          };
+
+          /**
+           * Returns a reference to the specified <a href="#/p5.TableRow">p5.TableRow</a>. The reference
+           * can then be used to get and set values of the selected row.
+           *
+           * @method  getRow
+           * @param  {Integer}   rowID ID number of the row to get
+           * @return {p5.TableRow} <a href="#/p5.TableRow">p5.TableRow</a> object
+           *
+           * @example
+           * <div class="norender">
+           * <code>
+           * // Given the CSV file "mammals.csv"
+           * // in the project's "assets" folder:
+           * //
+           * // id,species,name
+           * // 0,Capra hircus,Goat
+           * // 1,Panthera pardus,Leopard
+           * // 2,Equus zebra,Zebra
+           *
+           * let table;
+           *
+           * function preload() {
+           *   //my table is comma separated value "csv"
+           *   //and has a header specifying the columns labels
+           *   table = loadTable('assets/mammals.csv', 'csv', 'header');
+           * }
+           *
+           * function setup() {
+           *   let row = table.getRow(1);
+           *   //print it column by column
+           *   //note: a row is an object, not an array
+           *   for (let c = 0; c < table.getColumnCount(); c++) {
+           *     print(row.getString(c));
+           *   }
+           * }
+           * </code>
+           * </div>
+           *
+           *@alt
+           * no image displayed
+           */
+          _main.default.Table.prototype.getRow = function(r) {
+            return this.rows[r];
+          };
+
+          /**
+           *  Gets all rows from the table. Returns an array of <a href="#/p5.TableRow">p5.TableRow</a>s.
+           *
+           *  @method  getRows
+           *  @return {p5.TableRow[]}   Array of <a href="#/p5.TableRow">p5.TableRow</a>s
+           *
+           * @example
+           * <div class="norender">
+           * <code>
+           * // Given the CSV file "mammals.csv"
