@@ -72879,3 +72879,123 @@
         function(_dereq_, module, exports) {
           'use strict';
           Object.defineProperty(exports, '__esModule', { value: true });
+          exports.default = void 0;
+
+          var _main = _interopRequireDefault(_dereq_('../core/main'));
+          function _interopRequireDefault(obj) {
+            return obj && obj.__esModule ? obj : { default: obj };
+          } /**
+           *  <a href="#/p5.Table">Table</a> objects store data with multiple rows and columns, much
+           *  like in a traditional spreadsheet. Tables can be generated from
+           *  scratch, dynamically, or using data from an existing file.
+           *
+           *  @class p5.Table
+           *  @constructor
+           *  @param  {p5.TableRow[]}     [rows] An array of p5.TableRow objects
+           */ /**
+           * @module IO
+           * @submodule Table
+           * @requires core
+           */ /**
+           *  Table Options
+           *  Generic class for handling tabular data, typically from a
+           *  CSV, TSV, or other sort of spreadsheet file.
+           *  CSV files are
+           *  <a href="http://en.wikipedia.org/wiki/Comma-separated_values">
+           *  comma separated values</a>, often with the data in quotes. TSV
+           *  files use tabs as separators, and usually don't bother with the
+           *  quotes.
+           *  File names should end with .csv if they're comma separated.
+           *  A rough "spec" for CSV can be found
+           *  <a href="http://tools.ietf.org/html/rfc4180">here</a>.
+           *  To load files, use the <a href="#/p5/loadTable">loadTable</a> method.
+           *  To save tables to your computer, use the <a href="#/p5/save">save</a> method
+           *   or the <a href="#/p5/saveTable">saveTable</a> method.
+           *
+           *  Possible options include:
+           *  <ul>
+           *  <li>csv - parse the table as comma-separated values
+           *  <li>tsv - parse the table as tab-separated values
+           *  <li>header - this table has a header (title) row
+           *  </ul>
+           */
+          _main.default.Table = function(rows) {
+            /**
+             * An array containing the names of the columns in the table, if the "header" the table is
+             * loaded with the "header" parameter.
+             * @property columns {String[]}
+             * @example
+             * <div class="norender">
+             * <code>
+             * // Given the CSV file "mammals.csv"
+             * // in the project's "assets" folder:
+             * //
+             * // id,species,name
+             * // 0,Capra hircus,Goat
+             * // 1,Panthera pardus,Leopard
+             * // 2,Equus zebra,Zebra
+             *
+             * let table;
+             *
+             * function preload() {
+             *   //my table is comma separated value "csv"
+             *   //and has a header specifying the columns labels
+             *   table = loadTable('assets/mammals.csv', 'csv', 'header');
+             * }
+             *
+             * function setup() {
+             *   //print the column names
+             *   for (let c = 0; c < table.getColumnCount(); c++) {
+             *     print('column ' + c + ' is named ' + table.columns[c]);
+             *   }
+             * }
+             * </code>
+             * </div>
+             */
+            this.columns = [];
+
+            /**
+             * An array containing the <a href="#/p5.Table">p5.TableRow</a> objects that make up the
+             * rows of the table. The same result as calling <a href="#/p5/getRows">getRows()</a>
+             * @property rows {p5.TableRow[]}
+             */
+            this.rows = [];
+          };
+
+          /**
+           *  Use <a href="#/p5/addRow">addRow()</a> to add a new row of data to a <a href="#/p5.Table">p5.Table</a> object. By default,
+           *  an empty row is created. Typically, you would store a reference to
+           *  the new row in a TableRow object (see newRow in the example above),
+           *  and then set individual values using <a href="#/p5/set">set()</a>.
+           *
+           *  If a <a href="#/p5.TableRow">p5.TableRow</a> object is included as a parameter, then that row is
+           *  duplicated and added to the table.
+           *
+           *  @method  addRow
+           *  @param   {p5.TableRow} [row] row to be added to the table
+           *  @return  {p5.TableRow} the row that was added
+           *
+           * @example
+           * <div class="norender">
+           * <code>
+           * // Given the CSV file "mammals.csv"
+           * // in the project's "assets" folder:
+           * //
+           * // id,species,name
+           * // 0,Capra hircus,Goat
+           * // 1,Panthera pardus,Leopard
+           * // 2,Equus zebra,Zebra
+           *
+           * let table;
+           *
+           * function preload() {
+           *   //my table is comma separated value "csv"
+           *   //and has a header specifying the columns labels
+           *   table = loadTable('assets/mammals.csv', 'csv', 'header');
+           * }
+           *
+           * function setup() {
+           *   //add a row
+           *   let newRow = table.addRow();
+           *   newRow.setString('id', table.getRowCount() - 1);
+           *   newRow.setString('species', 'Canis Lupus');
