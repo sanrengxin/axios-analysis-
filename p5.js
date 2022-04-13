@@ -73387,3 +73387,140 @@
            *
            *   newRow = table.addRow();
            *   newRow.setString('name', 'Mosquito');
+           *   newRow.setString('type', 'Insect');
+           *
+           *   newRow = table.addRow();
+           *   newRow.setString('name', 'Lizard');
+           *   newRow.setString('type', 'Reptile');
+           *
+           *   let rows = table.matchRows('R.*', 'type');
+           *   for (let i = 0; i < rows.length; i++) {
+           *     print(rows[i].getString('name') + ': ' + rows[i].getString('type'));
+           *   }
+           * }
+           * // Sketch prints:
+           * // Snake: Reptile
+           * // Lizard: Reptile
+           * </code>
+           * </div>
+           */
+          _main.default.Table.prototype.matchRows = function(regexp, column) {
+            var ret = [];
+            if (typeof column === 'number') {
+              for (var j = 0; j < this.rows.length; j++) {
+                if (this.rows[j].arr[column].match(regexp)) {
+                  ret.push(this.rows[j]);
+                }
+              }
+            } else {
+              for (var i = 0; i < this.rows.length; i++) {
+                if (this.rows[i].obj[column].match(regexp)) {
+                  ret.push(this.rows[i]);
+                }
+              }
+            }
+            return ret;
+          };
+
+          /**
+           *  Retrieves all values in the specified column, and returns them
+           *  as an array. The column may be specified by either its ID or title.
+           *
+           *  @method  getColumn
+           *  @param  {String|Number} column String or Number of the column to return
+           *  @return {Array}       Array of column values
+           *
+           * @example
+           * <div class="norender">
+           * <code>
+           * // Given the CSV file "mammals.csv"
+           * // in the project's "assets" folder:
+           * //
+           * // id,species,name
+           * // 0,Capra hircus,Goat
+           * // 1,Panthera pardus,Leopard
+           * // 2,Equus zebra,Zebra
+           *
+           * let table;
+           *
+           * function preload() {
+           *   //my table is comma separated value "csv"
+           *   //and has a header specifying the columns labels
+           *   table = loadTable('assets/mammals.csv', 'csv', 'header');
+           * }
+           *
+           * function setup() {
+           *   //getColumn returns an array that can be printed directly
+           *   print(table.getColumn('species'));
+           *   //outputs ["Capra hircus", "Panthera pardus", "Equus zebra"]
+           * }
+           * </code>
+           * </div>
+           *
+           *@alt
+           * no image displayed
+           */
+          _main.default.Table.prototype.getColumn = function(value) {
+            var ret = [];
+            if (typeof value === 'string') {
+              for (var i = 0; i < this.rows.length; i++) {
+                ret.push(this.rows[i].obj[value]);
+              }
+            } else {
+              for (var j = 0; j < this.rows.length; j++) {
+                ret.push(this.rows[j].arr[value]);
+              }
+            }
+            return ret;
+          };
+
+          /**
+           *  Removes all rows from a Table. While all rows are removed,
+           *  columns and column titles are maintained.
+           *
+           *  @method  clearRows
+           *
+           * @example
+           * <div class="norender">
+           * <code>
+           * // Given the CSV file "mammals.csv"
+           * // in the project's "assets" folder:
+           * //
+           * // id,species,name
+           * // 0,Capra hircus,Goat
+           * // 1,Panthera pardus,Leopard
+           * // 2,Equus zebra,Zebra
+           *
+           * let table;
+           *
+           * function preload() {
+           *   //my table is comma separated value "csv"
+           *   //and has a header specifying the columns labels
+           *   table = loadTable('assets/mammals.csv', 'csv', 'header');
+           * }
+           *
+           * function setup() {
+           *   table.clearRows();
+           *   print(table.getRowCount() + ' total rows in table');
+           *   print(table.getColumnCount() + ' total columns in table');
+           * }
+           * </code>
+           * </div>
+           *
+           *@alt
+           * no image displayed
+           */
+          _main.default.Table.prototype.clearRows = function() {
+            delete this.rows;
+            this.rows = [];
+          };
+
+          /**
+           *  Use <a href="#/p5/addColumn">addColumn()</a> to add a new column to a <a href="#/p5.Table">Table</a> object.
+           *  Typically, you will want to specify a title, so the column
+           *  may be easily referenced later by name. (If no title is
+           *  specified, the new column's title will be null.)
+           *
+           *  @method  addColumn
+           *  @param {String} [title] title of the given column
+           *
