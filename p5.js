@@ -73254,3 +73254,136 @@
            * // 2,Equus zebra,Zebra
            *
            * let table;
+           *
+           * function preload() {
+           *   //my table is comma separated value "csv"
+           *   //and has a header specifying the columns labels
+           *   table = loadTable('assets/mammals.csv', 'csv', 'header');
+           * }
+           *
+           * function setup() {
+           *   //add another goat
+           *   let newRow = table.addRow();
+           *   newRow.setString('id', table.getRowCount() - 1);
+           *   newRow.setString('species', 'Scape Goat');
+           *   newRow.setString('name', 'Goat');
+           *
+           *   //find the rows containing animals named Goat
+           *   let rows = table.findRows('Goat', 'name');
+           *   print(rows.length + ' Goats found');
+           * }
+           * </code>
+           * </div>
+           *
+           *@alt
+           * no image displayed
+           */
+          _main.default.Table.prototype.findRows = function(value, column) {
+            var ret = [];
+            if (typeof column === 'string') {
+              for (var i = 0; i < this.rows.length; i++) {
+                if (this.rows[i].obj[column] === value) {
+                  ret.push(this.rows[i]);
+                }
+              }
+            } else {
+              // try the Array
+              for (var j = 0; j < this.rows.length; j++) {
+                if (this.rows[j].arr[column] === value) {
+                  ret.push(this.rows[j]);
+                }
+              }
+            }
+            return ret;
+          };
+
+          /**
+           * Finds the first row in the Table that matches the regular
+           * expression provided, and returns a reference to that row.
+           * Even if multiple rows are possible matches, only the first
+           * matching row is returned. The column to search may be
+           * specified by either its ID or title.
+           *
+           * @method  matchRow
+           * @param  {String|RegExp} regexp The regular expression to match
+           * @param  {String|Integer} column The column ID (number) or
+           *                                  title (string)
+           * @return {p5.TableRow}        TableRow object
+           *
+           * @example
+           * <div class="norender">
+           * <code>
+           * // Given the CSV file "mammals.csv"
+           * // in the project's "assets" folder:
+           * //
+           * // id,species,name
+           * // 0,Capra hircus,Goat
+           * // 1,Panthera pardus,Leopard
+           * // 2,Equus zebra,Zebra
+           *
+           * let table;
+           *
+           * function preload() {
+           *   //my table is comma separated value "csv"
+           *   //and has a header specifying the columns labels
+           *   table = loadTable('assets/mammals.csv', 'csv', 'header');
+           * }
+           *
+           * function setup() {
+           *   //Search using specified regex on a given column, return TableRow object
+           *   let mammal = table.matchRow(new RegExp('ant'), 1);
+           *   print(mammal.getString(1));
+           *   //Output "Panthera pardus"
+           * }
+           * </code>
+           * </div>
+           */
+          _main.default.Table.prototype.matchRow = function(regexp, column) {
+            if (typeof column === 'number') {
+              for (var j = 0; j < this.rows.length; j++) {
+                if (this.rows[j].arr[column].match(regexp)) {
+                  return this.rows[j];
+                }
+              }
+            } else {
+              for (var i = 0; i < this.rows.length; i++) {
+                if (this.rows[i].obj[column].match(regexp)) {
+                  return this.rows[i];
+                }
+              }
+            }
+            return null;
+          };
+
+          /**
+           * Finds the rows in the Table that match the regular expression provided,
+           * and returns references to those rows. Returns an array, so for must be
+           * used to iterate through all the rows, as shown in the example. The
+           * column to search may be specified by either its ID or title.
+           *
+           * @method  matchRows
+           * @param  {String} regexp The regular expression to match
+           * @param  {String|Integer} [column] The column ID (number) or
+           *                                  title (string)
+           * @return {p5.TableRow[]}          An Array of TableRow objects
+           * @example
+           * <div class="norender">
+           * <code>
+           * let table;
+           *
+           * function setup() {
+           *   table = new p5.Table();
+           *
+           *   table.addColumn('name');
+           *   table.addColumn('type');
+           *
+           *   let newRow = table.addRow();
+           *   newRow.setString('name', 'Lion');
+           *   newRow.setString('type', 'Mammal');
+           *
+           *   newRow = table.addRow();
+           *   newRow.setString('name', 'Snake');
+           *   newRow.setString('type', 'Reptile');
+           *
+           *   newRow = table.addRow();
+           *   newRow.setString('name', 'Mosquito');
