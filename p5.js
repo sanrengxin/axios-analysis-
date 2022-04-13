@@ -73127,3 +73127,130 @@
            * <div class="norender">
            * <code>
            * // Given the CSV file "mammals.csv"
+           * // in the project's "assets" folder:
+           * //
+           * // id,species,name
+           * // 0,Capra hircus,Goat
+           * // 1,Panthera pardus,Leopard
+           * // 2,Equus zebra,Zebra
+           *
+           * let table;
+           *
+           * function preload() {
+           *   //my table is comma separated value "csv"
+           *   //and has a header specifying the columns labels
+           *   table = loadTable('assets/mammals.csv', 'csv', 'header');
+           * }
+           *
+           * function setup() {
+           *   let rows = table.getRows();
+           *
+           *   //warning: rows is an array of objects
+           *   for (let r = 0; r < rows.length; r++) {
+           *     rows[r].set('name', 'Unicorn');
+           *   }
+           *
+           *   //print the results
+           *   for (let r = 0; r < table.getRowCount(); r++)
+           *     for (let c = 0; c < table.getColumnCount(); c++)
+           *       print(table.getString(r, c));
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * no image displayed
+           */
+          _main.default.Table.prototype.getRows = function() {
+            return this.rows;
+          };
+
+          /**
+           *  Finds the first row in the Table that contains the value
+           *  provided, and returns a reference to that row. Even if
+           *  multiple rows are possible matches, only the first matching
+           *  row is returned. The column to search may be specified by
+           *  either its ID or title.
+           *
+           *  @method  findRow
+           *  @param  {String} value  The value to match
+           *  @param  {Integer|String} column ID number or title of the
+           *                                 column to search
+           *  @return {p5.TableRow}
+           *
+           * @example
+           * <div class="norender">
+           * <code>
+           * // Given the CSV file "mammals.csv"
+           * // in the project's "assets" folder:
+           * //
+           * // id,species,name
+           * // 0,Capra hircus,Goat
+           * // 1,Panthera pardus,Leopard
+           * // 2,Equus zebra,Zebra
+           *
+           * let table;
+           *
+           * function preload() {
+           *   //my table is comma separated value "csv"
+           *   //and has a header specifying the columns labels
+           *   table = loadTable('assets/mammals.csv', 'csv', 'header');
+           * }
+           *
+           * function setup() {
+           *   //find the animal named zebra
+           *   let row = table.findRow('Zebra', 'name');
+           *   //find the corresponding species
+           *   print(row.getString('species'));
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * no image displayed
+           */
+          _main.default.Table.prototype.findRow = function(value, column) {
+            // try the Object
+            if (typeof column === 'string') {
+              for (var i = 0; i < this.rows.length; i++) {
+                if (this.rows[i].obj[column] === value) {
+                  return this.rows[i];
+                }
+              }
+            } else {
+              // try the Array
+              for (var j = 0; j < this.rows.length; j++) {
+                if (this.rows[j].arr[column] === value) {
+                  return this.rows[j];
+                }
+              }
+            }
+            // otherwise...
+            return null;
+          };
+
+          /**
+           *  Finds the rows in the Table that contain the value
+           *  provided, and returns references to those rows. Returns an
+           *  Array, so for must be used to iterate through all the rows,
+           *  as shown in the example above. The column to search may be
+           *  specified by either its ID or title.
+           *
+           *  @method  findRows
+           *  @param  {String} value  The value to match
+           *  @param  {Integer|String} column ID number or title of the
+           *                                 column to search
+           *  @return {p5.TableRow[]}        An Array of TableRow objects
+           *
+           * @example
+           * <div class="norender">
+           * <code>
+           * // Given the CSV file "mammals.csv"
+           * // in the project's "assets" folder:
+           * //
+           * // id,species,name
+           * // 0,Capra hircus,Goat
+           * // 1,Panthera pardus,Leopard
+           * // 2,Equus zebra,Zebra
+           *
+           * let table;
