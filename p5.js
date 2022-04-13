@@ -73524,3 +73524,145 @@
            *  @method  addColumn
            *  @param {String} [title] title of the given column
            *
+           * @example
+           * <div class="norender">
+           * <code>
+           * // Given the CSV file "mammals.csv"
+           * // in the project's "assets" folder:
+           * //
+           * // id,species,name
+           * // 0,Capra hircus,Goat
+           * // 1,Panthera pardus,Leopard
+           * // 2,Equus zebra,Zebra
+           *
+           * let table;
+           *
+           * function preload() {
+           *   //my table is comma separated value "csv"
+           *   //and has a header specifying the columns labels
+           *   table = loadTable('assets/mammals.csv', 'csv', 'header');
+           * }
+           *
+           * function setup() {
+           *   table.addColumn('carnivore');
+           *   table.set(0, 'carnivore', 'no');
+           *   table.set(1, 'carnivore', 'yes');
+           *   table.set(2, 'carnivore', 'no');
+           *
+           *   //print the results
+           *   for (let r = 0; r < table.getRowCount(); r++)
+           *     for (let c = 0; c < table.getColumnCount(); c++)
+           *       print(table.getString(r, c));
+           * }
+           * </code>
+           * </div>
+           *
+           *@alt
+           * no image displayed
+           */
+          _main.default.Table.prototype.addColumn = function(title) {
+            var t = title || null;
+            this.columns.push(t);
+          };
+
+          /**
+           *  Returns the total number of columns in a Table.
+           *
+           *  @method  getColumnCount
+           *  @return {Integer} Number of columns in this table
+           * @example
+           * <div>
+           * <code>
+           * // given the cvs file "blobs.csv" in /assets directory
+           * // ID, Name, Flavor, Shape, Color
+           * // Blob1, Blobby, Sweet, Blob, Pink
+           * // Blob2, Saddy, Savory, Blob, Blue
+           *
+           * let table;
+           *
+           * function preload() {
+           *   table = loadTable('assets/blobs.csv');
+           * }
+           *
+           * function setup() {
+           *   createCanvas(200, 100);
+           *   textAlign(CENTER);
+           *   background(255);
+           * }
+           *
+           * function draw() {
+           *   let numOfColumn = table.getColumnCount();
+           *   text('There are ' + numOfColumn + ' columns in the table.', 100, 50);
+           * }
+           * </code>
+           * </div>
+           */
+          _main.default.Table.prototype.getColumnCount = function() {
+            return this.columns.length;
+          };
+
+          /**
+           *  Returns the total number of rows in a Table.
+           *
+           *  @method  getRowCount
+           *  @return {Integer} Number of rows in this table
+           * @example
+           * <div>
+           * <code>
+           * // given the cvs file "blobs.csv" in /assets directory
+           * //
+           * // ID, Name, Flavor, Shape, Color
+           * // Blob1, Blobby, Sweet, Blob, Pink
+           * // Blob2, Saddy, Savory, Blob, Blue
+           *
+           * let table;
+           *
+           * function preload() {
+           *   table = loadTable('assets/blobs.csv');
+           * }
+           *
+           * function setup() {
+           *   createCanvas(200, 100);
+           *   textAlign(CENTER);
+           *   background(255);
+           * }
+           *
+           * function draw() {
+           *   text('There are ' + table.getRowCount() + ' rows in the table.', 100, 50);
+           * }
+           * </code>
+           * </div>
+           */
+          _main.default.Table.prototype.getRowCount = function() {
+            return this.rows.length;
+          };
+
+          /**
+           *  Removes any of the specified characters (or "tokens").
+           *
+           *  If no column is specified, then the values in all columns and
+           *  rows are processed. A specific column may be referenced by
+           *  either its ID or title.
+           *
+           *  @method  removeTokens
+           *  @param  {String} chars  String listing characters to be removed
+           *  @param  {String|Integer} [column] Column ID (number)
+           *                                   or name (string)
+           *
+           * @example
+           * <div class="norender"><code>
+           * function setup() {
+           *   let table = new p5.Table();
+           *
+           *   table.addColumn('name');
+           *   table.addColumn('type');
+           *
+           *   let newRow = table.addRow();
+           *   newRow.setString('name', '   $Lion  ,');
+           *   newRow.setString('type', ',,,Mammal');
+           *
+           *   newRow = table.addRow();
+           *   newRow.setString('name', '$Snake  ');
+           *   newRow.setString('type', ',,,Reptile');
+           *
+           *   table.removeTokens(',$ ');
