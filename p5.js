@@ -73666,3 +73666,135 @@
            *   newRow.setString('type', ',,,Reptile');
            *
            *   table.removeTokens(',$ ');
+           *   print(table.getArray());
+           * }
+           *
+           * // prints:
+           * //  0  "Lion"   "Mamal"
+           * //  1  "Snake"  "Reptile"
+           * </code></div>
+           */
+          _main.default.Table.prototype.removeTokens = function(chars, column) {
+            var escape = function escape(s) {
+              return s.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
+            };
+            var charArray = [];
+            for (var i = 0; i < chars.length; i++) {
+              charArray.push(escape(chars.charAt(i)));
+            }
+            var regex = new RegExp(charArray.join('|'), 'g');
+
+            if (typeof column === 'undefined') {
+              for (var c = 0; c < this.columns.length; c++) {
+                for (var d = 0; d < this.rows.length; d++) {
+                  var s = this.rows[d].arr[c];
+                  s = s.replace(regex, '');
+                  this.rows[d].arr[c] = s;
+                  this.rows[d].obj[this.columns[c]] = s;
+                }
+              }
+            } else if (typeof column === 'string') {
+              for (var j = 0; j < this.rows.length; j++) {
+                var val = this.rows[j].obj[column];
+                val = val.replace(regex, '');
+                this.rows[j].obj[column] = val;
+                var pos = this.columns.indexOf(column);
+                this.rows[j].arr[pos] = val;
+              }
+            } else {
+              for (var k = 0; k < this.rows.length; k++) {
+                var str = this.rows[k].arr[column];
+                str = str.replace(regex, '');
+                this.rows[k].arr[column] = str;
+                this.rows[k].obj[this.columns[column]] = str;
+              }
+            }
+          };
+
+          /**
+           *  Trims leading and trailing whitespace, such as spaces and tabs,
+           *  from String table values. If no column is specified, then the
+           *  values in all columns and rows are trimmed. A specific column
+           *  may be referenced by either its ID or title.
+           *
+           *  @method  trim
+           *  @param  {String|Integer} [column] Column ID (number)
+           *                                   or name (string)
+           * @example
+           * <div class="norender"><code>
+           * function setup() {
+           *   let table = new p5.Table();
+           *
+           *   table.addColumn('name');
+           *   table.addColumn('type');
+           *
+           *   let newRow = table.addRow();
+           *   newRow.setString('name', '   Lion  ,');
+           *   newRow.setString('type', ' Mammal  ');
+           *
+           *   newRow = table.addRow();
+           *   newRow.setString('name', '  Snake  ');
+           *   newRow.setString('type', '  Reptile  ');
+           *
+           *   table.trim();
+           *   print(table.getArray());
+           * }
+           *
+           * // prints:
+           * //  0  "Lion"   "Mamal"
+           * //  1  "Snake"  "Reptile"
+           * </code></div>
+           */
+          _main.default.Table.prototype.trim = function(column) {
+            var regex = new RegExp(' ', 'g');
+
+            if (typeof column === 'undefined') {
+              for (var c = 0; c < this.columns.length; c++) {
+                for (var d = 0; d < this.rows.length; d++) {
+                  var s = this.rows[d].arr[c];
+                  s = s.replace(regex, '');
+                  this.rows[d].arr[c] = s;
+                  this.rows[d].obj[this.columns[c]] = s;
+                }
+              }
+            } else if (typeof column === 'string') {
+              for (var j = 0; j < this.rows.length; j++) {
+                var val = this.rows[j].obj[column];
+                val = val.replace(regex, '');
+                this.rows[j].obj[column] = val;
+                var pos = this.columns.indexOf(column);
+                this.rows[j].arr[pos] = val;
+              }
+            } else {
+              for (var k = 0; k < this.rows.length; k++) {
+                var str = this.rows[k].arr[column];
+                str = str.replace(regex, '');
+                this.rows[k].arr[column] = str;
+                this.rows[k].obj[this.columns[column]] = str;
+              }
+            }
+          };
+
+          /**
+           *  Use <a href="#/p5/removeColumn">removeColumn()</a> to remove an existing column from a Table
+           *  object. The column to be removed may be identified by either
+           *  its title (a String) or its index value (an int).
+           *  removeColumn(0) would remove the first column, removeColumn(1)
+           *  would remove the second column, and so on.
+           *
+           *  @method  removeColumn
+           *  @param  {String|Integer} column columnName (string) or ID (number)
+           *
+           * @example
+           * <div class="norender">
+           * <code>
+           * // Given the CSV file "mammals.csv"
+           * // in the project's "assets" folder:
+           * //
+           * // id,species,name
+           * // 0,Capra hircus,Goat
+           * // 1,Panthera pardus,Leopard
+           * // 2,Equus zebra,Zebra
+           *
+           * let table;
+           *
