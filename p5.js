@@ -74053,3 +74053,147 @@
            *   //my table is comma separated value "csv"
            *   //and has a header specifying the columns labels
            *   table = loadTable('assets/mammals.csv', 'csv', 'header');
+           * }
+           *
+           * function setup() {
+           *   print(table.getNum(1, 0) + 100);
+           *   //id 1 + 100 = 101
+           * }
+           * </code>
+           * </div>
+           *
+           *@alt
+           * no image displayed
+           */
+          _main.default.Table.prototype.getNum = function(row, column) {
+            return this.rows[row].getNum(column);
+          };
+
+          /**
+           * Retrieves a String value from the Table's specified row and column.
+           * The row is specified by its ID, while the column may be specified by
+           * either its ID or title.
+           *
+           * @method  getString
+           * @param {Integer} row row ID
+           * @param  {String|Integer} column columnName (string) or
+           *                                   ID (number)
+           * @return {String}
+           *
+           * @example
+           * <div class="norender">
+           * <code>
+           * // Given the CSV file "mammals.csv"
+           * // in the project's "assets" folder:
+           * //
+           * // id,species,name
+           * // 0,Capra hircus,Goat
+           * // 1,Panthera pardus,Leopard
+           * // 2,Equus zebra,Zebra
+           *
+           * let table;
+           *
+           * function preload() {
+           *   // table is comma separated value "CSV"
+           *   // and has specifiying header for column labels
+           *   table = loadTable('assets/mammals.csv', 'csv', 'header');
+           * }
+           *
+           * function setup() {
+           *   print(table.getString(0, 0)); // 0
+           *   print(table.getString(0, 1)); // Capra hircus
+           *   print(table.getString(0, 2)); // Goat
+           *   print(table.getString(1, 0)); // 1
+           *   print(table.getString(1, 1)); // Panthera pardus
+           *   print(table.getString(1, 2)); // Leopard
+           *   print(table.getString(2, 0)); // 2
+           *   print(table.getString(2, 1)); // Equus zebra
+           *   print(table.getString(2, 2)); // Zebra
+           * }
+           * </code>
+           * </div>
+           *
+           *@alt
+           * no image displayed
+           */
+
+          _main.default.Table.prototype.getString = function(row, column) {
+            return this.rows[row].getString(column);
+          };
+
+          /**
+           * Retrieves all table data and returns as an object. If a column name is
+           * passed in, each row object will be stored with that attribute as its
+           * title.
+           *
+           * @method  getObject
+           * @param {String} [headerColumn] Name of the column which should be used to
+           *                              title each row object (optional)
+           * @return {Object}
+           *
+           * @example
+           * <div class="norender">
+           * <code>
+           * // Given the CSV file "mammals.csv"
+           * // in the project's "assets" folder:
+           * //
+           * // id,species,name
+           * // 0,Capra hircus,Goat
+           * // 1,Panthera pardus,Leopard
+           * // 2,Equus zebra,Zebra
+           *
+           * let table;
+           *
+           * function preload() {
+           *   //my table is comma separated value "csv"
+           *   //and has a header specifying the columns labels
+           *   table = loadTable('assets/mammals.csv', 'csv', 'header');
+           * }
+           *
+           * function setup() {
+           *   let tableObject = table.getObject();
+           *
+           *   print(tableObject);
+           *   //outputs an object
+           * }
+           * </code>
+           * </div>
+           *
+           *@alt
+           * no image displayed
+           */
+          _main.default.Table.prototype.getObject = function(headerColumn) {
+            var tableObject = {};
+            var obj, cPos, index;
+
+            for (var i = 0; i < this.rows.length; i++) {
+              obj = this.rows[i].obj;
+
+              if (typeof headerColumn === 'string') {
+                cPos = this.columns.indexOf(headerColumn); // index of columnID
+                if (cPos >= 0) {
+                  index = obj[headerColumn];
+                  tableObject[index] = obj;
+                } else {
+                  throw new Error(
+                    'This table has no column named "'.concat(headerColumn, '"')
+                  );
+                }
+              } else {
+                tableObject[i] = this.rows[i].obj;
+              }
+            }
+            return tableObject;
+          };
+
+          /**
+           * Retrieves all table data and returns it as a multidimensional array.
+           *
+           * @method  getArray
+           * @return {Array}
+           *
+           * @example
+           * <div class="norender">
+           * <code>
+           * // Given the CSV file "mammals.csv"
+           * // in the project's "assets" folder
