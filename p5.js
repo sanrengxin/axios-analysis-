@@ -73924,3 +73924,132 @@
            *   print(table.getColumn(0));
            *   //["0", 1, "2"]
            * }
+           * </code>
+           * </div>
+           *
+           *@alt
+           * no image displayed
+           */
+          _main.default.Table.prototype.setNum = function(row, column, value) {
+            this.rows[row].setNum(column, value);
+          };
+
+          /**
+           * Stores a String value in the Table's specified row and column.
+           * The row is specified by its ID, while the column may be specified
+           * by either its ID or title.
+           *
+           * @method  setString
+           * @param {Integer} row row ID
+           * @param {String|Integer} column column ID (Number)
+           *                               or title (String)
+           * @param {String} value  value to assign
+           * @example
+           * <div class="norender"><code>
+           * // Given the CSV file "mammals.csv" in the project's "assets" folder:
+           * //
+           * // id,species,name
+           * // 0,Capra hircus,Goat
+           * // 1,Panthera pardus,Leopard
+           * // 2,Equus zebra,Zebra
+           *
+           * let table;
+           *
+           * function preload() {
+           *   //my table is comma separated value "csv"
+           *   //and has a header specifying the columns labels
+           *   table = loadTable('assets/mammals.csv', 'csv', 'header');
+           * }
+           *
+           * function setup() {
+           *   //add a row
+           *   let newRow = table.addRow();
+           *   newRow.setString('id', table.getRowCount() - 1);
+           *   newRow.setString('species', 'Canis Lupus');
+           *   newRow.setString('name', 'Wolf');
+           *
+           *   print(table.getArray());
+           * }
+           * </code></div>
+           *
+           * @alt
+           * no image displayed
+           */
+          _main.default.Table.prototype.setString = function(row, column, value) {
+            this.rows[row].setString(column, value);
+          };
+
+          /**
+           * Retrieves a value from the Table's specified row and column.
+           * The row is specified by its ID, while the column may be specified by
+           * either its ID or title.
+           *
+           * @method  get
+           * @param {Integer} row row ID
+           * @param  {String|Integer} column columnName (string) or
+           *                                   ID (number)
+           * @return {String|Number}
+           *
+           * @example
+           * <div class="norender">
+           * <code>
+           * // Given the CSV file "mammals.csv"
+           * // in the project's "assets" folder:
+           * //
+           * // id,species,name
+           * // 0,Capra hircus,Goat
+           * // 1,Panthera pardus,Leopard
+           * // 2,Equus zebra,Zebra
+           *
+           * let table;
+           *
+           * function preload() {
+           *   //my table is comma separated value "csv"
+           *   //and has a header specifying the columns labels
+           *   table = loadTable('assets/mammals.csv', 'csv', 'header');
+           * }
+           *
+           * function setup() {
+           *   print(table.get(0, 1));
+           *   //Capra hircus
+           *   print(table.get(0, 'species'));
+           *   //Capra hircus
+           * }
+           * </code>
+           * </div>
+           *
+           *@alt
+           * no image displayed
+           */
+          _main.default.Table.prototype.get = function(row, column) {
+            return this.rows[row].get(column);
+          };
+
+          /**
+           * Retrieves a Float value from the Table's specified row and column.
+           * The row is specified by its ID, while the column may be specified by
+           * either its ID or title.
+           *
+           * @method  getNum
+           * @param {Integer} row row ID
+           * @param  {String|Integer} column columnName (string) or
+           *                                   ID (number)
+           * @return {Number}
+           *
+           * @example
+           * <div class="norender">
+           * <code>
+           * // Given the CSV file "mammals.csv"
+           * // in the project's "assets" folder:
+           * //
+           * // id,species,name
+           * // 0,Capra hircus,Goat
+           * // 1,Panthera pardus,Leopard
+           * // 2,Equus zebra,Zebra
+           *
+           * let table;
+           *
+           * function preload() {
+           *   //my table is comma separated value "csv"
+           *   //and has a header specifying the columns labels
+           *   table = loadTable('assets/mammals.csv', 'csv', 'header');
