@@ -74304,3 +74304,130 @@
            *   //and has a header specifying the columns labels
            *   table = loadTable('assets/mammals.csv', 'csv', 'header');
            * }
+           *
+           * function setup() {
+           *   let rows = table.getRows();
+           *   for (let r = 0; r < rows.length; r++) {
+           *     rows[r].set('name', 'Unicorn');
+           *   }
+           *
+           *   //print the results
+           *   print(table.getArray());
+           * }
+           * </code></div>
+           *
+           * @alt
+           * no image displayed
+           */
+          _main.default.TableRow.prototype.set = function(column, value) {
+            // if typeof column is string, use .obj
+            if (typeof column === 'string') {
+              var cPos = this.table.columns.indexOf(column); // index of columnID
+              if (cPos >= 0) {
+                this.obj[column] = value;
+                this.arr[cPos] = value;
+              } else {
+                throw new Error('This table has no column named "'.concat(column, '"'));
+              }
+            } else {
+              // if typeof column is number, use .arr
+              if (column < this.table.columns.length) {
+                this.arr[column] = value;
+                var cTitle = this.table.columns[column];
+                this.obj[cTitle] = value;
+              } else {
+                throw new Error(
+                  'Column #'.concat(column, ' is out of the range of this table')
+                );
+              }
+            }
+          };
+
+          /**
+           *  Stores a Float value in the TableRow's specified column.
+           *  The column may be specified by either its ID or title.
+           *
+           *  @method  setNum
+           *  @param {String|Integer} column Column ID (Number)
+           *                                or Title (String)
+           *  @param {Number|String} value  The value to be stored
+           *                                as a Float
+           * @example
+           * <div class="norender"><code>
+           * // Given the CSV file "mammals.csv" in the project's "assets" folder:
+           * //
+           * // id,species,name
+           * // 0,Capra hircus,Goat
+           * // 1,Panthera pardus,Leopard
+           * // 2,Equus zebra,Zebra
+           *
+           * let table;
+           *
+           * function preload() {
+           *   //my table is comma separated value "csv"
+           *   //and has a header specifying the columns labels
+           *   table = loadTable('assets/mammals.csv', 'csv', 'header');
+           * }
+           *
+           * function setup() {
+           *   let rows = table.getRows();
+           *   for (let r = 0; r < rows.length; r++) {
+           *     rows[r].setNum('id', r + 10);
+           *   }
+           *
+           *   print(table.getArray());
+           * }
+           * </code></div>
+           *
+           * @alt
+           * no image displayed
+           */
+          _main.default.TableRow.prototype.setNum = function(column, value) {
+            var floatVal = parseFloat(value);
+            this.set(column, floatVal);
+          };
+
+          /**
+           *  Stores a String value in the TableRow's specified column.
+           *  The column may be specified by either its ID or title.
+           *
+           *  @method  setString
+           *  @param {String|Integer} column Column ID (Number)
+           *                                or Title (String)
+           *  @param {String|Number|Boolean|Object} value  The value to be stored
+           *                                as a String
+           * @example
+           * <div class="norender"><code>
+           * // Given the CSV file "mammals.csv" in the project's "assets" folder:
+           * //
+           * // id,species,name
+           * // 0,Capra hircus,Goat
+           * // 1,Panthera pardus,Leopard
+           * // 2,Equus zebra,Zebra
+           *
+           * let table;
+           *
+           * function preload() {
+           *   //my table is comma separated value "csv"
+           *   //and has a header specifying the columns labels
+           *   table = loadTable('assets/mammals.csv', 'csv', 'header');
+           * }
+           *
+           * function setup() {
+           *   let rows = table.getRows();
+           *   for (let r = 0; r < rows.length; r++) {
+           *     let name = rows[r].getString('name');
+           *     rows[r].setString('name', 'A ' + name + ' named George');
+           *   }
+           *
+           *   print(table.getArray());
+           * }
+           * </code></div>
+           *
+           * @alt
+           * no image displayed
+           */
+          _main.default.TableRow.prototype.setString = function(column, value) {
+            var stringVal = value.toString();
+            this.set(column, stringVal);
+          };
