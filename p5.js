@@ -74197,3 +74197,110 @@
            * <code>
            * // Given the CSV file "mammals.csv"
            * // in the project's "assets" folder
+           * //
+           * // id,species,name
+           * // 0,Capra hircus,Goat
+           * // 1,Panthera pardus,Leoperd
+           * // 2,Equus zebra,Zebra
+           *
+           * let table;
+           *
+           * function preload() {
+           *   // table is comma separated value "CSV"
+           *   // and has specifiying header for column labels
+           *   table = loadTable('assets/mammals.csv', 'csv', 'header');
+           * }
+           *
+           * function setup() {
+           *   let tableArray = table.getArray();
+           *   for (let i = 0; i < tableArray.length; i++) {
+           *     print(tableArray[i]);
+           *   }
+           * }
+           * </code>
+           * </div>
+           *
+           *@alt
+           * no image displayed
+           */
+          _main.default.Table.prototype.getArray = function() {
+            var tableArray = [];
+            for (var i = 0; i < this.rows.length; i++) {
+              tableArray.push(this.rows[i].arr);
+            }
+            return tableArray;
+          };
+          var _default = _main.default;
+          exports.default = _default;
+        },
+        { '../core/main': 59 }
+      ],
+      87: [
+        function(_dereq_, module, exports) {
+          'use strict';
+          Object.defineProperty(exports, '__esModule', { value: true });
+          exports.default = void 0;
+
+          var _main = _interopRequireDefault(_dereq_('../core/main'));
+          function _interopRequireDefault(obj) {
+            return obj && obj.__esModule ? obj : { default: obj };
+          }
+          /**
+           * @module IO
+           * @submodule Table
+           * @requires core
+           */ /**
+           *  A TableRow object represents a single row of data values,
+           *  stored in columns, from a table.
+           *
+           *  A Table Row contains both an ordered array, and an unordered
+           *  JSON object.
+           *
+           *  @class p5.TableRow
+           *  @constructor
+           *  @param {String} [str]       optional: populate the row with a
+           *                              string of values, separated by the
+           *                              separator
+           *  @param {String} [separator] comma separated values (csv) by default
+           */ _main.default.TableRow = function(str, separator) {
+            var arr = [];
+            var obj = {};
+            if (str) {
+              separator = separator || ',';
+              arr = str.split(separator);
+            }
+            for (var i = 0; i < arr.length; i++) {
+              var key = i;
+              var val = arr[i];
+              obj[key] = val;
+            }
+            this.arr = arr;
+            this.obj = obj;
+            this.table = null;
+          };
+
+          /**
+           *  Stores a value in the TableRow's specified column.
+           *  The column may be specified by either its ID or title.
+           *
+           *  @method  set
+           *  @param {String|Integer} column Column ID (Number)
+           *                                or Title (String)
+           *  @param {String|Number} value  The value to be stored
+           *
+           * @example
+           * <div class="norender"><code>
+           * // Given the CSV file "mammals.csv" in the project's "assets" folder:
+           * //
+           * // id,species,name
+           * // 0,Capra hircus,Goat
+           * // 1,Panthera pardus,Leopard
+           * // 2,Equus zebra,Zebra
+           *
+           * let table;
+           *
+           * function preload() {
+           *   //my table is comma separated value "csv"
+           *   //and has a header specifying the columns labels
+           *   table = loadTable('assets/mammals.csv', 'csv', 'header');
+           * }
