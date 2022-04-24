@@ -74726,3 +74726,137 @@
            * // mammals
            * </code></div>
            */
+          _main.default.XML.prototype.getName = function() {
+            return this.DOM.tagName;
+          };
+
+          /**
+           * Sets the element's name, which is specified as a String.
+           *
+           * @method setName
+           * @param {String} the new name of the node
+           * @example&lt;animal
+           * <div class='norender'><code>
+           * // The following short XML file called "mammals.xml" is parsed
+           * // in the code below.
+           * //
+           * // <?xml version="1.0"?>
+           * // &lt;mammals&gt;
+           * //   &lt;animal id="0" species="Capra hircus">Goat&lt;/animal&gt;
+           * //   &lt;animal id="1" species="Panthera pardus">Leopard&lt;/animal&gt;
+           * //   &lt;animal id="2" species="Equus zebra">Zebra&lt;/animal&gt;
+           * // &lt;/mammals&gt;
+           *
+           * let xml;
+           *
+           * function preload() {
+           *   xml = loadXML('assets/mammals.xml');
+           * }
+           *
+           * function setup() {
+           *   print(xml.getName());
+           *   xml.setName('fish');
+           *   print(xml.getName());
+           * }
+           *
+           * // Sketch prints:
+           * // mammals
+           * // fish
+           * </code></div>
+           */
+          _main.default.XML.prototype.setName = function(name) {
+            var content = this.DOM.innerHTML;
+            var attributes = this.DOM.attributes;
+            var xmlDoc = document.implementation.createDocument(null, 'default');
+            var newDOM = xmlDoc.createElement(name);
+            newDOM.innerHTML = content;
+            for (var i = 0; i < attributes.length; i++) {
+              newDOM.setAttribute(attributes[i].nodeName, attributes.nodeValue);
+            }
+            this.DOM = newDOM;
+          };
+
+          /**
+           * Checks whether or not the element has any children, and returns the result
+           * as a boolean.
+           *
+           * @method hasChildren
+           * @return {boolean}
+           * @example&lt;animal
+           * <div class='norender'><code>
+           * // The following short XML file called "mammals.xml" is parsed
+           * // in the code below.
+           * //
+           * // <?xml version="1.0"?>
+           * // &lt;mammals&gt;
+           * //   &lt;animal id="0" species="Capra hircus">Goat&lt;/animal&gt;
+           * //   &lt;animal id="1" species="Panthera pardus">Leopard&lt;/animal&gt;
+           * //   &lt;animal id="2" species="Equus zebra">Zebra&lt;/animal&gt;
+           * // &lt;/mammals&gt;
+           *
+           * let xml;
+           *
+           * function preload() {
+           *   xml = loadXML('assets/mammals.xml');
+           * }
+           *
+           * function setup() {
+           *   print(xml.hasChildren());
+           * }
+           *
+           * // Sketch prints:
+           * // true
+           * </code></div>
+           */
+          _main.default.XML.prototype.hasChildren = function() {
+            return this.DOM.children.length > 0;
+          };
+
+          /**
+           * Get the names of all of the element's children, and returns the names as an
+           * array of Strings. This is the same as looping through and calling <a href="#/p5.XML/getName">getName()</a>
+           * on each child element individually.
+           *
+           * @method listChildren
+           * @return {String[]} names of the children of the element
+           * @example&lt;animal
+           * <div class='norender'><code>
+           * // The following short XML file called "mammals.xml" is parsed
+           * // in the code below.
+           * //
+           * // <?xml version="1.0"?>
+           * // &lt;mammals&gt;
+           * //   &lt;animal id="0" species="Capra hircus">Goat&lt;/animal&gt;
+           * //   &lt;animal id="1" species="Panthera pardus">Leopard&lt;/animal&gt;
+           * //   &lt;animal id="2" species="Equus zebra">Zebra&lt;/animal&gt;
+           * // &lt;/mammals&gt;
+           *
+           * let xml;
+           *
+           * function preload() {
+           *   xml = loadXML('assets/mammals.xml');
+           * }
+           *
+           * function setup() {
+           *   print(xml.listChildren());
+           * }
+           *
+           * // Sketch prints:
+           * // ["animal", "animal", "animal"]
+           * </code></div>
+           */
+          _main.default.XML.prototype.listChildren = function() {
+            var arr = [];
+            for (var i = 0; i < this.DOM.childNodes.length; i++) {
+              arr.push(this.DOM.childNodes[i].nodeName);
+            }
+            return arr;
+          };
+
+          /**
+           * Returns all of the element's children as an array of <a href="#/p5.XML">p5.XML</a> objects. When
+           * the name parameter is specified, then it will return all children that match
+           * that name.
+           *
+           * @method getChildren
+           * @param {String} [name] element name
