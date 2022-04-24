@@ -74575,3 +74575,154 @@
            *   print('longest: ' + longest);
            * }
            * </code></div>
+           *
+           * @alt
+           * no image displayed
+           */
+          _main.default.TableRow.prototype.getString = function(column) {
+            if (typeof column === 'string') {
+              return this.obj[column].toString();
+            } else {
+              return this.arr[column].toString();
+            }
+          };
+          var _default = _main.default;
+          exports.default = _default;
+        },
+        { '../core/main': 59 }
+      ],
+      88: [
+        function(_dereq_, module, exports) {
+          'use strict';
+          Object.defineProperty(exports, '__esModule', { value: true });
+          exports.default = void 0;
+
+          var _main = _interopRequireDefault(_dereq_('../core/main'));
+          function _interopRequireDefault(obj) {
+            return obj && obj.__esModule ? obj : { default: obj };
+          }
+          /**
+           * @module IO
+           * @submodule Input
+           * @requires core
+           */ /**
+           * XML is a representation of an XML object, able to parse XML code. Use
+           * <a href="#/p5/loadXML">loadXML()</a> to load external XML files and create XML objects.
+           *
+           * @class p5.XML
+           * @constructor
+           * @example
+           * <div class='norender'><code>
+           * // The following short XML file called "mammals.xml" is parsed
+           * // in the code below.
+           * //
+           * // <?xml version="1.0"?>
+           * // &lt;mammals&gt;
+           * //   &lt;animal id="0" species="Capra hircus">Goat&lt;/animal&gt;
+           * //   &lt;animal id="1" species="Panthera pardus">Leopard&lt;/animal&gt;
+           * //   &lt;animal id="2" species="Equus zebra">Zebra&lt;/animal&gt;
+           * // &lt;/mammals&gt;
+           *
+           * let xml;
+           *
+           * function preload() {
+           *   xml = loadXML('assets/mammals.xml');
+           * }
+           *
+           * function setup() {
+           *   let children = xml.getChildren('animal');
+           *
+           *   for (let i = 0; i < children.length; i++) {
+           *     let id = children[i].getNum('id');
+           *     let coloring = children[i].getString('species');
+           *     let name = children[i].getContent();
+           *     print(id + ', ' + coloring + ', ' + name);
+           *   }
+           * }
+           *
+           * // Sketch prints:
+           * // 0, Capra hircus, Goat
+           * // 1, Panthera pardus, Leopard
+           * // 2, Equus zebra, Zebra
+           * </code></div>
+           *
+           * @alt
+           * no image displayed
+           */ _main.default.XML = function(DOM) {
+            if (!DOM) {
+              var xmlDoc = document.implementation.createDocument(null, 'doc');
+              this.DOM = xmlDoc.createElement('root');
+            } else {
+              this.DOM = DOM;
+            }
+          };
+
+          /**
+           * Gets a copy of the element's parent. Returns the parent as another
+           * <a href="#/p5.XML">p5.XML</a> object.
+           *
+           * @method getParent
+           * @return {p5.XML}   element parent
+           * @example
+           * <div class='norender'><code>
+           * // The following short XML file called "mammals.xml" is parsed
+           * // in the code below.
+           * //
+           * // <?xml version="1.0"?>
+           * // &lt;mammals&gt;
+           * //   &lt;animal id="0" species="Capra hircus">Goat&lt;/animal&gt;
+           * //   &lt;animal id="1" species="Panthera pardus">Leopard&lt;/animal&gt;
+           * //   &lt;animal id="2" species="Equus zebra">Zebra&lt;/animal&gt;
+           * // &lt;/mammals&gt;
+           *
+           * let xml;
+           *
+           * function preload() {
+           *   xml = loadXML('assets/mammals.xml');
+           * }
+           *
+           * function setup() {
+           *   let children = xml.getChildren('animal');
+           *   let parent = children[1].getParent();
+           *   print(parent.getName());
+           * }
+           *
+           * // Sketch prints:
+           * // mammals
+           * </code></div>
+           */
+          _main.default.XML.prototype.getParent = function() {
+            return new _main.default.XML(this.DOM.parentElement);
+          };
+
+          /**
+           *  Gets the element's full name, which is returned as a String.
+           *
+           * @method getName
+           * @return {String} the name of the node
+           * @example&lt;animal
+           * <div class='norender'><code>
+           * // The following short XML file called "mammals.xml" is parsed
+           * // in the code below.
+           * //
+           * // <?xml version="1.0"?>
+           * // &lt;mammals&gt;
+           * //   &lt;animal id="0" species="Capra hircus">Goat&lt;/animal&gt;
+           * //   &lt;animal id="1" species="Panthera pardus">Leopard&lt;/animal&gt;
+           * //   &lt;animal id="2" species="Equus zebra">Zebra&lt;/animal&gt;
+           * // &lt;/mammals&gt;
+           *
+           * let xml;
+           *
+           * function preload() {
+           *   xml = loadXML('assets/mammals.xml');
+           * }
+           *
+           * function setup() {
+           *   print(xml.getName());
+           * }
+           *
+           * // Sketch prints:
+           * // mammals
+           * </code></div>
+           */
