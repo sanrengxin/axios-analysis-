@@ -74860,3 +74860,141 @@
            *
            * @method getChildren
            * @param {String} [name] element name
+           * @return {p5.XML[]} children of the element
+           * @example&lt;animal
+           * <div class='norender'><code>
+           * // The following short XML file called "mammals.xml" is parsed
+           * // in the code below.
+           * //
+           * // <?xml version="1.0"?>
+           * // &lt;mammals&gt;
+           * //   &lt;animal id="0" species="Capra hircus">Goat&lt;/animal&gt;
+           * //   &lt;animal id="1" species="Panthera pardus">Leopard&lt;/animal&gt;
+           * //   &lt;animal id="2" species="Equus zebra">Zebra&lt;/animal&gt;
+           * // &lt;/mammals&gt;
+           *
+           * let xml;
+           *
+           * function preload() {
+           *   xml = loadXML('assets/mammals.xml');
+           * }
+           *
+           * function setup() {
+           *   let animals = xml.getChildren('animal');
+           *
+           *   for (let i = 0; i < animals.length; i++) {
+           *     print(animals[i].getContent());
+           *   }
+           * }
+           *
+           * // Sketch prints:
+           * // "Goat"
+           * // "Leopard"
+           * // "Zebra"
+           * </code></div>
+           */
+          _main.default.XML.prototype.getChildren = function(param) {
+            if (param) {
+              return elementsToP5XML(this.DOM.getElementsByTagName(param));
+            } else {
+              return elementsToP5XML(this.DOM.children);
+            }
+          };
+
+          function elementsToP5XML(elements) {
+            var arr = [];
+            for (var i = 0; i < elements.length; i++) {
+              arr.push(new _main.default.XML(elements[i]));
+            }
+            return arr;
+          }
+
+          /**
+           * Returns the first of the element's children that matches the name parameter
+           * or the child of the given index.It returns undefined if no matching
+           * child is found.
+           *
+           * @method getChild
+           * @param {String|Integer} name element name or index
+           * @return {p5.XML}
+           * @example&lt;animal
+           * <div class='norender'><code>
+           * // The following short XML file called "mammals.xml" is parsed
+           * // in the code below.
+           * //
+           * // <?xml version="1.0"?>
+           * // &lt;mammals&gt;
+           * //   &lt;animal id="0" species="Capra hircus">Goat&lt;/animal&gt;
+           * //   &lt;animal id="1" species="Panthera pardus">Leopard&lt;/animal&gt;
+           * //   &lt;animal id="2" species="Equus zebra">Zebra&lt;/animal&gt;
+           * // &lt;/mammals&gt;
+           *
+           * let xml;
+           *
+           * function preload() {
+           *   xml = loadXML('assets/mammals.xml');
+           * }
+           *
+           * function setup() {
+           *   let firstChild = xml.getChild('animal');
+           *   print(firstChild.getContent());
+           * }
+           *
+           * // Sketch prints:
+           * // "Goat"
+           * </code></div>
+           * <div class='norender'><code>
+           * let xml;
+           *
+           * function preload() {
+           *   xml = loadXML('assets/mammals.xml');
+           * }
+           *
+           * function setup() {
+           *   let secondChild = xml.getChild(1);
+           *   print(secondChild.getContent());
+           * }
+           *
+           * // Sketch prints:
+           * // "Leopard"
+           * </code></div>
+           */
+          _main.default.XML.prototype.getChild = function(param) {
+            if (typeof param === 'string') {
+              var _iteratorNormalCompletion = true;
+              var _didIteratorError = false;
+              var _iteratorError = undefined;
+              try {
+                for (
+                  var _iterator = this.DOM.children[Symbol.iterator](), _step;
+                  !(_iteratorNormalCompletion = (_step = _iterator.next()).done);
+                  _iteratorNormalCompletion = true
+                ) {
+                  var child = _step.value;
+                  if (child.tagName === param) return new _main.default.XML(child);
+                }
+              } catch (err) {
+                _didIteratorError = true;
+                _iteratorError = err;
+              } finally {
+                try {
+                  if (!_iteratorNormalCompletion && _iterator.return != null) {
+                    _iterator.return();
+                  }
+                } finally {
+                  if (_didIteratorError) {
+                    throw _iteratorError;
+                  }
+                }
+              }
+            } else {
+              return new _main.default.XML(this.DOM.children[param]);
+            }
+          };
+
+          /**
+           * Appends a new child to the element. The child can be specified with
+           * either a String, which will be used as the new tag's name, or as a
+           * reference to an existing <a href="#/p5.XML">p5.XML</a> object.
+           * A reference to the newly created child is returned as an <a href="#/p5.XML">p5.XML</a> object.
+           *
