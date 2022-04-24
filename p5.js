@@ -74431,3 +74431,147 @@
             var stringVal = value.toString();
             this.set(column, stringVal);
           };
+
+          /**
+           *  Retrieves a value from the TableRow's specified column.
+           *  The column may be specified by either its ID or title.
+           *
+           *  @method  get
+           *  @param  {String|Integer} column columnName (string) or
+           *                                   ID (number)
+           *  @return {String|Number}
+           *
+           * @example
+           * <div class="norender"><code>
+           * // Given the CSV file "mammals.csv" in the project's "assets" folder:
+           * //
+           * // id,species,name
+           * // 0,Capra hircus,Goat
+           * // 1,Panthera pardus,Leopard
+           * // 2,Equus zebra,Zebra
+           *
+           * let table;
+           *
+           * function preload() {
+           *   //my table is comma separated value "csv"
+           *   //and has a header specifying the columns labels
+           *   table = loadTable('assets/mammals.csv', 'csv', 'header');
+           * }
+           *
+           * function setup() {
+           *   let names = [];
+           *   let rows = table.getRows();
+           *   for (let r = 0; r < rows.length; r++) {
+           *     names.push(rows[r].get('name'));
+           *   }
+           *
+           *   print(names);
+           * }
+           * </code></div>
+           *
+           * @alt
+           * no image displayed
+           */
+          _main.default.TableRow.prototype.get = function(column) {
+            if (typeof column === 'string') {
+              return this.obj[column];
+            } else {
+              return this.arr[column];
+            }
+          };
+
+          /**
+           *  Retrieves a Float value from the TableRow's specified
+           *  column. The column may be specified by either its ID or
+           *  title.
+           *
+           *  @method  getNum
+           *  @param  {String|Integer} column columnName (string) or
+           *                                   ID (number)
+           *  @return {Number}  Float Floating point number
+           * @example
+           * <div class="norender"><code>
+           * // Given the CSV file "mammals.csv" in the project's "assets" folder:
+           * //
+           * // id,species,name
+           * // 0,Capra hircus,Goat
+           * // 1,Panthera pardus,Leopard
+           * // 2,Equus zebra,Zebra
+           *
+           * let table;
+           *
+           * function preload() {
+           *   //my table is comma separated value "csv"
+           *   //and has a header specifying the columns labels
+           *   table = loadTable('assets/mammals.csv', 'csv', 'header');
+           * }
+           *
+           * function setup() {
+           *   let rows = table.getRows();
+           *   let minId = Infinity;
+           *   let maxId = -Infinity;
+           *   for (let r = 0; r < rows.length; r++) {
+           *     let id = rows[r].getNum('id');
+           *     minId = min(minId, id);
+           *     maxId = min(maxId, id);
+           *   }
+           *   print('minimum id = ' + minId + ', maximum id = ' + maxId);
+           * }
+           * </code></div>
+           *
+           * @alt
+           * no image displayed
+           */
+          _main.default.TableRow.prototype.getNum = function(column) {
+            var ret;
+            if (typeof column === 'string') {
+              ret = parseFloat(this.obj[column]);
+            } else {
+              ret = parseFloat(this.arr[column]);
+            }
+
+            if (ret.toString() === 'NaN') {
+              throw 'Error: '.concat(this.obj[column], ' is NaN (Not a Number)');
+            }
+            return ret;
+          };
+
+          /**
+           *  Retrieves an String value from the TableRow's specified
+           *  column. The column may be specified by either its ID or
+           *  title.
+           *
+           *  @method  getString
+           *  @param  {String|Integer} column columnName (string) or
+           *                                   ID (number)
+           *  @return {String}  String
+           * @example
+           * <div class="norender"><code>
+           * // Given the CSV file "mammals.csv" in the project's "assets" folder:
+           * //
+           * // id,species,name
+           * // 0,Capra hircus,Goat
+           * // 1,Panthera pardus,Leopard
+           * // 2,Equus zebra,Zebra
+           *
+           * let table;
+           *
+           * function preload() {
+           *   //my table is comma separated value "csv"
+           *   //and has a header specifying the columns labels
+           *   table = loadTable('assets/mammals.csv', 'csv', 'header');
+           * }
+           *
+           * function setup() {
+           *   let rows = table.getRows();
+           *   let longest = '';
+           *   for (let r = 0; r < rows.length; r++) {
+           *     let species = rows[r].getString('species');
+           *     if (longest.length < species.length) {
+           *       longest = species;
+           *     }
+           *   }
+           *
+           *   print('longest: ' + longest);
+           * }
+           * </code></div>
