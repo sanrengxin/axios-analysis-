@@ -75286,3 +75286,125 @@
 
           /**
            * Returns an attribute value of the element as an Number. If the defaultValue
+           * parameter is specified and the attribute doesn't exist, then defaultValue
+           * is returned. If no defaultValue is specified and the attribute doesn't
+           * exist, the value 0 is returned.
+           *
+           * @method getNum
+           * @param {String} name            the non-null full name of the attribute
+           * @param {Number} [defaultValue]  the default value of the attribute
+           * @return {Number}
+           * @example
+           * <div class='norender'><code>
+           * // The following short XML file called "mammals.xml" is parsed
+           * // in the code below.
+           * //
+           * // <?xml version="1.0"?>
+           * // &lt;mammals&gt;
+           * //   &lt;animal id="0" species="Capra hircus">Goat&lt;/animal&gt;
+           * //   &lt;animal id="1" species="Panthera pardus">Leopard&lt;/animal&gt;
+           * //   &lt;animal id="2" species="Equus zebra">Zebra&lt;/animal&gt;
+           * // &lt;/mammals&gt;
+           *
+           * let xml;
+           *
+           * function preload() {
+           *   xml = loadXML('assets/mammals.xml');
+           * }
+           *
+           * function setup() {
+           *   let firstChild = xml.getChild('animal');
+           *   print(firstChild.getNum('id'));
+           * }
+           *
+           * // Sketch prints:
+           * // 0
+           * </code></div>
+           */
+          _main.default.XML.prototype.getNum = function(name, defaultValue) {
+            var obj = {};
+            var _iteratorNormalCompletion4 = true;
+            var _didIteratorError4 = false;
+            var _iteratorError4 = undefined;
+            try {
+              for (
+                var _iterator4 = this.DOM.attributes[Symbol.iterator](), _step4;
+                !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done);
+                _iteratorNormalCompletion4 = true
+              ) {
+                var attribute = _step4.value;
+                obj[attribute.nodeName] = attribute.nodeValue;
+              }
+            } catch (err) {
+              _didIteratorError4 = true;
+              _iteratorError4 = err;
+            } finally {
+              try {
+                if (!_iteratorNormalCompletion4 && _iterator4.return != null) {
+                  _iterator4.return();
+                }
+              } finally {
+                if (_didIteratorError4) {
+                  throw _iteratorError4;
+                }
+              }
+            }
+
+            return Number(obj[name]) || defaultValue || 0;
+          };
+
+          /**
+           * Returns an attribute value of the element as an String. If the defaultValue
+           * parameter is specified and the attribute doesn't exist, then defaultValue
+           * is returned. If no defaultValue is specified and the attribute doesn't
+           * exist, null is returned.
+           *
+           * @method getString
+           * @param {String} name            the non-null full name of the attribute
+           * @param {Number} [defaultValue]  the default value of the attribute
+           * @return {String}
+           * @example
+           * <div class='norender'><code>
+           * // The following short XML file called "mammals.xml" is parsed
+           * // in the code below.
+           * //
+           * // <?xml version="1.0"?>
+           * // &lt;mammals&gt;
+           * //   &lt;animal id="0" species="Capra hircus">Goat&lt;/animal&gt;
+           * //   &lt;animal id="1" species="Panthera pardus">Leopard&lt;/animal&gt;
+           * //   &lt;animal id="2" species="Equus zebra">Zebra&lt;/animal&gt;
+           * // &lt;/mammals&gt;
+           *
+           * let xml;
+           *
+           * function preload() {
+           *   xml = loadXML('assets/mammals.xml');
+           * }
+           *
+           * function setup() {
+           *   let firstChild = xml.getChild('animal');
+           *   print(firstChild.getString('species'));
+           * }
+           *
+           * // Sketch prints:
+           * // "Capra hircus"
+           * </code></div>
+           */
+          _main.default.XML.prototype.getString = function(name, defaultValue) {
+            var obj = {};
+            var _iteratorNormalCompletion5 = true;
+            var _didIteratorError5 = false;
+            var _iteratorError5 = undefined;
+            try {
+              for (
+                var _iterator5 = this.DOM.attributes[Symbol.iterator](), _step5;
+                !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done);
+                _iteratorNormalCompletion5 = true
+              ) {
+                var attribute = _step5.value;
+                obj[attribute.nodeName] = attribute.nodeValue;
+              }
+            } catch (err) {
+              _didIteratorError5 = true;
+              _iteratorError5 = err;
+            } finally {
