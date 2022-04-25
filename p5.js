@@ -74998,3 +74998,151 @@
            * reference to an existing <a href="#/p5.XML">p5.XML</a> object.
            * A reference to the newly created child is returned as an <a href="#/p5.XML">p5.XML</a> object.
            *
+           * @method addChild
+           * @param {p5.XML} node a <a href="#/p5.XML">p5.XML</a> Object which will be the child to be added
+           * @example
+           * <div class='norender'><code>
+           * // The following short XML file called "mammals.xml" is parsed
+           * // in the code below.
+           * //
+           * // <?xml version="1.0"?>
+           * // &lt;mammals&gt;
+           * //   &lt;animal id="0" species="Capra hircus">Goat&lt;/animal&gt;
+           * //   &lt;animal id="1" species="Panthera pardus">Leopard&lt;/animal&gt;
+           * //   &lt;animal id="2" species="Equus zebra">Zebra&lt;/animal&gt;
+           * // &lt;/mammals&gt;
+           *
+           * let xml;
+           *
+           * function preload() {
+           *   xml = loadXML('assets/mammals.xml');
+           * }
+           *
+           * function setup() {
+           *   let child = new p5.XML();
+           *   child.setName('animal');
+           *   child.setAttribute('id', '3');
+           *   child.setAttribute('species', 'Ornithorhynchus anatinus');
+           *   child.setContent('Platypus');
+           *   xml.addChild(child);
+           *
+           *   let animals = xml.getChildren('animal');
+           *   print(animals[animals.length - 1].getContent());
+           * }
+           *
+           * // Sketch prints:
+           * // "Goat"
+           * // "Leopard"
+           * // "Zebra"
+           * </code></div>
+           */
+          _main.default.XML.prototype.addChild = function(node) {
+            if (node instanceof _main.default.XML) {
+              this.DOM.appendChild(node.DOM);
+            } else {
+              // PEND
+            }
+          };
+
+          /**
+           * Removes the element specified by name or index.
+           *
+           * @method removeChild
+           * @param {String|Integer} name element name or index
+           * @example
+           * <div class='norender'><code>
+           * // The following short XML file called "mammals.xml" is parsed
+           * // in the code below.
+           * //
+           * // <?xml version="1.0"?>
+           * // &lt;mammals&gt;
+           * //   &lt;animal id="0" species="Capra hircus">Goat&lt;/animal&gt;
+           * //   &lt;animal id="1" species="Panthera pardus">Leopard&lt;/animal&gt;
+           * //   &lt;animal id="2" species="Equus zebra">Zebra&lt;/animal&gt;
+           * // &lt;/mammals&gt;
+           *
+           * let xml;
+           *
+           * function preload() {
+           *   xml = loadXML('assets/mammals.xml');
+           * }
+           *
+           * function setup() {
+           *   xml.removeChild('animal');
+           *   let children = xml.getChildren();
+           *   for (let i = 0; i < children.length; i++) {
+           *     print(children[i].getContent());
+           *   }
+           * }
+           *
+           * // Sketch prints:
+           * // "Leopard"
+           * // "Zebra"
+           * </code></div>
+           * <div class='norender'><code>
+           * let xml;
+           *
+           * function preload() {
+           *   xml = loadXML('assets/mammals.xml');
+           * }
+           *
+           * function setup() {
+           *   xml.removeChild(1);
+           *   let children = xml.getChildren();
+           *   for (let i = 0; i < children.length; i++) {
+           *     print(children[i].getContent());
+           *   }
+           * }
+           *
+           * // Sketch prints:
+           * // "Goat"
+           * // "Zebra"
+           * </code></div>
+           */
+          _main.default.XML.prototype.removeChild = function(param) {
+            var ind = -1;
+            if (typeof param === 'string') {
+              for (var i = 0; i < this.DOM.children.length; i++) {
+                if (this.DOM.children[i].tagName === param) {
+                  ind = i;
+                  break;
+                }
+              }
+            } else {
+              ind = param;
+            }
+            if (ind !== -1) {
+              this.DOM.removeChild(this.DOM.children[ind]);
+            }
+          };
+
+          /**
+           * Counts the specified element's number of attributes, returned as an Number.
+           *
+           * @method getAttributeCount
+           * @return {Integer}
+           * @example
+           * <div class='norender'><code>
+           * // The following short XML file called "mammals.xml" is parsed
+           * // in the code below.
+           * //
+           * // <?xml version="1.0"?>
+           * // &lt;mammals&gt;
+           * //   &lt;animal id="0" species="Capra hircus">Goat&lt;/animal&gt;
+           * //   &lt;animal id="1" species="Panthera pardus">Leopard&lt;/animal&gt;
+           * //   &lt;animal id="2" species="Equus zebra">Zebra&lt;/animal&gt;
+           * // &lt;/mammals&gt;
+           *
+           * let xml;
+           *
+           * function preload() {
+           *   xml = loadXML('assets/mammals.xml');
+           * }
+           *
+           * function setup() {
+           *   let firstChild = xml.getChild('animal');
+           *   print(firstChild.getAttributeCount());
+           * }
+           *
+           * // Sketch prints:
+           * // 2
