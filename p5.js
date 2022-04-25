@@ -75146,3 +75146,143 @@
            *
            * // Sketch prints:
            * // 2
+           * </code></div>
+           */
+          _main.default.XML.prototype.getAttributeCount = function() {
+            return this.DOM.attributes.length;
+          };
+
+          /**
+           * Gets all of the specified element's attributes, and returns them as an
+           * array of Strings.
+           *
+           * @method listAttributes
+           * @return {String[]} an array of strings containing the names of attributes
+           * @example
+           * <div class='norender'><code>
+           * // The following short XML file called "mammals.xml" is parsed
+           * // in the code below.
+           * //
+           * // <?xml version="1.0"?>
+           * // &lt;mammals&gt;
+           * //   &lt;animal id="0" species="Capra hircus">Goat&lt;/animal&gt;
+           * //   &lt;animal id="1" species="Panthera pardus">Leopard&lt;/animal&gt;
+           * //   &lt;animal id="2" species="Equus zebra">Zebra&lt;/animal&gt;
+           * // &lt;/mammals&gt;
+           *
+           * let xml;
+           *
+           * function preload() {
+           *   xml = loadXML('assets/mammals.xml');
+           * }
+           *
+           * function setup() {
+           *   let firstChild = xml.getChild('animal');
+           *   print(firstChild.listAttributes());
+           * }
+           *
+           * // Sketch prints:
+           * // ["id", "species"]
+           * </code></div>
+           */
+          _main.default.XML.prototype.listAttributes = function() {
+            var arr = [];
+            var _iteratorNormalCompletion2 = true;
+            var _didIteratorError2 = false;
+            var _iteratorError2 = undefined;
+            try {
+              for (
+                var _iterator2 = this.DOM.attributes[Symbol.iterator](), _step2;
+                !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done);
+                _iteratorNormalCompletion2 = true
+              ) {
+                var attribute = _step2.value;
+                arr.push(attribute.nodeName);
+              }
+            } catch (err) {
+              _didIteratorError2 = true;
+              _iteratorError2 = err;
+            } finally {
+              try {
+                if (!_iteratorNormalCompletion2 && _iterator2.return != null) {
+                  _iterator2.return();
+                }
+              } finally {
+                if (_didIteratorError2) {
+                  throw _iteratorError2;
+                }
+              }
+            }
+
+            return arr;
+          };
+
+          /**
+           *  Checks whether or not an element has the specified attribute.
+           *
+           * @method hasAttribute
+           * @param {String} the attribute to be checked
+           * @return {boolean} true if attribute found else false
+           * @example
+           * <div class='norender'><code>
+           * // The following short XML file called "mammals.xml" is parsed
+           * // in the code below.
+           * //
+           * // <?xml version="1.0"?>
+           * // &lt;mammals&gt;
+           * //   &lt;animal id="0" species="Capra hircus">Goat&lt;/animal&gt;
+           * //   &lt;animal id="1" species="Panthera pardus">Leopard&lt;/animal&gt;
+           * //   &lt;animal id="2" species="Equus zebra">Zebra&lt;/animal&gt;
+           * // &lt;/mammals&gt;
+           *
+           * let xml;
+           *
+           * function preload() {
+           *   xml = loadXML('assets/mammals.xml');
+           * }
+           *
+           * function setup() {
+           *   let firstChild = xml.getChild('animal');
+           *   print(firstChild.hasAttribute('species'));
+           *   print(firstChild.hasAttribute('color'));
+           * }
+           *
+           * // Sketch prints:
+           * // true
+           * // false
+           * </code></div>
+           */
+          _main.default.XML.prototype.hasAttribute = function(name) {
+            var obj = {};
+            var _iteratorNormalCompletion3 = true;
+            var _didIteratorError3 = false;
+            var _iteratorError3 = undefined;
+            try {
+              for (
+                var _iterator3 = this.DOM.attributes[Symbol.iterator](), _step3;
+                !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done);
+                _iteratorNormalCompletion3 = true
+              ) {
+                var attribute = _step3.value;
+                obj[attribute.nodeName] = attribute.nodeValue;
+              }
+            } catch (err) {
+              _didIteratorError3 = true;
+              _iteratorError3 = err;
+            } finally {
+              try {
+                if (!_iteratorNormalCompletion3 && _iterator3.return != null) {
+                  _iterator3.return();
+                }
+              } finally {
+                if (_didIteratorError3) {
+                  throw _iteratorError3;
+                }
+              }
+            }
+
+            return obj[name] ? true : false;
+          };
+
+          /**
+           * Returns an attribute value of the element as an Number. If the defaultValue
