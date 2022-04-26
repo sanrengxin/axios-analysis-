@@ -75552,3 +75552,140 @@
            * @method serialize
            * @return {String} Serialized string of the element
            * @example
+           * <div class='norender'><code>
+           * let xml;
+           *
+           * function preload() {
+           *   xml = loadXML('assets/mammals.xml');
+           * }
+           *
+           * function setup() {
+           *   print(xml.serialize());
+           * }
+           *
+           * // Sketch prints:
+           * // <mammals>
+           * //   <animal id="0" species="Capra hircus">Goat</animal>
+           * //   <animal id="1" species="Panthera pardus">Leopard</animal>
+           * //   <animal id="2" species="Equus zebra">Zebra</animal>
+           * // </mammals>
+           * </code></div>
+           */
+          _main.default.XML.prototype.serialize = function() {
+            var xmlSerializer = new XMLSerializer();
+            return xmlSerializer.serializeToString(this.DOM);
+          };
+          var _default = _main.default;
+          exports.default = _default;
+        },
+        { '../core/main': 59 }
+      ],
+      89: [
+        function(_dereq_, module, exports) {
+          'use strict';
+          Object.defineProperty(exports, '__esModule', { value: true });
+          exports.default = void 0;
+
+          var _main = _interopRequireDefault(_dereq_('../core/main'));
+          function _interopRequireDefault(obj) {
+            return obj && obj.__esModule ? obj : { default: obj };
+          }
+          /**
+           * @module Math
+           * @submodule Calculation
+           * @for p5
+           * @requires core
+           */ /**
+           * Calculates the absolute value (magnitude) of a number. Maps to Math.abs().
+           * The absolute value of a number is always positive.
+           *
+           * @method abs
+           * @param  {Number} n number to compute
+           * @return {Number}   absolute value of given number
+           * @example
+           * <div class = "norender"><code>
+           * function setup() {
+           *   let x = -3;
+           *   let y = abs(x);
+           *
+           *   print(x); // -3
+           *   print(y); // 3
+           * }
+           * </code></div>
+           *
+           * @alt
+           * no image displayed
+           */ _main.default.prototype.abs = Math.abs; /**
+           * Calculates the closest int value that is greater than or equal to the
+           * value of the parameter. Maps to Math.ceil(). For example, ceil(9.03)
+           * returns the value 10.
+           *
+           * @method ceil
+           * @param  {Number} n number to round up
+           * @return {Integer}   rounded up number
+           * @example
+           * <div><code>
+           * function draw() {
+           *   background(200);
+           *   // map, mouseX between 0 and 5.
+           *   let ax = map(mouseX, 0, 100, 0, 5);
+           *   let ay = 66;
+           *
+           *   //Get the ceiling of the mapped number.
+           *   let bx = ceil(map(mouseX, 0, 100, 0, 5));
+           *   let by = 33;
+           *
+           *   // Multiply the mapped numbers by 20 to more easily
+           *   // see the changes.
+           *   stroke(0);
+           *   fill(0);
+           *   line(0, ay, ax * 20, ay);
+           *   line(0, by, bx * 20, by);
+           *
+           *   // Reformat the float returned by map and draw it.
+           *   noStroke();
+           *   text(nfc(ax, 2), ax, ay - 5);
+           *   text(nfc(bx, 1), bx, by - 5);
+           * }
+           * </code></div>
+           *
+           * @alt
+           * 2 horizontal lines & number sets. increase with mouse x. bottom to 2 decimals
+           */
+          _main.default.prototype.ceil = Math.ceil;
+
+          /**
+           * Constrains a value between a minimum and maximum value.
+           *
+           * @method constrain
+           * @param  {Number} n    number to constrain
+           * @param  {Number} low  minimum limit
+           * @param  {Number} high maximum limit
+           * @return {Number}      constrained number
+           * @example
+           * <div><code>
+           * function draw() {
+           *   background(200);
+           *
+           *   let leftWall = 25;
+           *   let rightWall = 75;
+           *
+           *   // xm is just the mouseX, while
+           *   // xc is the mouseX, but constrained
+           *   // between the leftWall and rightWall!
+           *   let xm = mouseX;
+           *   let xc = constrain(mouseX, leftWall, rightWall);
+           *
+           *   // Draw the walls.
+           *   stroke(150);
+           *   line(leftWall, 0, leftWall, height);
+           *   line(rightWall, 0, rightWall, height);
+           *
+           *   // Draw xm and xc as circles.
+           *   noStroke();
+           *   fill(150);
+           *   ellipse(xm, 33, 9, 9); // Not Constrained
+           *   fill(0);
+           *   ellipse(xc, 66, 9, 9); // Constrained
+           * }
+           * </code></div>
