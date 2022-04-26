@@ -75408,3 +75408,147 @@
               _didIteratorError5 = true;
               _iteratorError5 = err;
             } finally {
+              try {
+                if (!_iteratorNormalCompletion5 && _iterator5.return != null) {
+                  _iterator5.return();
+                }
+              } finally {
+                if (_didIteratorError5) {
+                  throw _iteratorError5;
+                }
+              }
+            }
+
+            return obj[name] ? String(obj[name]) : defaultValue || null;
+          };
+
+          /**
+           * Sets the content of an element's attribute. The first parameter specifies
+           * the attribute name, while the second specifies the new content.
+           *
+           * @method setAttribute
+           * @param {String} name            the full name of the attribute
+           * @param {Number|String|Boolean} value  the value of the attribute
+           * @example
+           * <div class='norender'><code>
+           * // The following short XML file called "mammals.xml" is parsed
+           * // in the code below.
+           * //
+           * // <?xml version="1.0"?>
+           * // &lt;mammals&gt;
+           * //   &lt;animal id="0" species="Capra hircus">Goat&lt;/animal&gt;
+           * //   &lt;animal id="1" species="Panthera pardus">Leopard&lt;/animal&gt;
+           * //   &lt;animal id="2" species="Equus zebra">Zebra&lt;/animal&gt;
+           * // &lt;/mammals&gt;
+           *
+           * let xml;
+           *
+           * function preload() {
+           *   xml = loadXML('assets/mammals.xml');
+           * }
+           *
+           * function setup() {
+           *   let firstChild = xml.getChild('animal');
+           *   print(firstChild.getString('species'));
+           *   firstChild.setAttribute('species', 'Jamides zebra');
+           *   print(firstChild.getString('species'));
+           * }
+           *
+           * // Sketch prints:
+           * // "Capra hircus"
+           * // "Jamides zebra"
+           * </code></div>
+           */
+          _main.default.XML.prototype.setAttribute = function(name, value) {
+            this.DOM.setAttribute(name, value);
+          };
+
+          /**
+           * Returns the content of an element. If there is no such content,
+           * defaultValue is returned if specified, otherwise null is returned.
+           *
+           * @method getContent
+           * @param {String} [defaultValue] value returned if no content is found
+           * @return {String}
+           * @example
+           * <div class='norender'><code>
+           * // The following short XML file called "mammals.xml" is parsed
+           * // in the code below.
+           * //
+           * // <?xml version="1.0"?>
+           * // &lt;mammals&gt;
+           * //   &lt;animal id="0" species="Capra hircus">Goat&lt;/animal&gt;
+           * //   &lt;animal id="1" species="Panthera pardus">Leopard&lt;/animal&gt;
+           * //   &lt;animal id="2" species="Equus zebra">Zebra&lt;/animal&gt;
+           * // &lt;/mammals&gt;
+           *
+           * let xml;
+           *
+           * function preload() {
+           *   xml = loadXML('assets/mammals.xml');
+           * }
+           *
+           * function setup() {
+           *   let firstChild = xml.getChild('animal');
+           *   print(firstChild.getContent());
+           * }
+           *
+           * // Sketch prints:
+           * // "Goat"
+           * </code></div>
+           */
+          _main.default.XML.prototype.getContent = function(defaultValue) {
+            var str;
+            str = this.DOM.textContent;
+            str = str.replace(/\s\s+/g, ',');
+            return str || defaultValue || null;
+          };
+
+          /**
+           * Sets the element's content.
+           *
+           * @method setContent
+           * @param {String} text the new content
+           * @example
+           * <div class='norender'><code>
+           * // The following short XML file called "mammals.xml" is parsed
+           * // in the code below.
+           * //
+           * // <?xml version="1.0"?>
+           * // &lt;mammals&gt;
+           * //   &lt;animal id="0" species="Capra hircus">Goat&lt;/animal&gt;
+           * //   &lt;animal id="1" species="Panthera pardus">Leopard&lt;/animal&gt;
+           * //   &lt;animal id="2" species="Equus zebra">Zebra&lt;/animal&gt;
+           * // &lt;/mammals&gt;
+           *
+           * let xml;
+           *
+           * function preload() {
+           *   xml = loadXML('assets/mammals.xml');
+           * }
+           *
+           * function setup() {
+           *   let firstChild = xml.getChild('animal');
+           *   print(firstChild.getContent());
+           *   firstChild.setContent('Mountain Goat');
+           *   print(firstChild.getContent());
+           * }
+           *
+           * // Sketch prints:
+           * // "Goat"
+           * // "Mountain Goat"
+           * </code></div>
+           */
+          _main.default.XML.prototype.setContent = function(content) {
+            if (!this.DOM.children.length) {
+              this.DOM.textContent = content;
+            }
+          };
+
+          /**
+           * Serializes the element into a string. This function is useful for preparing
+           * the content to be sent over a http request or saved to file.
+           *
+           * @method serialize
+           * @return {String} Serialized string of the element
+           * @example
