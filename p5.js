@@ -75689,3 +75689,142 @@
            *   ellipse(xc, 66, 9, 9); // Constrained
            * }
            * </code></div>
+           *
+           * @alt
+           * 2 vertical lines. 2 ellipses move with mouse X 1 does not move passed lines
+           */
+          _main.default.prototype.constrain = function(n, low, high) {
+            _main.default._validateParameters('constrain', arguments);
+            return Math.max(Math.min(n, high), low);
+          };
+
+          /**
+           * Calculates the distance between two points, in either two or three dimensions.
+           *
+           * @method dist
+           * @param  {Number} x1 x-coordinate of the first point
+           * @param  {Number} y1 y-coordinate of the first point
+           * @param  {Number} x2 x-coordinate of the second point
+           * @param  {Number} y2 y-coordinate of the second point
+           * @return {Number}    distance between the two points
+           *
+           * @example
+           * <div><code>
+           * // Move your mouse inside the canvas to see the
+           * // change in distance between two points!
+           * function draw() {
+           *   background(200);
+           *   fill(0);
+           *
+           *   let x1 = 10;
+           *   let y1 = 90;
+           *   let x2 = mouseX;
+           *   let y2 = mouseY;
+           *
+           *   line(x1, y1, x2, y2);
+           *   ellipse(x1, y1, 7, 7);
+           *   ellipse(x2, y2, 7, 7);
+           *
+           *   // d is the length of the line
+           *   // the distance from point 1 to point 2.
+           *   let d = dist(x1, y1, x2, y2);
+           *
+           *   // Let's write d along the line we are drawing!
+           *   push();
+           *   translate((x1 + x2) / 2, (y1 + y2) / 2);
+           *   rotate(atan2(y2 - y1, x2 - x1));
+           *   text(nfc(d, 1), 0, -5);
+           *   pop();
+           *   // Fancy!
+           * }
+           * </code></div>
+           *
+           * @alt
+           * 2 ellipses joined by line. 1 ellipse moves with mouse X&Y. Distance displayed.
+           */
+          /**
+           * @method dist
+           * @param  {Number} x1
+           * @param  {Number} y1
+           * @param  {Number} z1 z-coordinate of the first point
+           * @param  {Number} x2
+           * @param  {Number} y2
+           * @param  {Number} z2 z-coordinate of the second point
+           * @return {Number}    distance between the two points
+           */
+          _main.default.prototype.dist = function() {
+            for (
+              var _len = arguments.length, args = new Array(_len), _key = 0;
+              _key < _len;
+              _key++
+            ) {
+              args[_key] = arguments[_key];
+            }
+            _main.default._validateParameters('dist', args);
+            if (args.length === 4) {
+              //2D
+              return hypot(args[2] - args[0], args[3] - args[1]);
+            } else if (args.length === 6) {
+              //3D
+              return hypot(args[3] - args[0], args[4] - args[1], args[5] - args[2]);
+            }
+          };
+
+          /**
+           * Returns Euler's number e (2.71828...) raised to the power of the n
+           * parameter. Maps to Math.exp().
+           *
+           * @method exp
+           * @param  {Number} n exponent to raise
+           * @return {Number}   e^n
+           * @example
+           * <div><code>
+           * function draw() {
+           *   background(200);
+           *
+           *   // Compute the exp() function with a value between 0 and 2
+           *   let xValue = map(mouseX, 0, width, 0, 2);
+           *   let yValue = exp(xValue);
+           *
+           *   let y = map(yValue, 0, 8, height, 0);
+           *
+           *   let legend = 'exp (' + nfc(xValue, 3) + ')\n= ' + nf(yValue, 1, 4);
+           *   stroke(150);
+           *   line(mouseX, y, mouseX, height);
+           *   fill(0);
+           *   text(legend, 5, 15);
+           *   noStroke();
+           *   ellipse(mouseX, y, 7, 7);
+           *
+           *   // Draw the exp(x) curve,
+           *   // over the domain of x from 0 to 2
+           *   noFill();
+           *   stroke(0);
+           *   beginShape();
+           *   for (let x = 0; x < width; x++) {
+           *     xValue = map(x, 0, width, 0, 2);
+           *     yValue = exp(xValue);
+           *     y = map(yValue, 0, 8, height, 0);
+           *     vertex(x, y);
+           *   }
+           *
+           *   endShape();
+           *   line(0, 0, 0, height);
+           *   line(0, height - 1, width, height - 1);
+           * }
+           * </code></div>
+           *
+           * @alt
+           * ellipse moves along a curve with mouse x. e^n displayed.
+           */
+          _main.default.prototype.exp = Math.exp;
+
+          /**
+           * Calculates the closest int value that is less than or equal to the
+           * value of the parameter. Maps to Math.floor().
+           *
+           * @method floor
+           * @param  {Number} n number to round down
+           * @return {Integer}  rounded down number
+           * @example
+           * <div><code>
