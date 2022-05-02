@@ -75962,3 +75962,142 @@
           /**
            * Calculates the magnitude (or length) of a vector. A vector is a direction
            * in space commonly used in computer graphics and linear algebra. Because it
+           * has no "start" position, the magnitude of a vector can be thought of as
+           * the distance from the coordinate 0,0 to its x,y value. Therefore, <a href="#/p5/mag">mag()</a> is
+           * a shortcut for writing dist(0, 0, x, y).
+           *
+           * @method mag
+           * @param  {Number} a first value
+           * @param  {Number} b second value
+           * @return {Number}   magnitude of vector from (0,0) to (a,b)
+           * @example
+           * <div><code>
+           * function setup() {
+           *   let x1 = 20;
+           *   let x2 = 80;
+           *   let y1 = 30;
+           *   let y2 = 70;
+           *
+           *   line(0, 0, x1, y1);
+           *   print(mag(x1, y1)); // Prints "36.05551275463989"
+           *   line(0, 0, x2, y1);
+           *   print(mag(x2, y1)); // Prints "85.44003745317531"
+           *   line(0, 0, x1, y2);
+           *   print(mag(x1, y2)); // Prints "72.80109889280519"
+           *   line(0, 0, x2, y2);
+           *   print(mag(x2, y2)); // Prints "106.3014581273465"
+           * }
+           * </code></div>
+           *
+           * @alt
+           * 4 lines of different length radiate from top left of canvas.
+           */
+          _main.default.prototype.mag = function(x, y) {
+            _main.default._validateParameters('mag', arguments);
+            return hypot(x, y);
+          };
+
+          /**
+    * Re-maps a number from one range to another.
+    *
+    * In the first example above, the number 25 is converted from a value in the
+    * range of 0 to 100 into a value that ranges from the left edge of the
+    * window (0) to the right edge (width).
+    *
+    * @method map
+    * @param  {Number} value  the incoming value to be converted
+    * @param  {Number} start1 lower bound of the value's current range
+    * @param  {Number} stop1  upper bound of the value's current range
+    * @param  {Number} start2 lower bound of the value's target range
+    * @param  {Number} stop2  upper bound of the value's target range
+    * @param  {Boolean} [withinBounds] constrain the value to the newly mapped range
+    * @return {Number}        remapped number
+    * @example
+    *   <div><code>
+    * let value = 25;
+    * let m = map(value, 0, 100, 0, width);
+    * ellipse(m, 50, 10, 10);
+   </code></div>
+    *
+    *   <div><code>
+    * function setup() {
+    *   noStroke();
+    * }
+    *
+    * function draw() {
+    *   background(204);
+    *   let x1 = map(mouseX, 0, width, 25, 75);
+    *   ellipse(x1, 25, 25, 25);
+    *   //This ellipse is constrained to the 0-100 range
+    *   //after setting withinBounds to true
+    *   let x2 = map(mouseX, 0, width, 0, 100, true);
+    *   ellipse(x2, 75, 25, 25);
+    * }
+   </code></div>
+    *
+    * @alt
+    * 10 by 10 white ellipse with in mid left canvas
+    * 2 25 by 25 white ellipses move with mouse x. Bottom has more range from X
+    */
+          _main.default.prototype.map = function(
+            n,
+            start1,
+            stop1,
+            start2,
+            stop2,
+            withinBounds
+          ) {
+            _main.default._validateParameters('map', arguments);
+            var newval = (n - start1) / (stop1 - start1) * (stop2 - start2) + start2;
+            if (!withinBounds) {
+              return newval;
+            }
+            if (start2 < stop2) {
+              return this.constrain(newval, start2, stop2);
+            } else {
+              return this.constrain(newval, stop2, start2);
+            }
+          };
+
+          /**
+           * Determines the largest value in a sequence of numbers, and then returns
+           * that value. <a href="#/p5/max">max()</a> accepts any number of Number parameters, or an Array
+           * of any length.
+           *
+           * @method max
+           * @param  {Number} n0 Number to compare
+           * @param  {Number} n1 Number to compare
+           * @return {Number}             maximum Number
+           * @example
+           * <div><code>
+           * function setup() {
+           *   // Change the elements in the array and run the sketch
+           *   // to show how max() works!
+           *   let numArray = [2, 1, 5, 4, 8, 9];
+           *   fill(0);
+           *   noStroke();
+           *   text('Array Elements', 0, 10);
+           *   // Draw all numbers in the array
+           *   let spacing = 15;
+           *   let elemsY = 25;
+           *   for (let i = 0; i < numArray.length; i++) {
+           *     text(numArray[i], i * spacing, elemsY);
+           *   }
+           *   let maxX = 33;
+           *   let maxY = 80;
+           *   // Draw the Maximum value in the array.
+           *   textSize(32);
+           *   text(max(numArray), maxX, maxY);
+           * }
+           * </code></div>
+           *
+           * @alt
+           * Small text at top reads: Array Elements 2 1 5 4 8 9. Large text at center: 9
+           */
+          /**
+           * @method max
+           * @param  {Number[]} nums Numbers to compare
+           * @return {Number}
+           */
+          _main.default.prototype.max = function() {
+            for (
