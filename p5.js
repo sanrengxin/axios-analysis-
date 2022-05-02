@@ -75828,3 +75828,137 @@
            * @return {Integer}  rounded down number
            * @example
            * <div><code>
+           * function draw() {
+           *   background(200);
+           *   //map, mouseX between 0 and 5.
+           *   let ax = map(mouseX, 0, 100, 0, 5);
+           *   let ay = 66;
+           *
+           *   //Get the floor of the mapped number.
+           *   let bx = floor(map(mouseX, 0, 100, 0, 5));
+           *   let by = 33;
+           *
+           *   // Multiply the mapped numbers by 20 to more easily
+           *   // see the changes.
+           *   stroke(0);
+           *   fill(0);
+           *   line(0, ay, ax * 20, ay);
+           *   line(0, by, bx * 20, by);
+           *
+           *   // Reformat the float returned by map and draw it.
+           *   noStroke();
+           *   text(nfc(ax, 2), ax, ay - 5);
+           *   text(nfc(bx, 1), bx, by - 5);
+           * }
+           * </code></div>
+           *
+           * @alt
+           * 2 horizontal lines & number sets. increase with mouse x. bottom to 2 decimals
+           */
+          _main.default.prototype.floor = Math.floor;
+
+          /**
+           * Calculates a number between two numbers at a specific increment. The amt
+           * parameter is the amount to interpolate between the two values where 0.0
+           * equal to the first point, 0.1 is very near the first point, 0.5 is
+           * half-way in between, and 1.0 is equal to the second point. If the
+           * value of amt is more than 1.0 or less than 0.0, the number will be
+           * calculated accordingly in the ratio of the two given numbers. The lerp
+           * function is convenient for creating motion along a straight
+           * path and for drawing dotted lines.
+           *
+           * @method lerp
+           * @param  {Number} start first value
+           * @param  {Number} stop  second value
+           * @param  {Number} amt   number
+           * @return {Number}       lerped value
+           * @example
+           * <div><code>
+           * function setup() {
+           *   background(200);
+           *   let a = 20;
+           *   let b = 80;
+           *   let c = lerp(a, b, 0.2);
+           *   let d = lerp(a, b, 0.5);
+           *   let e = lerp(a, b, 0.8);
+           *
+           *   let y = 50;
+           *
+           *   strokeWeight(5);
+           *   stroke(0); // Draw the original points in black
+           *   point(a, y);
+           *   point(b, y);
+           *
+           *   stroke(100); // Draw the lerp points in gray
+           *   point(c, y);
+           *   point(d, y);
+           *   point(e, y);
+           * }
+           * </code></div>
+           *
+           * @alt
+           * 5 points horizontally staggered mid-canvas. mid 3 are grey, outer black
+           */
+          _main.default.prototype.lerp = function(start, stop, amt) {
+            _main.default._validateParameters('lerp', arguments);
+            return amt * (stop - start) + start;
+          };
+
+          /**
+    * Calculates the natural logarithm (the base-e logarithm) of a number. This
+    * function expects the n parameter to be a value greater than 0.0. Maps to
+    * Math.log().
+    *
+    * @method log
+    * @param  {Number} n number greater than 0
+    * @return {Number}   natural logarithm of n
+    * @example
+    * <div><code>
+    * function draw() {
+    *   background(200);
+    *   let maxX = 2.8;
+    *   let maxY = 1.5;
+    *
+    *   // Compute the natural log of a value between 0 and maxX
+    *   let xValue = map(mouseX, 0, width, 0, maxX);
+    *   let yValue, y;
+    *   if (xValue > 0) {
+       // Cannot take the log of a negative number.
+    *     yValue = log(xValue);
+    *     y = map(yValue, -maxY, maxY, height, 0);
+    *
+    *     // Display the calculation occurring.
+    *     let legend = 'log(' + nf(xValue, 1, 2) + ')\n= ' + nf(yValue, 1, 3);
+    *     stroke(150);
+    *     line(mouseX, y, mouseX, height);
+    *     fill(0);
+    *     text(legend, 5, 15);
+    *     noStroke();
+    *     ellipse(mouseX, y, 7, 7);
+    *   }
+    *
+    *   // Draw the log(x) curve,
+    *   // over the domain of x from 0 to maxX
+    *   noFill();
+    *   stroke(0);
+    *   beginShape();
+    *   for (let x = 0; x < width; x++) {
+    *     xValue = map(x, 0, width, 0, maxX);
+    *     yValue = log(xValue);
+    *     y = map(yValue, -maxY, maxY, height, 0);
+    *     vertex(x, y);
+    *   }
+    *   endShape();
+    *   line(0, 0, 0, height);
+    *   line(0, height / 2, width, height / 2);
+    * }
+    * </code></div>
+    *
+    * @alt
+    * ellipse moves along a curve with mouse x. natural logarithm of n displayed.
+    */
+          _main.default.prototype.log = Math.log;
+
+          /**
+           * Calculates the magnitude (or length) of a vector. A vector is a direction
+           * in space commonly used in computer graphics and linear algebra. Because it
