@@ -76101,3 +76101,130 @@
            */
           _main.default.prototype.max = function() {
             for (
+              var _len2 = arguments.length, args = new Array(_len2), _key2 = 0;
+              _key2 < _len2;
+              _key2++
+            ) {
+              args[_key2] = arguments[_key2];
+            }
+            if (args[0] instanceof Array) {
+              return Math.max.apply(null, args[0]);
+            } else {
+              return Math.max.apply(null, args);
+            }
+          };
+
+          /**
+           * Determines the smallest value in a sequence of numbers, and then returns
+           * that value. <a href="#/p5/min">min()</a> accepts any number of Number parameters, or an Array
+           * of any length.
+           *
+           * @method min
+           * @param  {Number} n0 Number to compare
+           * @param  {Number} n1 Number to compare
+           * @return {Number}             minimum Number
+           * @example
+           * <div><code>
+           * function setup() {
+           *   // Change the elements in the array and run the sketch
+           *   // to show how min() works!
+           *   let numArray = [2, 1, 5, 4, 8, 9];
+           *   fill(0);
+           *   noStroke();
+           *   text('Array Elements', 0, 10);
+           *   // Draw all numbers in the array
+           *   let spacing = 15;
+           *   let elemsY = 25;
+           *   for (let i = 0; i < numArray.length; i++) {
+           *     text(numArray[i], i * spacing, elemsY);
+           *   }
+           *   let maxX = 33;
+           *   let maxY = 80;
+           *   // Draw the Minimum value in the array.
+           *   textSize(32);
+           *   text(min(numArray), maxX, maxY);
+           * }
+           * </code></div>
+           *
+           * @alt
+           * Small text at top reads: Array Elements 2 1 5 4 8 9. Large text at center: 1
+           */
+          /**
+           * @method min
+           * @param  {Number[]} nums Numbers to compare
+           * @return {Number}
+           */
+          _main.default.prototype.min = function() {
+            for (
+              var _len3 = arguments.length, args = new Array(_len3), _key3 = 0;
+              _key3 < _len3;
+              _key3++
+            ) {
+              args[_key3] = arguments[_key3];
+            }
+            if (args[0] instanceof Array) {
+              return Math.min.apply(null, args[0]);
+            } else {
+              return Math.min.apply(null, args);
+            }
+          };
+
+          /**
+           * Normalizes a number from another range into a value between 0 and 1.
+           * Identical to map(value, low, high, 0, 1).
+           * Numbers outside of the range are not clamped to 0 and 1, because
+           * out-of-range values are often intentional and useful. (See the example above.)
+           *
+           * @method norm
+           * @param  {Number} value incoming value to be normalized
+           * @param  {Number} start lower bound of the value's current range
+           * @param  {Number} stop  upper bound of the value's current range
+           * @return {Number}       normalized number
+           * @example
+           * <div><code>
+           * function draw() {
+           *   background(200);
+           *   let currentNum = mouseX;
+           *   let lowerBound = 0;
+           *   let upperBound = width; //100;
+           *   let normalized = norm(currentNum, lowerBound, upperBound);
+           *   let lineY = 70;
+           *   stroke(3);
+           *   line(0, lineY, width, lineY);
+           *   //Draw an ellipse mapped to the non-normalized value.
+           *   noStroke();
+           *   fill(50);
+           *   let s = 7; // ellipse size
+           *   ellipse(currentNum, lineY, s, s);
+           *
+           *   // Draw the guide
+           *   let guideY = lineY + 15;
+           *   text('0', 0, guideY);
+           *   textAlign(RIGHT);
+           *   text('100', width, guideY);
+           *
+           *   // Draw the normalized value
+           *   textAlign(LEFT);
+           *   fill(0);
+           *   textSize(32);
+           *   let normalY = 40;
+           *   let normalX = 20;
+           *   text(normalized, normalX, normalY);
+           * }
+           * </code></div>
+           *
+           * @alt
+           * ellipse moves with mouse. 0 shown left & 100 right and updating values center
+           */
+          _main.default.prototype.norm = function(n, start, stop) {
+            _main.default._validateParameters('norm', arguments);
+            return this.map(n, start, stop, 0, 1);
+          };
+
+          /**
+           * Facilitates exponential expressions. The <a href="#/p5/pow">pow()</a> function is an efficient
+           * way of multiplying numbers by themselves (or their reciprocals) in large
+           * quantities. For example, pow(3, 5) is equivalent to the expression
+           * 3 &times; 3 &times; 3 &times; 3 &times; 3 and pow(3, -5) is equivalent to 1 /
+           * 3 &times; 3 &times; 3 &times; 3 &times; 3. Maps to
+           * Math.pow().
