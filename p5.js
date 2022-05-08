@@ -76228,3 +76228,133 @@
            * 3 &times; 3 &times; 3 &times; 3 &times; 3 and pow(3, -5) is equivalent to 1 /
            * 3 &times; 3 &times; 3 &times; 3 &times; 3. Maps to
            * Math.pow().
+           *
+           * @method pow
+           * @param  {Number} n base of the exponential expression
+           * @param  {Number} e power by which to raise the base
+           * @return {Number}   n^e
+           * @example
+           * <div><code>
+           * function setup() {
+           *   //Exponentially increase the size of an ellipse.
+           *   let eSize = 3; // Original Size
+           *   let eLoc = 10; // Original Location
+           *
+           *   ellipse(eLoc, eLoc, eSize, eSize);
+           *
+           *   ellipse(eLoc * 2, eLoc * 2, pow(eSize, 2), pow(eSize, 2));
+           *
+           *   ellipse(eLoc * 4, eLoc * 4, pow(eSize, 3), pow(eSize, 3));
+           *
+           *   ellipse(eLoc * 8, eLoc * 8, pow(eSize, 4), pow(eSize, 4));
+           * }
+           * </code></div>
+           *
+           * @alt
+           * small to large ellipses radiating from top left of canvas
+           */
+          _main.default.prototype.pow = Math.pow;
+
+          /**
+           * Calculates the integer closest to the n parameter. For example,
+           * round(133.8) returns the value 134. Maps to Math.round().
+           *
+           * @method round
+           * @param  {Number} n number to round
+           * @param  {Number} [decimals] number of decimal places to round to, default is 0
+           * @return {Integer}  rounded number
+           * @example
+           * <div><code>
+           * let x = round(3.7);
+           * text(x, width / 2, height / 2);
+           * </code></div>
+           * <div><code>
+           * let x = round(12.782383, 2);
+           * text(x, width / 2, height / 2);
+           * </code></div>
+           * <div><code>
+           * function draw() {
+           *   background(200);
+           *   //map, mouseX between 0 and 5.
+           *   let ax = map(mouseX, 0, 100, 0, 5);
+           *   let ay = 66;
+           *
+           *   // Round the mapped number.
+           *   let bx = round(map(mouseX, 0, 100, 0, 5));
+           *   let by = 33;
+           *
+           *   // Multiply the mapped numbers by 20 to more easily
+           *   // see the changes.
+           *   stroke(0);
+           *   fill(0);
+           *   line(0, ay, ax * 20, ay);
+           *   line(0, by, bx * 20, by);
+           *
+           *   // Reformat the float returned by map and draw it.
+           *   noStroke();
+           *   text(nfc(ax, 2), ax, ay - 5);
+           *   text(nfc(bx, 1), bx, by - 5);
+           * }
+           * </code></div>
+           *
+           * @alt
+           * "3" written in middle of canvas
+           * "12.78" written in middle of canvas
+           * horizontal center line squared values displayed on top and regular on bottom.
+           */
+          _main.default.prototype.round = function(n, decimals) {
+            if (!decimals) {
+              return Math.round(n);
+            }
+            return Number(Math.round(n + 'e' + decimals) + 'e-' + decimals);
+          };
+
+          /**
+           * Squares a number (multiplies a number by itself). The result is always a
+           * positive number, as multiplying two negative numbers always yields a
+           * positive result. For example, -1 * -1 = 1.
+           *
+           * @method sq
+           * @param  {Number} n number to square
+           * @return {Number}   squared number
+           * @example
+           * <div><code>
+           * function draw() {
+           *   background(200);
+           *   let eSize = 7;
+           *   let x1 = map(mouseX, 0, width, 0, 10);
+           *   let y1 = 80;
+           *   let x2 = sq(x1);
+           *   let y2 = 20;
+           *
+           *   // Draw the non-squared.
+           *   line(0, y1, width, y1);
+           *   ellipse(x1, y1, eSize, eSize);
+           *
+           *   // Draw the squared.
+           *   line(0, y2, width, y2);
+           *   ellipse(x2, y2, eSize, eSize);
+           *
+           *   // Draw dividing line.
+           *   stroke(100);
+           *   line(0, height / 2, width, height / 2);
+           *
+           *   // Draw text.
+           *   let spacing = 15;
+           *   noStroke();
+           *   fill(0);
+           *   text('x = ' + x1, 0, y1 + spacing);
+           *   text('sq(x) = ' + x2, 0, y2 + spacing);
+           * }
+           * </code></div>
+           *
+           * @alt
+           * horizontal center line squared values displayed on top and regular on bottom.
+           */
+          _main.default.prototype.sq = function(n) {
+            return n * n;
+          };
+
+          /**
+           * Calculates the square root of a number. The square root of a number is
+           * always positive, even though there may be a valid negative root. The
