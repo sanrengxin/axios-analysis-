@@ -76358,3 +76358,147 @@
           /**
            * Calculates the square root of a number. The square root of a number is
            * always positive, even though there may be a valid negative root. The
+           * square root s of number a is such that s*s = a. It is the opposite of
+           * squaring. Maps to Math.sqrt().
+           *
+           * @method sqrt
+           * @param  {Number} n non-negative number to square root
+           * @return {Number}   square root of number
+           * @example
+           * <div><code>
+           * function draw() {
+           *   background(200);
+           *   let eSize = 7;
+           *   let x1 = mouseX;
+           *   let y1 = 80;
+           *   let x2 = sqrt(x1);
+           *   let y2 = 20;
+           *
+           *   // Draw the non-squared.
+           *   line(0, y1, width, y1);
+           *   ellipse(x1, y1, eSize, eSize);
+           *
+           *   // Draw the squared.
+           *   line(0, y2, width, y2);
+           *   ellipse(x2, y2, eSize, eSize);
+           *
+           *   // Draw dividing line.
+           *   stroke(100);
+           *   line(0, height / 2, width, height / 2);
+           *
+           *   // Draw text.
+           *   noStroke();
+           *   fill(0);
+           *   let spacing = 15;
+           *   text('x = ' + x1, 0, y1 + spacing);
+           *   text('sqrt(x) = ' + x2, 0, y2 + spacing);
+           * }
+           * </code></div>
+           *
+           * @alt
+           * horizontal center line squareroot values displayed on top and regular on bottom.
+           */
+          _main.default.prototype.sqrt = Math.sqrt;
+
+          // Calculate the length of the hypotenuse of a right triangle
+          // This won't under- or overflow in intermediate steps
+          // https://en.wikipedia.org/wiki/Hypot
+          function hypot(x, y, z) {
+            // Use the native implementation if it's available
+            if (typeof Math.hypot === 'function') {
+              return Math.hypot.apply(null, arguments);
+            }
+
+            // Otherwise use the V8 implementation
+            // https://github.com/v8/v8/blob/8cd3cf297287e581a49e487067f5cbd991b27123/src/js/math.js#L217
+            var length = arguments.length;
+            var args = [];
+            var max = 0;
+            for (var i = 0; i < length; i++) {
+              var n = arguments[i];
+              n = +n;
+              if (n === Infinity || n === -Infinity) {
+                return Infinity;
+              }
+              n = Math.abs(n);
+              if (n > max) {
+                max = n;
+              }
+              args[i] = n;
+            }
+
+            if (max === 0) {
+              max = 1;
+            }
+            var sum = 0;
+            var compensation = 0;
+            for (var j = 0; j < length; j++) {
+              var m = args[j] / max;
+              var summand = m * m - compensation;
+              var preliminary = sum + summand;
+              compensation = preliminary - sum - summand;
+              sum = preliminary;
+            }
+            return Math.sqrt(sum) * max;
+          }
+
+          /**
+           * Calculates the fractional part of a number.
+           *
+           * @method fract
+           * @param {Number} num Number whose fractional part needs to be found out
+           * @returns {Number} fractional part of x, i.e, {x}
+           * @example
+           * <div>
+           * <code>
+           * function setup() {
+           *   createCanvas(windowWidth, windowHeight);
+           *   fill(0);
+           *   text(7345.73472742, 0, 50);
+           *   text(fract(7345.73472742), 0, 100);
+           *   text(1.4215e-15, 150, 50);
+           *   text(fract(1.4215e-15), 150, 100);
+           * }
+           * </code>
+           * </div>
+           * @alt
+           * 2 rows of numbers, the first row having 8 numbers and the second having the fractional parts of those numbers.
+           */
+          _main.default.prototype.fract = function(toConvert) {
+            _main.default._validateParameters('fract', arguments);
+            var sign = 0;
+            var num = Number(toConvert);
+            if (isNaN(num) || Math.abs(num) === Infinity) {
+              return num;
+            } else if (num < 0) {
+              num = -num;
+              sign = 1;
+            }
+            if (String(num).includes('.') && !String(num).includes('e')) {
+              var toFract = String(num);
+              toFract = Number('0' + toFract.slice(toFract.indexOf('.')));
+              return Math.abs(sign - toFract);
+            } else if (num < 1) {
+              return Math.abs(sign - num);
+            } else {
+              return 0;
+            }
+          };
+          var _default = _main.default;
+          exports.default = _default;
+        },
+        { '../core/main': 59 }
+      ],
+      90: [
+        function(_dereq_, module, exports) {
+          'use strict';
+          Object.defineProperty(exports, '__esModule', { value: true });
+          exports.default = void 0;
+
+          var _main = _interopRequireDefault(_dereq_('../core/main'));
+          function _interopRequireDefault(obj) {
+            return obj && obj.__esModule ? obj : { default: obj };
+          }
+          /**
+           * @module Math
+           * @submodule Vector
