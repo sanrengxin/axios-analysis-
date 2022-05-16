@@ -76502,3 +76502,138 @@
           /**
            * @module Math
            * @submodule Vector
+           * @for p5
+           * @requires core
+           */ /**
+           * Creates a new <a href="#/p5.Vector">p5.Vector</a> (the datatype for storing vectors). This provides a
+           * two or three dimensional vector, specifically a Euclidean (also known as
+           * geometric) vector. A vector is an entity that has both magnitude and
+           * direction.
+           *
+           * @method createVector
+           * @param {Number} [x] x component of the vector
+           * @param {Number} [y] y component of the vector
+           * @param {Number} [z] z component of the vector
+           * @return {p5.Vector}
+           * @example
+           * <div><code>
+           * let v1;
+           * function setup() {
+           *   createCanvas(100, 100);
+           *   stroke(255, 0, 255);
+           *   v1 = createVector(width / 2, height / 2);
+           * }
+           *
+           * function draw() {
+           *   background(255);
+           *   line(v1.x, v1.y, mouseX, mouseY);
+           * }
+           * </code></div>
+           *
+           * @alt
+           * draws a line from center of canvas to mouse pointer position.
+           */ _main.default.prototype.createVector = function(x, y, z) {
+            if (this instanceof _main.default) {
+              return new _main.default.Vector(this, arguments);
+            } else {
+              return new _main.default.Vector(x, y, z);
+            }
+          };
+          var _default = _main.default;
+          exports.default = _default;
+        },
+        { '../core/main': 59 }
+      ],
+      91: [
+        function(_dereq_, module, exports) {
+          'use strict';
+          Object.defineProperty(exports, '__esModule', { value: true });
+          exports.default = void 0;
+
+          var _main = _interopRequireDefault(_dereq_('../core/main'));
+          function _interopRequireDefault(obj) {
+            return obj && obj.__esModule ? obj : { default: obj };
+          } //////////////////////////////////////////////////////////////
+          // http://mrl.nyu.edu/~perlin/noise/
+          // Adapting from PApplet.java
+          // which was adapted from toxi
+          // which was adapted from the german demo group farbrausch
+          // as used in their demo "art": http://www.farb-rausch.de/fr010src.zip
+          // someday we might consider using "improved noise"
+          // http://mrl.nyu.edu/~perlin/paper445.pdf
+          // See: https://github.com/shiffman/The-Nature-of-Code-Examples-p5.js/
+          //      blob/main/introduction/Noise1D/noise.js
+          /**
+           * @module Math
+           * @submodule Noise
+           * @for p5
+           * @requires core
+           */ var PERLIN_YWRAPB = 4;
+          var PERLIN_YWRAP = 1 << PERLIN_YWRAPB;
+          var PERLIN_ZWRAPB = 8;
+          var PERLIN_ZWRAP = 1 << PERLIN_ZWRAPB;
+          var PERLIN_SIZE = 4095;
+          var perlin_octaves = 4; // default to medium smooth
+          var perlin_amp_falloff = 0.5; // 50% reduction/octave
+          var scaled_cosine = function scaled_cosine(i) {
+            return 0.5 * (1.0 - Math.cos(i * Math.PI));
+          };
+          var perlin; // will be initialized lazily by noise() or noiseSeed()
+          /**
+           * Returns the Perlin noise value at specified coordinates. Perlin noise is
+           * a random sequence generator producing a more naturally ordered, harmonic
+           * succession of numbers compared to the standard <b>random()</b> function.
+           * It was invented by Ken Perlin in the 1980s and been used since in
+           * graphical applications to produce procedural textures, natural motion,
+           * shapes, terrains etc.<br /><br /> The main difference to the
+           * <b>random()</b> function is that Perlin noise is defined in an infinite
+           * n-dimensional space where each pair of coordinates corresponds to a
+           * fixed semi-random value (fixed only for the lifespan of the program; see
+           * the <a href="#/p5/noiseSeed">noiseSeed()</a> function). p5.js can compute 1D, 2D and 3D noise,
+           * depending on the number of coordinates given. The resulting value will
+           * always be between 0.0 and 1.0. The noise value can be animated by moving
+           * through the noise space as demonstrated in the example above. The 2nd
+           * and 3rd dimension can also be interpreted as time.<br /><br />The actual
+           * noise is structured similar to an audio signal, in respect to the
+           * function's use of frequencies. Similar to the concept of harmonics in
+           * physics, perlin noise is computed over several octaves which are added
+           * together for the final result. <br /><br />Another way to adjust the
+           * character of the resulting sequence is the scale of the input
+           * coordinates. As the function works within an infinite space the value of
+           * the coordinates doesn't matter as such, only the distance between
+           * successive coordinates does (eg. when using <b>noise()</b> within a
+           * loop). As a general rule the smaller the difference between coordinates,
+           * the smoother the resulting noise sequence will be. Steps of 0.005-0.03
+           * work best for most applications, but this will differ depending on use.
+           *
+           * @method noise
+           * @param  {Number} x   x-coordinate in noise space
+           * @param  {Number} [y] y-coordinate in noise space
+           * @param  {Number} [z] z-coordinate in noise space
+           * @return {Number}     Perlin noise value (between 0 and 1) at specified
+           *                      coordinates
+           * @example
+           * <div>
+           * <code>
+           * let xoff = 0.0;
+           *
+           * function draw() {
+           *   background(204);
+           *   xoff = xoff + 0.01;
+           *   let n = noise(xoff) * width;
+           *   line(n, 0, n, height);
+           * }
+           * </code>
+           * </div>
+           * <div>
+           * <code>let noiseScale=0.02;
+           *
+           * function draw() {
+           *   background(0);
+           *   for (let x=0; x < width; x++) {
+           *     let noiseVal = noise((mouseX+x)*noiseScale, mouseY*noiseScale);
+           *     stroke(noiseVal*255);
+           *     line(x, mouseY+noiseVal*80, x, height);
+           *   }
+           * }
+           * </code>
