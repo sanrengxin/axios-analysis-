@@ -76765,3 +76765,117 @@
            *       noiseVal = noise(
            *         (mouseX + x + width / 2) * noiseScale,
            *         (mouseY + y) * noiseScale
+           *       );
+           *       stroke(noiseVal * 255);
+           *       point(x + width / 2, y);
+           *     }
+           *   }
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * 2 vertical grey smokey patterns affected my mouse x-position and noise.
+           */
+          _main.default.prototype.noiseDetail = function(lod, falloff) {
+            if (lod > 0) {
+              perlin_octaves = lod;
+            }
+            if (falloff > 0) {
+              perlin_amp_falloff = falloff;
+            }
+          };
+
+          /**
+           * Sets the seed value for <b>noise()</b>. By default, <b>noise()</b>
+           * produces different results each time the program is run. Set the
+           * <b>value</b> parameter to a constant to return the same pseudo-random
+           * numbers each time the software is run.
+           *
+           * @method noiseSeed
+           * @param {Number} seed   the seed value
+           * @example
+           * <div>
+           * <code>let xoff = 0.0;
+           *
+           * function setup() {
+           *   noiseSeed(99);
+           *   stroke(0, 10);
+           * }
+           *
+           * function draw() {
+           *   xoff = xoff + .01;
+           *   let n = noise(xoff) * width;
+           *   line(n, 0, n, height);
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * vertical grey lines drawing in pattern affected by noise.
+           */
+          _main.default.prototype.noiseSeed = function(seed) {
+            // Linear Congruential Generator
+            // Variant of a Lehman Generator
+            var lcg = (function() {
+              // Set to values from http://en.wikipedia.org/wiki/Numerical_Recipes
+              // m is basically chosen to be large (as it is the max period)
+              // and for its relationships to a and c
+              var m = 4294967296;
+              // a - 1 should be divisible by m's prime factors
+              var a = 1664525;
+              // c and m should be co-prime
+              var c = 1013904223;
+              var seed, z;
+              return {
+                setSeed: function setSeed(val) {
+                  // pick a random seed if val is undefined or null
+                  // the >>> 0 casts the seed to an unsigned 32-bit integer
+                  z = seed = (val == null ? Math.random() * m : val) >>> 0;
+                },
+                getSeed: function getSeed() {
+                  return seed;
+                },
+                rand: function rand() {
+                  // define the recurrence relationship
+                  z = (a * z + c) % m;
+                  // return a float in [0, 1)
+                  // if z = m then z / m = 0 therefore (z % m) / m < 1 always
+                  return z / m;
+                }
+              };
+            })();
+
+            lcg.setSeed(seed);
+            perlin = new Array(PERLIN_SIZE + 1);
+            for (var i = 0; i < PERLIN_SIZE + 1; i++) {
+              perlin[i] = lcg.rand();
+            }
+          };
+          var _default = _main.default;
+          exports.default = _default;
+        },
+        { '../core/main': 59 }
+      ],
+      92: [
+        function(_dereq_, module, exports) {
+          'use strict';
+          function _typeof(obj) {
+            if (typeof Symbol === 'function' && typeof Symbol.iterator === 'symbol') {
+              _typeof = function _typeof(obj) {
+                return typeof obj;
+              };
+            } else {
+              _typeof = function _typeof(obj) {
+                return obj &&
+                  typeof Symbol === 'function' &&
+                  obj.constructor === Symbol &&
+                  obj !== Symbol.prototype
+                  ? 'symbol'
+                  : typeof obj;
+              };
+            }
+            return _typeof(obj);
+          }
+          Object.defineProperty(exports, '__esModule', { value: true });
+          exports.default = void 0;
