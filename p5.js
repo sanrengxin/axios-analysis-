@@ -76879,3 +76879,132 @@
           }
           Object.defineProperty(exports, '__esModule', { value: true });
           exports.default = void 0;
+
+          var _main = _interopRequireDefault(_dereq_('../core/main'));
+          var constants = _interopRequireWildcard(_dereq_('../core/constants'));
+          function _getRequireWildcardCache() {
+            if (typeof WeakMap !== 'function') return null;
+            var cache = new WeakMap();
+            _getRequireWildcardCache = function _getRequireWildcardCache() {
+              return cache;
+            };
+            return cache;
+          }
+          function _interopRequireWildcard(obj) {
+            if (obj && obj.__esModule) {
+              return obj;
+            }
+            if (obj === null || (_typeof(obj) !== 'object' && typeof obj !== 'function')) {
+              return { default: obj };
+            }
+            var cache = _getRequireWildcardCache();
+            if (cache && cache.has(obj)) {
+              return cache.get(obj);
+            }
+            var newObj = {};
+            var hasPropertyDescriptor =
+              Object.defineProperty && Object.getOwnPropertyDescriptor;
+            for (var key in obj) {
+              if (Object.prototype.hasOwnProperty.call(obj, key)) {
+                var desc = hasPropertyDescriptor
+                  ? Object.getOwnPropertyDescriptor(obj, key)
+                  : null;
+                if (desc && (desc.get || desc.set)) {
+                  Object.defineProperty(newObj, key, desc);
+                } else {
+                  newObj[key] = obj[key];
+                }
+              }
+            }
+            newObj.default = obj;
+            if (cache) {
+              cache.set(obj, newObj);
+            }
+            return newObj;
+          }
+          function _interopRequireDefault(obj) {
+            return obj && obj.__esModule ? obj : { default: obj };
+          }
+          /**
+           * @module Math
+           * @submodule Vector
+           * @requires constants
+           */ /**
+           * A class to describe a two or three dimensional vector, specifically
+           * a Euclidean (also known as geometric) vector. A vector is an entity
+           * that has both magnitude and direction. The datatype, however, stores
+           * the components of the vector (x, y for 2D, and x, y, z for 3D). The magnitude
+           * and direction can be accessed via the methods <a href="#/p5.Vector/mag">mag()</a> and <a href="#/p5.Vector/heading">heading()</a>.
+           *
+           * In many of the p5.js examples, you will see <a href="#/p5.Vector">p5.Vector</a> used to describe a
+           * position, velocity, or acceleration. For example, if you consider a rectangle
+           * moving across the screen, at any given instant it has a position (a vector
+           * that points from the origin to its location), a velocity (the rate at which
+           * the object's position changes per time unit, expressed as a vector), and
+           * acceleration (the rate at which the object's velocity changes per time
+           * unit, expressed as a vector).
+           *
+           * Since vectors represent groupings of values, we cannot simply use
+           * traditional addition/multiplication/etc. Instead, we'll need to do some
+           * "vector" math, which is made easy by the methods inside the <a href="#/p5.Vector">p5.Vector</a> class.
+           *
+           * @class p5.Vector
+           * @constructor
+           * @param {Number} [x] x component of the vector
+           * @param {Number} [y] y component of the vector
+           * @param {Number} [z] z component of the vector
+           * @example
+           * <div>
+           * <code>
+           * let v1 = createVector(40, 50);
+           * let v2 = createVector(40, 50);
+           *
+           * ellipse(v1.x, v1.y, 50, 50);
+           * ellipse(v2.x, v2.y, 50, 50);
+           * v1.add(v2);
+           * ellipse(v1.x, v1.y, 50, 50);
+           * </code>
+           * </div>
+           *
+           * @alt
+           * 2 white ellipses. One center-left the other bottom right and off canvas
+           */ _main.default.Vector = function Vector() {
+            var x, y, z;
+            // This is how it comes in with createVector()
+            if (arguments[0] instanceof _main.default) {
+              // save reference to p5 if passed in
+              this.p5 = arguments[0];
+              x = arguments[1][0] || 0;
+              y = arguments[1][1] || 0;
+              z = arguments[1][2] || 0;
+              // This is what we'll get with new p5.Vector()
+            } else {
+              x = arguments[0] || 0;
+              y = arguments[1] || 0;
+              z = arguments[2] || 0;
+            }
+            /**
+             * The x component of the vector
+             * @property x {Number}
+             */
+            this.x = x;
+            /**
+             * The y component of the vector
+             * @property y {Number}
+             */
+            this.y = y;
+            /**
+             * The z component of the vector
+             * @property z {Number}
+             */
+            this.z = z;
+          };
+
+          /**
+           * Returns a string representation of a vector v by calling String(v)
+           * or v.toString(). This method is useful for logging vectors in the
+           * console.
+           * @method  toString
+           * @return {String}
+           * @example
+           * <div class = "norender">
