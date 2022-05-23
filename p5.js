@@ -77130,3 +77130,139 @@
               this.z = x[2] || 0;
               return this;
             }
+            this.x = x || 0;
+            this.y = y || 0;
+            this.z = z || 0;
+            return this;
+          };
+
+          /**
+           * Gets a copy of the vector, returns a <a href="#/p5.Vector">p5.Vector</a> object.
+           *
+           * @method copy
+           * @return {p5.Vector} the copy of the <a href="#/p5.Vector">p5.Vector</a> object
+           * @example
+           * <div class="norender">
+           * <code>
+           * let v1 = createVector(1, 2, 3);
+           * let v2 = v1.copy();
+           * print(v1.x === v2.x && v1.y === v2.y && v1.z === v2.z);
+           * // Prints "true"
+           * </code>
+           * </div>
+           */
+          _main.default.Vector.prototype.copy = function copy() {
+            if (this.p5) {
+              return new _main.default.Vector(this.p5, [this.x, this.y, this.z]);
+            } else {
+              return new _main.default.Vector(this.x, this.y, this.z);
+            }
+          };
+
+          /**
+           * Adds x, y, and z components to a vector, adds one vector to another, or
+           * adds two independent vectors together. The version of the method that adds
+           * two vectors together is a static method and returns a <a href="#/p5.Vector">p5.Vector</a>, the others
+           * acts directly on the vector. Additionally, you may provide arguments to this function as an array.
+           * See the examples for more context.
+           *
+           * @method add
+           * @param  {Number} x   the x component of the vector to be added
+           * @param  {Number} [y] the y component of the vector to be added
+           * @param  {Number} [z] the z component of the vector to be added
+           * @chainable
+           * @example
+           * <div class="norender">
+           * <code>
+           * let v = createVector(1, 2, 3);
+           * v.add(4, 5, 6);
+           * // v's components are set to [5, 7, 9]
+           * </code>
+           * </div>
+           *
+           * <div class="norender">
+           * <code>
+           * let v = createVector(1, 2, 3);
+           * // Provide arguments as an array
+           * let arr = [4, 5, 6];
+           * v.add(arr);
+           * // v's components are set to [5, 7, 9]
+           * </code>
+           * </div>
+           *
+           * <div class="norender">
+           * <code>
+           * // Static method
+           * let v1 = createVector(1, 2, 3);
+           * let v2 = createVector(2, 3, 4);
+           *
+           * let v3 = p5.Vector.add(v1, v2);
+           * // v3 has components [3, 5, 7]
+           * print(v3);
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * // red vector + blue vector = purple vector
+           * function draw() {
+           *   background(240);
+           *
+           *   let v0 = createVector(0, 0);
+           *   let v1 = createVector(mouseX, mouseY);
+           *   drawArrow(v0, v1, 'red');
+           *
+           *   let v2 = createVector(-30, 20);
+           *   drawArrow(v1, v2, 'blue');
+           *
+           *   let v3 = p5.Vector.add(v1, v2);
+           *   drawArrow(v0, v3, 'purple');
+           * }
+           *
+           * // draw an arrow for a vector at a given base position
+           * function drawArrow(base, vec, myColor) {
+           *   push();
+           *   stroke(myColor);
+           *   strokeWeight(3);
+           *   fill(myColor);
+           *   translate(base.x, base.y);
+           *   line(0, 0, vec.x, vec.y);
+           *   rotate(vec.heading());
+           *   let arrowSize = 7;
+           *   translate(vec.mag() - arrowSize, 0);
+           *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
+           *   pop();
+           * }
+           * </code>
+           * </div>
+           */
+          /**
+           * @method add
+           * @param  {p5.Vector|Number[]} value the vector to add
+           * @chainable
+           */
+          _main.default.Vector.prototype.add = function add(x, y, z) {
+            if (x instanceof _main.default.Vector) {
+              this.x += x.x || 0;
+              this.y += x.y || 0;
+              this.z += x.z || 0;
+              return this;
+            }
+            if (x instanceof Array) {
+              this.x += x[0] || 0;
+              this.y += x[1] || 0;
+              this.z += x[2] || 0;
+              return this;
+            }
+            this.x += x || 0;
+            this.y += y || 0;
+            this.z += z || 0;
+            return this;
+          };
+
+          /// HELPERS FOR REMAINDER METHOD
+          var calculateRemainder2D = function calculateRemainder2D(xComponent, yComponent) {
+            if (xComponent !== 0) {
+              this.x = this.x % xComponent;
+            }
+            if (yComponent !== 0) {
