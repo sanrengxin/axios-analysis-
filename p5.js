@@ -77008,3 +77008,125 @@
            * @return {String}
            * @example
            * <div class = "norender">
+           * <code>
+           * function setup() {
+           *   let v = createVector(20, 30);
+           *   print(String(v)); // prints "p5.Vector Object : [20, 30, 0]"
+           * }
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * function draw() {
+           *   background(240);
+           *
+           *   let v0 = createVector(0, 0);
+           *   let v1 = createVector(mouseX, mouseY);
+           *   drawArrow(v0, v1, 'black');
+           *
+           *   noStroke();
+           *   text(v1.toString(), 10, 25, 90, 75);
+           * }
+           *
+           * // draw an arrow for a vector at a given base position
+           * function drawArrow(base, vec, myColor) {
+           *   push();
+           *   stroke(myColor);
+           *   strokeWeight(3);
+           *   fill(myColor);
+           *   translate(base.x, base.y);
+           *   line(0, 0, vec.x, vec.y);
+           *   rotate(vec.heading());
+           *   let arrowSize = 7;
+           *   translate(vec.mag() - arrowSize, 0);
+           *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
+           *   pop();
+           * }
+           * </code>
+           * </div>
+           */
+          _main.default.Vector.prototype.toString = function p5VectorToString() {
+            return 'p5.Vector Object : ['
+              .concat(this.x, ', ')
+              .concat(this.y, ', ')
+              .concat(this.z, ']');
+          };
+
+          /**
+           * Sets the x, y, and z component of the vector using two or three separate
+           * variables, the data from a <a href="#/p5.Vector">p5.Vector</a>, or the values from a float array.
+           * @method set
+           * @param {Number} [x] the x component of the vector
+           * @param {Number} [y] the y component of the vector
+           * @param {Number} [z] the z component of the vector
+           * @chainable
+           * @example
+           * <div class="norender">
+           * <code>
+           * function setup() {
+           *   let v = createVector(1, 2, 3);
+           *   v.set(4, 5, 6); // Sets vector to [4, 5, 6]
+           *
+           *   let v1 = createVector(0, 0, 0);
+           *   let arr = [1, 2, 3];
+           *   v1.set(arr); // Sets vector to [1, 2, 3]
+           * }
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * let v0, v1;
+           * function setup() {
+           *   createCanvas(100, 100);
+           *
+           *   v0 = createVector(0, 0);
+           *   v1 = createVector(50, 50);
+           * }
+           *
+           * function draw() {
+           *   background(240);
+           *
+           *   drawArrow(v0, v1, 'black');
+           *   v1.set(v1.x + random(-1, 1), v1.y + random(-1, 1));
+           *
+           *   noStroke();
+           *   text('x: ' + round(v1.x) + ' y: ' + round(v1.y), 20, 90);
+           * }
+           *
+           * // draw an arrow for a vector at a given base position
+           * function drawArrow(base, vec, myColor) {
+           *   push();
+           *   stroke(myColor);
+           *   strokeWeight(3);
+           *   fill(myColor);
+           *   translate(base.x, base.y);
+           *   line(0, 0, vec.x, vec.y);
+           *   rotate(vec.heading());
+           *   let arrowSize = 7;
+           *   translate(vec.mag() - arrowSize, 0);
+           *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
+           *   pop();
+           * }
+           * </code>
+           * </div>
+           */
+          /**
+           * @method set
+           * @param {p5.Vector|Number[]} value the vector to set
+           * @chainable
+           */
+          _main.default.Vector.prototype.set = function set(x, y, z) {
+            if (x instanceof _main.default.Vector) {
+              this.x = x.x || 0;
+              this.y = x.y || 0;
+              this.z = x.z || 0;
+              return this;
+            }
+            if (x instanceof Array) {
+              this.x = x[0] || 0;
+              this.y = x[1] || 0;
+              this.z = x[2] || 0;
+              return this;
+            }
