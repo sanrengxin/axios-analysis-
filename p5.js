@@ -77266,3 +77266,160 @@
               this.x = this.x % xComponent;
             }
             if (yComponent !== 0) {
+              this.y = this.y % yComponent;
+            }
+            return this;
+          };
+
+          var calculateRemainder3D = function calculateRemainder3D(
+            xComponent,
+            yComponent,
+            zComponent
+          ) {
+            if (xComponent !== 0) {
+              this.x = this.x % xComponent;
+            }
+            if (yComponent !== 0) {
+              this.y = this.y % yComponent;
+            }
+            if (zComponent !== 0) {
+              this.z = this.z % zComponent;
+            }
+            return this;
+          };
+          /**
+           * Gives remainder of a vector when it is divided by another vector.
+           * See examples for more context.
+           *
+           * @method rem
+           * @param {Number} x the x component of divisor vector
+           * @param {Number} y the y component of divisor vector
+           * @param {Number} z the z component of divisor vector
+           * @chainable
+           * @example
+           * <div class='norender'>
+           * <code>
+           * let v = createVector(3, 4, 5);
+           * v.rem(2, 3, 4);
+           * // v's components are set to [1, 1, 1]
+           * </code>
+           * </div>
+           * <div class="norender">
+           * <code>
+           * // Static method
+           * let v1 = createVector(3, 4, 5);
+           * let v2 = createVector(2, 3, 4);
+           *
+           * let v3 = p5.Vector.rem(v1, v2);
+           * // v3 has components [1, 1, 1]
+           * print(v3);
+           * </code>
+           * </div>
+           */
+          /**
+           * @method rem
+           * @param {p5.Vector | Number[]}  value  divisor vector
+           * @chainable
+           */
+          _main.default.Vector.prototype.rem = function rem(x, y, z) {
+            if (x instanceof _main.default.Vector) {
+              if (Number.isFinite(x.x) && Number.isFinite(x.y) && Number.isFinite(x.z)) {
+                var xComponent = parseFloat(x.x);
+                var yComponent = parseFloat(x.y);
+                var zComponent = parseFloat(x.z);
+                calculateRemainder3D.call(this, xComponent, yComponent, zComponent);
+              }
+            } else if (x instanceof Array) {
+              if (
+                x.every(function(element) {
+                  return Number.isFinite(element);
+                })
+              ) {
+                if (x.length === 2) {
+                  calculateRemainder2D.call(this, x[0], x[1]);
+                }
+                if (x.length === 3) {
+                  calculateRemainder3D.call(this, x[0], x[1], x[2]);
+                }
+              }
+            } else if (arguments.length === 1) {
+              if (Number.isFinite(arguments[0]) && arguments[0] !== 0) {
+                this.x = this.x % arguments[0];
+                this.y = this.y % arguments[0];
+                this.z = this.z % arguments[0];
+                return this;
+              }
+            } else if (arguments.length === 2) {
+              var vectorComponents = Array.prototype.slice.call(arguments);
+              if (
+                vectorComponents.every(function(element) {
+                  return Number.isFinite(element);
+                })
+              ) {
+                if (vectorComponents.length === 2) {
+                  calculateRemainder2D.call(this, vectorComponents[0], vectorComponents[1]);
+                }
+              }
+            } else if (arguments.length === 3) {
+              var _vectorComponents = Array.prototype.slice.call(arguments);
+              if (
+                _vectorComponents.every(function(element) {
+                  return Number.isFinite(element);
+                })
+              ) {
+                if (_vectorComponents.length === 3) {
+                  calculateRemainder3D.call(
+                    this,
+                    _vectorComponents[0],
+                    _vectorComponents[1],
+                    _vectorComponents[2]
+                  );
+                }
+              }
+            }
+          };
+
+          /**
+           * Subtracts x, y, and z components from a vector, subtracts one vector from
+           * another, or subtracts two independent vectors. The version of the method
+           * that subtracts two vectors is a static method and returns a <a href="#/p5.Vector">p5.Vector</a>, the
+           * other acts directly on the vector. Additionally, you may provide arguments to this function as an array.
+           * See the examples for more context.
+           *
+           * @method sub
+           * @param  {Number} x   the x component of the vector to subtract
+           * @param  {Number} [y] the y component of the vector to subtract
+           * @param  {Number} [z] the z component of the vector to subtract
+           * @chainable
+           * @example
+           * <div class="norender">
+           * <code>
+           * let v = createVector(4, 5, 6);
+           * v.sub(1, 1, 1);
+           * // v's components are set to [3, 4, 5]
+           * </code>
+           * </div>
+           *
+           * <div class="norender">
+           * <code>
+           * let v = createVector(4, 5, 6);
+           * // Provide arguments as an array
+           * let arr = [1, 1, 1];
+           * v.sub(arr);
+           * // v's components are set to [3, 4, 5]
+           * </code>
+           * </div>
+           *
+           * <div class="norender">
+           * <code>
+           * // Static method
+           * let v1 = createVector(2, 3, 4);
+           * let v2 = createVector(1, 2, 3);
+           *
+           * let v3 = p5.Vector.sub(v1, v2);
+           * // v3 has components [1, 1, 1]
+           * print(v3);
+           * </code>
+           * </div>
+           *
+           * <div>
