@@ -77674,3 +77674,134 @@
               console.warn(
                 'p5.Vector.prototype.mult:',
                 'x, y, or z arguments are either undefined or not a finite number'
+              );
+            }
+
+            return this;
+          };
+
+          /**
+           * Divides the vector by a scalar, divides a vector by the x, y, and z arguments, or divides the x, y, and
+           * z components of two vectors against each other. When dividing a vector by a scalar, the x, y,
+           * and z components of the vector are all divided by the scalar. When dividing a vector by a vector,
+           * the x, y, z components of the source vector are treated as the dividend, and the x, y, z components
+           * of the argument is treated as the divisor (for example with two vectors a and b: a.x / b.x, a.y / b.y, a.z / b.z).
+           * The static version of this method creates a
+           * new <a href="#/p5.Vector">p5.Vector</a> while the non static version acts on the vector directly.
+           * Additionally, you may provide arguments to this function as an array.
+           * See the examples for more context.
+           *
+           * @method div
+           * @param  {number}    n The number to divide the vector by
+           * @chainable
+           * @example
+           * <div class="norender">
+           * <code>
+           * let v = createVector(6, 4, 2);
+           * v.div(2); //v's components are set to [3, 2, 1]
+           * </code>
+           * </div>
+           *
+           * <div class="norender">
+           * <code>
+           * let v0 = createVector(9, 4, 2);
+           * let v1 = createVector(3, 2, 4);
+           * v0.div(v1); // v0's components are set to [3, 2, 0.5]
+           * </code>
+           * </div>
+           *
+           * <div class="norender">
+           * <code>
+           * let v0 = createVector(9, 4, 2);
+           * // Provide arguments as an array
+           * let arr = [3, 2, 4];
+           * v0.div(arr); // v0's components are set to [3, 2, 0.5]
+           * </code>
+           * </div>
+           *
+           * <div class="norender">
+           * <code>
+           * let v0 = createVector(9, 4, 2);
+           * let v1 = createVector(3, 2, 4);
+           * let result = p5.Vector.div(v0, v1);
+           * print(result); // result's components are set to [3, 2, 0.5]
+           * </code>
+           * </div>
+           *
+           * <div class="norender">
+           * <code>
+           * // Static method
+           * let v1 = createVector(6, 4, 2);
+           * let v2 = p5.Vector.div(v1, 2);
+           * // v2 has components [3, 2, 1]
+           * print(v2);
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * function draw() {
+           *   background(240);
+           *
+           *   let v0 = createVector(0, 100);
+           *   let v1 = createVector(50, -50);
+           *   drawArrow(v0, v1, 'red');
+           *
+           *   let num = map(mouseX, 0, width, 10, 0.5, true);
+           *   let v2 = p5.Vector.div(v1, num);
+           *   drawArrow(v0, v2, 'blue');
+           *
+           *   noStroke();
+           *   text('divided by ' + num.toFixed(2), 10, 90);
+           * }
+           *
+           * // draw an arrow for a vector at a given base position
+           * function drawArrow(base, vec, myColor) {
+           *   push();
+           *   stroke(myColor);
+           *   strokeWeight(3);
+           *   fill(myColor);
+           *   translate(base.x, base.y);
+           *   line(0, 0, vec.x, vec.y);
+           *   rotate(vec.heading());
+           *   let arrowSize = 7;
+           *   translate(vec.mag() - arrowSize, 0);
+           *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
+           *   pop();
+           * }
+           * </code>
+           * </div>
+           */
+
+          /**
+           * @method div
+           * @param  {Number} x The number to divide with the x component of the vector
+           * @param  {Number} y The number to divide with the y component of the vector
+           * @param  {Number} [z] The number to divide with the z component of the vector
+           * @chainable
+           */
+
+          /**
+           * @method div
+           * @param  {Number[]} arr The array to divide the components of the vector by
+           * @chainable
+           */
+
+          /**
+           * @method div
+           * @param  {p5.Vector} v The vector to divide the components of the original vector by
+           * @chainable
+           */
+          _main.default.Vector.prototype.div = function div(x, y, z) {
+            if (x instanceof _main.default.Vector) {
+              // new p5.Vector will check that values are valid upon construction but it's possible
+              // that someone could change the value of a component after creation, which is why we still
+              // perform this check
+              if (
+                Number.isFinite(x.x) &&
+                Number.isFinite(x.y) &&
+                Number.isFinite(x.z) &&
+                typeof x.x === 'number' &&
+                typeof x.y === 'number' &&
+                typeof x.z === 'number'
+              ) {
