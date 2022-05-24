@@ -77423,3 +77423,129 @@
            * </div>
            *
            * <div>
+           * <code>
+           * // red vector - blue vector = purple vector
+           * function draw() {
+           *   background(240);
+           *
+           *   let v0 = createVector(0, 0);
+           *   let v1 = createVector(70, 50);
+           *   drawArrow(v0, v1, 'red');
+           *
+           *   let v2 = createVector(mouseX, mouseY);
+           *   drawArrow(v0, v2, 'blue');
+           *
+           *   let v3 = p5.Vector.sub(v1, v2);
+           *   drawArrow(v2, v3, 'purple');
+           * }
+           *
+           * // draw an arrow for a vector at a given base position
+           * function drawArrow(base, vec, myColor) {
+           *   push();
+           *   stroke(myColor);
+           *   strokeWeight(3);
+           *   fill(myColor);
+           *   translate(base.x, base.y);
+           *   line(0, 0, vec.x, vec.y);
+           *   rotate(vec.heading());
+           *   let arrowSize = 7;
+           *   translate(vec.mag() - arrowSize, 0);
+           *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
+           *   pop();
+           * }
+           * </code>
+           * </div>
+           */
+          /**
+           * @method sub
+           * @param  {p5.Vector|Number[]} value the vector to subtract
+           * @chainable
+           */
+          _main.default.Vector.prototype.sub = function sub(x, y, z) {
+            if (x instanceof _main.default.Vector) {
+              this.x -= x.x || 0;
+              this.y -= x.y || 0;
+              this.z -= x.z || 0;
+              return this;
+            }
+            if (x instanceof Array) {
+              this.x -= x[0] || 0;
+              this.y -= x[1] || 0;
+              this.z -= x[2] || 0;
+              return this;
+            }
+            this.x -= x || 0;
+            this.y -= y || 0;
+            this.z -= z || 0;
+            return this;
+          };
+
+          /**
+           * Multiplies the vector by a scalar, multiplies the x, y, and z components from a vector, or multiplies
+           * the x, y, and z components of two independent vectors. When multiplying a vector by a scalar, the x, y,
+           * and z components of the vector are all multiplied by the scalar. When multiplying a vector by a vector,
+           * the x, y, z components of both vectors are multiplied by each other
+           * (for example, with two vectors a and b: a.x * b.x, a.y * b.y, a.z * b.z). The static version of this method
+           * creates a new <a href="#/p5.Vector">p5.Vector</a> while the non static version acts on the vector
+           * directly. Additionally, you may provide arguments to this function as an array.
+           * See the examples for more context.
+           *
+           * @method mult
+           * @param  {Number} n The number to multiply with the vector
+           * @chainable
+           * @example
+           * <div class="norender">
+           * <code>
+           * let v = createVector(1, 2, 3);
+           * v.mult(2);
+           * // v's components are set to [2, 4, 6]
+           * </code>
+           * </div>
+           *
+           * <div class="norender">
+           * <code>
+           * let v0 = createVector(1, 2, 3);
+           * let v1 = createVector(2, 3, 4);
+           * v0.mult(v1); // v0's components are set to [2, 6, 12]
+           * </code>
+           * </div>
+           *
+           * <div class="norender">
+           * <code>
+           * let v0 = createVector(1, 2, 3);
+           * // Provide arguments as an array
+           * let arr = [2, 3, 4];
+           * v0.mult(arr); // v0's components are set to [2, 6, 12]
+           * </code>
+           * </div>
+           *
+           * <div class="norender">
+           * <code>
+           * let v0 = createVector(1, 2, 3);
+           * let v1 = createVector(2, 3, 4);
+           * const result = p5.Vector.mult(v0, v1);
+           * print(result); // result's components are set to [2, 6, 12]
+           * </code>
+           * </div>
+           *
+           * <div class="norender">
+           * <code>
+           * // Static method
+           * let v1 = createVector(1, 2, 3);
+           * let v2 = p5.Vector.mult(v1, 2);
+           * // v2 has components [2, 4, 6]
+           * print(v2);
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * function draw() {
+           *   background(240);
+           *
+           *   let v0 = createVector(50, 50);
+           *   let v1 = createVector(25, -25);
+           *   drawArrow(v0, v1, 'red');
+           *
+           *   let num = map(mouseX, 0, width, -2, 2, true);
+           *   let v2 = p5.Vector.mult(v1, num);
