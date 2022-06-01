@@ -77805,3 +77805,139 @@
                 typeof x.y === 'number' &&
                 typeof x.z === 'number'
               ) {
+                if (x.x === 0 || x.y === 0 || x.z === 0) {
+                  console.warn('p5.Vector.prototype.div:', 'divide by 0');
+                  return this;
+                }
+                this.x /= x.x;
+                this.y /= x.y;
+                this.z /= x.z;
+              } else {
+                console.warn(
+                  'p5.Vector.prototype.div:',
+                  'x contains components that are either undefined or not finite numbers'
+                );
+              }
+              return this;
+            }
+            if (x instanceof Array) {
+              if (
+                x.every(function(element) {
+                  return Number.isFinite(element);
+                }) &&
+                x.every(function(element) {
+                  return typeof element === 'number';
+                })
+              ) {
+                if (
+                  x.some(function(element) {
+                    return element === 0;
+                  })
+                ) {
+                  console.warn('p5.Vector.prototype.div:', 'divide by 0');
+                  return this;
+                }
+
+                if (x.length === 1) {
+                  this.x /= x[0];
+                  this.y /= x[0];
+                  this.z /= x[0];
+                } else if (x.length === 2) {
+                  this.x /= x[0];
+                  this.y /= x[1];
+                } else if (x.length === 3) {
+                  this.x /= x[0];
+                  this.y /= x[1];
+                  this.z /= x[2];
+                }
+              } else {
+                console.warn(
+                  'p5.Vector.prototype.div:',
+                  'x contains components that are either undefined or not finite numbers'
+                );
+              }
+
+              return this;
+            }
+
+            var vectorComponents = Array.prototype.slice.call(arguments);
+            if (
+              vectorComponents.every(function(element) {
+                return Number.isFinite(element);
+              }) &&
+              vectorComponents.every(function(element) {
+                return typeof element === 'number';
+              })
+            ) {
+              if (
+                vectorComponents.some(function(element) {
+                  return element === 0;
+                })
+              ) {
+                console.warn('p5.Vector.prototype.div:', 'divide by 0');
+                return this;
+              }
+
+              if (arguments.length === 1) {
+                this.x /= x;
+                this.y /= x;
+                this.z /= x;
+              }
+              if (arguments.length === 2) {
+                this.x /= x;
+                this.y /= y;
+              }
+              if (arguments.length === 3) {
+                this.x /= x;
+                this.y /= y;
+                this.z /= z;
+              }
+            } else {
+              console.warn(
+                'p5.Vector.prototype.div:',
+                'x, y, or z arguments are either undefined or not a finite number'
+              );
+            }
+
+            return this;
+          };
+          /**
+           * Calculates the magnitude (length) of the vector and returns the result as
+           * a float (this is simply the equation sqrt(x\*x + y\*y + z\*z).)
+           *
+           * @method mag
+           * @return {Number} magnitude of the vector
+           * @example
+           * <div>
+           * <code>
+           * function draw() {
+           *   background(240);
+           *
+           *   let v0 = createVector(0, 0);
+           *   let v1 = createVector(mouseX, mouseY);
+           *   drawArrow(v0, v1, 'black');
+           *
+           *   noStroke();
+           *   text('vector length: ' + v1.mag().toFixed(2), 10, 70, 90, 30);
+           * }
+           *
+           * // draw an arrow for a vector at a given base position
+           * function drawArrow(base, vec, myColor) {
+           *   push();
+           *   stroke(myColor);
+           *   strokeWeight(3);
+           *   fill(myColor);
+           *   translate(base.x, base.y);
+           *   line(0, 0, vec.x, vec.y);
+           *   rotate(vec.heading());
+           *   let arrowSize = 7;
+           *   translate(vec.mag() - arrowSize, 0);
+           *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
+           *   pop();
+           * }
+           * </code>
+           * </div>
+           * <div class="norender">
+           * <code>
+           * let v = createVector(20.0, 30.0, 40.0);
+           * let m = v.mag();
