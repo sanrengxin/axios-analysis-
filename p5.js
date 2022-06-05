@@ -77941,3 +77941,139 @@
            * <code>
            * let v = createVector(20.0, 30.0, 40.0);
            * let m = v.mag();
+           * print(m); // Prints "53.85164807134504"
+           * </code>
+           * </div>
+           */
+          _main.default.Vector.prototype.mag = function mag() {
+            return Math.sqrt(this.magSq());
+          };
+
+          /**
+           * Calculates the squared magnitude of the vector and returns the result
+           * as a float (this is simply the equation <em>(x\*x + y\*y + z\*z)</em>.)
+           * Faster if the real length is not required in the
+           * case of comparing vectors, etc.
+           *
+           * @method magSq
+           * @return {number} squared magnitude of the vector
+           * @example
+           * <div class="norender">
+           * <code>
+           * // Static method
+           * let v1 = createVector(6, 4, 2);
+           * print(v1.magSq()); // Prints "56"
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * function draw() {
+           *   background(240);
+           *
+           *   let v0 = createVector(0, 0);
+           *   let v1 = createVector(mouseX, mouseY);
+           *   drawArrow(v0, v1, 'black');
+           *
+           *   noStroke();
+           *   text('vector length squared: ' + v1.magSq().toFixed(2), 10, 45, 90, 55);
+           * }
+           *
+           * // draw an arrow for a vector at a given base position
+           * function drawArrow(base, vec, myColor) {
+           *   push();
+           *   stroke(myColor);
+           *   strokeWeight(3);
+           *   fill(myColor);
+           *   translate(base.x, base.y);
+           *   line(0, 0, vec.x, vec.y);
+           *   rotate(vec.heading());
+           *   let arrowSize = 7;
+           *   translate(vec.mag() - arrowSize, 0);
+           *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
+           *   pop();
+           * }
+           * </code>
+           * </div>
+           */
+          _main.default.Vector.prototype.magSq = function magSq() {
+            var x = this.x;
+            var y = this.y;
+            var z = this.z;
+            return x * x + y * y + z * z;
+          };
+
+          /**
+           * Calculates the dot product of two vectors. The version of the method
+           * that computes the dot product of two independent vectors is a static
+           * method. See the examples for more context.
+           *
+           * @method dot
+           * @param  {Number} x   x component of the vector
+           * @param  {Number} [y] y component of the vector
+           * @param  {Number} [z] z component of the vector
+           * @return {Number}       the dot product
+           *
+           * @example
+           * <div class="norender">
+           * <code>
+           * let v1 = createVector(1, 2, 3);
+           * let v2 = createVector(2, 3, 4);
+           *
+           * print(v1.dot(v2)); // Prints "20"
+           * </code>
+           * </div>
+           *
+           * <div class="norender">
+           * <code>
+           * //Static method
+           * let v1 = createVector(1, 2, 3);
+           * let v2 = createVector(3, 2, 1);
+           * print(p5.Vector.dot(v1, v2)); // Prints "10"
+           * </code>
+           * </div>
+           */
+          /**
+           * @method dot
+           * @param  {p5.Vector} value value component of the vector or a <a href="#/p5.Vector">p5.Vector</a>
+           * @return {Number}
+           */
+          _main.default.Vector.prototype.dot = function dot(x, y, z) {
+            if (x instanceof _main.default.Vector) {
+              return this.dot(x.x, x.y, x.z);
+            }
+            return this.x * (x || 0) + this.y * (y || 0) + this.z * (z || 0);
+          };
+
+          /**
+           * Calculates and returns a vector composed of the cross product between
+           * two vectors. Both the static and non static methods return a new <a href="#/p5.Vector">p5.Vector</a>.
+           * See the examples for more context.
+           *
+           * @method cross
+           * @param  {p5.Vector} v <a href="#/p5.Vector">p5.Vector</a> to be crossed
+           * @return {p5.Vector}   <a href="#/p5.Vector">p5.Vector</a> composed of cross product
+           * @example
+           * <div class="norender">
+           * <code>
+           * let v1 = createVector(1, 2, 3);
+           * let v2 = createVector(1, 2, 3);
+           *
+           * let v = v1.cross(v2); // v's components are [0, 0, 0]
+           * print(v);
+           * </code>
+           * </div>
+           *
+           * <div class="norender">
+           * <code>
+           * // Static method
+           * let v1 = createVector(1, 0, 0);
+           * let v2 = createVector(0, 1, 0);
+           *
+           * let crossProduct = p5.Vector.cross(v1, v2);
+           * // crossProduct has components [0, 0, 1]
+           * print(crossProduct);
+           * </code>
+           * </div>
+           */
+          _main.default.Vector.prototype.cross = function cross(v) {
