@@ -78207,3 +78207,177 @@
            * </div>
            */
           _main.default.Vector.prototype.normalize = function normalize() {
+            var len = this.mag();
+            // here we multiply by the reciprocal instead of calling 'div()'
+            // since div duplicates this zero check.
+            if (len !== 0) this.mult(1 / len);
+            return this;
+          };
+
+          /**
+           * Limit the magnitude of this vector to the value used for the <b>max</b>
+           * parameter.
+           *
+           * @method limit
+           * @param  {Number}    max the maximum magnitude for the vector
+           * @chainable
+           * @example
+           * <div class="norender">
+           * <code>
+           * let v = createVector(10, 20, 2);
+           * // v has components [10.0, 20.0, 2.0]
+           * v.limit(5);
+           * // v's components are set to
+           * // [2.2271771, 4.4543543, 0.4454354]
+           * </code>
+           * </div>
+           * <div>
+           * <code>
+           * function draw() {
+           *   background(240);
+           *
+           *   let v0 = createVector(50, 50);
+           *   let v1 = createVector(mouseX - 50, mouseY - 50);
+           *
+           *   drawArrow(v0, v1, 'red');
+           *   drawArrow(v0, v1.limit(35), 'blue');
+           *
+           *   noFill();
+           *   ellipse(50, 50, 35 * 2);
+           * }
+           *
+           * // draw an arrow for a vector at a given base position
+           * function drawArrow(base, vec, myColor) {
+           *   push();
+           *   stroke(myColor);
+           *   strokeWeight(3);
+           *   fill(myColor);
+           *   translate(base.x, base.y);
+           *   line(0, 0, vec.x, vec.y);
+           *   rotate(vec.heading());
+           *   let arrowSize = 7;
+           *   translate(vec.mag() - arrowSize, 0);
+           *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
+           *   pop();
+           * }
+           * </code>
+           * </div>
+           */
+          _main.default.Vector.prototype.limit = function limit(max) {
+            var mSq = this.magSq();
+            if (mSq > max * max) {
+              this.div(Math.sqrt(mSq)) //normalize it
+                .mult(max);
+            }
+            return this;
+          };
+
+          /**
+           * Set the magnitude of this vector to the value used for the <b>len</b>
+           * parameter.
+           *
+           * @method setMag
+           * @param  {number}    len the new length for this vector
+           * @chainable
+           * @example
+           * <div class="norender">
+           * <code>
+           * let v = createVector(10, 20, 2);
+           * // v has components [10.0, 20.0, 2.0]
+           * v.setMag(10);
+           * // v's components are set to [6.0, 8.0, 0.0]
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * function draw() {
+           *   background(240);
+           *
+           *   let v0 = createVector(0, 0);
+           *   let v1 = createVector(50, 50);
+           *
+           *   drawArrow(v0, v1, 'red');
+           *
+           *   let length = map(mouseX, 0, width, 0, 141, true);
+           *   v1.setMag(length);
+           *   drawArrow(v0, v1, 'blue');
+           *
+           *   noStroke();
+           *   text('magnitude set to: ' + length.toFixed(2), 10, 70, 90, 30);
+           * }
+           *
+           * // draw an arrow for a vector at a given base position
+           * function drawArrow(base, vec, myColor) {
+           *   push();
+           *   stroke(myColor);
+           *   strokeWeight(3);
+           *   fill(myColor);
+           *   translate(base.x, base.y);
+           *   line(0, 0, vec.x, vec.y);
+           *   rotate(vec.heading());
+           *   let arrowSize = 7;
+           *   translate(vec.mag() - arrowSize, 0);
+           *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
+           *   pop();
+           * }
+           * </code>
+           * </div>
+           */
+          _main.default.Vector.prototype.setMag = function setMag(n) {
+            return this.normalize().mult(n);
+          };
+
+          /**
+           * Calculate the angle of rotation for this vector(only 2D vectors).
+           * p5.Vectors created using <a src="#/p5/createVector">createVector()</a>
+           * will take the current <a = src="#/p5/angleMode">angleMode</a> into consideration, and give the angle
+           * in radians or degree accordingly.
+           *
+           * @method heading
+           * @return {Number} the angle of rotation
+           * @example
+           * <div class = "norender">
+           * <code>
+           * function setup() {
+           *   let v1 = createVector(30, 50);
+           *   print(v1.heading()); // 1.0303768265243125
+           *
+           *   v1 = createVector(40, 50);
+           *   print(v1.heading()); // 0.8960553845713439
+           *
+           *   v1 = createVector(30, 70);
+           *   print(v1.heading()); // 1.1659045405098132
+           * }
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * function draw() {
+           *   background(240);
+           *
+           *   let v0 = createVector(50, 50);
+           *   let v1 = createVector(mouseX - 50, mouseY - 50);
+           *
+           *   drawArrow(v0, v1, 'black');
+           *
+           *   let myHeading = v1.heading();
+           *   noStroke();
+           *   text(
+           *     'vector heading: ' +
+           *       myHeading.toFixed(2) +
+           *       ' radians or ' +
+           *       degrees(myHeading).toFixed(2) +
+           *       ' degrees',
+           *     10,
+           *     50,
+           *     90,
+           *     50
+           *   );
+           * }
+           *
+           * // draw an arrow for a vector at a given base position
+           * function drawArrow(base, vec, myColor) {
+           *   push();
+           *   stroke(myColor);
