@@ -78077,3 +78077,133 @@
            * </div>
            */
           _main.default.Vector.prototype.cross = function cross(v) {
+            var x = this.y * v.z - this.z * v.y;
+            var y = this.z * v.x - this.x * v.z;
+            var z = this.x * v.y - this.y * v.x;
+            if (this.p5) {
+              return new _main.default.Vector(this.p5, [x, y, z]);
+            } else {
+              return new _main.default.Vector(x, y, z);
+            }
+          };
+
+          /**
+           * Calculates the Euclidean distance between two points (considering a
+           * point as a vector object).
+           *
+           * @method dist
+           * @param  {p5.Vector} v the x, y, and z coordinates of a <a href="#/p5.Vector">p5.Vector</a>
+           * @return {Number}      the distance
+           * @example
+           * <div class="norender">
+           * <code>
+           * let v1 = createVector(1, 0, 0);
+           * let v2 = createVector(0, 1, 0);
+           *
+           * let distance = v1.dist(v2); // distance is 1.4142...
+           * print(distance);
+           * </code>
+           * </div>
+           *
+           * <div class="norender">
+           * <code>
+           * // Static method
+           * let v1 = createVector(1, 0, 0);
+           * let v2 = createVector(0, 1, 0);
+           *
+           * let distance = p5.Vector.dist(v1, v2);
+           * // distance is 1.4142...
+           * print(distance);
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * function draw() {
+           *   background(240);
+           *
+           *   let v0 = createVector(0, 0);
+           *
+           *   let v1 = createVector(70, 50);
+           *   drawArrow(v0, v1, 'red');
+           *
+           *   let v2 = createVector(mouseX, mouseY);
+           *   drawArrow(v0, v2, 'blue');
+           *
+           *   noStroke();
+           *   text('distance between vectors: ' + v2.dist(v1).toFixed(2), 5, 50, 95, 50);
+           * }
+           *
+           * // draw an arrow for a vector at a given base position
+           * function drawArrow(base, vec, myColor) {
+           *   push();
+           *   stroke(myColor);
+           *   strokeWeight(3);
+           *   fill(myColor);
+           *   translate(base.x, base.y);
+           *   line(0, 0, vec.x, vec.y);
+           *   rotate(vec.heading());
+           *   let arrowSize = 7;
+           *   translate(vec.mag() - arrowSize, 0);
+           *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
+           *   pop();
+           * }
+           * </code>
+           * </div>
+           */
+          _main.default.Vector.prototype.dist = function dist(v) {
+            return v
+              .copy()
+              .sub(this)
+              .mag();
+          };
+
+          /**
+           * Normalize the vector to length 1 (make it a unit vector).
+           *
+           * @method normalize
+           * @return {p5.Vector} normalized <a href="#/p5.Vector">p5.Vector</a>
+           * @example
+           * <div class="norender">
+           * <code>
+           * let v = createVector(10, 20, 2);
+           * // v has components [10.0, 20.0, 2.0]
+           * v.normalize();
+           * // v's components are set to
+           * // [0.4454354, 0.8908708, 0.089087084]
+           * </code>
+           * </div>
+           * <div>
+           * <code>
+           * function draw() {
+           *   background(240);
+           *
+           *   let v0 = createVector(50, 50);
+           *   let v1 = createVector(mouseX - 50, mouseY - 50);
+           *
+           *   drawArrow(v0, v1, 'red');
+           *   v1.normalize();
+           *   drawArrow(v0, v1.mult(35), 'blue');
+           *
+           *   noFill();
+           *   ellipse(50, 50, 35 * 2);
+           * }
+           *
+           * // draw an arrow for a vector at a given base position
+           * function drawArrow(base, vec, myColor) {
+           *   push();
+           *   stroke(myColor);
+           *   strokeWeight(3);
+           *   fill(myColor);
+           *   translate(base.x, base.y);
+           *   line(0, 0, vec.x, vec.y);
+           *   rotate(vec.heading());
+           *   let arrowSize = 7;
+           *   translate(vec.mag() - arrowSize, 0);
+           *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
+           *   pop();
+           * }
+           * </code>
+           * </div>
+           */
+          _main.default.Vector.prototype.normalize = function normalize() {
