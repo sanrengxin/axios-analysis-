@@ -78381,3 +78381,157 @@
            * function drawArrow(base, vec, myColor) {
            *   push();
            *   stroke(myColor);
+           *   strokeWeight(3);
+           *   fill(myColor);
+           *   translate(base.x, base.y);
+           *   line(0, 0, vec.x, vec.y);
+           *   rotate(vec.heading());
+           *   let arrowSize = 7;
+           *   translate(vec.mag() - arrowSize, 0);
+           *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
+           *   pop();
+           * }
+           * </code>
+           * </div>
+           */
+          _main.default.Vector.prototype.heading = function heading() {
+            var h = Math.atan2(this.y, this.x);
+            if (this.p5) return this.p5._fromRadians(h);
+            return h;
+          };
+
+          /**
+           * Rotate the vector to a specific angle (only 2D vectors), magnitude remains the
+           * same
+           *
+           * @method setHeading
+           * @param  {number}    angle the angle of rotation
+           * @chainable
+           * @example
+           * <div class="norender">
+           * <code>
+           * let v = createVector(10.0, 20.0);
+           * // result of v.heading() is 1.1071487177940904
+           * v.setHeading(Math.PI);
+           * // result of v.heading() is now 3.141592653589793
+           * </code>
+           * </div>
+           */
+
+          _main.default.Vector.prototype.setHeading = function setHeading(a) {
+            var m = this.mag();
+            this.x = m * Math.cos(a);
+            this.y = m * Math.sin(a);
+            return this;
+          };
+
+          /**
+           * Rotate the vector by an angle (only 2D vectors), magnitude remains the
+           * same
+           *
+           * @method rotate
+           * @param  {number}    angle the angle of rotation
+           * @chainable
+           * @example
+           * <div class="norender">
+           * <code>
+           * let v = createVector(10.0, 20.0);
+           * // v has components [10.0, 20.0, 0.0]
+           * v.rotate(HALF_PI);
+           * // v's components are set to [-20.0, 9.999999, 0.0]
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * let angle = 0;
+           * function draw() {
+           *   background(240);
+           *
+           *   let v0 = createVector(50, 50);
+           *   let v1 = createVector(50, 0);
+           *
+           *   drawArrow(v0, v1.rotate(angle), 'black');
+           *   angle += 0.01;
+           * }
+           *
+           * // draw an arrow for a vector at a given base position
+           * function drawArrow(base, vec, myColor) {
+           *   push();
+           *   stroke(myColor);
+           *   strokeWeight(3);
+           *   fill(myColor);
+           *   translate(base.x, base.y);
+           *   line(0, 0, vec.x, vec.y);
+           *   rotate(vec.heading());
+           *   let arrowSize = 7;
+           *   translate(vec.mag() - arrowSize, 0);
+           *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
+           *   pop();
+           * }
+           * </code>
+           * </div>
+           */
+          _main.default.Vector.prototype.rotate = function rotate(a) {
+            var newHeading = this.heading() + a;
+            if (this.p5) newHeading = this.p5._toRadians(newHeading);
+            var mag = this.mag();
+            this.x = Math.cos(newHeading) * mag;
+            this.y = Math.sin(newHeading) * mag;
+            return this;
+          };
+
+          /**
+           * Calculates and returns the angle (in radians) between two vectors.
+           * @method angleBetween
+           * @param  {p5.Vector}    value the x, y, and z components of a <a href="#/p5.Vector">p5.Vector</a>
+           * @return {Number}       the angle between (in radians)
+           * @example
+           * <div class="norender">
+           * <code>
+           * let v1 = createVector(1, 0, 0);
+           * let v2 = createVector(0, 1, 0);
+           *
+           * let angle = v1.angleBetween(v2);
+           * // angle is PI/2
+           * print(angle);
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * function draw() {
+           *   background(240);
+           *   let v0 = createVector(50, 50);
+           *
+           *   let v1 = createVector(50, 0);
+           *   drawArrow(v0, v1, 'red');
+           *
+           *   let v2 = createVector(mouseX - 50, mouseY - 50);
+           *   drawArrow(v0, v2, 'blue');
+           *
+           *   let angleBetween = v1.angleBetween(v2);
+           *   noStroke();
+           *   text(
+           *     'angle between: ' +
+           *       angleBetween.toFixed(2) +
+           *       ' radians or ' +
+           *       degrees(angleBetween).toFixed(2) +
+           *       ' degrees',
+           *     10,
+           *     50,
+           *     90,
+           *     50
+           *   );
+           * }
+           *
+           * // draw an arrow for a vector at a given base position
+           * function drawArrow(base, vec, myColor) {
+           *   push();
+           *   stroke(myColor);
+           *   strokeWeight(3);
+           *   fill(myColor);
+           *   translate(base.x, base.y);
+           *   line(0, 0, vec.x, vec.y);
+           *   rotate(vec.heading());
+           *   let arrowSize = 7;
