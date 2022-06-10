@@ -78535,3 +78535,131 @@
            *   line(0, 0, vec.x, vec.y);
            *   rotate(vec.heading());
            *   let arrowSize = 7;
+           *   translate(vec.mag() - arrowSize, 0);
+           *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
+           *   pop();
+           * }
+           * </code>
+           * </div>
+           */
+
+          _main.default.Vector.prototype.angleBetween = function angleBetween(v) {
+            var dotmagmag = this.dot(v) / (this.mag() * v.mag());
+            // Mathematically speaking: the dotmagmag variable will be between -1 and 1
+            // inclusive. Practically though it could be slightly outside this range due
+            // to floating-point rounding issues. This can make Math.acos return NaN.
+            //
+            // Solution: we'll clamp the value to the -1,1 range
+            var angle;
+            angle = Math.acos(Math.min(1, Math.max(-1, dotmagmag)));
+            angle = angle * Math.sign(this.cross(v).z || 1);
+            if (this.p5) {
+              angle = this.p5._fromRadians(angle);
+            }
+            return angle;
+          };
+          /**
+           * Linear interpolate the vector to another vector
+           *
+           * @method lerp
+           * @param  {Number}    x   the x component
+           * @param  {Number}    y   the y component
+           * @param  {Number}    z   the z component
+           * @param  {Number}    amt the amount of interpolation; some value between 0.0
+           *                         (old vector) and 1.0 (new vector). 0.9 is very near
+           *                         the new vector. 0.5 is halfway in between.
+           * @chainable
+           *
+           * @example
+           * <div class="norender">
+           * <code>
+           * let v = createVector(1, 1, 0);
+           *
+           * v.lerp(3, 3, 0, 0.5); // v now has components [2,2,0]
+           * </code>
+           * </div>
+           *
+           * <div class="norender">
+           * <code>
+           * let v1 = createVector(0, 0, 0);
+           * let v2 = createVector(100, 100, 0);
+           *
+           * let v3 = p5.Vector.lerp(v1, v2, 0.5);
+           * // v3 has components [50,50,0]
+           * print(v3);
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * let step = 0.01;
+           * let amount = 0;
+           *
+           * function draw() {
+           *   background(240);
+           *   let v0 = createVector(0, 0);
+           *
+           *   let v1 = createVector(mouseX, mouseY);
+           *   drawArrow(v0, v1, 'red');
+           *
+           *   let v2 = createVector(90, 90);
+           *   drawArrow(v0, v2, 'blue');
+           *
+           *   if (amount > 1 || amount < 0) {
+           *     step *= -1;
+           *   }
+           *   amount += step;
+           *   let v3 = p5.Vector.lerp(v1, v2, amount);
+           *
+           *   drawArrow(v0, v3, 'purple');
+           * }
+           *
+           * // draw an arrow for a vector at a given base position
+           * function drawArrow(base, vec, myColor) {
+           *   push();
+           *   stroke(myColor);
+           *   strokeWeight(3);
+           *   fill(myColor);
+           *   translate(base.x, base.y);
+           *   line(0, 0, vec.x, vec.y);
+           *   rotate(vec.heading());
+           *   let arrowSize = 7;
+           *   translate(vec.mag() - arrowSize, 0);
+           *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
+           *   pop();
+           * }
+           * </code>
+           * </div>
+           */
+          /**
+           * @method lerp
+           * @param  {p5.Vector} v   the <a href="#/p5.Vector">p5.Vector</a> to lerp to
+           * @param  {Number}    amt
+           * @chainable
+           */
+          _main.default.Vector.prototype.lerp = function lerp(x, y, z, amt) {
+            if (x instanceof _main.default.Vector) {
+              return this.lerp(x.x, x.y, x.z, y);
+            }
+            this.x += (x - this.x) * amt || 0;
+            this.y += (y - this.y) * amt || 0;
+            this.z += (z - this.z) * amt || 0;
+            return this;
+          };
+
+          /**
+           * Reflect the incoming vector about a normal to a line in 2D, or about a normal to a plane in 3D
+           * This method acts on the vector directly
+           *
+           * @method reflect
+           * @param  {p5.Vector} surfaceNormal   the <a href="#/p5.Vector">p5.Vector</a> to reflect about, will be normalized by this method
+           * @chainable
+           * @example
+           * <div class="norender">
+           * <code>
+           * let v = createVector(4, 6); // incoming vector, this example vector is heading to the right and downward
+           * let n = createVector(0, -1); // surface normal to a plane (this example normal points directly upwards)
+           * v.reflect(n); // v is reflected about the surface normal n.  v's components are now set to [4, -6]
+           * </code>
+           * </div>
+           *
