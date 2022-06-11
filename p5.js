@@ -78663,3 +78663,147 @@
            * </code>
            * </div>
            *
+           * <div>
+           * <code>
+           * function draw() {
+           *   background(240);
+           *
+           *   let v0 = createVector(0, 0);
+           *   let v1 = createVector(mouseX, mouseY);
+           *   drawArrow(v0, v1, 'red');
+           *
+           *   let n = createVector(0, -30);
+           *   drawArrow(v1, n, 'blue');
+           *
+           *   let r = v1.copy();
+           *   r.reflect(n);
+           *   drawArrow(v1, r, 'purple');
+           * }
+           *
+           * // draw an arrow for a vector at a given base position
+           * function drawArrow(base, vec, myColor) {
+           *   push();
+           *   stroke(myColor);
+           *   strokeWeight(3);
+           *   fill(myColor);
+           *   translate(base.x, base.y);
+           *   line(0, 0, vec.x, vec.y);
+           *   rotate(vec.heading());
+           *   let arrowSize = 7;
+           *   translate(vec.mag() - arrowSize, 0);
+           *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
+           *   pop();
+           * }
+           * </code>
+           * </div>
+           */
+          _main.default.Vector.prototype.reflect = function reflect(surfaceNormal) {
+            surfaceNormal.normalize();
+            return this.sub(surfaceNormal.mult(2 * this.dot(surfaceNormal)));
+          };
+
+          /**
+           * Return a representation of this vector as a float array. This is only
+           * for temporary use. If used in any other fashion, the contents should be
+           * copied by using the <b>p5.Vector.<a href="#/p5.Vector/copy">copy()</a></b> method to copy into your own
+           * array.
+           *
+           * @method array
+           * @return {Number[]} an Array with the 3 values
+           * @example
+           * <div class = "norender">
+           * <code>
+           * function setup() {
+           *   let v = createVector(20, 30);
+           *   print(v.array()); // Prints : Array [20, 30, 0]
+           * }
+           * </code>
+           * </div>
+           *
+           * <div class="norender">
+           * <code>
+           * let v = createVector(10.0, 20.0, 30.0);
+           * let f = v.array();
+           * print(f[0]); // Prints "10.0"
+           * print(f[1]); // Prints "20.0"
+           * print(f[2]); // Prints "30.0"
+           * </code>
+           * </div>
+           */
+          _main.default.Vector.prototype.array = function array() {
+            return [this.x || 0, this.y || 0, this.z || 0];
+          };
+
+          /**
+           * Equality check against a <a href="#/p5.Vector">p5.Vector</a>
+           *
+           * @method equals
+           * @param {Number} [x] the x component of the vector
+           * @param {Number} [y] the y component of the vector
+           * @param {Number} [z] the z component of the vector
+           * @return {Boolean} whether the vectors are equals
+           * @example
+           * <div class = "norender">
+           * <code>
+           * let v1 = createVector(5, 10, 20);
+           * let v2 = createVector(5, 10, 20);
+           * let v3 = createVector(13, 10, 19);
+           *
+           * print(v1.equals(v2.x, v2.y, v2.z)); // true
+           * print(v1.equals(v3.x, v3.y, v3.z)); // false
+           * </code>
+           * </div>
+           *
+           * <div class="norender">
+           * <code>
+           * let v1 = createVector(10.0, 20.0, 30.0);
+           * let v2 = createVector(10.0, 20.0, 30.0);
+           * let v3 = createVector(0.0, 0.0, 0.0);
+           * print(v1.equals(v2)); // true
+           * print(v1.equals(v3)); // false
+           * </code>
+           * </div>
+           */
+          /**
+           * @method equals
+           * @param {p5.Vector|Array} value the vector to compare
+           * @return {Boolean}
+           */
+          _main.default.Vector.prototype.equals = function equals(x, y, z) {
+            var a, b, c;
+            if (x instanceof _main.default.Vector) {
+              a = x.x || 0;
+              b = x.y || 0;
+              c = x.z || 0;
+            } else if (x instanceof Array) {
+              a = x[0] || 0;
+              b = x[1] || 0;
+              c = x[2] || 0;
+            } else {
+              a = x || 0;
+              b = y || 0;
+              c = z || 0;
+            }
+            return this.x === a && this.y === b && this.z === c;
+          };
+
+          // Static Methods
+
+          /**
+           * Make a new 2D vector from an angle
+           *
+           * @method fromAngle
+           * @static
+           * @param {Number}     angle the desired angle, in radians (unaffected by <a href="#/p5/angleMode">angleMode</a>)
+           * @param {Number}     [length] the length of the new vector (defaults to 1)
+           * @return {p5.Vector}       the new <a href="#/p5.Vector">p5.Vector</a> object
+           * @example
+           * <div>
+           * <code>
+           * function draw() {
+           *   background(200);
+           *
+           *   // Create a variable, proportional to the mouseX,
+           *   // varying from 0-360, to represent an angle in degrees.
+           *   let myDegrees = map(mouseX, 0, width, 0, 360);
+           *
