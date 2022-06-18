@@ -78807,3 +78807,135 @@
            *   // varying from 0-360, to represent an angle in degrees.
            *   let myDegrees = map(mouseX, 0, width, 0, 360);
            *
+           *   // Display that variable in an onscreen text.
+           *   // (Note the nfc() function to truncate additional decimal places,
+           *   // and the "\xB0" character for the degree symbol.)
+           *   let readout = 'angle = ' + nfc(myDegrees, 1) + '\xB0';
+           *   noStroke();
+           *   fill(0);
+           *   text(readout, 5, 15);
+           *
+           *   // Create a p5.Vector using the fromAngle function,
+           *   // and extract its x and y components.
+           *   let v = p5.Vector.fromAngle(radians(myDegrees), 30);
+           *   let vx = v.x;
+           *   let vy = v.y;
+           *
+           *   push();
+           *   translate(width / 2, height / 2);
+           *   noFill();
+           *   stroke(150);
+           *   line(0, 0, 30, 0);
+           *   stroke(0);
+           *   line(0, 0, vx, vy);
+           *   pop();
+           * }
+           * </code>
+           * </div>
+           */
+          _main.default.Vector.fromAngle = function fromAngle(angle, length) {
+            if (typeof length === 'undefined') {
+              length = 1;
+            }
+            return new _main.default.Vector(
+              length * Math.cos(angle),
+              length * Math.sin(angle),
+              0
+            );
+          };
+
+          /**
+           * Make a new 3D vector from a pair of ISO spherical angles
+           *
+           * @method fromAngles
+           * @static
+           * @param {Number}     theta    the polar angle, in radians (zero is up)
+           * @param {Number}     phi      the azimuthal angle, in radians
+           *                               (zero is out of the screen)
+           * @param {Number}     [length] the length of the new vector (defaults to 1)
+           * @return {p5.Vector}          the new <a href="#/p5.Vector">p5.Vector</a> object
+           * @example
+           * <div modernizr='webgl'>
+           * <code>
+           * function setup() {
+           *   createCanvas(100, 100, WEBGL);
+           *   fill(255);
+           *   noStroke();
+           * }
+           * function draw() {
+           *   background(255);
+           *
+           *   let t = millis() / 1000;
+           *
+           *   // add three point lights
+           *   pointLight(color('#f00'), p5.Vector.fromAngles(t * 1.0, t * 1.3, 100));
+           *   pointLight(color('#0f0'), p5.Vector.fromAngles(t * 1.1, t * 1.2, 100));
+           *   pointLight(color('#00f'), p5.Vector.fromAngles(t * 1.2, t * 1.1, 100));
+           *
+           *   sphere(35);
+           * }
+           * </code>
+           * </div>
+           */
+          _main.default.Vector.fromAngles = function(theta, phi, length) {
+            if (typeof length === 'undefined') {
+              length = 1;
+            }
+            var cosPhi = Math.cos(phi);
+            var sinPhi = Math.sin(phi);
+            var cosTheta = Math.cos(theta);
+            var sinTheta = Math.sin(theta);
+
+            return new _main.default.Vector(
+              length * sinTheta * sinPhi,
+              -length * cosTheta,
+              length * sinTheta * cosPhi
+            );
+          };
+
+          /**
+           * Make a new 2D unit vector from a random angle
+           *
+           * @method random2D
+           * @static
+           * @return {p5.Vector} the new <a href="#/p5.Vector">p5.Vector</a> object
+           * @example
+           * <div class="norender">
+           * <code>
+           * let v = p5.Vector.random2D();
+           * // May make v's attributes something like:
+           * // [0.61554617, -0.51195765, 0.0] or
+           * // [-0.4695841, -0.14366731, 0.0] or
+           * // [0.6091097, -0.22805278, 0.0]
+           * print(v);
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * function setup() {
+           *   frameRate(1);
+           * }
+           *
+           * function draw() {
+           *   background(240);
+           *
+           *   let v0 = createVector(50, 50);
+           *   let v1 = p5.Vector.random2D();
+           *   drawArrow(v0, v1.mult(50), 'black');
+           * }
+           *
+           * // draw an arrow for a vector at a given base position
+           * function drawArrow(base, vec, myColor) {
+           *   push();
+           *   stroke(myColor);
+           *   strokeWeight(3);
+           *   fill(myColor);
+           *   translate(base.x, base.y);
+           *   line(0, 0, vec.x, vec.y);
+           *   rotate(vec.heading());
+           *   let arrowSize = 7;
+           *   translate(vec.mag() - arrowSize, 0);
+           *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
+           *   pop();
+           * }
