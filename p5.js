@@ -78939,3 +78939,128 @@
            *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
            *   pop();
            * }
+           * </code>
+           * </div>
+           */
+          _main.default.Vector.random2D = function random2D() {
+            return this.fromAngle(Math.random() * constants.TWO_PI);
+          };
+
+          /**
+           * Make a new random 3D unit vector.
+           *
+           * @method random3D
+           * @static
+           * @return {p5.Vector} the new <a href="#/p5.Vector">p5.Vector</a> object
+           * @example
+           * <div class="norender">
+           * <code>
+           * let v = p5.Vector.random3D();
+           * // May make v's attributes something like:
+           * // [0.61554617, -0.51195765, 0.599168] or
+           * // [-0.4695841, -0.14366731, -0.8711202] or
+           * // [0.6091097, -0.22805278, -0.7595902]
+           * print(v);
+           * </code>
+           * </div>
+           */
+          _main.default.Vector.random3D = function random3D() {
+            var angle = Math.random() * constants.TWO_PI;
+            var vz = Math.random() * 2 - 1;
+            var vzBase = Math.sqrt(1 - vz * vz);
+            var vx = vzBase * Math.cos(angle);
+            var vy = vzBase * Math.sin(angle);
+            return new _main.default.Vector(vx, vy, vz);
+          };
+
+          // Adds two vectors together and returns a new one.
+          /**
+           * @method add
+           * @static
+           * @param  {p5.Vector} v1 a <a href="#/p5.Vector">p5.Vector</a> to add
+           * @param  {p5.Vector} v2 a <a href="#/p5.Vector">p5.Vector</a> to add
+           * @param  {p5.Vector} [target] the vector to receive the result (Optional)
+           * @return {p5.Vector} the resulting <a href="#/p5.Vector">p5.Vector</a>
+           */
+
+          _main.default.Vector.add = function add(v1, v2, target) {
+            if (!target) {
+              target = v1.copy();
+              if (arguments.length === 3) {
+                _main.default._friendlyError(
+                  'The target parameter is undefined, it should be of type p5.Vector',
+                  'p5.Vector.add'
+                );
+              }
+            } else {
+              target.set(v1);
+            }
+            target.add(v2);
+            return target;
+          };
+
+          // Returns a vector remainder when it is divided by another vector
+          /**
+           * @method rem
+           * @static
+           * @param  {p5.Vector} v1 dividend <a href="#/p5.Vector">p5.Vector</a>
+           * @param  {p5.Vector} v2 divisor <a href="#/p5.Vector">p5.Vector</a>
+           */
+          /**
+           * @method rem
+           * @static
+           * @param  {p5.Vector} v1
+           * @param  {p5.Vector} v2
+           * @return {p5.Vector} the resulting <a href="#/p5.Vector">p5.Vector</a>
+           */
+          _main.default.Vector.rem = function rem(v1, v2) {
+            if (v1 instanceof _main.default.Vector && v2 instanceof _main.default.Vector) {
+              var target = v1.copy();
+              target.rem(v2);
+              return target;
+            }
+          };
+
+          /*
+    * Subtracts one <a href="#/p5.Vector">p5.Vector</a> from another and returns a new one.  The second
+    * vector (v2) is subtracted from the first (v1), resulting in v1-v2.
+    */
+          /**
+           * @method sub
+           * @static
+           * @param  {p5.Vector} v1 a <a href="#/p5.Vector">p5.Vector</a> to subtract from
+           * @param  {p5.Vector} v2 a <a href="#/p5.Vector">p5.Vector</a> to subtract
+           * @param  {p5.Vector} [target] the vector to receive the result (Optional)
+           * @return {p5.Vector} the resulting <a href="#/p5.Vector">p5.Vector</a>
+           */
+
+          _main.default.Vector.sub = function sub(v1, v2, target) {
+            if (!target) {
+              target = v1.copy();
+              if (arguments.length === 3) {
+                _main.default._friendlyError(
+                  'The target parameter is undefined, it should be of type p5.Vector',
+                  'p5.Vector.sub'
+                );
+              }
+            } else {
+              target.set(v1);
+            }
+            target.sub(v2);
+            return target;
+          };
+
+          /**
+           * Multiplies a vector by a scalar and returns a new vector.
+           */
+
+          /**
+           * @method mult
+           * @static
+           * @param  {Number} x
+           * @param  {Number} y
+           * @param  {Number} [z]
+           * @return {p5.Vector} The resulting new <a href="#/p5.Vector">p5.Vector</a>
+           */
+
+          /**
