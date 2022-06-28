@@ -79064,3 +79064,141 @@
            */
 
           /**
+           * @method mult
+           * @static
+           * @param  {p5.Vector} v
+           * @param  {Number}  n
+           * @param  {p5.Vector} [target] the vector to receive the result (Optional)
+           */
+
+          /**
+           * @method mult
+           * @static
+           * @param  {p5.Vector} v0
+           * @param  {p5.Vector} v1
+           * @param  {p5.Vector} [target]
+           */
+
+          /**
+           * @method mult
+           * @static
+           * @param  {p5.Vector} v0
+           * @param  {Number[]} arr
+           * @param  {p5.Vector} [target]
+           */
+          _main.default.Vector.mult = function mult(v, n, target) {
+            if (!target) {
+              target = v.copy();
+              if (arguments.length === 3) {
+                _main.default._friendlyError(
+                  'The target parameter is undefined, it should be of type p5.Vector',
+                  'p5.Vector.mult'
+                );
+              }
+            } else {
+              target.set(v);
+            }
+            target.mult(n);
+            return target;
+          };
+
+          /**
+           * Divides a vector by a scalar and returns a new vector.
+           */
+
+          /**
+           * @method div
+           * @static
+           * @param  {Number} x
+           * @param  {Number} y
+           * @param  {Number} [z]
+           * @return {p5.Vector} The resulting new <a href="#/p5.Vector">p5.Vector</a>
+           */
+
+          /**
+           * @method div
+           * @static
+           * @param  {p5.Vector} v
+           * @param  {Number}  n
+           * @param  {p5.Vector} [target] the vector to receive the result (Optional)
+           */
+
+          /**
+           * @method div
+           * @static
+           * @param  {p5.Vector} v0
+           * @param  {p5.Vector} v1
+           * @param  {p5.Vector} [target]
+           */
+
+          /**
+           * @method div
+           * @static
+           * @param  {p5.Vector} v0
+           * @param  {Number[]} arr
+           * @param  {p5.Vector} [target]
+           */
+          _main.default.Vector.div = function div(v, n, target) {
+            if (!target) {
+              target = v.copy();
+
+              if (arguments.length === 3) {
+                _main.default._friendlyError(
+                  'The target parameter is undefined, it should be of type p5.Vector',
+                  'p5.Vector.div'
+                );
+              }
+            } else {
+              target.set(v);
+            }
+            target.div(n);
+            return target;
+          };
+
+          /**
+           * Calculates the dot product of two vectors.
+           */
+          /**
+           * @method dot
+           * @static
+           * @param  {p5.Vector} v1 the first <a href="#/p5.Vector">p5.Vector</a>
+           * @param  {p5.Vector} v2 the second <a href="#/p5.Vector">p5.Vector</a>
+           * @return {Number}     the dot product
+           */
+          _main.default.Vector.dot = function dot(v1, v2) {
+            return v1.dot(v2);
+          };
+
+          /**
+           * Calculates the cross product of two vectors.
+           */
+          /**
+           * @method cross
+           * @static
+           * @param  {p5.Vector} v1 the first <a href="#/p5.Vector">p5.Vector</a>
+           * @param  {p5.Vector} v2 the second <a href="#/p5.Vector">p5.Vector</a>
+           * @return {Number}     the cross product
+           */
+          _main.default.Vector.cross = function cross(v1, v2) {
+            return v1.cross(v2);
+          };
+
+          /**
+           * Calculates the Euclidean distance between two points (considering a
+           * point as a vector object).
+           */
+          /**
+           * @method dist
+           * @static
+           * @param  {p5.Vector} v1 the first <a href="#/p5.Vector">p5.Vector</a>
+           * @param  {p5.Vector} v2 the second <a href="#/p5.Vector">p5.Vector</a>
+           * @return {Number}     the distance
+           */
+          _main.default.Vector.dist = function dist(v1, v2) {
+            return v1.dist(v2);
+          };
+
+          /**
+           * Linear interpolate a vector to another vector and return the result as a
+           * new vector.
+           */
