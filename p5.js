@@ -79202,3 +79202,141 @@
            * Linear interpolate a vector to another vector and return the result as a
            * new vector.
            */
+          /**
+           * @method lerp
+           * @static
+           * @param {p5.Vector} v1
+           * @param {p5.Vector} v2
+           * @param {Number} amt
+           * @param {p5.Vector} [target] the vector to receive the result (Optional)
+           * @return {p5.Vector}      the lerped value
+           */
+          _main.default.Vector.lerp = function lerp(v1, v2, amt, target) {
+            if (!target) {
+              target = v1.copy();
+              if (arguments.length === 4) {
+                _main.default._friendlyError(
+                  'The target parameter is undefined, it should be of type p5.Vector',
+                  'p5.Vector.lerp'
+                );
+              }
+            } else {
+              target.set(v1);
+            }
+            target.lerp(v2, amt);
+            return target;
+          };
+
+          /**
+           * @method mag
+           * @param {p5.Vector} vecT the vector to return the magnitude of
+           * @return {Number}        the magnitude of vecT
+           * @static
+           */
+          _main.default.Vector.mag = function mag(vecT) {
+            var x = vecT.x,
+              y = vecT.y,
+              z = vecT.z;
+            var magSq = x * x + y * y + z * z;
+            return Math.sqrt(magSq);
+          };
+          var _default = _main.default.Vector;
+          exports.default = _default;
+        },
+        { '../core/constants': 48, '../core/main': 59 }
+      ],
+      93: [
+        function(_dereq_, module, exports) {
+          'use strict';
+          Object.defineProperty(exports, '__esModule', { value: true });
+          exports.default = void 0;
+
+          var _main = _interopRequireDefault(_dereq_('../core/main'));
+          function _interopRequireDefault(obj) {
+            return obj && obj.__esModule ? obj : { default: obj };
+          } /** // variables used for random number generators
+           * @module Math
+           * @submodule Random
+           * @for p5
+           * @requires core
+           */
+          var randomStateProp = '_lcg_random_state'; // Set to values from http://en.wikipedia.org/wiki/Numerical_Recipes
+          // m is basically chosen to be large (as it is the max period)
+          // and for its relationships to a and c
+          var m = 4294967296; // a - 1 should be divisible by m's prime factors
+          var a = 1664525; // c and m should be co-prime
+          var c = 1013904223;
+          var y2 = 0;
+
+          // Linear Congruential Generator that stores its state at instance[stateProperty]
+          _main.default.prototype._lcg = function(stateProperty) {
+            // define the recurrence relationship
+            this[stateProperty] = (a * this[stateProperty] + c) % m;
+            // return a float in [0, 1)
+            // we've just used % m, so / m is always < 1
+            return this[stateProperty] / m;
+          };
+
+          _main.default.prototype._lcgSetSeed = function(stateProperty, val) {
+            // pick a random seed if val is undefined or null
+            // the >>> 0 casts the seed to an unsigned 32-bit integer
+            this[stateProperty] = (val == null ? Math.random() * m : val) >>> 0;
+          };
+
+          /**
+           * Sets the seed value for <a href="#/p5/random">random()</a>.
+           *
+           * By default, <a href="#/p5/random">random()</a> produces different results each time the program
+           * is run. Set the seed parameter to a constant to return the same
+           * pseudo-random numbers each time the software is run.
+           *
+           * @method randomSeed
+           * @param {Number} seed   the seed value
+           * @example
+           * <div>
+           * <code>
+           * randomSeed(99);
+           * for (let i = 0; i < 100; i++) {
+           *   let r = random(0, 255);
+           *   stroke(r);
+           *   line(i, 0, i, 100);
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * many vertical lines drawn in white, black or grey.
+           */
+          _main.default.prototype.randomSeed = function(seed) {
+            this._lcgSetSeed(randomStateProp, seed);
+            this._gaussian_previous = false;
+          };
+
+          /**
+           * Return a random floating-point number.
+           *
+           * Takes either 0, 1 or 2 arguments.
+           *
+           * If no argument is given, returns a random number from 0
+           * up to (but not including) 1.
+           *
+           * If one argument is given and it is a number, returns a random number from 0
+           * up to (but not including) the number.
+           *
+           * If one argument is given and it is an array, returns a random element from
+           * that array.
+           *
+           * If two arguments are given, returns a random number from the
+           * first argument up to (but not including) the second argument.
+           *
+           * @method random
+           * @param  {Number} [min]   the lower bound (inclusive)
+           * @param  {Number} [max]   the upper bound (exclusive)
+           * @return {Number} the random number
+           * @example
+           * <div>
+           * <code>
+           * for (let i = 0; i < 100; i++) {
+           *   let r = random(50);
+           *   stroke(r * 5);
+           *   line(50, i, 50 + r, i);
