@@ -79595,3 +79595,143 @@
           };
 
           /**
+           * The inverse of <a href="#/p5/sin">sin()</a>, returns the arc sine of a value.
+           * This function expects the values in the range of -1 to 1 and values are returned
+           * in the range -PI/2 to PI/2 if the angleMode is RADIANS or -90 to 90 if the angle
+           * mode is DEGREES.
+           *
+           * @method asin
+           * @param  {Number} value the value whose arc sine is to be returned
+           * @return {Number}       the arc sine of the given value
+           *
+           * @example
+           * <div class= “norender">
+           * <code>
+           * let a = PI / 3.0;
+           * let s = sin(a);
+           * let as = asin(s);
+           * // Prints: "1.0471975 : 0.86602540 : 1.0471975"
+           * print(a + ' : ' + s + ' : ' + as);
+           * </code>
+           * </div>
+           *
+           * <div class= “norender">
+           * <code>
+           * let a = PI + PI / 3.0;
+           * let s = sin(a);
+           * let as = asin(s);
+           * // Prints: "4.1887902 : -0.86602540 : -1.0471975"
+           * print(a + ' : ' + s + ' : ' + as);
+           * </code>
+           * </div>
+           */
+          _main.default.prototype.asin = function(ratio) {
+            return this._fromRadians(Math.asin(ratio));
+          };
+
+          /**
+           * The inverse of <a href="#/p5/tan">tan()</a>, returns the arc tangent of a value.
+           * This function expects the values in the range of -Infinity to Infinity (exclusive) and
+           * values are returned in the range -PI/2 to PI/2 if the angleMode is RADIANS or
+           * -90 to 90 if the angle mode is DEGREES.
+           *
+           * @method atan
+           * @param  {Number} value the value whose arc tangent is to be returned
+           * @return {Number}       the arc tangent of the given value
+           *
+           * @example
+           * <div class= “norender">
+           * <code>
+           * let a = PI / 3.0;
+           * let t = tan(a);
+           * let at = atan(t);
+           * // Prints: "1.0471975 : 1.7320508 : 1.0471975"
+           * print(a + ' : ' + t + ' : ' + at);
+           * </code>
+           * </div>
+           *
+           * <div class= “norender">
+           * <code>
+           * let a = PI + PI / 3.0;
+           * let t = tan(a);
+           * let at = atan(t);
+           * // Prints: "4.1887902 : 1.7320508 : 1.0471975"
+           * print(a + ' : ' + t + ' : ' + at);
+           * </code>
+           * </div>
+           */
+          _main.default.prototype.atan = function(ratio) {
+            return this._fromRadians(Math.atan(ratio));
+          };
+
+          /**
+           * Calculates the angle (in radians) from a specified point to the coordinate
+           * origin as measured from the positive x-axis. Values are returned as a
+           * float in the range from PI to -PI if the angleMode is RADIANS or 180 to
+           * -180 if the angleMode is DEGREES. The atan2<a href="#/p5/">()</a> function is
+           * most often used for orienting geometry to the position of the cursor.
+           *
+           * Note: The y-coordinate of the point is the first parameter, and the
+           * x-coordinate is the second parameter, due the the structure of calculating
+           * the tangent.
+           *
+           * @method atan2
+           * @param  {Number} y y-coordinate of the point
+           * @param  {Number} x x-coordinate of the point
+           * @return {Number}   the arc tangent of the given point
+           *
+           * @example
+           * <div>
+           * <code>
+           * function draw() {
+           *   background(204);
+           *   translate(width / 2, height / 2);
+           *   let a = atan2(mouseY - height / 2, mouseX - width / 2);
+           *   rotate(a);
+           *   rect(-30, -5, 60, 10);
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * 60 by 10 rect at center of canvas rotates with mouse movements
+           */
+          _main.default.prototype.atan2 = function(y, x) {
+            return this._fromRadians(Math.atan2(y, x));
+          };
+
+          /**
+           * Calculates the cosine of an angle. This function takes into account the
+           * current <a href="#/p5/angleMode">angleMode</a>. Values are returned in the range -1 to 1.
+           *
+           * @method cos
+           * @param  {Number} angle the angle
+           * @return {Number}       the cosine of the angle
+           *
+           * @example
+           * <div>
+           * <code>
+           * let a = 0.0;
+           * let inc = TWO_PI / 25.0;
+           * for (let i = 0; i < 25; i++) {
+           *   line(i * 4, 50, i * 4, 50 + cos(a) * 40.0);
+           *   a = a + inc;
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * vertical black lines form wave patterns, extend-down on left and right side
+           */
+          _main.default.prototype.cos = function(angle) {
+            return Math.cos(this._toRadians(angle));
+          };
+
+          /**
+           * Calculates the sine of an angle. This function takes into account the
+           * current <a href="#/p5/angleMode">angleMode</a>. Values are returned in the range -1 to 1.
+           *
+           * @method sin
+           * @param  {Number} angle the angle
+           * @return {Number}       the sine of the angle
+           *
