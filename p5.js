@@ -79340,3 +79340,129 @@
            *   let r = random(50);
            *   stroke(r * 5);
            *   line(50, i, 50 + r, i);
+           * }
+           * </code>
+           * </div>
+           * <div>
+           * <code>
+           * for (let i = 0; i < 100; i++) {
+           *   let r = random(-50, 50);
+           *   line(50, i, 50 + r, i);
+           * }
+           * </code>
+           * </div>
+           * <div>
+           * <code>
+           * // Get a random element from an array using the random(Array) syntax
+           * let words = ['apple', 'bear', 'cat', 'dog'];
+           * let word = random(words); // select random word
+           * text(word, 10, 50); // draw the word
+           * </code>
+           * </div>
+           *
+           * @alt
+           * 100 horizontal lines from center canvas to right. size+fill change each time
+           * 100 horizontal lines from center of canvas. height & side change each render
+           * word displayed at random. Either apple, bear, cat, or dog
+           */
+          /**
+           * @method random
+           * @param  {Array} choices   the array to choose from
+           * @return {*} the random element from the array
+           * @example
+           */
+          _main.default.prototype.random = function(min, max) {
+            _main.default._validateParameters('random', arguments);
+            var rand;
+
+            if (this[randomStateProp] != null) {
+              rand = this._lcg(randomStateProp);
+            } else {
+              rand = Math.random();
+            }
+            if (typeof min === 'undefined') {
+              return rand;
+            } else if (typeof max === 'undefined') {
+              if (min instanceof Array) {
+                return min[Math.floor(rand * min.length)];
+              } else {
+                return rand * min;
+              }
+            } else {
+              if (min > max) {
+                var tmp = min;
+                min = max;
+                max = tmp;
+              }
+
+              return rand * (max - min) + min;
+            }
+          };
+
+          /**
+           *
+           * Returns a random number fitting a Gaussian, or
+           * normal, distribution. There is theoretically no minimum or maximum
+           * value that <a href="#/p5/randomGaussian">randomGaussian()</a> might return. Rather, there is
+           * just a very low probability that values far from the mean will be
+           * returned; and a higher probability that numbers near the mean will
+           * be returned.
+           *
+           * Takes either 0, 1 or 2 arguments.<br>
+           * If no args, returns a mean of 0 and standard deviation of 1.<br>
+           * If one arg, that arg is the mean (standard deviation is 1).<br>
+           * If two args, first is mean, second is standard deviation.
+           *
+           * @method randomGaussian
+           * @param  {Number} [mean]  the mean
+           * @param  {Number} [sd]    the standard deviation
+           * @return {Number} the random number
+           * @example
+           * <div>
+           * <code>
+           * for (let y = 0; y < 100; y++) {
+           *   let x = randomGaussian(50, 15);
+           *   line(50, y, x, y);
+           * }
+           * </code>
+           * </div>
+           * <div>
+           * <code>
+           * let distribution = new Array(360);
+           *
+           * function setup() {
+           *   createCanvas(100, 100);
+           *   for (let i = 0; i < distribution.length; i++) {
+           *     distribution[i] = floor(randomGaussian(0, 15));
+           *   }
+           * }
+           *
+           * function draw() {
+           *   background(204);
+           *
+           *   translate(width / 2, width / 2);
+           *
+           *   for (let i = 0; i < distribution.length; i++) {
+           *     rotate(TWO_PI / distribution.length);
+           *     stroke(0);
+           *     let dist = abs(distribution[i]);
+           *     line(0, 0, dist, 0);
+           *   }
+           * }
+           * </code>
+           * </div>
+           * @alt
+           * 100 horizontal lines from center of canvas. height & side change each render
+           * black lines radiate from center of canvas. size determined each render
+           */
+          _main.default.prototype.randomGaussian = function(mean) {
+            var sd = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
+            var y1, x1, x2, w;
+            if (this._gaussian_previous) {
+              y1 = y2;
+              this._gaussian_previous = false;
+            } else {
+              do {
+                x1 = this.random(2) - 1;
+                x2 = this.random(2) - 1;
+                w = x1 * x1 + x2 * x2;
