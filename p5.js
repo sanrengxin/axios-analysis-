@@ -79466,3 +79466,132 @@
                 x1 = this.random(2) - 1;
                 x2 = this.random(2) - 1;
                 w = x1 * x1 + x2 * x2;
+              } while (w >= 1);
+              w = Math.sqrt(-2 * Math.log(w) / w);
+              y1 = x1 * w;
+              y2 = x2 * w;
+              this._gaussian_previous = true;
+            }
+
+            var m = mean || 0;
+            return y1 * sd + m;
+          };
+          var _default = _main.default;
+          exports.default = _default;
+        },
+        { '../core/main': 59 }
+      ],
+      94: [
+        function(_dereq_, module, exports) {
+          'use strict';
+          function _typeof(obj) {
+            if (typeof Symbol === 'function' && typeof Symbol.iterator === 'symbol') {
+              _typeof = function _typeof(obj) {
+                return typeof obj;
+              };
+            } else {
+              _typeof = function _typeof(obj) {
+                return obj &&
+                  typeof Symbol === 'function' &&
+                  obj.constructor === Symbol &&
+                  obj !== Symbol.prototype
+                  ? 'symbol'
+                  : typeof obj;
+              };
+            }
+            return _typeof(obj);
+          }
+          Object.defineProperty(exports, '__esModule', { value: true });
+          exports.default = void 0;
+
+          var _main = _interopRequireDefault(_dereq_('../core/main'));
+          var constants = _interopRequireWildcard(_dereq_('../core/constants'));
+          function _getRequireWildcardCache() {
+            if (typeof WeakMap !== 'function') return null;
+            var cache = new WeakMap();
+            _getRequireWildcardCache = function _getRequireWildcardCache() {
+              return cache;
+            };
+            return cache;
+          }
+          function _interopRequireWildcard(obj) {
+            if (obj && obj.__esModule) {
+              return obj;
+            }
+            if (obj === null || (_typeof(obj) !== 'object' && typeof obj !== 'function')) {
+              return { default: obj };
+            }
+            var cache = _getRequireWildcardCache();
+            if (cache && cache.has(obj)) {
+              return cache.get(obj);
+            }
+            var newObj = {};
+            var hasPropertyDescriptor =
+              Object.defineProperty && Object.getOwnPropertyDescriptor;
+            for (var key in obj) {
+              if (Object.prototype.hasOwnProperty.call(obj, key)) {
+                var desc = hasPropertyDescriptor
+                  ? Object.getOwnPropertyDescriptor(obj, key)
+                  : null;
+                if (desc && (desc.get || desc.set)) {
+                  Object.defineProperty(newObj, key, desc);
+                } else {
+                  newObj[key] = obj[key];
+                }
+              }
+            }
+            newObj.default = obj;
+            if (cache) {
+              cache.set(obj, newObj);
+            }
+            return newObj;
+          }
+          function _interopRequireDefault(obj) {
+            return obj && obj.__esModule ? obj : { default: obj };
+          }
+          /**
+           * @module Math
+           * @submodule Trigonometry
+           * @for p5
+           * @requires core
+           * @requires constants
+           */ /*
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 * all DEGREES/RADIANS conversion should be done in the p5 instance
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 * if possible, using the p5._toRadians(), p5._fromRadians() methods.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 */ _main.default.prototype._angleMode =
+            constants.RADIANS;
+          /**
+           * The inverse of <a href="#/p5/cos">cos()</a>, returns the arc cosine of a value.
+           * This function expects the values in the range of -1 to 1 and values are returned in
+           * the range 0 to PI (3.1415927) if the angleMode is RADIANS or 0 to 180 if the
+           * angle mode is DEGREES.
+           *
+           * @method acos
+           * @param  {Number} value the value whose arc cosine is to be returned
+           * @return {Number}       the arc cosine of the given value
+           *
+           * @example
+           * <div class= “norender">
+           * <code>
+           * let a = PI;
+           * let c = cos(a);
+           * let ac = acos(c);
+           * // Prints: "3.1415927 : -1.0 : 3.1415927"
+           * print(a + ' : ' + c + ' : ' + ac);
+           * </code>
+           * </div>
+           *
+           * <div class= “norender">
+           * <code>
+           * let a = PI + PI / 4.0;
+           * let c = cos(a);
+           * let ac = acos(c);
+           * // Prints: "3.926991 : -0.70710665 : 2.3561943"
+           * print(a + ' : ' + c + ' : ' + ac);
+           * </code>
+           * </div>
+           */ _main.default.prototype.acos = function(ratio) {
+            return this._fromRadians(Math.acos(ratio));
+          };
+
+          /**
