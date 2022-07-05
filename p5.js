@@ -79735,3 +79735,161 @@
            * @param  {Number} angle the angle
            * @return {Number}       the sine of the angle
            *
+           * @example
+           * <div>
+           * <code>
+           * let a = 0.0;
+           * let inc = TWO_PI / 25.0;
+           * for (let i = 0; i < 25; i++) {
+           *   line(i * 4, 50, i * 4, 50 + sin(a) * 40.0);
+           *   a = a + inc;
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * vertical black lines extend down and up from center to form wave pattern
+           */
+          _main.default.prototype.sin = function(angle) {
+            return Math.sin(this._toRadians(angle));
+          };
+
+          /**
+           * Calculates the tangent of an angle. This function takes into account
+           * the current <a href="#/p5/angleMode">angleMode</a>. Values are returned in the range of all real numbers.
+           *
+           * @method tan
+           * @param  {Number} angle the angle
+           * @return {Number}       the tangent of the angle
+           *
+           * @example
+           * <div>
+           * <code>
+           * let a = 0.0;
+           * let inc = TWO_PI / 50.0;
+           * for (let i = 0; i < 100; i = i + 2) {
+           *   line(i, 50, i, 50 + tan(a) * 2.0);
+           *   a = a + inc;
+           * }
+           * </code>
+           *
+           * @alt
+           * vertical black lines end down and up from center to form spike pattern
+           */
+          _main.default.prototype.tan = function(angle) {
+            return Math.tan(this._toRadians(angle));
+          };
+
+          /**
+           * Converts a radian measurement to its corresponding value in degrees.
+           * Radians and degrees are two ways of measuring the same thing. There are
+           * 360 degrees in a circle and 2*PI radians in a circle. For example,
+           * 90° = PI/2 = 1.5707964. This function does not take into account the
+           * current <a href="#/p5/angleMode">angleMode</a>.
+           *
+           * @method degrees
+           * @param  {Number} radians the radians value to convert to degrees
+           * @return {Number}         the converted angle
+           *
+           * @example
+           * <div class= “norender">
+           * <code>
+           * let rad = PI / 4;
+           * let deg = degrees(rad);
+           * print(rad + ' radians is ' + deg + ' degrees');
+           * // Prints: 0.7853981633974483 radians is 45 degrees
+           * </code>
+           * </div>
+           */
+          _main.default.prototype.degrees = function(angle) {
+            return angle * constants.RAD_TO_DEG;
+          };
+
+          /**
+           * Converts a degree measurement to its corresponding value in radians.
+           * Radians and degrees are two ways of measuring the same thing. There are
+           * 360 degrees in a circle and 2*PI radians in a circle. For example,
+           * 90° = PI/2 = 1.5707964. This function does not take into account the
+           * current <a href="#/p5/angleMode">angleMode</a>.
+           *
+           * @method radians
+           * @param  {Number} degrees the degree value to convert to radians
+           * @return {Number}         the converted angle
+           *
+           * @example
+           * <div class= “norender">
+           * <code>
+           * let deg = 45.0;
+           * let rad = radians(deg);
+           * print(deg + ' degrees is ' + rad + ' radians');
+           * // Prints: 45 degrees is 0.7853981633974483 radians
+           * </code>
+           * </div>
+           */
+          _main.default.prototype.radians = function(angle) {
+            return angle * constants.DEG_TO_RAD;
+          };
+
+          /**
+           * Sets the current mode of p5 to given mode. Default mode is RADIANS.
+           *
+           * @method angleMode
+           * @param {Constant} mode either RADIANS or DEGREES
+           *
+           * @example
+           * <div>
+           * <code>
+           * function draw() {
+           *   background(204);
+           *   angleMode(DEGREES); // Change the mode to DEGREES
+           *   let a = atan2(mouseY - height / 2, mouseX - width / 2);
+           *   translate(width / 2, height / 2);
+           *   push();
+           *   rotate(a);
+           *   rect(-20, -5, 40, 10); // Larger rectangle is rotating in degrees
+           *   pop();
+           *   angleMode(RADIANS); // Change the mode to RADIANS
+           *   rotate(a); // variable a stays the same
+           *   rect(-40, -5, 20, 10); // Smaller rectangle is rotating in radians
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * 40 by 10 rect in center rotates with mouse moves. 20 by 10 rect moves faster.
+           *
+           */
+          _main.default.prototype.angleMode = function(mode) {
+            if (mode === constants.DEGREES || mode === constants.RADIANS) {
+              this._angleMode = mode;
+            }
+          };
+
+          /**
+           * converts angles from the current angleMode to RADIANS
+           *
+           * @method _toRadians
+           * @private
+           * @param {Number} angle
+           * @returns {Number}
+           */
+          _main.default.prototype._toRadians = function(angle) {
+            if (this._angleMode === constants.DEGREES) {
+              return angle * constants.DEG_TO_RAD;
+            }
+            return angle;
+          };
+
+          /**
+           * converts angles from the current angleMode to DEGREES
+           *
+           * @method _toDegrees
+           * @private
+           * @param {Number} angle
+           * @returns {Number}
+           */
+          _main.default.prototype._toDegrees = function(angle) {
+            if (this._angleMode === constants.RADIANS) {
+              return angle * constants.RAD_TO_DEG;
+            }
+            return angle;
