@@ -79893,3 +79893,141 @@
               return angle * constants.RAD_TO_DEG;
             }
             return angle;
+          };
+
+          /**
+           * converts angles from RADIANS into the current angleMode
+           *
+           * @method _fromRadians
+           * @private
+           * @param {Number} angle
+           * @returns {Number}
+           */
+          _main.default.prototype._fromRadians = function(angle) {
+            if (this._angleMode === constants.DEGREES) {
+              return angle * constants.RAD_TO_DEG;
+            }
+            return angle;
+          };
+          var _default = _main.default;
+          exports.default = _default;
+        },
+        { '../core/constants': 48, '../core/main': 59 }
+      ],
+      95: [
+        function(_dereq_, module, exports) {
+          'use strict';
+          Object.defineProperty(exports, '__esModule', { value: true });
+          exports.default = void 0;
+
+          var _main = _interopRequireDefault(_dereq_('../core/main'));
+          function _interopRequireDefault(obj) {
+            return obj && obj.__esModule ? obj : { default: obj };
+          }
+          /**
+           * @module Typography
+           * @submodule Attributes
+           * @for p5
+           * @requires core
+           * @requires constants
+           */ /**
+           * Sets the current alignment for drawing text. Accepts two
+           * arguments: horizAlign (LEFT, CENTER, or RIGHT) and
+           * vertAlign (TOP, BOTTOM, CENTER, or BASELINE).
+           *
+           * The horizAlign parameter is in reference to the x value
+           * of the <a href="#/p5/text">text()</a> function, while the vertAlign parameter
+           * is in reference to the y value.
+           *
+           * So if you write textAlign(LEFT), you are aligning the left
+           * edge of your text to the x value you give in <a href="#/p5/text">text()</a>.
+           * If you write textAlign(RIGHT, TOP), you are aligning the right edge
+           * of your text to the x value and the top of edge of the text
+           * to the y value.
+           *
+           * @method textAlign
+           * @param {Constant} horizAlign horizontal alignment, either LEFT,
+           *                            CENTER, or RIGHT
+           * @param {Constant} [vertAlign] vertical alignment, either TOP,
+           *                            BOTTOM, CENTER, or BASELINE
+           * @chainable
+           * @example
+           * <div>
+           * <code>
+           * textSize(16);
+           * textAlign(RIGHT);
+           * text('ABCD', 50, 30);
+           * textAlign(CENTER);
+           * text('EFGH', 50, 50);
+           * textAlign(LEFT);
+           * text('IJKL', 50, 70);
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * textSize(16);
+           * strokeWeight(0.5);
+           *
+           * line(0, 12, width, 12);
+           * textAlign(CENTER, TOP);
+           * text('TOP', 0, 12, width);
+           *
+           * line(0, 37, width, 37);
+           * textAlign(CENTER, CENTER);
+           * text('CENTER', 0, 37, width);
+           *
+           * line(0, 62, width, 62);
+           * textAlign(CENTER, BASELINE);
+           * text('BASELINE', 0, 62, width);
+           *
+           * line(0, 87, width, 87);
+           * textAlign(CENTER, BOTTOM);
+           * text('BOTTOM', 0, 87, width);
+           * </code>
+           * </div>
+           *
+           * @alt
+           * Letters ABCD displayed at top left, EFGH at center and IJKL at bottom right.
+           * The names of the four vertical alignments (TOP, CENTER, BASELINE & BOTTOM) rendered each showing that alignment's placement relative to a horizontal line.
+           */ /**
+           * @method textAlign
+           * @return {Object}
+           */ _main.default.prototype.textAlign = function(horizAlign, vertAlign) {
+            var _this$_renderer;
+            _main.default._validateParameters('textAlign', arguments);
+            return (_this$_renderer = this._renderer).textAlign.apply(
+              _this$_renderer,
+              arguments
+            );
+          };
+
+          /**
+           * Sets/gets the spacing, in pixels, between lines of text. This setting will be
+           * used in all subsequent calls to the <a href="#/p5/text">text()</a> function.
+           *
+           * @method textLeading
+           * @param {Number} leading the size in pixels for spacing between lines
+           * @chainable
+           *
+           * @example
+           * <div>
+           * <code>
+           * let lines = 'L1\nL2\nL3'; // "\n" is a "new line" character
+           * textSize(12);
+           *
+           * textLeading(10);
+           * text(lines, 10, 25);
+           *
+           * textLeading(20);
+           * text(lines, 40, 25);
+           *
+           * textLeading(30);
+           * text(lines, 70, 25);
+           * </code>
+           * </div>
+           *
+           * @alt
+           * A set of L1 L2 & L3 displayed vertically 3 times. spacing increases for each set
+           */
+          /**
