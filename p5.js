@@ -80162,3 +80162,147 @@
             }
             return (_this$_renderer5 = this._renderer).textWidth.apply(
               _this$_renderer5,
+              args
+            );
+          };
+
+          /**
+           * Returns the ascent of the current font at its current size. The ascent
+           * represents the distance, in pixels, of the tallest character above
+           * the baseline.
+           * @method textAscent
+           * @return {Number}
+           * @example
+           * <div>
+           * <code>
+           * let base = height * 0.75;
+           * let scalar = 0.8; // Different for each font
+           *
+           * textSize(32); // Set initial text size
+           * let asc = textAscent() * scalar; // Calc ascent
+           * line(0, base - asc, width, base - asc);
+           * text('dp', 0, base); // Draw text on baseline
+           *
+           * textSize(64); // Increase text size
+           * asc = textAscent() * scalar; // Recalc ascent
+           * line(40, base - asc, width, base - asc);
+           * text('dp', 40, base); // Draw text on baseline
+           * </code>
+           * </div>
+           */
+          _main.default.prototype.textAscent = function() {
+            for (
+              var _len2 = arguments.length, args = new Array(_len2), _key2 = 0;
+              _key2 < _len2;
+              _key2++
+            ) {
+              args[_key2] = arguments[_key2];
+            }
+            _main.default._validateParameters('textAscent', args);
+            return this._renderer.textAscent();
+          };
+
+          /**
+           * Returns the descent of the current font at its current size. The descent
+           * represents the distance, in pixels, of the character with the longest
+           * descender below the baseline.
+           * @method textDescent
+           * @return {Number}
+           * @example
+           * <div>
+           * <code>
+           * let base = height * 0.75;
+           * let scalar = 0.8; // Different for each font
+           *
+           * textSize(32); // Set initial text size
+           * let desc = textDescent() * scalar; // Calc ascent
+           * line(0, base + desc, width, base + desc);
+           * text('dp', 0, base); // Draw text on baseline
+           *
+           * textSize(64); // Increase text size
+           * desc = textDescent() * scalar; // Recalc ascent
+           * line(40, base + desc, width, base + desc);
+           * text('dp', 40, base); // Draw text on baseline
+           * </code>
+           * </div>
+           */
+          _main.default.prototype.textDescent = function() {
+            for (
+              var _len3 = arguments.length, args = new Array(_len3), _key3 = 0;
+              _key3 < _len3;
+              _key3++
+            ) {
+              args[_key3] = arguments[_key3];
+            }
+            _main.default._validateParameters('textDescent', args);
+            return this._renderer.textDescent();
+          };
+
+          /**
+           * Helper function to measure ascent and descent.
+           */
+          _main.default.prototype._updateTextMetrics = function() {
+            return this._renderer._updateTextMetrics();
+          };
+          var _default = _main.default;
+          exports.default = _default;
+        },
+        { '../core/main': 59 }
+      ],
+      96: [
+        function(_dereq_, module, exports) {
+          'use strict';
+          function _typeof(obj) {
+            if (typeof Symbol === 'function' && typeof Symbol.iterator === 'symbol') {
+              _typeof = function _typeof(obj) {
+                return typeof obj;
+              };
+            } else {
+              _typeof = function _typeof(obj) {
+                return obj &&
+                  typeof Symbol === 'function' &&
+                  obj.constructor === Symbol &&
+                  obj !== Symbol.prototype
+                  ? 'symbol'
+                  : typeof obj;
+              };
+            }
+            return _typeof(obj);
+          }
+          Object.defineProperty(exports, '__esModule', { value: true });
+          exports.default = void 0;
+
+          var _main = _interopRequireDefault(_dereq_('../core/main'));
+          var constants = _interopRequireWildcard(_dereq_('../core/constants'));
+          var opentype = _interopRequireWildcard(_dereq_('opentype.js'));
+
+          _dereq_('../core/friendly_errors/validate_params');
+          _dereq_('../core/friendly_errors/file_errors');
+          _dereq_('../core/friendly_errors/fes_core');
+          function _getRequireWildcardCache() {
+            if (typeof WeakMap !== 'function') return null;
+            var cache = new WeakMap();
+            _getRequireWildcardCache = function _getRequireWildcardCache() {
+              return cache;
+            };
+            return cache;
+          }
+          function _interopRequireWildcard(obj) {
+            if (obj && obj.__esModule) {
+              return obj;
+            }
+            if (obj === null || (_typeof(obj) !== 'object' && typeof obj !== 'function')) {
+              return { default: obj };
+            }
+            var cache = _getRequireWildcardCache();
+            if (cache && cache.has(obj)) {
+              return cache.get(obj);
+            }
+            var newObj = {};
+            var hasPropertyDescriptor =
+              Object.defineProperty && Object.getOwnPropertyDescriptor;
+            for (var key in obj) {
+              if (Object.prototype.hasOwnProperty.call(obj, key)) {
+                var desc = hasPropertyDescriptor
+                  ? Object.getOwnPropertyDescriptor(obj, key)
+                  : null;
