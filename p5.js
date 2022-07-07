@@ -80031,3 +80031,134 @@
            * A set of L1 L2 & L3 displayed vertically 3 times. spacing increases for each set
            */
           /**
+           * @method textLeading
+           * @return {Number}
+           */
+          _main.default.prototype.textLeading = function(theLeading) {
+            var _this$_renderer2;
+            _main.default._validateParameters('textLeading', arguments);
+            return (_this$_renderer2 = this._renderer).textLeading.apply(
+              _this$_renderer2,
+              arguments
+            );
+          };
+
+          /**
+           * Sets/gets the current font size. This size will be used in all subsequent
+           * calls to the <a href="#/p5/text">text()</a> function. Font size is measured in pixels.
+           *
+           * @method textSize
+           * @param {Number} theSize the size of the letters in units of pixels
+           * @chainable
+           *
+           * @example
+           * <div>
+           * <code>
+           * textSize(12);
+           * text('Font Size 12', 10, 30);
+           * textSize(14);
+           * text('Font Size 14', 10, 60);
+           * textSize(16);
+           * text('Font Size 16', 10, 90);
+           * </code>
+           * </div>
+           *
+           * @alt
+           * 'Font Size 12' displayed small, 'Font Size 14' medium & 'Font Size 16' large
+           */
+          /**
+           * @method textSize
+           * @return {Number}
+           */
+          _main.default.prototype.textSize = function(theSize) {
+            var _this$_renderer3;
+            _main.default._validateParameters('textSize', arguments);
+            return (_this$_renderer3 = this._renderer).textSize.apply(
+              _this$_renderer3,
+              arguments
+            );
+          };
+
+          /**
+           * Sets/gets the style of the text for system fonts to NORMAL, ITALIC, BOLD or BOLDITALIC.
+           * Note: this may be is overridden by CSS styling. For non-system fonts
+           * (opentype, truetype, etc.) please load styled fonts instead.
+           *
+           * @method textStyle
+           * @param {Constant} theStyle styling for text, either NORMAL,
+           *                            ITALIC, BOLD or BOLDITALIC
+           * @chainable
+           * @example
+           * <div>
+           * <code>
+           * strokeWeight(0);
+           * textSize(12);
+           * textStyle(NORMAL);
+           * text('Font Style Normal', 10, 15);
+           * textStyle(ITALIC);
+           * text('Font Style Italic', 10, 40);
+           * textStyle(BOLD);
+           * text('Font Style Bold', 10, 65);
+           * textStyle(BOLDITALIC);
+           * text('Font Style Bold Italic', 10, 90);
+           * </code>
+           * </div>
+           *
+           * @alt
+           * Words Font Style Normal displayed normally, Italic in italic, bold in bold and bold italic in bold italics.
+           */
+          /**
+           * @method textStyle
+           * @return {String}
+           */
+          _main.default.prototype.textStyle = function(theStyle) {
+            var _this$_renderer4;
+            _main.default._validateParameters('textStyle', arguments);
+            return (_this$_renderer4 = this._renderer).textStyle.apply(
+              _this$_renderer4,
+              arguments
+            );
+          };
+
+          /**
+           * Calculates and returns the width of any character or text string.
+           *
+           * @method textWidth
+           * @param {String} theText the String of characters to measure
+           * @return {Number} the calculated width
+           * @example
+           * <div>
+           * <code>
+           * textSize(28);
+           *
+           * let aChar = 'P';
+           * let cWidth = textWidth(aChar);
+           * text(aChar, 0, 40);
+           * line(cWidth, 0, cWidth, 50);
+           *
+           * let aString = 'p5.js';
+           * let sWidth = textWidth(aString);
+           * text(aString, 0, 85);
+           * line(sWidth, 50, sWidth, 100);
+           * </code>
+           * </div>
+           *
+           * @alt
+           * Letter P and p5.js are displayed with vertical lines at end.
+           */
+          _main.default.prototype.textWidth = function() {
+            var _this$_renderer5;
+            for (
+              var _len = arguments.length, args = new Array(_len), _key = 0;
+              _key < _len;
+              _key++
+            ) {
+              args[_key] = arguments[_key];
+            }
+            args[0] += '';
+            _main.default._validateParameters('textWidth', args);
+            if (args[0].length === 0) {
+              return 0;
+            }
+            return (_this$_renderer5 = this._renderer).textWidth.apply(
+              _this$_renderer5,
