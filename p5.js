@@ -80306,3 +80306,135 @@
                 var desc = hasPropertyDescriptor
                   ? Object.getOwnPropertyDescriptor(obj, key)
                   : null;
+                if (desc && (desc.get || desc.set)) {
+                  Object.defineProperty(newObj, key, desc);
+                } else {
+                  newObj[key] = obj[key];
+                }
+              }
+            }
+            newObj.default = obj;
+            if (cache) {
+              cache.set(obj, newObj);
+            }
+            return newObj;
+          }
+          function _interopRequireDefault(obj) {
+            return obj && obj.__esModule ? obj : { default: obj };
+          }
+          /**
+           * @module Typography
+           * @submodule Loading & Displaying
+           * @for p5
+           * @requires core
+           */ /**
+           * Loads an opentype font file (.otf, .ttf) from a file or a URL,
+           * and returns a PFont Object. This method is asynchronous,
+           * meaning it may not finish before the next line in your sketch
+           * is executed.
+           *
+           * The path to the font should be relative to the HTML file
+           * that links in your sketch. Loading fonts from a URL or other
+           * remote location may be blocked due to your browser's built-in
+           * security.
+           *
+           * @method loadFont
+           * @param  {String}        path       name of the file or url to load
+           * @param  {Function}      [callback] function to be executed after
+           *                                    <a href="#/p5/loadFont">loadFont()</a> completes
+           * @param  {Function}      [onError]  function to be executed if
+           *                                    an error occurs
+           * @return {p5.Font}                  <a href="#/p5.Font">p5.Font</a> object
+           * @example
+           *
+           * Calling loadFont() inside <a href="#/p5/preload">preload()</a> guarantees
+           * that the load operation will have completed before <a href="#/p5/setup">setup()</a>
+           * and <a href="#/p5/draw">draw()</a> are called.
+           *
+           * <div><code>
+           * let myFont;
+           * function preload() {
+           *   myFont = loadFont('assets/inconsolata.otf');
+           * }
+           *
+           * function setup() {
+           *   fill('#ED225D');
+           *   textFont(myFont);
+           *   textSize(36);
+           *   text('p5*js', 10, 50);
+           * }
+           * </code></div>
+           *
+           * Outside of <a href="#/p5/preload">preload()</a>, you may supply a
+           * callback function to handle the object:
+           *
+           * <div><code>
+           * function setup() {
+           *   loadFont('assets/inconsolata.otf', drawText);
+           * }
+           *
+           * function drawText(font) {
+           *   fill('#ED225D');
+           *   textFont(font, 36);
+           *   text('p5*js', 10, 50);
+           * }
+           * </code></div>
+           *
+           * You can also use the font filename string (without the file extension) to
+           * style other HTML elements.
+           *
+           * <div><code>
+           * function preload() {
+           *   loadFont('assets/inconsolata.otf');
+           * }
+           *
+           * function setup() {
+           *   let myDiv = createDiv('hello there');
+           *   myDiv.style('font-family', 'Inconsolata');
+           * }
+           * </code></div>
+           *
+           * @alt
+           * p5*js in p5's theme dark pink
+           * p5*js in p5's theme dark pink
+           */ _main.default.prototype.loadFont = function(path, onSuccess, onError) {
+            _main.default._validateParameters('loadFont', arguments);
+            var p5Font = new _main.default.Font(this);
+
+            var self = this;
+            opentype.load(path, function(err, font) {
+              if (err) {
+                _main.default._friendlyFileLoadError(4, path);
+                if (typeof onError !== 'undefined') {
+                  return onError(err);
+                }
+                console.error(err, path);
+                return;
+              }
+
+              p5Font.font = font;
+
+              if (typeof onSuccess !== 'undefined') {
+                onSuccess(p5Font);
+              }
+
+              self._decrementPreload();
+
+              // check that we have an acceptable font type
+              var validFontTypes = ['ttf', 'otf', 'woff', 'woff2'];
+
+              var fileNoPath = path
+                .split('\\')
+                .pop()
+                .split('/')
+                .pop();
+
+              var lastDotIdx = fileNoPath.lastIndexOf('.');
+              var fontFamily;
+              var newStyle;
+              var fileExt = lastDotIdx < 1 ? null : fileNoPath.substr(lastDotIdx + 1);
+
+              // if so, add it to the DOM (name-only) for use with DOM module
+              if (validFontTypes.includes(fileExt)) {
+                fontFamily = fileNoPath.substr(0, lastDotIdx);
+                newStyle = document.createElement('style');
