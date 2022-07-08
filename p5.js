@@ -80438,3 +80438,153 @@
               if (validFontTypes.includes(fileExt)) {
                 fontFamily = fileNoPath.substr(0, lastDotIdx);
                 newStyle = document.createElement('style');
+                newStyle.appendChild(
+                  document.createTextNode(
+                    '\n@font-face {\nfont-family: '
+                      .concat(fontFamily, ';\nsrc: url(')
+                      .concat(path, ');\n}\n')
+                  )
+                );
+
+                document.head.appendChild(newStyle);
+              }
+            });
+
+            return p5Font;
+          };
+
+          /**
+           * Draws text to the screen. Displays the information specified in the first
+           * parameter on the screen in the position specified by the additional
+           * parameters. A default font will be used unless a font is set with the
+           * <a href="#/p5/textFont">textFont()</a> function and a default size will be
+           * used unless a font is set with <a href="#/p5/textSize">textSize()</a>. Change
+           * the color of the text with the <a href="#/p5/fill">fill()</a> function. Change
+           * the outline of the text with the <a href="#/p5/stroke">stroke()</a> and
+           * <a href="#/p5/strokeWeight">strokeWeight()</a> functions.
+           *
+           * The text displays in relation to the <a href="#/p5/textAlign">textAlign()</a>
+           * function, which gives the option to draw to the left, right, and center of the
+           * coordinates.
+           *
+           * The x2 and y2 parameters define a rectangular area to display within and
+           * may only be used with string data. When these parameters are specified,
+           * they are interpreted based on the current <a href="#/p5/rectMode">rectMode()</a>
+           * setting. Text that does not fit completely within the rectangle specified will
+           * not be drawn to the screen. If x2 and y2 are not specified, the baseline
+           * alignment is the default, which means that the text will be drawn upwards
+           * from x and y.
+           *
+           * <b>WEBGL</b>: Only opentype/truetype fonts are supported. You must load a font
+           * using the <a href="#/p5/loadFont">loadFont()</a> method (see the example above).
+           * <a href="#/p5/stroke">stroke()</a> currently has no effect in webgl mode.
+           *
+           * @method text
+           * @param {String|Object|Array|Number|Boolean} str the alphanumeric
+           *                                             symbols to be displayed
+           * @param {Number} x   x-coordinate of text
+           * @param {Number} y   y-coordinate of text
+           * @param {Number} [x2]  by default, the width of the text box,
+           *                     see <a href="#/p5/rectMode">rectMode()</a> for more info
+           * @param {Number} [y2]  by default, the height of the text box,
+           *                     see <a href="#/p5/rectMode">rectMode()</a> for more info
+           * @chainable
+           * @example
+           * <div>
+           * <code>
+           * textSize(32);
+           * text('word', 10, 30);
+           * fill(0, 102, 153);
+           * text('word', 10, 60);
+           * fill(0, 102, 153, 51);
+           * text('word', 10, 90);
+           * </code>
+           * </div>
+           * <div>
+           * <code>
+           * let s = 'The quick brown fox jumped over the lazy dog.';
+           * fill(50);
+           * text(s, 10, 10, 70, 80); // Text wraps within text box
+           * </code>
+           * </div>
+           *
+           * <div modernizr='webgl'>
+           * <code>
+           * let inconsolata;
+           * function preload() {
+           *   inconsolata = loadFont('assets/inconsolata.otf');
+           * }
+           * function setup() {
+           *   createCanvas(100, 100, WEBGL);
+           *   textFont(inconsolata);
+           *   textSize(width / 3);
+           *   textAlign(CENTER, CENTER);
+           * }
+           * function draw() {
+           *   background(0);
+           *   let time = millis();
+           *   rotateX(time / 1000);
+           *   rotateZ(time / 1234);
+           *   text('p5.js', 0, 0);
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * 'word' displayed 3 times going from black, blue to translucent blue
+           * The text 'The quick brown fox jumped over the lazy dog' displayed.
+           * The text 'p5.js' spinning in 3d
+           */
+          _main.default.prototype.text = function(str, x, y, maxWidth, maxHeight) {
+            var _this$_renderer;
+            _main.default._validateParameters('text', arguments);
+            return !(this._renderer._doFill || this._renderer._doStroke)
+              ? this
+              : (_this$_renderer = this._renderer).text.apply(_this$_renderer, arguments);
+          };
+
+          /**
+    * Sets the current font that will be drawn with the <a href="#/p5/text">text()</a> function.
+    *
+    * <b>WEBGL</b>: Only fonts loaded via <a href="#/p5/loadFont">loadFont()</a> are supported.
+    *
+    * @method textFont
+    * @return {Object} the current font
+    *
+    * @example
+    * <div>
+    * <code>
+    * fill(0);
+    * textSize(12);
+    * textFont('Georgia');
+    * text('Georgia', 12, 30);
+    * textFont('Helvetica');
+    * text('Helvetica', 12, 60);
+    * </code>
+    * </div>
+    * <div>
+    * <code>
+    * let fontRegular, fontItalic, fontBold;
+    * function preload() {
+    *   fontRegular = loadFont('assets/Regular.otf');
+    *   fontItalic = loadFont('assets/Italic.ttf');
+    *   fontBold = loadFont('assets/Bold.ttf');
+    * }
+    * function setup() {
+    *   background(210);
+    *   fill(0)
+       .strokeWeight(0)
+       .textSize(10);
+    *   textFont(fontRegular);
+    *   text('Font Style Normal', 10, 30);
+    *   textFont(fontItalic);
+    *   text('Font Style Italic', 10, 50);
+    *   textFont(fontBold);
+    *   text('Font Style Bold', 10, 70);
+    * }
+    * </code>
+    * </div>
+    *
+    * @alt
+    * word 'Georgia' displayed in font Georgia and 'Helvetica' in font Helvetica
+    * words Font Style Normal displayed normally, Italic in italic and bold in bold
