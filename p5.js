@@ -80843,3 +80843,160 @@
                 w: finalMaxX,
                 advance: finalMinX - x
               };
+
+              // Bounds are now calculated, so shift the x & y to match alignment settings
+              pos = this._handleAlignment(
+                p._renderer,
+                str,
+                result.x,
+                result.y,
+                result.w + result.advance
+              );
+
+              result.x = pos.x;
+              result.y = pos.y;
+
+              if (cacheResults) {
+                this.cache[key] = result;
+              }
+            }
+
+            return result;
+          };
+
+          /**
+           * Computes an array of points following the path for specified text
+           *
+           * @method textToPoints
+           * @param  {String} txt     a line of text
+           * @param  {Number} x        x-position
+           * @param  {Number} y        y-position
+           * @param  {Number} fontSize font size to use (optional)
+           * @param  {Object} [options] an (optional) object that can contain:
+           *
+           * <br>sampleFactor - the ratio of path-length to number of samples
+           * (default=.1); higher values yield more points and are therefore
+           * more precise
+           *
+           * <br>simplifyThreshold - if set to a non-zero value, collinear points will be
+           * be removed from the polygon; the value represents the threshold angle to use
+           * when determining whether two edges are collinear
+           *
+           * @return {Array}  an array of points, each with x, y, alpha (the path angle)
+           * @example
+           * <div>
+           * <code>
+           * let font;
+           * function preload() {
+           *   font = loadFont('assets/inconsolata.otf');
+           * }
+           *
+           * let points;
+           * let bounds;
+           * function setup() {
+           *   createCanvas(100, 100);
+           *   stroke(0);
+           *   fill(255, 104, 204);
+           *
+           *   points = font.textToPoints('p5', 0, 0, 10, {
+           *     sampleFactor: 5,
+           *     simplifyThreshold: 0
+           *   });
+           *   bounds = font.textBounds(' p5 ', 0, 0, 10);
+           * }
+           *
+           * function draw() {
+           *   background(255);
+           *   beginShape();
+           *   translate(-bounds.x * width / bounds.w, -bounds.y * height / bounds.h);
+           *   for (let i = 0; i < points.length; i++) {
+           *     let p = points[i];
+           *     vertex(
+           *       p.x * width / bounds.w +
+           *         sin(20 * p.y / bounds.h + millis() / 1000) * width / 30,
+           *       p.y * height / bounds.h
+           *     );
+           *   }
+           *   endShape(CLOSE);
+           * }
+           * </code>
+           * </div>
+           */
+          _main.default.Font.prototype.textToPoints = function(
+            txt,
+            x,
+            y,
+            fontSize,
+            options
+          ) {
+            var xoff = 0;
+            var result = [];
+            var glyphs = this._getGlyphs(txt);
+
+            function isSpace(i) {
+              return (
+                (glyphs[i].name && glyphs[i].name === 'space') ||
+                (txt.length === glyphs.length && txt[i] === ' ') ||
+                (glyphs[i].index && glyphs[i].index === 3)
+              );
+            }
+
+            fontSize = fontSize || this.parent._renderer._textSize;
+
+            for (var i = 0; i < glyphs.length; i++) {
+              if (!isSpace(i)) {
+                // fix to #1817, #2069
+
+                var gpath = glyphs[i].getPath(x, y, fontSize),
+                  paths = splitPaths(gpath.commands);
+
+                for (var j = 0; j < paths.length; j++) {
+                  var pts = pathToPoints(paths[j], options);
+
+                  for (var k = 0; k < pts.length; k++) {
+                    pts[k].x += xoff;
+                    result.push(pts[k]);
+                  }
+                }
+              }
+
+              xoff += glyphs[i].advanceWidth * this._scale(fontSize);
+            }
+
+            return result;
+          };
+
+          // ----------------------------- End API ------------------------------
+
+          /**
+           * Returns the set of opentype glyphs for the supplied string.
+           *
+           * Note that there is not a strict one-to-one mapping between characters
+           * and glyphs, so the list of returned glyphs can be larger or smaller
+           *  than the length of the given string.
+           *
+           * @private
+           * @param  {String} str the string to be converted
+           * @return {Array}     the opentype glyphs
+           */
+          _main.default.Font.prototype._getGlyphs = function(str) {
+            return this.font.stringToGlyphs(str);
+          };
+
+          /**
+           * Returns an opentype path for the supplied string and position.
+           *
+           * @private
+           * @param  {String} line     a line of text
+           * @param  {Number} x        x-position
+           * @param  {Number} y        y-position
+           * @param  {Object} options opentype options (optional)
+           * @return {Object}     the opentype path
+           */
+          _main.default.Font.prototype._getPath = function(line, x, y, options) {
+            var p = (options && options.renderer && options.renderer._pInst) || this.parent,
+              renderer = p._renderer,
+              pos = this._handleAlignment(renderer, line, x, y);
+
+            return this.font.getPath(line, pos.x, pos.y, renderer._textSize, options);
+          };
