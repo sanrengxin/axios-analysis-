@@ -80714,3 +80714,132 @@
             /**
              * Underlying opentype font implementation
              * @property font
+             */
+            this.font = undefined;
+          };
+
+          /**
+           * Returns a tight bounding box for the given text string using this
+           * font
+           *
+           * @method textBounds
+           * @param  {String} line     a line of text
+           * @param  {Number} x        x-position
+           * @param  {Number} y        y-position
+           * @param  {Number} [fontSize] font size to use (optional) Default is 12.
+           * @param  {Object} [options] opentype options (optional)
+           *                            opentype fonts contains alignment and baseline options.
+           *                            Default is 'LEFT' and 'alphabetic'
+           *
+           * @return {Object}          a rectangle object with properties: x, y, w, h
+           *
+           * @example
+           * <div>
+           * <code>
+           * let font;
+           * let textString = 'Lorem ipsum dolor sit amet.';
+           * function preload() {
+           *   font = loadFont('./assets/Regular.otf');
+           * }
+           * function setup() {
+           *   background(210);
+           *
+           *   let bbox = font.textBounds(textString, 10, 30, 12);
+           *   fill(255);
+           *   stroke(0);
+           *   rect(bbox.x, bbox.y, bbox.w, bbox.h);
+           *   fill(0);
+           *   noStroke();
+           *
+           *   textFont(font);
+           *   textSize(12);
+           *   text(textString, 10, 30);
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           *words Lorem ipsum dol go off canvas and contained by white bounding box
+           */
+          _main.default.Font.prototype.textBounds = function(str) {
+            var x = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+            var y = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
+            var fontSize = arguments.length > 3 ? arguments[3] : undefined;
+            var opts = arguments.length > 4 ? arguments[4] : undefined;
+            // Check cache for existing bounds. Take into consideration the text alignment
+            // settings. Default alignment should match opentype's origin: left-aligned &
+            // alphabetic baseline.
+            var p = (opts && opts.renderer && opts.renderer._pInst) || this.parent;
+
+            var ctx = p._renderer.drawingContext;
+            var alignment = ctx.textAlign || constants.LEFT;
+            var baseline = ctx.textBaseline || constants.BASELINE;
+            var cacheResults = false;
+            var result;
+            var key;
+
+            fontSize = fontSize || p._renderer._textSize;
+
+            // NOTE: cache disabled for now pending further discussion of #3436
+            if (cacheResults) {
+              key = cacheKey('textBounds', str, x, y, fontSize, alignment, baseline);
+              result = this.cache[key];
+            }
+
+            if (!result) {
+              var minX = [];
+              var minY;
+              var maxX = [];
+              var maxY;
+              var pos;
+              var xCoords = [];
+              xCoords[0] = [];
+              var yCoords = [];
+              var scale = this._scale(fontSize);
+              var lineHeight = p._renderer.textLeading();
+              var lineCount = 0;
+
+              this.font.forEachGlyph(str, x, y, fontSize, opts, function(
+                glyph,
+                gX,
+                gY,
+                gFontSize
+              ) {
+                var gm = glyph.getMetrics();
+                if (glyph.index === 0 || glyph.index === 10) {
+                  lineCount += 1;
+                  xCoords[lineCount] = [];
+                } else {
+                  xCoords[lineCount].push(gX + gm.xMin * scale);
+                  xCoords[lineCount].push(gX + gm.xMax * scale);
+                  yCoords.push(gY + lineCount * lineHeight + -gm.yMin * scale);
+                  yCoords.push(gY + lineCount * lineHeight + -gm.yMax * scale);
+                }
+              });
+
+              if (xCoords[lineCount].length > 0) {
+                minX[lineCount] = Math.min.apply(null, xCoords[lineCount]);
+                maxX[lineCount] = Math.max.apply(null, xCoords[lineCount]);
+              }
+
+              var finalMaxX = 0;
+              for (var i = 0; i <= lineCount; i++) {
+                minX[i] = Math.min.apply(null, xCoords[i]);
+                maxX[i] = Math.max.apply(null, xCoords[i]);
+                var lineLength = maxX[i] - minX[i];
+                if (lineLength > finalMaxX) {
+                  finalMaxX = lineLength;
+                }
+              }
+
+              var finalMinX = Math.min.apply(null, minX);
+              minY = Math.min.apply(null, yCoords);
+              maxY = Math.max.apply(null, yCoords);
+
+              result = {
+                x: finalMinX,
+                y: minY,
+                h: maxY - minY,
+                w: finalMaxX,
+                advance: finalMinX - x
+              };
