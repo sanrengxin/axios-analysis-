@@ -80588,3 +80588,129 @@
     * @alt
     * word 'Georgia' displayed in font Georgia and 'Helvetica' in font Helvetica
     * words Font Style Normal displayed normally, Italic in italic and bold in bold
+    */
+          /**
+           * @method textFont
+           * @param {Object|String} font a font loaded via <a href="#/p5/loadFont">loadFont()</a>,
+           * or a String representing a <a href="https://mzl.la/2dOw8WD">web safe font</a>
+           * (a font that is generally available across all systems)
+           * @param {Number} [size] the font size to use
+           * @chainable
+           */
+          _main.default.prototype.textFont = function(theFont, theSize) {
+            _main.default._validateParameters('textFont', arguments);
+            if (arguments.length) {
+              if (!theFont) {
+                throw new Error('null font passed to textFont');
+              }
+
+              this._renderer._setProperty('_textFont', theFont);
+
+              if (theSize) {
+                this._renderer._setProperty('_textSize', theSize);
+                this._renderer._setProperty(
+                  '_textLeading',
+                  theSize * constants._DEFAULT_LEADMULT
+                );
+              }
+
+              return this._renderer._applyTextProperties();
+            }
+
+            return this._renderer._textFont;
+          };
+          var _default = _main.default;
+          exports.default = _default;
+        },
+        {
+          '../core/constants': 48,
+          '../core/friendly_errors/fes_core': 51,
+          '../core/friendly_errors/file_errors': 52,
+          '../core/friendly_errors/validate_params': 54,
+          '../core/main': 59,
+          'opentype.js': 34
+        }
+      ],
+      97: [
+        function(_dereq_, module, exports) {
+          'use strict';
+          Object.defineProperty(exports, '__esModule', { value: true });
+          exports.default = void 0;
+
+          var _main = _interopRequireDefault(_dereq_('../core/main'));
+          var constants = _interopRequireWildcard(_dereq_('../core/constants'));
+          function _getRequireWildcardCache() {
+            if (typeof WeakMap !== 'function') return null;
+            var cache = new WeakMap();
+            _getRequireWildcardCache = function _getRequireWildcardCache() {
+              return cache;
+            };
+            return cache;
+          }
+          function _interopRequireWildcard(obj) {
+            if (obj && obj.__esModule) {
+              return obj;
+            }
+            if (obj === null || (_typeof(obj) !== 'object' && typeof obj !== 'function')) {
+              return { default: obj };
+            }
+            var cache = _getRequireWildcardCache();
+            if (cache && cache.has(obj)) {
+              return cache.get(obj);
+            }
+            var newObj = {};
+            var hasPropertyDescriptor =
+              Object.defineProperty && Object.getOwnPropertyDescriptor;
+            for (var key in obj) {
+              if (Object.prototype.hasOwnProperty.call(obj, key)) {
+                var desc = hasPropertyDescriptor
+                  ? Object.getOwnPropertyDescriptor(obj, key)
+                  : null;
+                if (desc && (desc.get || desc.set)) {
+                  Object.defineProperty(newObj, key, desc);
+                } else {
+                  newObj[key] = obj[key];
+                }
+              }
+            }
+            newObj.default = obj;
+            if (cache) {
+              cache.set(obj, newObj);
+            }
+            return newObj;
+          }
+          function _interopRequireDefault(obj) {
+            return obj && obj.__esModule ? obj : { default: obj };
+          }
+          function _typeof(obj) {
+            if (typeof Symbol === 'function' && typeof Symbol.iterator === 'symbol') {
+              _typeof = function _typeof(obj) {
+                return typeof obj;
+              };
+            } else {
+              _typeof = function _typeof(obj) {
+                return obj &&
+                  typeof Symbol === 'function' &&
+                  obj.constructor === Symbol &&
+                  obj !== Symbol.prototype
+                  ? 'symbol'
+                  : typeof obj;
+              };
+            }
+            return _typeof(obj);
+          }
+
+          /**
+           * Base class for font handling
+           * @class p5.Font
+           * @constructor
+           * @param {p5} [pInst] pointer to p5 instance
+           */
+          _main.default.Font = function(p) {
+            this.parent = p;
+
+            this.cache = {};
+
+            /**
+             * Underlying opentype font implementation
+             * @property font
