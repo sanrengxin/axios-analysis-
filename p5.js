@@ -81137,3 +81137,134 @@
               _iteratorError = err;
             } finally {
               try {
+                if (!_iteratorNormalCompletion && _iterator.return != null) {
+                  _iterator.return();
+                }
+              } finally {
+                if (_didIteratorError) {
+                  throw _iteratorError;
+                }
+              }
+            }
+            if (pg._doStroke && pg._strokeSet) {
+              ctx.stroke();
+            }
+
+            if (pg._doFill) {
+              // if fill hasn't been set by user, use default-text-fill
+              if (!pg._fillSet) {
+                pg._setFill(constants._DEFAULT_TEXT_FILL);
+              }
+              ctx.fill();
+            }
+
+            return this;
+          };
+
+          _main.default.Font.prototype._textWidth = function(str, fontSize) {
+            return this.font.getAdvanceWidth(str, fontSize);
+          };
+
+          _main.default.Font.prototype._textAscent = function(fontSize) {
+            return this.font.ascender * this._scale(fontSize);
+          };
+
+          _main.default.Font.prototype._textDescent = function(fontSize) {
+            return -this.font.descender * this._scale(fontSize);
+          };
+
+          _main.default.Font.prototype._scale = function(fontSize) {
+            return 1 / this.font.unitsPerEm * (fontSize || this.parent._renderer._textSize);
+          };
+
+          _main.default.Font.prototype._handleAlignment = function(
+            renderer,
+            line,
+            x,
+            y,
+            textWidth
+          ) {
+            var fontSize = renderer._textSize;
+
+            if (typeof textWidth === 'undefined') {
+              textWidth = this._textWidth(line, fontSize);
+            }
+
+            switch (renderer._textAlign) {
+              case constants.CENTER:
+                x -= textWidth / 2;
+                break;
+              case constants.RIGHT:
+                x -= textWidth;
+                break;
+            }
+
+            switch (renderer._textBaseline) {
+              case constants.TOP:
+                y += this._textAscent(fontSize);
+                break;
+              case constants.CENTER:
+                y += this._textAscent(fontSize) / 2;
+                break;
+              case constants.BOTTOM:
+                y -= this._textDescent(fontSize);
+                break;
+            }
+
+            return { x: x, y: y };
+          };
+
+          // path-utils
+
+          function pathToPoints(cmds, options) {
+            var opts = parseOpts(options, {
+              sampleFactor: 0.1,
+              simplifyThreshold: 0
+            });
+
+            var // total-length
+              len = pointAtLength(cmds, 0, 1),
+              t = len / (len * opts.sampleFactor),
+              pts = [];
+
+            for (var i = 0; i < len; i += t) {
+              pts.push(pointAtLength(cmds, i));
+            }
+
+            if (opts.simplifyThreshold) {
+              simplify(pts, opts.simplifyThreshold);
+            }
+
+            return pts;
+          }
+
+          function simplify(pts) {
+            var angle =
+              arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+            var num = 0;
+            for (var i = pts.length - 1; pts.length > 3 && i >= 0; --i) {
+              if (collinear(at(pts, i - 1), at(pts, i), at(pts, i + 1), angle)) {
+                // Remove the middle point
+                pts.splice(i % pts.length, 1);
+                num++;
+              }
+            }
+            return num;
+          }
+
+          function splitPaths(cmds) {
+            var paths = [];
+            var current;
+            for (var i = 0; i < cmds.length; i++) {
+              if (cmds[i].type === 'M') {
+                if (current) {
+                  paths.push(current);
+                }
+                current = [];
+              }
+              current.push(cmdToArr(cmds[i]));
+            }
+            paths.push(current);
+
+            return paths;
+          }
