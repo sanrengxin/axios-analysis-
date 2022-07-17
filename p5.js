@@ -81000,3 +81000,140 @@
 
             return this.font.getPath(line, pos.x, pos.y, renderer._textSize, options);
           };
+
+          /*
+    * Creates an SVG-formatted path-data string
+    * (See http://www.w3.org/TR/SVG/paths.html#PathData)
+    * from the given opentype path or string/position
+    *
+    * @param  {Object} path    an opentype path, OR the following:
+    *
+    * @param  {String} line     a line of text
+    * @param  {Number} x        x-position
+    * @param  {Number} y        y-position
+    * @param  {Object} options opentype options (optional), set options.decimals
+    * to set the decimal precision of the path-data
+    *
+    * @return {Object}     this p5.Font object
+    */
+          _main.default.Font.prototype._getPathData = function(line, x, y, options) {
+            var decimals = 3;
+
+            // create path from string/position
+            if (typeof line === 'string' && arguments.length > 2) {
+              line = this._getPath(line, x, y, options);
+            } else if (_typeof(x) === 'object') {
+              // handle options specified in 2nd arg
+              options = x;
+            }
+
+            // handle svg arguments
+            if (options && typeof options.decimals === 'number') {
+              decimals = options.decimals;
+            }
+
+            return line.toPathData(decimals);
+          };
+
+          /*
+    * Creates an SVG <path> element, as a string,
+    * from the given opentype path or string/position
+    *
+    * @param  {Object} path    an opentype path, OR the following:
+    *
+    * @param  {String} line     a line of text
+    * @param  {Number} x        x-position
+    * @param  {Number} y        y-position
+    * @param  {Object} options opentype options (optional), set options.decimals
+    * to set the decimal precision of the path-data in the <path> element,
+    *  options.fill to set the fill color for the <path> element,
+    *  options.stroke to set the stroke color for the <path> element,
+    *  options.strokeWidth to set the strokeWidth for the <path> element.
+    *
+    * @return {Object}     this p5.Font object
+    */
+          _main.default.Font.prototype._getSVG = function(line, x, y, options) {
+            var decimals = 3;
+
+            // create path from string/position
+            if (typeof line === 'string' && arguments.length > 2) {
+              line = this._getPath(line, x, y, options);
+            } else if (_typeof(x) === 'object') {
+              // handle options specified in 2nd arg
+              options = x;
+            }
+
+            // handle svg arguments
+            if (options) {
+              if (typeof options.decimals === 'number') {
+                decimals = options.decimals;
+              }
+              if (typeof options.strokeWidth === 'number') {
+                line.strokeWidth = options.strokeWidth;
+              }
+              if (typeof options.fill !== 'undefined') {
+                line.fill = options.fill;
+              }
+              if (typeof options.stroke !== 'undefined') {
+                line.stroke = options.stroke;
+              }
+            }
+
+            return line.toSVG(decimals);
+          };
+
+          /*
+    * Renders an opentype path or string/position
+    * to the current graphics context
+    *
+    * @param  {Object} path    an opentype path, OR the following:
+    *
+    * @param  {String} line     a line of text
+    * @param  {Number} x        x-position
+    * @param  {Number} y        y-position
+    * @param  {Object} options opentype options (optional)
+    *
+    * @return {p5.Font}     this p5.Font object
+    */
+          _main.default.Font.prototype._renderPath = function(line, x, y, options) {
+            var pdata;
+            var pg = (options && options.renderer) || this.parent._renderer;
+            var ctx = pg.drawingContext;
+
+            if (_typeof(line) === 'object' && line.commands) {
+              pdata = line.commands;
+            } else {
+              //pos = handleAlignment(p, ctx, line, x, y);
+              pdata = this._getPath(line, x, y, options).commands;
+            }
+
+            ctx.beginPath();
+            var _iteratorNormalCompletion = true;
+            var _didIteratorError = false;
+            var _iteratorError = undefined;
+            try {
+              for (
+                var _iterator = pdata[Symbol.iterator](), _step;
+                !(_iteratorNormalCompletion = (_step = _iterator.next()).done);
+                _iteratorNormalCompletion = true
+              ) {
+                var cmd = _step.value;
+                if (cmd.type === 'M') {
+                  ctx.moveTo(cmd.x, cmd.y);
+                } else if (cmd.type === 'L') {
+                  ctx.lineTo(cmd.x, cmd.y);
+                } else if (cmd.type === 'C') {
+                  ctx.bezierCurveTo(cmd.x1, cmd.y1, cmd.x2, cmd.y2, cmd.x, cmd.y);
+                } else if (cmd.type === 'Q') {
+                  ctx.quadraticCurveTo(cmd.x1, cmd.y1, cmd.x, cmd.y);
+                } else if (cmd.type === 'Z') {
+                  ctx.closePath();
+                }
+              }
+
+              // only draw stroke if manually set by user
+            } catch (err) {
+              _didIteratorError = true;
+              _iteratorError = err;
+            } finally {
+              try {
