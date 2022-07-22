@@ -81268,3 +81268,142 @@
 
             return paths;
           }
+
+          function cmdToArr(cmd) {
+            var arr = [cmd.type];
+            if (cmd.type === 'M' || cmd.type === 'L') {
+              // moveto or lineto
+              arr.push(cmd.x, cmd.y);
+            } else if (cmd.type === 'C') {
+              arr.push(cmd.x1, cmd.y1, cmd.x2, cmd.y2, cmd.x, cmd.y);
+            } else if (cmd.type === 'Q') {
+              arr.push(cmd.x1, cmd.y1, cmd.x, cmd.y);
+            }
+            // else if (cmd.type === 'Z') { /* no-op */ }
+            return arr;
+          }
+
+          function parseOpts(options, defaults) {
+            if (_typeof(options) !== 'object') {
+              options = defaults;
+            } else {
+              for (var key in defaults) {
+                if (typeof options[key] === 'undefined') {
+                  options[key] = defaults[key];
+                }
+              }
+            }
+            return options;
+          }
+
+          //////////////////////// Helpers ////////////////////////////
+
+          function at(v, i) {
+            var s = v.length;
+            return v[i < 0 ? i % s + s : i % s];
+          }
+
+          function collinear(a, b, c, thresholdAngle) {
+            if (!thresholdAngle) {
+              return areaTriangle(a, b, c) === 0;
+            }
+
+            if (typeof collinear.tmpPoint1 === 'undefined') {
+              collinear.tmpPoint1 = [];
+              collinear.tmpPoint2 = [];
+            }
+
+            var ab = collinear.tmpPoint1,
+              bc = collinear.tmpPoint2;
+            ab.x = b.x - a.x;
+            ab.y = b.y - a.y;
+            bc.x = c.x - b.x;
+            bc.y = c.y - b.y;
+
+            var dot = ab.x * bc.x + ab.y * bc.y,
+              magA = Math.sqrt(ab.x * ab.x + ab.y * ab.y),
+              magB = Math.sqrt(bc.x * bc.x + bc.y * bc.y),
+              angle = Math.acos(dot / (magA * magB));
+
+            return angle < thresholdAngle;
+          }
+
+          function areaTriangle(a, b, c) {
+            return (b[0] - a[0]) * (c[1] - a[1]) - (c[0] - a[0]) * (b[1] - a[1]);
+          }
+
+          // Portions of below code copyright 2008 Dmitry Baranovskiy (via MIT license)
+
+          function findDotsAtSegment(p1x, p1y, c1x, c1y, c2x, c2y, p2x, p2y, t) {
+            var t1 = 1 - t;
+            var t13 = Math.pow(t1, 3);
+            var t12 = Math.pow(t1, 2);
+            var t2 = t * t;
+            var t3 = t2 * t;
+            var x = t13 * p1x + t12 * 3 * t * c1x + t1 * 3 * t * t * c2x + t3 * p2x;
+            var y = t13 * p1y + t12 * 3 * t * c1y + t1 * 3 * t * t * c2y + t3 * p2y;
+            var mx = p1x + 2 * t * (c1x - p1x) + t2 * (c2x - 2 * c1x + p1x);
+            var my = p1y + 2 * t * (c1y - p1y) + t2 * (c2y - 2 * c1y + p1y);
+            var nx = c1x + 2 * t * (c2x - c1x) + t2 * (p2x - 2 * c2x + c1x);
+            var ny = c1y + 2 * t * (c2y - c1y) + t2 * (p2y - 2 * c2y + c1y);
+            var ax = t1 * p1x + t * c1x;
+            var ay = t1 * p1y + t * c1y;
+            var cx = t1 * c2x + t * p2x;
+            var cy = t1 * c2y + t * p2y;
+            var alpha = 90 - Math.atan2(mx - nx, my - ny) * 180 / Math.PI;
+
+            if (mx > nx || my < ny) {
+              alpha += 180;
+            }
+
+            return {
+              x: x,
+              y: y,
+              m: { x: mx, y: my },
+              n: { x: nx, y: ny },
+              start: { x: ax, y: ay },
+              end: { x: cx, y: cy },
+              alpha: alpha
+            };
+          }
+
+          function getPointAtSegmentLength(p1x, p1y, c1x, c1y, c2x, c2y, p2x, p2y, length) {
+            return length == null
+              ? bezlen(p1x, p1y, c1x, c1y, c2x, c2y, p2x, p2y)
+              : findDotsAtSegment(
+                  p1x,
+                  p1y,
+                  c1x,
+                  c1y,
+                  c2x,
+                  c2y,
+                  p2x,
+                  p2y,
+                  getTatLen(p1x, p1y, c1x, c1y, c2x, c2y, p2x, p2y, length)
+                );
+          }
+
+          function pointAtLength(path, length, istotal) {
+            path = path2curve(path);
+            var x;
+            var y;
+            var p;
+            var l;
+            var sp = '';
+            var subpaths = {};
+            var point;
+            var len = 0;
+            for (var i = 0, ii = path.length; i < ii; i++) {
+              p = path[i];
+              if (p[0] === 'M') {
+                x = +p[1];
+                y = +p[2];
+              } else {
+                l = getPointAtSegmentLength(x, y, p[1], p[2], p[3], p[4], p[5], p[6]);
+                if (len + l > length) {
+                  if (!istotal) {
+                    point = getPointAtSegmentLength(
+                      x,
+                      y,
+                      p[1],
+                      p[2],
