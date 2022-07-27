@@ -81407,3 +81407,140 @@
                       y,
                       p[1],
                       p[2],
+                      p[3],
+                      p[4],
+                      p[5],
+                      p[6],
+                      length - len
+                    );
+
+                    return { x: point.x, y: point.y, alpha: point.alpha };
+                  }
+                }
+                len += l;
+                x = +p[5];
+                y = +p[6];
+              }
+              sp += p.shift() + p;
+            }
+            subpaths.end = sp;
+
+            point = istotal
+              ? len
+              : findDotsAtSegment(x, y, p[0], p[1], p[2], p[3], p[4], p[5], 1);
+
+            if (point.alpha) {
+              point = { x: point.x, y: point.y, alpha: point.alpha };
+            }
+
+            return point;
+          }
+
+          function pathToAbsolute(pathArray) {
+            var res = [],
+              x = 0,
+              y = 0,
+              mx = 0,
+              my = 0,
+              start = 0;
+            if (!pathArray) {
+              // console.warn("Unexpected state: undefined pathArray"); // shouldn't happen
+              return res;
+            }
+            if (pathArray[0][0] === 'M') {
+              x = +pathArray[0][1];
+              y = +pathArray[0][2];
+              mx = x;
+              my = y;
+              start++;
+              res[0] = ['M', x, y];
+            }
+
+            var dots;
+
+            var crz =
+              pathArray.length === 3 &&
+              pathArray[0][0] === 'M' &&
+              pathArray[1][0].toUpperCase() === 'R' &&
+              pathArray[2][0].toUpperCase() === 'Z';
+
+            for (var r, pa, i = start, ii = pathArray.length; i < ii; i++) {
+              res.push((r = []));
+              pa = pathArray[i];
+              if (pa[0] !== String.prototype.toUpperCase.call(pa[0])) {
+                r[0] = String.prototype.toUpperCase.call(pa[0]);
+                switch (r[0]) {
+                  case 'A':
+                    r[1] = pa[1];
+                    r[2] = pa[2];
+                    r[3] = pa[3];
+                    r[4] = pa[4];
+                    r[5] = pa[5];
+                    r[6] = +(pa[6] + x);
+                    r[7] = +(pa[7] + y);
+                    break;
+                  case 'V':
+                    r[1] = +pa[1] + y;
+                    break;
+                  case 'H':
+                    r[1] = +pa[1] + x;
+                    break;
+                  case 'R':
+                    dots = [x, y].concat(pa.slice(1));
+                    for (var j = 2, jj = dots.length; j < jj; j++) {
+                      dots[j] = +dots[j] + x;
+                      dots[++j] = +dots[j] + y;
+                    }
+                    res.pop();
+                    res = res.concat(catmullRom2bezier(dots, crz));
+                    break;
+                  case 'M':
+                    mx = +pa[1] + x;
+                    my = +pa[2] + y;
+                    break;
+                  default:
+                    for (var _j = 1, _jj = pa.length; _j < _jj; _j++) {
+                      r[_j] = +pa[_j] + (_j % 2 ? x : y);
+                    }
+                }
+              } else if (pa[0] === 'R') {
+                dots = [x, y].concat(pa.slice(1));
+                res.pop();
+                res = res.concat(catmullRom2bezier(dots, crz));
+                r = ['R'].concat(pa.slice(-2));
+              } else {
+                for (var k = 0, kk = pa.length; k < kk; k++) {
+                  r[k] = pa[k];
+                }
+              }
+              switch (r[0]) {
+                case 'Z':
+                  x = mx;
+                  y = my;
+                  break;
+                case 'H':
+                  x = r[1];
+                  break;
+                case 'V':
+                  y = r[1];
+                  break;
+                case 'M':
+                  mx = r[r.length - 2];
+                  my = r[r.length - 1];
+                  break;
+                default:
+                  x = r[r.length - 2];
+                  y = r[r.length - 1];
+              }
+            }
+            return res;
+          }
+
+          function path2curve(path, path2) {
+            var p = pathToAbsolute(path),
+              p2 = path2 && pathToAbsolute(path2);
+            var attrs = { x: 0, y: 0, bx: 0, by: 0, X: 0, Y: 0, qx: null, qy: null };
+            var attrs2 = { x: 0, y: 0, bx: 0, by: 0, X: 0, Y: 0, qx: null, qy: null };
+            var pcoms1 = []; // path commands of original path p
+            var pcoms2 = []; // path commands of original path p2
+            var ii;
