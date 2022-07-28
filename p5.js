@@ -82151,3 +82151,139 @@
            * function setup() {
            *   let myArray = ['A', 'B', 'C'];
            *   print(myArray); // ['A','B','C']
+           *
+           *   reverse(myArray);
+           *   print(myArray); // ['C','B','A']
+           * }
+           * </code></div>
+           */
+          _main.default.prototype.reverse = function(list) {
+            return list.reverse();
+          };
+
+          /**
+           * Decreases an array by one element and returns the shortened array,
+           * maps to Array.pop().
+           *
+           * @method shorten
+           * @deprecated Use <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/pop">array.pop()</a> instead.
+           * @param  {Array} list Array to shorten
+           * @return {Array} shortened Array
+           * @example
+           * <div class = 'norender'><code>
+           * function setup() {
+           *   let myArray = ['A', 'B', 'C'];
+           *   print(myArray); // ['A', 'B', 'C']
+           *   let newArray = shorten(myArray);
+           *   print(myArray); // ['A','B','C']
+           *   print(newArray); // ['A','B']
+           * }
+           * </code></div>
+           */
+          _main.default.prototype.shorten = function(list) {
+            list.pop();
+            return list;
+          };
+
+          /**
+           * Randomizes the order of the elements of an array. Implements
+           * <a href='http://Bost.Ocks.org/mike/shuffle/' target=_blank>
+           * Fisher-Yates Shuffle Algorithm</a>.
+           *
+           * @method shuffle
+           * @param  {Array}   array  Array to shuffle
+           * @param  {Boolean} [bool] modify passed array
+           * @return {Array}   shuffled Array
+           * @example
+           * <div><code>
+           * function setup() {
+           *   let regularArr = ['ABC', 'def', createVector(), TAU, Math.E];
+           *   print(regularArr);
+           *   shuffle(regularArr, true); // force modifications to passed array
+           *   print(regularArr);
+           *
+           *   // By default shuffle() returns a shuffled cloned array:
+           *   let newArr = shuffle(regularArr);
+           *   print(regularArr);
+           *   print(newArr);
+           * }
+           * </code></div>
+           */
+          _main.default.prototype.shuffle = function(arr, bool) {
+            var isView = ArrayBuffer && ArrayBuffer.isView && ArrayBuffer.isView(arr);
+            arr = bool || isView ? arr : arr.slice();
+
+            var rnd,
+              tmp,
+              idx = arr.length;
+            while (idx > 1) {
+              rnd = (this.random(0, 1) * idx) | 0;
+
+              tmp = arr[--idx];
+              arr[idx] = arr[rnd];
+              arr[rnd] = tmp;
+            }
+
+            return arr;
+          };
+
+          /**
+           * Sorts an array of numbers from smallest to largest, or puts an array of
+           * words in alphabetical order. The original array is not modified; a
+           * re-ordered array is returned. The count parameter states the number of
+           * elements to sort. For example, if there are 12 elements in an array and
+           * count is set to 5, only the first 5 elements in the array will be sorted.
+           *
+           * @method sort
+           * @deprecated Use <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort">array.sort()</a> instead.
+           * @param {Array} list Array to sort
+           * @param {Integer} [count] number of elements to sort, starting from 0
+           * @return {Array} the sorted list
+           *
+           * @example
+           * <div class = 'norender'><code>
+           * function setup() {
+           *   let words = ['banana', 'apple', 'pear', 'lime'];
+           *   print(words); // ['banana', 'apple', 'pear', 'lime']
+           *   let count = 4; // length of array
+           *
+           *   words = sort(words, count);
+           *   print(words); // ['apple', 'banana', 'lime', 'pear']
+           * }
+           * </code></div>
+           * <div class = 'norender'><code>
+           * function setup() {
+           *   let numbers = [2, 6, 1, 5, 14, 9, 8, 12];
+           *   print(numbers); // [2, 6, 1, 5, 14, 9, 8, 12]
+           *   let count = 5; // Less than the length of the array
+           *
+           *   numbers = sort(numbers, count);
+           *   print(numbers); // [1,2,5,6,14,9,8,12]
+           * }
+           * </code></div>
+           */
+          _main.default.prototype.sort = function(list, count) {
+            var arr = count ? list.slice(0, Math.min(count, list.length)) : list;
+            var rest = count ? list.slice(Math.min(count, list.length)) : [];
+            if (typeof arr[0] === 'string') {
+              arr = arr.sort();
+            } else {
+              arr = arr.sort(function(a, b) {
+                return a - b;
+              });
+            }
+            return arr.concat(rest);
+          };
+
+          /**
+           * Inserts a value or an array of values into an existing array. The first
+           * parameter specifies the initial array to be modified, and the second
+           * parameter defines the data to be inserted. The third parameter is an index
+           * value which specifies the array position from which to insert data.
+           * (Remember that array index numbering starts at zero, so the first position
+           * is 0, the second position is 1, and so on.)
+           *
+           * @method splice
+           * @deprecated Use <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/splice">array.splice()</a> instead.
+           * @param {Array}  list Array to splice into
+           * @param {any}    value value to be spliced in
