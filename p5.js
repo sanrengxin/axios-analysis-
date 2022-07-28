@@ -82287,3 +82287,160 @@
            * @deprecated Use <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/splice">array.splice()</a> instead.
            * @param {Array}  list Array to splice into
            * @param {any}    value value to be spliced in
+           * @param {Integer} position in the array from which to insert data
+           * @return {Array} the list
+           *
+           * @example
+           * <div class = 'norender'><code>
+           * function setup() {
+           *   let myArray = [0, 1, 2, 3, 4];
+           *   let insArray = ['A', 'B', 'C'];
+           *   print(myArray); // [0, 1, 2, 3, 4]
+           *   print(insArray); // ['A','B','C']
+           *
+           *   splice(myArray, insArray, 3);
+           *   print(myArray); // [0,1,2,'A','B','C',3,4]
+           * }
+           * </code></div>
+           */
+          _main.default.prototype.splice = function(list, value, index) {
+            // note that splice returns spliced elements and not an array
+            Array.prototype.splice.apply(list, [index, 0].concat(value));
+
+            return list;
+          };
+
+          /**
+           * Extracts an array of elements from an existing array. The list parameter
+           * defines the array from which the elements will be copied, and the start
+           * and count parameters specify which elements to extract. If no count is
+           * given, elements will be extracted from the start to the end of the array.
+           * When specifying the start, remember that the first array element is 0.
+           * This function does not change the source array.
+           *
+           * @method subset
+           * @deprecated Use <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/slice">array.slice()</a> instead.
+           * @param  {Array}  list    Array to extract from
+           * @param  {Integer} start   position to begin
+           * @param  {Integer} [count] number of values to extract
+           * @return {Array}          Array of extracted elements
+           *
+           * @example
+           * <div class = 'norender'><code>
+           * function setup() {
+           *   let myArray = [1, 2, 3, 4, 5];
+           *   print(myArray); // [1, 2, 3, 4, 5]
+           *
+           *   let sub1 = subset(myArray, 0, 3);
+           *   let sub2 = subset(myArray, 2, 2);
+           *   print(sub1); // [1,2,3]
+           *   print(sub2); // [3,4]
+           * }
+           * </code></div>
+           */
+          _main.default.prototype.subset = function(list, start, count) {
+            if (typeof count !== 'undefined') {
+              return list.slice(start, start + count);
+            } else {
+              return list.slice(start, list.length);
+            }
+          };
+          var _default = _main.default;
+          exports.default = _default;
+        },
+        { '../core/main': 59 }
+      ],
+      99: [
+        function(_dereq_, module, exports) {
+          'use strict';
+          Object.defineProperty(exports, '__esModule', { value: true });
+          exports.default = void 0;
+
+          var _main = _interopRequireDefault(_dereq_('../core/main'));
+          function _interopRequireDefault(obj) {
+            return obj && obj.__esModule ? obj : { default: obj };
+          }
+          /**
+           * @module Data
+           * @submodule Conversion
+           * @for p5
+           * @requires core
+           */ /**
+           * Converts a string to its floating point representation. The contents of a
+           * string must resemble a number, or NaN (not a number) will be returned.
+           * For example, float("1234.56") evaluates to 1234.56, but float("giraffe")
+           * will return NaN.
+           *
+           * When an array of values is passed in, then an array of floats of the same
+           * length is returned.
+           *
+           * @method float
+           * @param {String}  str float string to parse
+           * @return {Number}     floating point representation of string
+           * @example
+           * <div><code>
+           * let str = '20';
+           * let diameter = float(str);
+           * ellipse(width / 2, height / 2, diameter, diameter);
+           * </code></div>
+           * <div class='norender'><code>
+           * print(float('10.31')); // 10.31
+           * print(float('Infinity')); // Infinity
+           * print(float('-Infinity')); // -Infinity
+           * </code></div>
+           *
+           * @alt
+           * 20 by 20 white ellipse in the center of the canvas
+           */ _main.default.prototype.float = function(str) {
+            if (str instanceof Array) {
+              return str.map(parseFloat);
+            }
+            return parseFloat(str);
+          };
+
+          /**
+           * Converts a boolean, string, or float to its integer representation.
+           * When an array of values is passed in, then an int array of the same length
+           * is returned.
+           *
+           * @method int
+           * @param {String|Boolean|Number}       n value to parse
+           * @param {Integer}       [radix] the radix to convert to (default: 10)
+           * @return {Number}                     integer representation of value
+           *
+           * @example
+           * <div class='norender'><code>
+           * print(int('10')); // 10
+           * print(int(10.31)); // 10
+           * print(int(-10)); // -10
+           * print(int(true)); // 1
+           * print(int(false)); // 0
+           * print(int([false, true, '10.3', 9.8])); // [0, 1, 10, 9]
+           * print(int(Infinity)); // Infinity
+           * print(int('-Infinity')); // -Infinity
+           * </code></div>
+           */
+          /**
+           * @method int
+           * @param {Array} ns                    values to parse
+           * @return {Number[]}                   integer representation of values
+           */
+          _main.default.prototype.int = function(n) {
+            var radix =
+              arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 10;
+            if (n === Infinity || n === 'Infinity') {
+              return Infinity;
+            } else if (n === -Infinity || n === '-Infinity') {
+              return -Infinity;
+            } else if (typeof n === 'string') {
+              return parseInt(n, radix);
+            } else if (typeof n === 'number') {
+              return n | 0;
+            } else if (typeof n === 'boolean') {
+              return n ? 1 : 0;
+            } else if (n instanceof Array) {
+              return n.map(function(n) {
+                return _main.default.prototype.int(n, radix);
+              });
+            }
+          };
