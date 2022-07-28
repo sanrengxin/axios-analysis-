@@ -82444,3 +82444,152 @@
               });
             }
           };
+
+          /**
+           * Converts a boolean, string or number to its string representation.
+           * When an array of values is passed in, then an array of strings of the same
+           * length is returned.
+           *
+           * @method str
+           * @param {String|Boolean|Number|Array} n value to parse
+           * @return {String}                     string representation of value
+           * @example
+           * <div class='norender'><code>
+           * print(str('10')); // "10"
+           * print(str(10.31)); // "10.31"
+           * print(str(-10)); // "-10"
+           * print(str(true)); // "true"
+           * print(str(false)); // "false"
+           * print(str([true, '10.3', 9.8])); // [ "true", "10.3", "9.8" ]
+           * </code></div>
+           */
+          _main.default.prototype.str = function(n) {
+            if (n instanceof Array) {
+              return n.map(_main.default.prototype.str);
+            } else {
+              return String(n);
+            }
+          };
+
+          /**
+           * Converts a number or string to its boolean representation.
+           * For a number, any non-zero value (positive or negative) evaluates to true,
+           * while zero evaluates to false. For a string, the value "true" evaluates to
+           * true, while any other value evaluates to false. When an array of number or
+           * string values is passed in, then a array of booleans of the same length is
+           * returned.
+           *
+           * @method boolean
+           * @param {String|Boolean|Number|Array} n value to parse
+           * @return {Boolean}                    boolean representation of value
+           * @example
+           * <div class='norender'><code>
+           * print(boolean(0)); // false
+           * print(boolean(1)); // true
+           * print(boolean('true')); // true
+           * print(boolean('abcd')); // false
+           * print(boolean([0, 12, 'true'])); // [false, true, true]
+           * </code></div>
+           */
+          _main.default.prototype.boolean = function(n) {
+            if (typeof n === 'number') {
+              return n !== 0;
+            } else if (typeof n === 'string') {
+              return n.toLowerCase() === 'true';
+            } else if (typeof n === 'boolean') {
+              return n;
+            } else if (n instanceof Array) {
+              return n.map(_main.default.prototype.boolean);
+            }
+          };
+
+          /**
+           * Converts a number, string representation of a number, or boolean to its byte
+           * representation. A byte can be only a whole number between -128 and 127, so
+           * when a value outside of this range is converted, it wraps around to the
+           * corresponding byte representation. When an array of number, string or boolean
+           * values is passed in, then an array of bytes the same length is returned.
+           *
+           * @method byte
+           * @param {String|Boolean|Number}       n value to parse
+           * @return {Number}                     byte representation of value
+           *
+           * @example
+           * <div class='norender'><code>
+           * print(byte(127)); // 127
+           * print(byte(128)); // -128
+           * print(byte(23.4)); // 23
+           * print(byte('23.4')); // 23
+           * print(byte('hello')); // NaN
+           * print(byte(true)); // 1
+           * print(byte([0, 255, '100'])); // [0, -1, 100]
+           * </code></div>
+           */
+          /**
+           * @method byte
+           * @param {Array} ns                   values to parse
+           * @return {Number[]}                  array of byte representation of values
+           */
+          _main.default.prototype.byte = function(n) {
+            var nn = _main.default.prototype.int(n, 10);
+            if (typeof nn === 'number') {
+              return (nn + 128) % 256 - 128;
+            } else if (nn instanceof Array) {
+              return nn.map(_main.default.prototype.byte);
+            }
+          };
+
+          /**
+           * Converts a number or string to its corresponding single-character
+           * string representation. If a string parameter is provided, it is first
+           * parsed as an integer and then translated into a single-character string.
+           * When an array of number or string values is passed in, then an array of
+           * single-character strings of the same length is returned.
+           *
+           * @method char
+           * @param {String|Number}       n value to parse
+           * @return {String}             string representation of value
+           *
+           * @example
+           * <div class='norender'><code>
+           * print(char(65)); // "A"
+           * print(char('65')); // "A"
+           * print(char([65, 66, 67])); // [ "A", "B", "C" ]
+           * print(join(char([65, 66, 67]), '')); // "ABC"
+           * </code></div>
+           */
+          /**
+           * @method char
+           * @param {Array} ns              values to parse
+           * @return {String[]}             array of string representation of values
+           */
+          _main.default.prototype.char = function(n) {
+            if (typeof n === 'number' && !isNaN(n)) {
+              return String.fromCharCode(n);
+            } else if (n instanceof Array) {
+              return n.map(_main.default.prototype.char);
+            } else if (typeof n === 'string') {
+              return _main.default.prototype.char(parseInt(n, 10));
+            }
+          };
+
+          /**
+           * Converts a single-character string to its corresponding integer
+           * representation. When an array of single-character string values is passed
+           * in, then an array of integers of the same length is returned.
+           *
+           * @method unchar
+           * @param {String} n     value to parse
+           * @return {Number}      integer representation of value
+           *
+           * @example
+           * <div class='norender'><code>
+           * print(unchar('A')); // 65
+           * print(unchar(['A', 'B', 'C'])); // [ 65, 66, 67 ]
+           * print(unchar(split('ABC', ''))); // [ 65, 66, 67 ]
+           * </code></div>
+           */
+          /**
+           * @method unchar
+           * @param {Array} ns       values to parse
+           * @return {Number[]}      integer representation of values
