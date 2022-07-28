@@ -81841,3 +81841,168 @@
                 if (!i) {
                   p[0] = {
                     x: +crp[iLen - 2],
+                    y: +crp[iLen - 1]
+                  };
+                } else if (iLen - 4 === i) {
+                  p[3] = {
+                    x: +crp[0],
+                    y: +crp[1]
+                  };
+                } else if (iLen - 2 === i) {
+                  p[2] = {
+                    x: +crp[0],
+                    y: +crp[1]
+                  };
+
+                  p[3] = {
+                    x: +crp[2],
+                    y: +crp[3]
+                  };
+                }
+              } else {
+                if (iLen - 4 === i) {
+                  p[3] = p[2];
+                } else if (!i) {
+                  p[0] = {
+                    x: +crp[i],
+                    y: +crp[i + 1]
+                  };
+                }
+              }
+              d.push([
+                'C',
+                (-p[0].x + 6 * p[1].x + p[2].x) / 6,
+                (-p[0].y + 6 * p[1].y + p[2].y) / 6,
+                (p[1].x + 6 * p[2].x - p[3].x) / 6,
+                (p[1].y + 6 * p[2].y - p[3].y) / 6,
+                p[2].x,
+                p[2].y
+              ]);
+            }
+
+            return d;
+          }
+
+          function l2c(x1, y1, x2, y2) {
+            return [x1, y1, x2, y2, x2, y2];
+          }
+
+          function q2c(x1, y1, ax, ay, x2, y2) {
+            var _13 = 1 / 3,
+              _23 = 2 / 3;
+            return [
+              _13 * x1 + _23 * ax,
+              _13 * y1 + _23 * ay,
+              _13 * x2 + _23 * ax,
+              _13 * y2 + _23 * ay,
+              x2,
+              y2
+            ];
+          }
+
+          function bezlen(x1, y1, x2, y2, x3, y3, x4, y4, z) {
+            if (z == null) {
+              z = 1;
+            }
+            z = z > 1 ? 1 : z < 0 ? 0 : z;
+            var z2 = z / 2;
+            var n = 12;
+            var Tvalues = [
+              -0.1252,
+              0.1252,
+              -0.3678,
+              0.3678,
+              -0.5873,
+              0.5873,
+              -0.7699,
+              0.7699,
+              -0.9041,
+              0.9041,
+              -0.9816,
+              0.9816
+            ];
+
+            var sum = 0;
+            var Cvalues = [
+              0.2491,
+              0.2491,
+              0.2335,
+              0.2335,
+              0.2032,
+              0.2032,
+              0.1601,
+              0.1601,
+              0.1069,
+              0.1069,
+              0.0472,
+              0.0472
+            ];
+
+            for (var i = 0; i < n; i++) {
+              var ct = z2 * Tvalues[i] + z2,
+                xbase = base3(ct, x1, x2, x3, x4),
+                ybase = base3(ct, y1, y2, y3, y4),
+                comb = xbase * xbase + ybase * ybase;
+              sum += Cvalues[i] * Math.sqrt(comb);
+            }
+            return z2 * sum;
+          }
+
+          function getTatLen(x1, y1, x2, y2, x3, y3, x4, y4, ll) {
+            if (ll < 0 || bezlen(x1, y1, x2, y2, x3, y3, x4, y4) < ll) {
+              return;
+            }
+            var t = 1;
+            var step = t / 2;
+            var t2 = t - step;
+            var l;
+            var e = 0.01;
+            l = bezlen(x1, y1, x2, y2, x3, y3, x4, y4, t2);
+            while (Math.abs(l - ll) > e) {
+              step /= 2;
+              t2 += (l < ll ? 1 : -1) * step;
+              l = bezlen(x1, y1, x2, y2, x3, y3, x4, y4, t2);
+            }
+            return t2;
+          }
+
+          function base3(t, p1, p2, p3, p4) {
+            var t1 = -3 * p1 + 9 * p2 - 9 * p3 + 3 * p4,
+              t2 = t * t1 + 6 * p1 - 12 * p2 + 6 * p3;
+            return t * t2 - 3 * p1 + 3 * p2;
+          }
+
+          function cacheKey() {
+            var hash = '';
+            for (var i = arguments.length - 1; i >= 0; --i) {
+              hash += '\uFF1F'.concat(
+                i < 0 || arguments.length <= i ? undefined : arguments[i]
+              );
+            }
+            return hash;
+          }
+          var _default = _main.default;
+          exports.default = _default;
+        },
+        { '../core/constants': 48, '../core/main': 59 }
+      ],
+      98: [
+        function(_dereq_, module, exports) {
+          'use strict';
+          Object.defineProperty(exports, '__esModule', { value: true });
+          exports.default = void 0;
+
+          var _main = _interopRequireDefault(_dereq_('../core/main'));
+          function _interopRequireDefault(obj) {
+            return obj && obj.__esModule ? obj : { default: obj };
+          }
+          /**
+           * @module Data
+           * @submodule Array Functions
+           * @for p5
+           * @requires core
+           */ /**
+           * Adds a value to the end of an array. Extends the length of
+           * the array by one. Maps to Array.push().
+           *
+           * @method append
