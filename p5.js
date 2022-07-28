@@ -82006,3 +82006,148 @@
            * the array by one. Maps to Array.push().
            *
            * @method append
+           * @deprecated Use <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/push">array.push(value)</a> instead.
+           * @param {Array} array Array to append
+           * @param {any} value to be added to the Array
+           * @return {Array} the array that was appended to
+           * @example
+           * <div class='norender'><code>
+           * function setup() {
+           *   let myArray = ['Mango', 'Apple', 'Papaya'];
+           *   print(myArray); // ['Mango', 'Apple', 'Papaya']
+           *
+           *   append(myArray, 'Peach');
+           *   print(myArray); // ['Mango', 'Apple', 'Papaya', 'Peach']
+           * }
+           * </code></div>
+           */ _main.default.prototype.append = function(array, value) {
+            array.push(value);
+            return array;
+          };
+
+          /**
+           * Copies an array (or part of an array) to another array. The src array is
+           * copied to the dst array, beginning at the position specified by
+           * srcPosition and into the position specified by dstPosition. The number of
+           * elements to copy is determined by length. Note that copying values
+           * overwrites existing values in the destination array. To append values
+           * instead of overwriting them, use <a href="#/p5/concat">concat()</a>.
+           *
+           * The simplified version with only two arguments, arrayCopy(src, dst),
+           * copies an entire array to another of the same size. It is equivalent to
+           * arrayCopy(src, 0, dst, 0, src.length).
+           *
+           * Using this function is far more efficient for copying array data than
+           * iterating through a for() loop and copying each element individually.
+           *
+           * @method arrayCopy
+           * @deprecated Use <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/copyWithin">arr1.copyWithin(arr2)</a> instead.
+           * @param {Array}  src           the source Array
+           * @param {Integer} srcPosition  starting position in the source Array
+           * @param {Array}  dst           the destination Array
+           * @param {Integer} dstPosition   starting position in the destination Array
+           * @param {Integer} length        number of Array elements to be copied
+           *
+           * @example
+           * <div class='norender'><code>
+           * let src = ['A', 'B', 'C'];
+           * let dst = [1, 2, 3];
+           * let srcPosition = 1;
+           * let dstPosition = 0;
+           * let length = 2;
+           *
+           * print(src); // ['A', 'B', 'C']
+           * print(dst); // [ 1 ,  2 ,  3 ]
+           *
+           * arrayCopy(src, srcPosition, dst, dstPosition, length);
+           * print(dst); // ['B', 'C', 3]
+           * </code></div>
+           */
+          /**
+           * @method arrayCopy
+           * @deprecated Use <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/copyWithin">arr1.copyWithin(arr2)</a> instead.
+           * @param {Array}  src
+           * @param {Array}  dst
+           * @param {Integer} [length]
+           */
+          _main.default.prototype.arrayCopy = function(
+            src,
+            srcPosition,
+            dst,
+            dstPosition,
+            length
+          ) {
+            // the index to begin splicing from dst array
+            var start;
+            var end;
+
+            if (typeof length !== 'undefined') {
+              end = Math.min(length, src.length);
+              start = dstPosition;
+              src = src.slice(srcPosition, end + srcPosition);
+            } else {
+              if (typeof dst !== 'undefined') {
+                // src, dst, length
+                // rename  so we don't get confused
+                end = dst;
+                end = Math.min(end, src.length);
+              } else {
+                // src, dst
+                end = src.length;
+              }
+
+              start = 0;
+              // rename  so we don't get confused
+              dst = srcPosition;
+              src = src.slice(0, end);
+            }
+
+            // Since we are not returning the array and JavaScript is pass by reference
+            // we must modify the actual values of the array
+            // instead of reassigning arrays
+            Array.prototype.splice.apply(dst, [start, end].concat(src));
+          };
+
+          /**
+           * Concatenates two arrays, maps to Array.concat(). Does not modify the
+           * input arrays.
+           *
+           * @method concat
+           * @deprecated Use <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/concat">arr1.concat(arr2)</a> instead.
+           * @param {Array} a first Array to concatenate
+           * @param {Array} b second Array to concatenate
+           * @return {Array} concatenated array
+           *
+           * @example
+           * <div class = 'norender'><code>
+           * function setup() {
+           *   let arr1 = ['A', 'B', 'C'];
+           *   let arr2 = [1, 2, 3];
+           *
+           *   print(arr1); // ['A','B','C']
+           *   print(arr2); // [1,2,3]
+           *
+           *   let arr3 = concat(arr1, arr2);
+           *
+           *   print(arr1); // ['A','B','C']
+           *   print(arr2); // [1, 2, 3]
+           *   print(arr3); // ['A','B','C', 1, 2, 3]
+           * }
+           * </code></div>
+           */
+          _main.default.prototype.concat = function(list0, list1) {
+            return list0.concat(list1);
+          };
+
+          /**
+           * Reverses the order of an array, maps to Array.reverse()
+           *
+           * @method reverse
+           * @deprecated Use <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reverse">array.reverse()</a> instead.
+           * @param {Array} list Array to reverse
+           * @return {Array} the reversed list
+           * @example
+           * <div class='norender'><code>
+           * function setup() {
+           *   let myArray = ['A', 'B', 'C'];
+           *   print(myArray); // ['A','B','C']
