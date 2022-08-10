@@ -82730,3 +82730,114 @@
            */ _main.default.prototype.join = function(list, separator) {
             _main.default._validateParameters('join', arguments);
             return list.join(separator);
+          };
+
+          /**
+           * This function is used to apply a regular expression to a piece of text,
+           * and return matching groups (elements found inside parentheses) as a
+           * String array. If there are no matches, a null value will be returned.
+           * If no groups are specified in the regular expression, but the sequence
+           * matches, an array of length 1 (with the matched text as the first element
+           * of the array) will be returned.
+           *
+           * To use the function, first check to see if the result is null. If the
+           * result is null, then the sequence did not match at all. If the sequence
+           * did match, an array is returned.
+           *
+           * If there are groups (specified by sets of parentheses) in the regular
+           * expression, then the contents of each will be returned in the array.
+           * Element [0] of a regular expression match returns the entire matching
+           * string, and the match groups start at element [1] (the first group is [1],
+           * the second [2], and so on).
+           *
+           * @method match
+           * @param  {String} str    the String to be searched
+           * @param  {String} regexp the regexp to be used for matching
+           * @return {String[]}      Array of Strings found
+           * @example
+           * <div>
+           * <code>
+           * let string = 'Hello p5js*!';
+           * let regexp = 'p5js\\*';
+           * let m = match(string, regexp);
+           * text(m, 5, 50);
+           * </code>
+           * </div>
+           *
+           * @alt
+           * "p5js*" displayed middle left of canvas.
+           */
+          _main.default.prototype.match = function(str, reg) {
+            _main.default._validateParameters('match', arguments);
+            return str.match(reg);
+          };
+
+          /**
+           * This function is used to apply a regular expression to a piece of text,
+           * and return a list of matching groups (elements found inside parentheses)
+           * as a two-dimensional String array. If there are no matches, a null value
+           * will be returned. If no groups are specified in the regular expression,
+           * but the sequence matches, a two dimensional array is still returned, but
+           * the second dimension is only of length one.
+           *
+           * To use the function, first check to see if the result is null. If the
+           * result is null, then the sequence did not match at all. If the sequence
+           * did match, a 2D array is returned.
+           *
+           * If there are groups (specified by sets of parentheses) in the regular
+           * expression, then the contents of each will be returned in the array.
+           * Assuming a loop with counter variable i, element [i][0] of a regular
+           * expression match returns the entire matching string, and the match groups
+           * start at element [i][1] (the first group is [i][1], the second [i][2],
+           * and so on).
+           *
+           * @method matchAll
+           * @param  {String} str    the String to be searched
+           * @param  {String} regexp the regexp to be used for matching
+           * @return {String[]}         2d Array of Strings found
+           * @example
+           * <div class="norender">
+           * <code>
+           * let string = 'Hello p5js*! Hello world!';
+           * let regexp = 'Hello';
+           * matchAll(string, regexp);
+           * </code>
+           * </div>
+           */
+          _main.default.prototype.matchAll = function(str, reg) {
+            _main.default._validateParameters('matchAll', arguments);
+            var re = new RegExp(reg, 'g');
+            var match = re.exec(str);
+            var matches = [];
+            while (match !== null) {
+              matches.push(match);
+              // matched text: match[0]
+              // match start: match.index
+              // capturing group n: match[n]
+              match = re.exec(str);
+            }
+            return matches;
+          };
+
+          /**
+           * Utility function for formatting numbers into strings. There are two
+           * versions: one for formatting floats, and one for formatting ints.
+           * The values for the digits, left, and right parameters should always
+           * be positive integers.
+           * (NOTE): Be cautious when using left and right parameters as it prepends numbers of 0's if the parameter
+           * if greater than the current length of the number.
+           * For example if number is 123.2 and left parameter passed is 4 which is greater than length of 123
+           * (integer part) i.e 3 than result will be 0123.2. Same case for right parameter i.e. if right is 3 than
+           * the result will be 123.200.
+           *
+           * @method nf
+           * @param {Number|String}       num      the Number to format
+           * @param {Integer|String}      [left]   number of digits to the left of the
+           *                                decimal point
+           * @param {Integer|String}      [right]  number of digits to the right of the
+           *                                decimal point
+           * @return {String}               formatted String
+           *
+           * @example
+           * <div>
+           * <code>
