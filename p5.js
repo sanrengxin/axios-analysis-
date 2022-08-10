@@ -82593,3 +82593,140 @@
            * @method unchar
            * @param {Array} ns       values to parse
            * @return {Number[]}      integer representation of values
+           */
+          _main.default.prototype.unchar = function(n) {
+            if (typeof n === 'string' && n.length === 1) {
+              return n.charCodeAt(0);
+            } else if (n instanceof Array) {
+              return n.map(_main.default.prototype.unchar);
+            }
+          };
+
+          /**
+           * Converts a number to a string in its equivalent hexadecimal notation. If a
+           * second parameter is passed, it is used to set the number of characters to
+           * generate in the hexadecimal notation. When an array is passed in, an
+           * array of strings in hexadecimal notation of the same length is returned.
+           *
+           * @method hex
+           * @param {Number} n     value to parse
+           * @param {Number} [digits]
+           * @return {String}      hexadecimal string representation of value
+           *
+           * @example
+           * <div class='norender'><code>
+           * print(hex(255)); // "000000FF"
+           * print(hex(255, 6)); // "0000FF"
+           * print(hex([0, 127, 255], 6)); // [ "000000", "00007F", "0000FF" ]
+           * print(Infinity); // "FFFFFFFF"
+           * print(-Infinity); // "00000000"
+           * </code></div>
+           */
+          /**
+           * @method hex
+           * @param {Number[]} ns    array of values to parse
+           * @param {Number} [digits]
+           * @return {String[]}      hexadecimal string representation of values
+           */
+          _main.default.prototype.hex = function(n, digits) {
+            digits = digits === undefined || digits === null ? (digits = 8) : digits;
+            if (n instanceof Array) {
+              return n.map(function(n) {
+                return _main.default.prototype.hex(n, digits);
+              });
+            } else if (n === Infinity || n === -Infinity) {
+              var c = n === Infinity ? 'F' : '0';
+              return c.repeat(digits);
+            } else if (typeof n === 'number') {
+              if (n < 0) {
+                n = 0xffffffff + n + 1;
+              }
+              var hex = Number(n)
+                .toString(16)
+                .toUpperCase();
+              while (hex.length < digits) {
+                hex = '0'.concat(hex);
+              }
+              if (hex.length >= digits) {
+                hex = hex.substring(hex.length - digits, hex.length);
+              }
+              return hex;
+            }
+          };
+
+          /**
+           * Converts a string representation of a hexadecimal number to its equivalent
+           * integer value. When an array of strings in hexadecimal notation is passed
+           * in, an array of integers of the same length is returned.
+           *
+           * @method unhex
+           * @param {String} n value to parse
+           * @return {Number}      integer representation of hexadecimal value
+           *
+           * @example
+           * <div class='norender'><code>
+           * print(unhex('A')); // 10
+           * print(unhex('FF')); // 255
+           * print(unhex(['FF', 'AA', '00'])); // [ 255, 170, 0 ]
+           * </code></div>
+           */
+          /**
+           * @method unhex
+           * @param {Array} ns values to parse
+           * @return {Number[]}      integer representations of hexadecimal value
+           */
+          _main.default.prototype.unhex = function(n) {
+            if (n instanceof Array) {
+              return n.map(_main.default.prototype.unhex);
+            } else {
+              return parseInt('0x'.concat(n), 16);
+            }
+          };
+          var _default = _main.default;
+          exports.default = _default;
+        },
+        { '../core/main': 59 }
+      ],
+      100: [
+        function(_dereq_, module, exports) {
+          'use strict';
+          Object.defineProperty(exports, '__esModule', { value: true });
+          exports.default = void 0;
+
+          var _main = _interopRequireDefault(_dereq_('../core/main'));
+          _dereq_('../core/friendly_errors/validate_params');
+          _dereq_('../core/friendly_errors/file_errors');
+          _dereq_('../core/friendly_errors/fes_core');
+          function _interopRequireDefault(obj) {
+            return obj && obj.__esModule ? obj : { default: obj };
+          } /** //return p5; //LM is this a mistake?
+           * @module Data
+           * @submodule String Functions
+           * @for p5
+           * @requires core
+           */
+          /**
+           * Combines an array of Strings into one String, each separated by the
+           * character(s) used for the separator parameter. To join arrays of ints or
+           * floats, it's necessary to first convert them to Strings using <a href="#/p5/nf">nf()</a> or
+           * nfs().
+           *
+           * @method join
+           * @param  {Array}  list      array of Strings to be joined
+           * @param  {String} separator String to be placed between each item
+           * @return {String}           joined String
+           * @example
+           * <div>
+           * <code>
+           * let array = ['Hello', 'world!'];
+           * let separator = ' ';
+           * let message = join(array, separator);
+           * text(message, 5, 50);
+           * </code>
+           * </div>
+           *
+           * @alt
+           * "hello world!" displayed middle left of canvas.
+           */ _main.default.prototype.join = function(list, separator) {
+            _main.default._validateParameters('join', arguments);
+            return list.join(separator);
