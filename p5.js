@@ -82841,3 +82841,143 @@
            * @example
            * <div>
            * <code>
+           * let myFont;
+           * function preload() {
+           *   myFont = loadFont('assets/fonts/inconsolata.ttf');
+           * }
+           * function setup() {
+           *   background(200);
+           *   let num1 = 321;
+           *   let num2 = -1321;
+           *
+           *   noStroke();
+           *   fill(0);
+           *   textFont(myFont);
+           *   textSize(22);
+           *
+           *   text(nf(num1, 4, 2), 10, 30);
+           *   text(nf(num2, 4, 2), 10, 80);
+           *   // Draw dividing line
+           *   stroke(120);
+           *   line(0, 50, width, 50);
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * "0321.00" middle top, -1321.00" middle bottom canvas
+           */
+          /**
+           * @method nf
+           * @param {Array}        nums     the Numbers to format
+           * @param {Integer|String}      [left]
+           * @param {Integer|String}      [right]
+           * @return {String[]}                formatted Strings
+           */
+          _main.default.prototype.nf = function(nums, left, right) {
+            _main.default._validateParameters('nf', arguments);
+            if (nums instanceof Array) {
+              return nums.map(function(x) {
+                return doNf(x, left, right);
+              });
+            } else {
+              var typeOfFirst = Object.prototype.toString.call(nums);
+              if (typeOfFirst === '[object Arguments]') {
+                if (nums.length === 3) {
+                  return this.nf(nums[0], nums[1], nums[2]);
+                } else if (nums.length === 2) {
+                  return this.nf(nums[0], nums[1]);
+                } else {
+                  return this.nf(nums[0]);
+                }
+              } else {
+                return doNf(nums, left, right);
+              }
+            }
+          };
+
+          function doNf(num, left, right) {
+            var neg = num < 0;
+            var n = neg ? num.toString().substring(1) : num.toString();
+            var decimalInd = n.indexOf('.');
+            var intPart = decimalInd !== -1 ? n.substring(0, decimalInd) : n;
+            var decPart = decimalInd !== -1 ? n.substring(decimalInd + 1) : '';
+            var str = neg ? '-' : '';
+            if (typeof right !== 'undefined') {
+              var decimal = '';
+              if (decimalInd !== -1 || right - decPart.length > 0) {
+                decimal = '.';
+              }
+              if (decPart.length > right) {
+                decPart = decPart.substring(0, right);
+              }
+              for (var i = 0; i < left - intPart.length; i++) {
+                str += '0';
+              }
+              str += intPart;
+              str += decimal;
+              str += decPart;
+              for (var j = 0; j < right - decPart.length; j++) {
+                str += '0';
+              }
+              return str;
+            } else {
+              for (var k = 0; k < Math.max(left - intPart.length, 0); k++) {
+                str += '0';
+              }
+              str += n;
+              return str;
+            }
+          }
+
+          /**
+           * Utility function for formatting numbers into strings and placing
+           * appropriate commas to mark units of 1000. There are two versions: one
+           * for formatting ints, and one for formatting an array of ints. The value
+           * for the right parameter should always be a positive integer.
+           *
+           * @method nfc
+           * @param  {Number|String}   num     the Number to format
+           * @param  {Integer|String}  [right] number of digits to the right of the
+           *                                  decimal point
+           * @return {String}           formatted String
+           *
+           * @example
+           * <div>
+           * <code>
+           * function setup() {
+           *   background(200);
+           *   let num = 11253106.115;
+           *   let numArr = [1, 1, 2];
+           *
+           *   noStroke();
+           *   fill(0);
+           *   textSize(12);
+           *
+           *   // Draw formatted numbers
+           *   text(nfc(num, 4), 10, 30);
+           *   text(nfc(numArr, 2), 10, 80);
+           *
+           *   // Draw dividing line
+           *   stroke(120);
+           *   line(0, 50, width, 50);
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * "11,253,106.115" top middle and "1.00,1.00,2.00" displayed bottom mid
+           */
+          /**
+           * @method nfc
+           * @param  {Array}    nums     the Numbers to format
+           * @param  {Integer|String}  [right]
+           * @return {String[]}           formatted Strings
+           */
+          _main.default.prototype.nfc = function(num, right) {
+            _main.default._validateParameters('nfc', arguments);
+            if (num instanceof Array) {
+              return num.map(function(x) {
+                return doNfc(x, right);
+              });
+            } else {
