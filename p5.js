@@ -82981,3 +82981,145 @@
                 return doNfc(x, right);
               });
             } else {
+              return doNfc(num, right);
+            }
+          };
+          function doNfc(num, right) {
+            num = num.toString();
+            var dec = num.indexOf('.');
+            var rem = dec !== -1 ? num.substring(dec) : '';
+            var n = dec !== -1 ? num.substring(0, dec) : num;
+            n = n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+            if (right === 0) {
+              rem = '';
+            } else if (typeof right !== 'undefined') {
+              if (right > rem.length) {
+                rem += dec === -1 ? '.' : '';
+                var len = right - rem.length + 1;
+                for (var i = 0; i < len; i++) {
+                  rem += '0';
+                }
+              } else {
+                rem = rem.substring(0, right + 1);
+              }
+            }
+            return n + rem;
+          }
+
+          /**
+           * Utility function for formatting numbers into strings. Similar to <a href="#/p5/nf">nf()</a> but
+           * puts a "+" in front of positive numbers and a "-" in front of negative
+           * numbers. There are two versions: one for formatting floats, and one for
+           * formatting ints. The values for left, and right parameters
+           * should always be positive integers.
+           *
+           * @method nfp
+           * @param {Number} num      the Number to format
+           * @param {Integer}      [left]   number of digits to the left of the decimal
+           *                                point
+           * @param {Integer}      [right]  number of digits to the right of the
+           *                                decimal point
+           * @return {String}         formatted String
+           *
+           * @example
+           * <div>
+           * <code>
+           * function setup() {
+           *   background(200);
+           *   let num1 = 11253106.115;
+           *   let num2 = -11253106.115;
+           *
+           *   noStroke();
+           *   fill(0);
+           *   textSize(12);
+           *
+           *   // Draw formatted numbers
+           *   text(nfp(num1, 4, 2), 10, 30);
+           *   text(nfp(num2, 4, 2), 10, 80);
+           *
+           *   // Draw dividing line
+           *   stroke(120);
+           *   line(0, 50, width, 50);
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * "+11253106.11" top middle and "-11253106.11" displayed bottom middle
+           */
+          /**
+           * @method nfp
+           * @param {Number[]} nums      the Numbers to format
+           * @param {Integer}      [left]
+           * @param {Integer}      [right]
+           * @return {String[]}         formatted Strings
+           */
+          _main.default.prototype.nfp = function() {
+            for (
+              var _len = arguments.length, args = new Array(_len), _key = 0;
+              _key < _len;
+              _key++
+            ) {
+              args[_key] = arguments[_key];
+            }
+            _main.default._validateParameters('nfp', args);
+            var nfRes = _main.default.prototype.nf.apply(this, args);
+            if (nfRes instanceof Array) {
+              return nfRes.map(addNfp);
+            } else {
+              return addNfp(nfRes);
+            }
+          };
+
+          function addNfp(num) {
+            return parseFloat(num) > 0 ? '+'.concat(num.toString()) : num.toString();
+          }
+
+          /**
+           * Utility function for formatting numbers into strings. Similar to <a href="#/p5/nf">nf()</a> but
+           * puts an additional "_" (space) in front of positive numbers just in case to align it with negative
+           * numbers which includes "-" (minus) sign.
+           * The main usecase of nfs() can be seen when one wants to align the digits (place values) of a non-negative
+           * number with some negative number (See the example to get a clear picture).
+           * There are two versions: one for formatting float, and one for formatting int.
+           * The values for the digits, left, and right parameters should always be positive integers.
+           * (IMP): The result on the canvas basically the expected alignment can vary based on the typeface you are using.
+           * (NOTE): Be cautious when using left and right parameters as it prepends numbers of 0's if the parameter
+           * if greater than the current length of the number.
+           * For example if number is 123.2 and left parameter passed is 4 which is greater than length of 123
+           * (integer part) i.e 3 than result will be 0123.2. Same case for right parameter i.e. if right is 3 than
+           * the result will be 123.200.
+           *
+           * @method nfs
+           * @param {Number}       num      the Number to format
+           * @param {Integer}      [left]   number of digits to the left of the decimal
+           *                                point
+           * @param {Integer}      [right]  number of digits to the right of the
+           *                                decimal point
+           * @return {String}         formatted String
+           *
+           * @example
+           * <div>
+           * <code>
+           * let myFont;
+           * function preload() {
+           *   myFont = loadFont('assets/fonts/inconsolata.ttf');
+           * }
+           * function setup() {
+           *   background(200);
+           *   let num1 = 321;
+           *   let num2 = -1321;
+           *
+           *   noStroke();
+           *   fill(0);
+           *   textFont(myFont);
+           *   textSize(22);
+           *
+           *   // nfs() aligns num1 (positive number) with num2 (negative number) by
+           *   // adding a blank space in front of the num1 (positive number)
+           *   // [left = 4] in num1 add one 0 in front, to align the digits with num2
+           *   // [right = 2] in num1 and num2 adds two 0's after both numbers
+           *   // To see the differences check the example of nf() too.
+           *   text(nfs(num1, 4, 2), 10, 30);
+           *   text(nfs(num2, 4, 2), 10, 80);
+           *   // Draw dividing line
