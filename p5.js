@@ -83123,3 +83123,127 @@
            *   text(nfs(num1, 4, 2), 10, 30);
            *   text(nfs(num2, 4, 2), 10, 80);
            *   // Draw dividing line
+           *   stroke(120);
+           *   line(0, 50, width, 50);
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * "0321.00" top middle and "-1321.00" displayed bottom middle
+           */
+          /**
+           * @method nfs
+           * @param {Array}        nums     the Numbers to format
+           * @param {Integer}      [left]
+           * @param {Integer}      [right]
+           * @return {String[]}         formatted Strings
+           */
+          _main.default.prototype.nfs = function() {
+            for (
+              var _len2 = arguments.length, args = new Array(_len2), _key2 = 0;
+              _key2 < _len2;
+              _key2++
+            ) {
+              args[_key2] = arguments[_key2];
+            }
+            _main.default._validateParameters('nfs', args);
+            var nfRes = _main.default.prototype.nf.apply(this, args);
+            if (nfRes instanceof Array) {
+              return nfRes.map(addNfs);
+            } else {
+              return addNfs(nfRes);
+            }
+          };
+
+          function addNfs(num) {
+            return parseFloat(num) >= 0 ? ' '.concat(num.toString()) : num.toString();
+          }
+
+          /**
+           * The <a href="#/p5/split">split()</a> function maps to String.split(), it breaks a String into
+           * pieces using a character or string as the delimiter. The delim parameter
+           * specifies the character or characters that mark the boundaries between
+           * each piece. A String[] array is returned that contains each of the pieces.
+           *
+           * The <a href="#/p5/splitTokens">splitTokens()</a> function works in a similar fashion, except that it
+           * splits using a range of characters instead of a specific character or
+           * sequence.
+           *
+           * @method split
+           * @param  {String} value the String to be split
+           * @param  {String} delim the String used to separate the data
+           * @return {String[]}  Array of Strings
+           * @example
+           * <div>
+           * <code>
+           * let names = 'Pat,Xio,Alex';
+           * let splitString = split(names, ',');
+           * text(splitString[0], 5, 30);
+           * text(splitString[1], 5, 50);
+           * text(splitString[2], 5, 70);
+           * </code>
+           * </div>
+           *
+           * @alt
+           * "pat" top left, "Xio" mid left and "Alex" displayed bottom left
+           */
+          _main.default.prototype.split = function(str, delim) {
+            _main.default._validateParameters('split', arguments);
+            return str.split(delim);
+          };
+
+          /**
+           * The <a href="#/p5/splitTokens">splitTokens()</a> function splits a String at one or many character
+           * delimiters or "tokens." The delim parameter specifies the character or
+           * characters to be used as a boundary.
+           *
+           * If no delim characters are specified, any whitespace character is used to
+           * split. Whitespace characters include tab (\t), line feed (\n), carriage
+           * return (\r), form feed (\f), and space.
+           *
+           * @method splitTokens
+           * @param  {String} value   the String to be split
+           * @param  {String} [delim] list of individual Strings that will be used as
+           *                          separators
+           * @return {String[]}          Array of Strings
+           * @example
+           * <div class = "norender">
+           * <code>
+           * function setup() {
+           *   let myStr = 'Mango, Banana, Lime';
+           *   let myStrArr = splitTokens(myStr, ',');
+           *
+           *   print(myStrArr); // prints : ["Mango"," Banana"," Lime"]
+           * }
+           * </code>
+           * </div>
+           */
+          _main.default.prototype.splitTokens = function(value, delims) {
+            _main.default._validateParameters('splitTokens', arguments);
+            var d;
+            if (typeof delims !== 'undefined') {
+              var str = delims;
+              var sqc = /\]/g.exec(str);
+              var sqo = /\[/g.exec(str);
+              if (sqo && sqc) {
+                str = str.slice(0, sqc.index) + str.slice(sqc.index + 1);
+                sqo = /\[/g.exec(str);
+                str = str.slice(0, sqo.index) + str.slice(sqo.index + 1);
+                d = new RegExp('[\\['.concat(str, '\\]]'), 'g');
+              } else if (sqc) {
+                str = str.slice(0, sqc.index) + str.slice(sqc.index + 1);
+                d = new RegExp('['.concat(str, '\\]]'), 'g');
+              } else if (sqo) {
+                str = str.slice(0, sqo.index) + str.slice(sqo.index + 1);
+                d = new RegExp('['.concat(str, '\\[]'), 'g');
+              } else {
+                d = new RegExp('['.concat(str, ']'), 'g');
+              }
+            } else {
+              d = /\s/g;
+            }
+            return value.split(d).filter(function(n) {
+              return n;
+            });
+          };
