@@ -83247,3 +83247,141 @@
               return n;
             });
           };
+
+          /**
+           * Removes whitespace characters from the beginning and end of a String. In
+           * addition to standard whitespace characters such as space, carriage return,
+           * and tab, this function also removes the Unicode "nbsp" character.
+           *
+           * @method trim
+           * @param  {String} str a String to be trimmed
+           * @return {String}       a trimmed String
+           *
+           * @example
+           * <div>
+           * <code>
+           * let string = trim('  No new lines\n   ');
+           * text(string + ' here', 2, 50);
+           * </code>
+           * </div>
+           *
+           * @alt
+           * "No new lines here" displayed center canvas
+           */
+          /**
+           * @method trim
+           * @param  {Array} strs an Array of Strings to be trimmed
+           * @return {String[]}   an Array of trimmed Strings
+           */
+          _main.default.prototype.trim = function(str) {
+            _main.default._validateParameters('trim', arguments);
+            if (str instanceof Array) {
+              return str.map(this.trim);
+            } else {
+              return str.trim();
+            }
+          };
+          var _default = _main.default;
+          exports.default = _default;
+        },
+        {
+          '../core/friendly_errors/fes_core': 51,
+          '../core/friendly_errors/file_errors': 52,
+          '../core/friendly_errors/validate_params': 54,
+          '../core/main': 59
+        }
+      ],
+      101: [
+        function(_dereq_, module, exports) {
+          'use strict';
+          Object.defineProperty(exports, '__esModule', { value: true });
+          exports.default = void 0;
+
+          var _main = _interopRequireDefault(_dereq_('../core/main'));
+          function _interopRequireDefault(obj) {
+            return obj && obj.__esModule ? obj : { default: obj };
+          }
+          /**
+           * @module IO
+           * @submodule Time & Date
+           * @for p5
+           * @requires core
+           */ /**
+           * p5.js communicates with the clock on your computer. The <a href="#/p5/day">day()</a> function
+           * returns the current day as a value from 1 - 31.
+           *
+           * @method day
+           * @return {Integer} the current day
+           * @example
+           * <div>
+           * <code>
+           * let d = day();
+           * text('Current day: \n' + d, 5, 50);
+           * </code>
+           * </div>
+           *
+           * @alt
+           * Current day is displayed
+           */ _main.default.prototype.day = function() {
+            return new Date().getDate();
+          };
+
+          /**
+           * p5.js communicates with the clock on your computer. The <a href="#/p5/hour">hour()</a> function
+           * returns the current hour as a value from 0 - 23.
+           *
+           * @method hour
+           * @return {Integer} the current hour
+           * @example
+           * <div>
+           * <code>
+           * let h = hour();
+           * text('Current hour:\n' + h, 5, 50);
+           * </code>
+           * </div>
+           *
+           * @alt
+           * Current hour is displayed
+           */
+          _main.default.prototype.hour = function() {
+            return new Date().getHours();
+          };
+
+          /**
+           * p5.js communicates with the clock on your computer. The <a href="#/p5/minute">minute()</a> function
+           * returns the current minute as a value from 0 - 59.
+           *
+           * @method minute
+           * @return {Integer} the current minute
+           * @example
+           * <div>
+           * <code>
+           * let m = minute();
+           * text('Current minute: \n' + m, 5, 50);
+           * </code>
+           * </div>
+           *
+           * @alt
+           * Current minute is displayed
+           */
+          _main.default.prototype.minute = function() {
+            return new Date().getMinutes();
+          };
+
+          /**
+           * Returns the number of milliseconds (thousandths of a second) since
+           * starting the sketch (when `setup()` is called). This information is often
+           * used for timing events and animation sequences.
+           *
+           * @method millis
+           * @return {Number} the number of milliseconds since starting the sketch
+           * @example
+           * <div>
+           * <code>
+           * let millisecond = millis();
+           * text('Milliseconds \nrunning: \n' + millisecond, 5, 40);
+           * </code>
+           * </div>
+           *
+           * @alt
+           * number of milliseconds since sketch has started displayed
