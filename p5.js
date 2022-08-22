@@ -83385,3 +83385,146 @@
            *
            * @alt
            * number of milliseconds since sketch has started displayed
+           */
+          _main.default.prototype.millis = function() {
+            if (this._millisStart === -1) {
+              // Sketch has not started
+              return 0;
+            } else {
+              return window.performance.now() - this._millisStart;
+            }
+          };
+
+          /**
+           * p5.js communicates with the clock on your computer. The <a href="#/p5/month">month()</a> function
+           * returns the current month as a value from 1 - 12.
+           *
+           * @method month
+           * @return {Integer} the current month
+           * @example
+           * <div>
+           * <code>
+           * let m = month();
+           * text('Current month: \n' + m, 5, 50);
+           * </code>
+           * </div>
+           *
+           * @alt
+           * Current month is displayed
+           */
+          _main.default.prototype.month = function() {
+            //January is 0!
+            return new Date().getMonth() + 1;
+          };
+
+          /**
+           * p5.js communicates with the clock on your computer. The <a href="#/p5/second">second()</a> function
+           * returns the current second as a value from 0 - 59.
+           *
+           * @method second
+           * @return {Integer} the current second
+           * @example
+           * <div>
+           * <code>
+           * let s = second();
+           * text('Current second: \n' + s, 5, 50);
+           * </code>
+           * </div>
+           *
+           * @alt
+           * Current second is displayed
+           */
+          _main.default.prototype.second = function() {
+            return new Date().getSeconds();
+          };
+
+          /**
+           * p5.js communicates with the clock on your computer. The <a href="#/p5/year">year()</a> function
+           * returns the current year as an integer (2014, 2015, 2016, etc).
+           *
+           * @method year
+           * @return {Integer} the current year
+           * @example
+           * <div>
+           * <code>
+           * let y = year();
+           * text('Current year: \n' + y, 5, 50);
+           * </code>
+           * </div>
+           *
+           * @alt
+           * Current year is displayed
+           */
+          _main.default.prototype.year = function() {
+            return new Date().getFullYear();
+          };
+          var _default = _main.default;
+          exports.default = _default;
+        },
+        { '../core/main': 59 }
+      ],
+      102: [
+        function(_dereq_, module, exports) {
+          'use strict';
+          function _typeof(obj) {
+            if (typeof Symbol === 'function' && typeof Symbol.iterator === 'symbol') {
+              _typeof = function _typeof(obj) {
+                return typeof obj;
+              };
+            } else {
+              _typeof = function _typeof(obj) {
+                return obj &&
+                  typeof Symbol === 'function' &&
+                  obj.constructor === Symbol &&
+                  obj !== Symbol.prototype
+                  ? 'symbol'
+                  : typeof obj;
+              };
+            }
+            return _typeof(obj);
+          }
+          Object.defineProperty(exports, '__esModule', { value: true });
+          exports.default = void 0;
+
+          var _main = _interopRequireDefault(_dereq_('../core/main'));
+          _dereq_('./p5.Geometry');
+          var constants = _interopRequireWildcard(_dereq_('../core/constants'));
+          function _getRequireWildcardCache() {
+            if (typeof WeakMap !== 'function') return null;
+            var cache = new WeakMap();
+            _getRequireWildcardCache = function _getRequireWildcardCache() {
+              return cache;
+            };
+            return cache;
+          }
+          function _interopRequireWildcard(obj) {
+            if (obj && obj.__esModule) {
+              return obj;
+            }
+            if (obj === null || (_typeof(obj) !== 'object' && typeof obj !== 'function')) {
+              return { default: obj };
+            }
+            var cache = _getRequireWildcardCache();
+            if (cache && cache.has(obj)) {
+              return cache.get(obj);
+            }
+            var newObj = {};
+            var hasPropertyDescriptor =
+              Object.defineProperty && Object.getOwnPropertyDescriptor;
+            for (var key in obj) {
+              if (Object.prototype.hasOwnProperty.call(obj, key)) {
+                var desc = hasPropertyDescriptor
+                  ? Object.getOwnPropertyDescriptor(obj, key)
+                  : null;
+                if (desc && (desc.get || desc.set)) {
+                  Object.defineProperty(newObj, key, desc);
+                } else {
+                  newObj[key] = obj[key];
+                }
+              }
+            }
+            newObj.default = obj;
+            if (cache) {
+              cache.set(obj, newObj);
+            }
+            return newObj;
