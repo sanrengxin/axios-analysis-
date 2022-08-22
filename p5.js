@@ -83528,3 +83528,170 @@
               cache.set(obj, newObj);
             }
             return newObj;
+          }
+          function _interopRequireDefault(obj) {
+            return obj && obj.__esModule ? obj : { default: obj };
+          }
+          /**
+           * @module Shape
+           * @submodule 3D Primitives
+           * @for p5
+           * @requires core
+           * @requires p5.Geometry
+           */ /**
+           * Draw a plane with given a width and height
+           * @method plane
+           * @param  {Number} [width]    width of the plane
+           * @param  {Number} [height]   height of the plane
+           * @param  {Integer} [detailX]  Optional number of triangle
+           *                             subdivisions in x-dimension
+           * @param {Integer} [detailY]   Optional number of triangle
+           *                             subdivisions in y-dimension
+           * @chainable
+           * @example
+           * <div>
+           * <code>
+           * // draw a plane
+           * // with width 50 and height 50
+           * function setup() {
+           *   createCanvas(100, 100, WEBGL);
+           * }
+           *
+           * function draw() {
+           *   background(200);
+           *   plane(50, 50);
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * Nothing displayed on canvas
+           * Rotating interior view of a box with sides that change color.
+           * 3d red and green gradient.
+           * Rotating interior view of a cylinder with sides that change color.
+           * Rotating view of a cylinder with sides that change color.
+           * 3d red and green gradient.
+           * rotating view of a multi-colored cylinder with concave sides.
+           */ _main.default.prototype.plane = function(width, height, detailX, detailY) {
+            this._assert3d('plane');
+            _main.default._validateParameters('plane', arguments);
+            if (typeof width === 'undefined') {
+              width = 50;
+            }
+            if (typeof height === 'undefined') {
+              height = width;
+            }
+
+            if (typeof detailX === 'undefined') {
+              detailX = 1;
+            }
+            if (typeof detailY === 'undefined') {
+              detailY = 1;
+            }
+
+            var gId = 'plane|'.concat(detailX, '|').concat(detailY);
+
+            if (!this._renderer.geometryInHash(gId)) {
+              var _plane = function _plane() {
+                var u, v, p;
+                for (var i = 0; i <= this.detailY; i++) {
+                  v = i / this.detailY;
+                  for (var j = 0; j <= this.detailX; j++) {
+                    u = j / this.detailX;
+                    p = new _main.default.Vector(u - 0.5, v - 0.5, 0);
+                    this.vertices.push(p);
+                    this.uvs.push(u, v);
+                  }
+                }
+              };
+              var planeGeom = new _main.default.Geometry(detailX, detailY, _plane);
+              planeGeom.computeFaces().computeNormals();
+              if (detailX <= 1 && detailY <= 1) {
+                planeGeom._makeTriangleEdges()._edgesToVertices();
+              } else if (this._renderer._doStroke) {
+                console.log(
+                  'Cannot draw stroke on plane objects with more' +
+                    ' than 1 detailX or 1 detailY'
+                );
+              }
+              this._renderer.createBuffers(gId, planeGeom);
+            }
+
+            this._renderer.drawBuffersScaled(gId, width, height, 1);
+            return this;
+          };
+
+          /**
+           * Draw a box with given width, height and depth
+           * @method  box
+           * @param  {Number} [width]     width of the box
+           * @param  {Number} [Height]    height of the box
+           * @param  {Number} [depth]     depth of the box
+           * @param {Integer} [detailX]  Optional number of triangle
+           *                            subdivisions in x-dimension
+           * @param {Integer} [detailY]  Optional number of triangle
+           *                            subdivisions in y-dimension
+           * @chainable
+           * @example
+           * <div>
+           * <code>
+           * // draw a spinning box
+           * // with width, height and depth of 50
+           * function setup() {
+           *   createCanvas(100, 100, WEBGL);
+           * }
+           *
+           * function draw() {
+           *   background(200);
+           *   rotateX(frameCount * 0.01);
+           *   rotateY(frameCount * 0.01);
+           *   box(50);
+           * }
+           * </code>
+           * </div>
+           */
+          _main.default.prototype.box = function(width, height, depth, detailX, detailY) {
+            this._assert3d('box');
+            _main.default._validateParameters('box', arguments);
+            if (typeof width === 'undefined') {
+              width = 50;
+            }
+            if (typeof height === 'undefined') {
+              height = width;
+            }
+            if (typeof depth === 'undefined') {
+              depth = height;
+            }
+
+            var perPixelLighting =
+              this._renderer.attributes && this._renderer.attributes.perPixelLighting;
+            if (typeof detailX === 'undefined') {
+              detailX = perPixelLighting ? 1 : 4;
+            }
+            if (typeof detailY === 'undefined') {
+              detailY = perPixelLighting ? 1 : 4;
+            }
+
+            var gId = 'box|'.concat(detailX, '|').concat(detailY);
+            if (!this._renderer.geometryInHash(gId)) {
+              var _box = function _box() {
+                var cubeIndices = [
+                  [0, 4, 2, 6], // -1, 0, 0],// -x
+                  [1, 3, 5, 7], // +1, 0, 0],// +x
+                  [0, 1, 4, 5], // 0, -1, 0],// -y
+                  [2, 6, 3, 7], // 0, +1, 0],// +y
+                  [0, 2, 1, 3], // 0, 0, -1],// -z
+                  [4, 5, 6, 7] // 0, 0, +1] // +z
+                ];
+                //using strokeIndices instead of faces for strokes
+                //to avoid diagonal stroke lines across face of box
+                this.strokeIndices = [
+                  [0, 1],
+                  [1, 3],
+                  [3, 2],
+                  [6, 7],
+                  [8, 9],
+                  [9, 11],
+                  [14, 15],
+                  [16, 17],
+                  [17, 19],
