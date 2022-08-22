@@ -83695,3 +83695,133 @@
                   [14, 15],
                   [16, 17],
                   [17, 19],
+                  [18, 19],
+                  [20, 21],
+                  [22, 23]
+                ];
+
+                for (var i = 0; i < cubeIndices.length; i++) {
+                  var cubeIndex = cubeIndices[i];
+                  var v = i * 4;
+                  for (var j = 0; j < 4; j++) {
+                    var d = cubeIndex[j];
+                    //inspired by lightgl:
+                    //https://github.com/evanw/lightgl.js
+                    //octants:https://en.wikipedia.org/wiki/Octant_(solid_geometry)
+                    var octant = new _main.default.Vector(
+                      ((d & 1) * 2 - 1) / 2,
+                      ((d & 2) - 1) / 2,
+                      ((d & 4) / 2 - 1) / 2
+                    );
+
+                    this.vertices.push(octant);
+                    this.uvs.push(j & 1, (j & 2) / 2);
+                  }
+                  this.faces.push([v, v + 1, v + 2]);
+                  this.faces.push([v + 2, v + 1, v + 3]);
+                }
+              };
+              var boxGeom = new _main.default.Geometry(detailX, detailY, _box);
+              boxGeom.computeNormals();
+              if (detailX <= 4 && detailY <= 4) {
+                boxGeom._makeTriangleEdges()._edgesToVertices();
+              } else if (this._renderer._doStroke) {
+                console.log(
+                  'Cannot draw stroke on box objects with more' +
+                    ' than 4 detailX or 4 detailY'
+                );
+              }
+              //initialize our geometry buffer with
+              //the key val pair:
+              //geometry Id, Geom object
+              this._renderer.createBuffers(gId, boxGeom);
+            }
+            this._renderer.drawBuffersScaled(gId, width, height, depth);
+
+            return this;
+          };
+
+          /**
+           * Draw a sphere with given radius.
+           *
+           * DetailX and detailY determines the number of subdivisions in the x-dimension
+           * and the y-dimension of a sphere. More subdivisions make the sphere seem
+           * smoother. The recommended maximum values are both 24. Using a value greater
+           * than 24 may cause a warning or slow down the browser.
+           * @method sphere
+           * @param  {Number} [radius]          radius of circle
+           * @param  {Integer} [detailX]        optional number of subdivisions in x-dimension
+           * @param  {Integer} [detailY]        optional number of subdivisions in y-dimension
+           *
+           * @chainable
+           * @example
+           * <div>
+           * <code>
+           * // draw a sphere with radius 40
+           * function setup() {
+           *   createCanvas(100, 100, WEBGL);
+           * }
+           *
+           * function draw() {
+           *   background(205, 102, 94);
+           *   sphere(40);
+           * }
+           * </code>
+           * </div>
+           *
+           * @example
+           * <div>
+           * <code>
+           * let detailX;
+           * // slide to see how detailX works
+           * function setup() {
+           *   createCanvas(100, 100, WEBGL);
+           *   detailX = createSlider(3, 24, 3);
+           *   detailX.position(10, height + 5);
+           *   detailX.style('width', '80px');
+           * }
+           *
+           * function draw() {
+           *   background(205, 105, 94);
+           *   rotateY(millis() / 1000);
+           *   sphere(40, detailX.value(), 16);
+           * }
+           * </code>
+           * </div>
+           *
+           * @example
+           * <div>
+           * <code>
+           * let detailY;
+           * // slide to see how detailY works
+           * function setup() {
+           *   createCanvas(100, 100, WEBGL);
+           *   detailY = createSlider(3, 16, 3);
+           *   detailY.position(10, height + 5);
+           *   detailY.style('width', '80px');
+           * }
+           *
+           * function draw() {
+           *   background(205, 105, 94);
+           *   rotateY(millis() / 1000);
+           *   sphere(40, 16, detailY.value());
+           * }
+           * </code>
+           * </div>
+           */
+          _main.default.prototype.sphere = function(radius, detailX, detailY) {
+            this._assert3d('sphere');
+            _main.default._validateParameters('sphere', arguments);
+            if (typeof radius === 'undefined') {
+              radius = 50;
+            }
+            if (typeof detailX === 'undefined') {
+              detailX = 24;
+            }
+            if (typeof detailY === 'undefined') {
+              detailY = 16;
+            }
+
+            this.ellipsoid(radius, radius, radius, detailX, detailY);
+
+            return this;
