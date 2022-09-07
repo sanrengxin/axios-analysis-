@@ -84103,3 +84103,144 @@
            * @param  {Number}  [radius]  radius of the bottom surface
            * @param  {Number}  [height]  height of the cone
            * @param  {Integer} [detailX] number of segments,
+           *                             the more segments the smoother geometry
+           *                             default is 24
+           * @param  {Integer} [detailY] number of segments,
+           *                             the more segments the smoother geometry
+           *                             default is 1
+           * @param  {Boolean} [cap]     whether to draw the base of the cone
+           * @chainable
+           * @example
+           * <div>
+           * <code>
+           * // draw a spinning cone
+           * // with radius 40 and height 70
+           * function setup() {
+           *   createCanvas(100, 100, WEBGL);
+           * }
+           *
+           * function draw() {
+           *   background(200);
+           *   rotateX(frameCount * 0.01);
+           *   rotateZ(frameCount * 0.01);
+           *   cone(40, 70);
+           * }
+           * </code>
+           * </div>
+           *
+           * @example
+           * <div>
+           * <code>
+           * // slide to see how detailx works
+           * let detailX;
+           * function setup() {
+           *   createCanvas(100, 100, WEBGL);
+           *   detailX = createSlider(3, 16, 3);
+           *   detailX.position(10, height + 5);
+           *   detailX.style('width', '80px');
+           * }
+           *
+           * function draw() {
+           *   background(205, 102, 94);
+           *   rotateY(millis() / 1000);
+           *   cone(30, 65, detailX.value(), 16);
+           * }
+           * </code>
+           * </div>
+           *
+           * @example
+           * <div>
+           * <code>
+           * // slide to see how detailY works
+           * let detailY;
+           * function setup() {
+           *   createCanvas(100, 100, WEBGL);
+           *   detailY = createSlider(3, 16, 3);
+           *   detailY.position(10, height + 5);
+           *   detailY.style('width', '80px');
+           * }
+           *
+           * function draw() {
+           *   background(205, 102, 94);
+           *   rotateY(millis() / 1000);
+           *   cone(30, 65, 16, detailY.value());
+           * }
+           * </code>
+           * </div>
+           */
+          _main.default.prototype.cone = function(radius, height, detailX, detailY, cap) {
+            this._assert3d('cone');
+            _main.default._validateParameters('cone', arguments);
+            if (typeof radius === 'undefined') {
+              radius = 50;
+            }
+            if (typeof height === 'undefined') {
+              height = radius;
+            }
+            if (typeof detailX === 'undefined') {
+              detailX = 24;
+            }
+            if (typeof detailY === 'undefined') {
+              detailY = 1;
+            }
+            if (typeof cap === 'undefined') {
+              cap = true;
+            }
+
+            var gId = 'cone|'
+              .concat(detailX, '|')
+              .concat(detailY, '|')
+              .concat(cap);
+            if (!this._renderer.geometryInHash(gId)) {
+              var coneGeom = new _main.default.Geometry(detailX, detailY);
+              _truncatedCone.call(coneGeom, 1, 0, 1, detailX, detailY, cap, false);
+              if (detailX <= 24 && detailY <= 16) {
+                coneGeom._makeTriangleEdges()._edgesToVertices();
+              } else if (this._renderer._doStroke) {
+                console.log(
+                  'Cannot draw stroke on cone objects with more' +
+                    ' than 24 detailX or 16 detailY'
+                );
+              }
+              this._renderer.createBuffers(gId, coneGeom);
+            }
+
+            this._renderer.drawBuffersScaled(gId, radius, height, radius);
+
+            return this;
+          };
+
+          /**
+           * Draw an ellipsoid with given radius
+           *
+           * DetailX and detailY determine the number of subdivisions in the x-dimension and
+           * the y-dimension of a cone. More subdivisions make the ellipsoid appear to be smoother.
+           * Avoid detail number above 150, it may crash the browser.
+           * @method ellipsoid
+           * @param  {Number} [radiusx]         x-radius of ellipsoid
+           * @param  {Number} [radiusy]         y-radius of ellipsoid
+           * @param  {Number} [radiusz]         z-radius of ellipsoid
+           * @param  {Integer} [detailX]        number of segments,
+           *                                    the more segments the smoother geometry
+           *                                    default is 24. Avoid detail number above
+           *                                    150, it may crash the browser.
+           * @param  {Integer} [detailY]        number of segments,
+           *                                    the more segments the smoother geometry
+           *                                    default is 16. Avoid detail number above
+           *                                    150, it may crash the browser.
+           * @chainable
+           * @example
+           * <div>
+           * <code>
+           * // draw an ellipsoid
+           * // with radius 30, 40 and 40.
+           * function setup() {
+           *   createCanvas(100, 100, WEBGL);
+           * }
+           *
+           * function draw() {
+           *   background(205, 105, 94);
+           *   ellipsoid(30, 40, 40);
+           * }
+           * </code>
+           * </div>
