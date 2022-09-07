@@ -83825,3 +83825,145 @@
             this.ellipsoid(radius, radius, radius, detailX, detailY);
 
             return this;
+          };
+
+          /**
+           * @private
+           * Helper function for creating both cones and cylinders
+           * Will only generate well-defined geometry when bottomRadius, height > 0
+           * and topRadius >= 0
+           * If topRadius == 0, topCap should be false
+           */
+          var _truncatedCone = function _truncatedCone(
+            bottomRadius,
+            topRadius,
+            height,
+            detailX,
+            detailY,
+            bottomCap,
+            topCap
+          ) {
+            bottomRadius = bottomRadius <= 0 ? 1 : bottomRadius;
+            topRadius = topRadius < 0 ? 0 : topRadius;
+            height = height <= 0 ? bottomRadius : height;
+            detailX = detailX < 3 ? 3 : detailX;
+            detailY = detailY < 1 ? 1 : detailY;
+            bottomCap = bottomCap === undefined ? true : bottomCap;
+            topCap = topCap === undefined ? topRadius !== 0 : topCap;
+            var start = bottomCap ? -2 : 0;
+            var end = detailY + (topCap ? 2 : 0);
+            //ensure constant slant for interior vertex normals
+            var slant = Math.atan2(bottomRadius - topRadius, height);
+            var sinSlant = Math.sin(slant);
+            var cosSlant = Math.cos(slant);
+            var yy, ii, jj;
+            for (yy = start; yy <= end; ++yy) {
+              var v = yy / detailY;
+              var y = height * v;
+              var ringRadius = void 0;
+              if (yy < 0) {
+                //for the bottomCap edge
+                y = 0;
+                v = 0;
+                ringRadius = bottomRadius;
+              } else if (yy > detailY) {
+                //for the topCap edge
+                y = height;
+                v = 1;
+                ringRadius = topRadius;
+              } else {
+                //for the middle
+                ringRadius = bottomRadius + (topRadius - bottomRadius) * v;
+              }
+              if (yy === -2 || yy === detailY + 2) {
+                //center of bottom or top caps
+                ringRadius = 0;
+              }
+
+              y -= height / 2; //shift coordiate origin to the center of object
+              for (ii = 0; ii < detailX; ++ii) {
+                var u = ii / (detailX - 1);
+                var ur = 2 * Math.PI * u;
+                var sur = Math.sin(ur);
+                var cur = Math.cos(ur);
+
+                //VERTICES
+                this.vertices.push(
+                  new _main.default.Vector(sur * ringRadius, y, cur * ringRadius)
+                );
+
+                //VERTEX NORMALS
+                var vertexNormal = void 0;
+                if (yy < 0) {
+                  vertexNormal = new _main.default.Vector(0, -1, 0);
+                } else if (yy > detailY && topRadius) {
+                  vertexNormal = new _main.default.Vector(0, 1, 0);
+                } else {
+                  vertexNormal = new _main.default.Vector(
+                    sur * cosSlant,
+                    sinSlant,
+                    cur * cosSlant
+                  );
+                }
+                this.vertexNormals.push(vertexNormal);
+                //UVs
+                this.uvs.push(u, v);
+              }
+            }
+
+            var startIndex = 0;
+            if (bottomCap) {
+              for (jj = 0; jj < detailX; ++jj) {
+                var nextjj = (jj + 1) % detailX;
+                this.faces.push([
+                  startIndex + jj,
+                  startIndex + detailX + nextjj,
+                  startIndex + detailX + jj
+                ]);
+              }
+              startIndex += detailX * 2;
+            }
+            for (yy = 0; yy < detailY; ++yy) {
+              for (ii = 0; ii < detailX; ++ii) {
+                var nextii = (ii + 1) % detailX;
+                this.faces.push([
+                  startIndex + ii,
+                  startIndex + nextii,
+                  startIndex + detailX + nextii
+                ]);
+
+                this.faces.push([
+                  startIndex + ii,
+                  startIndex + detailX + nextii,
+                  startIndex + detailX + ii
+                ]);
+              }
+              startIndex += detailX;
+            }
+            if (topCap) {
+              startIndex += detailX;
+              for (ii = 0; ii < detailX; ++ii) {
+                this.faces.push([
+                  startIndex + ii,
+                  startIndex + (ii + 1) % detailX,
+                  startIndex + detailX
+                ]);
+              }
+            }
+          };
+
+          /**
+           * Draw a cylinder with given radius and height
+           *
+           * DetailX and detailY determines the number of subdivisions in the x-dimension
+           * and the y-dimension of a cylinder. More subdivisions make the cylinder seem smoother.
+           * The recommended maximum value for detailX is 24. Using a value greater than 24
+           * may cause a warning or slow down the browser.
+           *
+           * @method cylinder
+           * @param  {Number}  [radius]    radius of the surface
+           * @param  {Number}  [height]    height of the cylinder
+           * @param  {Integer} [detailX]   number of subdivisions in x-dimension;
+           *                               default is 24
+           * @param  {Integer} [detailY]   number of subdivisions in y-dimension;
+           *                               default is 1
