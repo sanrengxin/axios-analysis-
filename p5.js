@@ -83967,3 +83967,139 @@
            *                               default is 24
            * @param  {Integer} [detailY]   number of subdivisions in y-dimension;
            *                               default is 1
+           * @param  {Boolean} [bottomCap] whether to draw the bottom of the cylinder
+           * @param  {Boolean} [topCap]    whether to draw the top of the cylinder
+           * @chainable
+           * @example
+           * <div>
+           * <code>
+           * // draw a spinning cylinder
+           * // with radius 20 and height 50
+           * function setup() {
+           *   createCanvas(100, 100, WEBGL);
+           * }
+           *
+           * function draw() {
+           *   background(205, 105, 94);
+           *   rotateX(frameCount * 0.01);
+           *   rotateZ(frameCount * 0.01);
+           *   cylinder(20, 50);
+           * }
+           * </code>
+           * </div>
+           *
+           * @example
+           * <div>
+           * <code>
+           * // slide to see how detailX works
+           * let detailX;
+           * function setup() {
+           *   createCanvas(100, 100, WEBGL);
+           *   detailX = createSlider(3, 24, 3);
+           *   detailX.position(10, height + 5);
+           *   detailX.style('width', '80px');
+           * }
+           *
+           * function draw() {
+           *   background(205, 105, 94);
+           *   rotateY(millis() / 1000);
+           *   cylinder(20, 75, detailX.value(), 1);
+           * }
+           * </code>
+           * </div>
+           *
+           * @example
+           * <div>
+           * <code>
+           * // slide to see how detailY works
+           * let detailY;
+           * function setup() {
+           *   createCanvas(100, 100, WEBGL);
+           *   detailY = createSlider(1, 16, 1);
+           *   detailY.position(10, height + 5);
+           *   detailY.style('width', '80px');
+           * }
+           *
+           * function draw() {
+           *   background(205, 105, 94);
+           *   rotateY(millis() / 1000);
+           *   cylinder(20, 75, 16, detailY.value());
+           * }
+           * </code>
+           * </div>
+           */
+          _main.default.prototype.cylinder = function(
+            radius,
+            height,
+            detailX,
+            detailY,
+            bottomCap,
+            topCap
+          ) {
+            this._assert3d('cylinder');
+            _main.default._validateParameters('cylinder', arguments);
+            if (typeof radius === 'undefined') {
+              radius = 50;
+            }
+            if (typeof height === 'undefined') {
+              height = radius;
+            }
+            if (typeof detailX === 'undefined') {
+              detailX = 24;
+            }
+            if (typeof detailY === 'undefined') {
+              detailY = 1;
+            }
+            if (typeof topCap === 'undefined') {
+              topCap = true;
+            }
+            if (typeof bottomCap === 'undefined') {
+              bottomCap = true;
+            }
+
+            var gId = 'cylinder|'
+              .concat(detailX, '|')
+              .concat(detailY, '|')
+              .concat(bottomCap, '|')
+              .concat(topCap);
+            if (!this._renderer.geometryInHash(gId)) {
+              var cylinderGeom = new _main.default.Geometry(detailX, detailY);
+              _truncatedCone.call(
+                cylinderGeom,
+                1,
+                1,
+                1,
+                detailX,
+                detailY,
+                bottomCap,
+                topCap
+              );
+
+              // normals are computed in call to _truncatedCone
+              if (detailX <= 24 && detailY <= 16) {
+                cylinderGeom._makeTriangleEdges()._edgesToVertices();
+              } else if (this._renderer._doStroke) {
+                console.log(
+                  'Cannot draw stroke on cylinder objects with more' +
+                    ' than 24 detailX or 16 detailY'
+                );
+              }
+              this._renderer.createBuffers(gId, cylinderGeom);
+            }
+
+            this._renderer.drawBuffersScaled(gId, radius, height, radius);
+
+            return this;
+          };
+
+          /**
+           * Draw a cone with given radius and height
+           *
+           * DetailX and detailY determine the number of subdivisions in the x-dimension and
+           * the y-dimension of a cone. More subdivisions make the cone seem smoother. The
+           * recommended maximum value for detailX is 24. Using a value greater than 24
+           * may cause a warning or slow down the browser.
+           * @method cone
+           * @param  {Number}  [radius]  radius of the bottom surface
+           * @param  {Number}  [height]  height of the cone
+           * @param  {Integer} [detailX] number of segments,
