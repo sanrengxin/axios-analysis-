@@ -84244,3 +84244,143 @@
            * }
            * </code>
            * </div>
+           *
+           * @example
+           * <div>
+           * <code>
+           * // slide to see how detailX works
+           * let detailX;
+           * function setup() {
+           *   createCanvas(100, 100, WEBGL);
+           *   detailX = createSlider(2, 24, 12);
+           *   detailX.position(10, height + 5);
+           *   detailX.style('width', '80px');
+           * }
+           *
+           * function draw() {
+           *   background(205, 105, 94);
+           *   rotateY(millis() / 1000);
+           *   ellipsoid(30, 40, 40, detailX.value(), 8);
+           * }
+           * </code>
+           * </div>
+           *
+           * @example
+           * <div>
+           * <code>
+           * // slide to see how detailY works
+           * let detailY;
+           * function setup() {
+           *   createCanvas(100, 100, WEBGL);
+           *   detailY = createSlider(2, 24, 6);
+           *   detailY.position(10, height + 5);
+           *   detailY.style('width', '80px');
+           * }
+           *
+           * function draw() {
+           *   background(205, 105, 9);
+           *   rotateY(millis() / 1000);
+           *   ellipsoid(30, 40, 40, 12, detailY.value());
+           * }
+           * </code>
+           * </div>
+           */
+          _main.default.prototype.ellipsoid = function(
+            radiusX,
+            radiusY,
+            radiusZ,
+            detailX,
+            detailY
+          ) {
+            this._assert3d('ellipsoid');
+            _main.default._validateParameters('ellipsoid', arguments);
+            if (typeof radiusX === 'undefined') {
+              radiusX = 50;
+            }
+            if (typeof radiusY === 'undefined') {
+              radiusY = radiusX;
+            }
+            if (typeof radiusZ === 'undefined') {
+              radiusZ = radiusX;
+            }
+
+            if (typeof detailX === 'undefined') {
+              detailX = 24;
+            }
+            if (typeof detailY === 'undefined') {
+              detailY = 16;
+            }
+
+            var gId = 'ellipsoid|'.concat(detailX, '|').concat(detailY);
+
+            if (!this._renderer.geometryInHash(gId)) {
+              var _ellipsoid = function _ellipsoid() {
+                for (var i = 0; i <= this.detailY; i++) {
+                  var v = i / this.detailY;
+                  var phi = Math.PI * v - Math.PI / 2;
+                  var cosPhi = Math.cos(phi);
+                  var sinPhi = Math.sin(phi);
+
+                  for (var j = 0; j <= this.detailX; j++) {
+                    var u = j / this.detailX;
+                    var theta = 2 * Math.PI * u;
+                    var cosTheta = Math.cos(theta);
+                    var sinTheta = Math.sin(theta);
+                    var p = new _main.default.Vector(
+                      cosPhi * sinTheta,
+                      sinPhi,
+                      cosPhi * cosTheta
+                    );
+                    this.vertices.push(p);
+                    this.vertexNormals.push(p);
+                    this.uvs.push(u, v);
+                  }
+                }
+              };
+              var ellipsoidGeom = new _main.default.Geometry(detailX, detailY, _ellipsoid);
+              ellipsoidGeom.computeFaces();
+              if (detailX <= 24 && detailY <= 24) {
+                ellipsoidGeom._makeTriangleEdges()._edgesToVertices();
+              } else if (this._renderer._doStroke) {
+                console.log(
+                  'Cannot draw stroke on ellipsoids with more' +
+                    ' than 24 detailX or 24 detailY'
+                );
+              }
+              this._renderer.createBuffers(gId, ellipsoidGeom);
+            }
+
+            this._renderer.drawBuffersScaled(gId, radiusX, radiusY, radiusZ);
+
+            return this;
+          };
+
+          /**
+           * Draw a torus with given radius and tube radius
+           *
+           * DetailX and detailY determine the number of subdivisions in the x-dimension and
+           * the y-dimension of a torus. More subdivisions make the torus appear to be smoother.
+           * The default and maximum values for detailX and detailY are 24 and 16, respectively.
+           * Setting them to relatively small values like 4 and 6 allows you to create new
+           * shapes other than a torus.
+           * @method torus
+           * @param  {Number} [radius]      radius of the whole ring
+           * @param  {Number} [tubeRadius]  radius of the tube
+           * @param  {Integer} [detailX]    number of segments in x-dimension,
+           *                                the more segments the smoother geometry
+           *                                default is 24
+           * @param  {Integer} [detailY]    number of segments in y-dimension,
+           *                                the more segments the smoother geometry
+           *                                default is 16
+           * @chainable
+           * @example
+           * <div>
+           * <code>
+           * // draw a spinning torus
+           * // with ring radius 30 and tube radius 15
+           * function setup() {
+           *   createCanvas(100, 100, WEBGL);
+           * }
+           *
+           * function draw() {
+           *   background(205, 102, 94);
