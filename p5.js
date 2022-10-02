@@ -84384,3 +84384,122 @@
            *
            * function draw() {
            *   background(205, 102, 94);
+           *   rotateX(frameCount * 0.01);
+           *   rotateY(frameCount * 0.01);
+           *   torus(30, 15);
+           * }
+           * </code>
+           * </div>
+           *
+           * @example
+           * <div>
+           * <code>
+           * // slide to see how detailX works
+           * let detailX;
+           * function setup() {
+           *   createCanvas(100, 100, WEBGL);
+           *   detailX = createSlider(3, 24, 3);
+           *   detailX.position(10, height + 5);
+           *   detailX.style('width', '80px');
+           * }
+           *
+           * function draw() {
+           *   background(205, 102, 94);
+           *   rotateY(millis() / 1000);
+           *   torus(30, 15, detailX.value(), 12);
+           * }
+           * </code>
+           * </div>
+           *
+           * @example
+           * <div>
+           * <code>
+           * // slide to see how detailY works
+           * let detailY;
+           * function setup() {
+           *   createCanvas(100, 100, WEBGL);
+           *   detailY = createSlider(3, 16, 3);
+           *   detailY.position(10, height + 5);
+           *   detailY.style('width', '80px');
+           * }
+           *
+           * function draw() {
+           *   background(205, 102, 94);
+           *   rotateY(millis() / 1000);
+           *   torus(30, 15, 16, detailY.value());
+           * }
+           * </code>
+           * </div>
+           */
+          _main.default.prototype.torus = function(radius, tubeRadius, detailX, detailY) {
+            this._assert3d('torus');
+            _main.default._validateParameters('torus', arguments);
+            if (typeof radius === 'undefined') {
+              radius = 50;
+            } else if (!radius) {
+              return; // nothing to draw
+            }
+
+            if (typeof tubeRadius === 'undefined') {
+              tubeRadius = 10;
+            } else if (!tubeRadius) {
+              return; // nothing to draw
+            }
+
+            if (typeof detailX === 'undefined') {
+              detailX = 24;
+            }
+            if (typeof detailY === 'undefined') {
+              detailY = 16;
+            }
+
+            var tubeRatio = (tubeRadius / radius).toPrecision(4);
+            var gId = 'torus|'
+              .concat(tubeRatio, '|')
+              .concat(detailX, '|')
+              .concat(detailY);
+
+            if (!this._renderer.geometryInHash(gId)) {
+              var _torus = function _torus() {
+                for (var i = 0; i <= this.detailY; i++) {
+                  var v = i / this.detailY;
+                  var phi = 2 * Math.PI * v;
+                  var cosPhi = Math.cos(phi);
+                  var sinPhi = Math.sin(phi);
+                  var r = 1 + tubeRatio * cosPhi;
+
+                  for (var j = 0; j <= this.detailX; j++) {
+                    var u = j / this.detailX;
+                    var theta = 2 * Math.PI * u;
+                    var cosTheta = Math.cos(theta);
+                    var sinTheta = Math.sin(theta);
+
+                    var p = new _main.default.Vector(
+                      r * cosTheta,
+                      r * sinTheta,
+                      tubeRatio * sinPhi
+                    );
+
+                    var n = new _main.default.Vector(
+                      cosPhi * cosTheta,
+                      cosPhi * sinTheta,
+                      sinPhi
+                    );
+
+                    this.vertices.push(p);
+                    this.vertexNormals.push(n);
+                    this.uvs.push(u, v);
+                  }
+                }
+              };
+              var torusGeom = new _main.default.Geometry(detailX, detailY, _torus);
+              torusGeom.computeFaces();
+              if (detailX <= 24 && detailY <= 16) {
+                torusGeom._makeTriangleEdges()._edgesToVertices();
+              } else if (this._renderer._doStroke) {
+                console.log(
+                  'Cannot draw strokes on torus object with more' +
+                    ' than 24 detailX or 16 detailY'
+                );
+              }
+              this._renderer.createBuffers(gId, torusGeom);
