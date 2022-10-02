@@ -84503,3 +84503,145 @@
                 );
               }
               this._renderer.createBuffers(gId, torusGeom);
+            }
+            this._renderer.drawBuffersScaled(gId, radius, radius, radius);
+
+            return this;
+          };
+
+          ///////////////////////
+          /// 2D primitives
+          /////////////////////////
+
+          /**
+           * Draws a point, a coordinate in space at the dimension of one pixel,
+           * given x, y and z coordinates. The color of the point is determined
+           * by the current stroke, while the point size is determined by current
+           * stroke weight.
+           * @private
+           * @param {Number} x x-coordinate of point
+           * @param {Number} y y-coordinate of point
+           * @param {Number} z z-coordinate of point
+           * @chainable
+           * @example
+           * <div>
+           * <code>
+           * function setup() {
+           *   createCanvas(100, 100, WEBGL);
+           * }
+           *
+           * function draw() {
+           *   background(50);
+           *   stroke(255);
+           *   strokeWeight(4);
+           *   point(25, 0);
+           *   strokeWeight(3);
+           *   point(-25, 0);
+           *   strokeWeight(2);
+           *   point(0, 25);
+           *   strokeWeight(1);
+           *   point(0, -25);
+           * }
+           * </code>
+           * </div>
+           */
+          _main.default.RendererGL.prototype.point = function(x, y, z) {
+            if (typeof z === 'undefined') {
+              z = 0;
+            }
+
+            var _vertex = [];
+            _vertex.push(new _main.default.Vector(x, y, z));
+            this._drawPoints(_vertex, this.immediateMode.buffers.point);
+
+            return this;
+          };
+
+          _main.default.RendererGL.prototype.triangle = function(args) {
+            var x1 = args[0],
+              y1 = args[1];
+            var x2 = args[2],
+              y2 = args[3];
+            var x3 = args[4],
+              y3 = args[5];
+
+            var gId = 'tri';
+            if (!this.geometryInHash(gId)) {
+              var _triangle = function _triangle() {
+                var vertices = [];
+                vertices.push(new _main.default.Vector(0, 0, 0));
+                vertices.push(new _main.default.Vector(0, 1, 0));
+                vertices.push(new _main.default.Vector(1, 0, 0));
+                this.strokeIndices = [[0, 1], [1, 2], [2, 0]];
+                this.vertices = vertices;
+                this.faces = [[0, 1, 2]];
+                this.uvs = [0, 0, 0, 1, 1, 1];
+              };
+              var triGeom = new _main.default.Geometry(1, 1, _triangle);
+              triGeom._makeTriangleEdges()._edgesToVertices();
+              triGeom.computeNormals();
+              this.createBuffers(gId, triGeom);
+            }
+
+            // only one triangle is cached, one point is at the origin, and the
+            // two adjacent sides are tne unit vectors along the X & Y axes.
+            //
+            // this matrix multiplication transforms those two unit vectors
+            // onto the required vector prior to rendering, and moves the
+            // origin appropriately.
+            var uMVMatrix = this.uMVMatrix.copy();
+            try {
+              // prettier-ignore
+              var mult = new _main.default.Matrix([
+    x2 - x1, y2 - y1, 0, 0, // the resulting unit X-axis
+    x3 - x1, y3 - y1, 0, 0, // the resulting unit Y-axis
+    0, 0, 1, 0, // the resulting unit Z-axis (unchanged)
+    x1, y1, 0, 1 // the resulting origin
+    ]).mult(this.uMVMatrix);
+
+              this.uMVMatrix = mult;
+
+              this.drawBuffers(gId);
+            } finally {
+              this.uMVMatrix = uMVMatrix;
+            }
+
+            return this;
+          };
+
+          _main.default.RendererGL.prototype.ellipse = function(args) {
+            this.arc(
+              args[0],
+              args[1],
+              args[2],
+              args[3],
+              0,
+              constants.TWO_PI,
+              constants.OPEN,
+              args[4]
+            );
+          };
+
+          _main.default.RendererGL.prototype.arc = function(args) {
+            var x = arguments[0];
+            var y = arguments[1];
+            var width = arguments[2];
+            var height = arguments[3];
+            var start = arguments[4];
+            var stop = arguments[5];
+            var mode = arguments[6];
+            var detail = arguments[7] || 25;
+
+            var shape;
+            var gId;
+
+            // check if it is an ellipse or an arc
+            if (Math.abs(stop - start) >= constants.TWO_PI) {
+              shape = 'ellipse';
+              gId = ''.concat(shape, '|').concat(detail, '|');
+            } else {
+              shape = 'arc';
+              gId = ''
+                .concat(shape, '|')
+                .concat(start, '|')
+                .concat(stop, '|')
