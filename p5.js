@@ -84645,3 +84645,122 @@
                 .concat(shape, '|')
                 .concat(start, '|')
                 .concat(stop, '|')
+                .concat(mode, '|')
+                .concat(detail, '|');
+            }
+
+            if (!this.geometryInHash(gId)) {
+              var _arc = function _arc() {
+                this.strokeIndices = [];
+
+                // if the start and stop angles are not the same, push vertices to the array
+                if (start.toFixed(10) !== stop.toFixed(10)) {
+                  // if the mode specified is PIE or null, push the mid point of the arc in vertices
+                  if (mode === constants.PIE || typeof mode === 'undefined') {
+                    this.vertices.push(new _main.default.Vector(0.5, 0.5, 0));
+                    this.uvs.push([0.5, 0.5]);
+                  }
+
+                  // vertices for the perimeter of the circle
+                  for (var i = 0; i <= detail; i++) {
+                    var u = i / detail;
+                    var theta = (stop - start) * u + start;
+
+                    var _x = 0.5 + Math.cos(theta) / 2;
+                    var _y = 0.5 + Math.sin(theta) / 2;
+
+                    this.vertices.push(new _main.default.Vector(_x, _y, 0));
+                    this.uvs.push([_x, _y]);
+
+                    if (i < detail - 1) {
+                      this.faces.push([0, i + 1, i + 2]);
+                      this.strokeIndices.push([i + 1, i + 2]);
+                    }
+                  }
+
+                  // check the mode specified in order to push vertices and faces, different for each mode
+                  switch (mode) {
+                    case constants.PIE:
+                      this.faces.push([
+                        0,
+                        this.vertices.length - 2,
+                        this.vertices.length - 1
+                      ]);
+
+                      this.strokeIndices.push([0, 1]);
+                      this.strokeIndices.push([
+                        this.vertices.length - 2,
+                        this.vertices.length - 1
+                      ]);
+
+                      this.strokeIndices.push([0, this.vertices.length - 1]);
+                      break;
+
+                    case constants.CHORD:
+                      this.strokeIndices.push([0, 1]);
+                      this.strokeIndices.push([0, this.vertices.length - 1]);
+                      break;
+
+                    case constants.OPEN:
+                      this.strokeIndices.push([0, 1]);
+                      break;
+
+                    default:
+                      this.faces.push([
+                        0,
+                        this.vertices.length - 2,
+                        this.vertices.length - 1
+                      ]);
+
+                      this.strokeIndices.push([
+                        this.vertices.length - 2,
+                        this.vertices.length - 1
+                      ]);
+                  }
+                }
+              };
+
+              var arcGeom = new _main.default.Geometry(detail, 1, _arc);
+              arcGeom.computeNormals();
+
+              if (detail <= 50) {
+                arcGeom._makeTriangleEdges()._edgesToVertices(arcGeom);
+              } else if (this._renderer._doStroke) {
+                console.log('Cannot stroke ${shape} with more than 50 detail');
+              }
+
+              this.createBuffers(gId, arcGeom);
+            }
+
+            var uMVMatrix = this.uMVMatrix.copy();
+
+            try {
+              this.uMVMatrix.translate([x, y, 0]);
+              this.uMVMatrix.scale(width, height, 1);
+
+              this.drawBuffers(gId);
+            } finally {
+              this.uMVMatrix = uMVMatrix;
+            }
+
+            return this;
+          };
+
+          _main.default.RendererGL.prototype.rect = function(args) {
+            var perPixelLighting = this._pInst._glAttributes.perPixelLighting;
+            var x = args[0];
+            var y = args[1];
+            var width = args[2];
+            var height = args[3];
+            var detailX = args[4] || (perPixelLighting ? 1 : 24);
+            var detailY = args[5] || (perPixelLighting ? 1 : 16);
+            var gId = 'rect|'.concat(detailX, '|').concat(detailY);
+            if (!this.geometryInHash(gId)) {
+              var _rect = function _rect() {
+                for (var i = 0; i <= this.detailY; i++) {
+                  var v = i / this.detailY;
+                  for (var j = 0; j <= this.detailX; j++) {
+                    var u = j / this.detailX;
+                    var p = new _main.default.Vector(u, v, 0);
+                    this.vertices.push(p);
+                    this.uvs.push(u, v);
