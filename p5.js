@@ -84764,3 +84764,141 @@
                     var p = new _main.default.Vector(u, v, 0);
                     this.vertices.push(p);
                     this.uvs.push(u, v);
+                  }
+                }
+                // using stroke indices to avoid stroke over face(s) of rectangle
+                if (detailX > 0 && detailY > 0) {
+                  this.strokeIndices = [
+                    [0, detailX],
+                    [detailX, (detailX + 1) * (detailY + 1) - 1],
+                    [(detailX + 1) * (detailY + 1) - 1, (detailX + 1) * detailY],
+                    [(detailX + 1) * detailY, 0]
+                  ];
+                }
+              };
+              var rectGeom = new _main.default.Geometry(detailX, detailY, _rect);
+              rectGeom
+                .computeFaces()
+                .computeNormals()
+                ._makeTriangleEdges()
+                ._edgesToVertices();
+              this.createBuffers(gId, rectGeom);
+            }
+
+            // only a single rectangle (of a given detail) is cached: a square with
+            // opposite corners at (0,0) & (1,1).
+            //
+            // before rendering, this square is scaled & moved to the required location.
+            var uMVMatrix = this.uMVMatrix.copy();
+            try {
+              this.uMVMatrix.translate([x, y, 0]);
+              this.uMVMatrix.scale(width, height, 1);
+
+              this.drawBuffers(gId);
+            } finally {
+              this.uMVMatrix = uMVMatrix;
+            }
+            return this;
+          };
+
+          // prettier-ignore
+          _main.default.RendererGL.prototype.quad = function (x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4) {
+  var gId = "quad|".concat(
+  x1, "|").concat(y1, "|").concat(z1, "|").concat(x2, "|").concat(y2, "|").concat(z2, "|").concat(x3, "|").concat(y3, "|").concat(z3, "|").concat(x4, "|").concat(y4, "|").concat(z4);
+  if (!this.geometryInHash(gId)) {
+    var _quad = function _quad() {
+      this.vertices.push(new _main.default.Vector(x1, y1, z1));
+      this.vertices.push(new _main.default.Vector(x2, y2, z2));
+      this.vertices.push(new _main.default.Vector(x3, y3, z3));
+      this.vertices.push(new _main.default.Vector(x4, y4, z4));
+      this.uvs.push(0, 0, 1, 0, 1, 1, 0, 1);
+      this.strokeIndices = [[0, 1], [1, 2], [2, 3], [3, 0]];
+    };
+    var quadGeom = new _main.default.Geometry(2, 2, _quad);
+    quadGeom.
+    computeNormals().
+    _makeTriangleEdges().
+    _edgesToVertices();
+    quadGeom.faces = [[0, 1, 2], [2, 3, 0]];
+    this.createBuffers(gId, quadGeom);
+  }
+  this.drawBuffers(gId);
+  return this;
+};
+
+          //this implementation of bezier curve
+          //is based on Bernstein polynomial
+          // pretier-ignore
+          _main.default.RendererGL.prototype.bezier = function(
+            x1,
+            y1,
+            z1, // x2
+            x2, // y2
+            y2, // x3
+            z2, // y3
+            x3, // x4
+            y3, // y4
+            z3,
+            x4,
+            y4,
+            z4
+          ) {
+            if (arguments.length === 8) {
+              y4 = y3;
+              x4 = x3;
+              y3 = z2;
+              x3 = y2;
+              y2 = x2;
+              x2 = z1;
+              z1 = z2 = z3 = z4 = 0;
+            }
+            var bezierDetail = this._pInst._bezierDetail || 20; //value of Bezier detail
+            this.beginShape();
+            for (var i = 0; i <= bezierDetail; i++) {
+              var c1 = Math.pow(1 - i / bezierDetail, 3);
+              var c2 = 3 * (i / bezierDetail) * Math.pow(1 - i / bezierDetail, 2);
+              var c3 = 3 * Math.pow(i / bezierDetail, 2) * (1 - i / bezierDetail);
+              var c4 = Math.pow(i / bezierDetail, 3);
+              this.vertex(
+                x1 * c1 + x2 * c2 + x3 * c3 + x4 * c4,
+                y1 * c1 + y2 * c2 + y3 * c3 + y4 * c4,
+                z1 * c1 + z2 * c2 + z3 * c3 + z4 * c4
+              );
+            }
+            this.endShape();
+            return this;
+          };
+
+          // pretier-ignore
+          _main.default.RendererGL.prototype.curve = function(
+            x1,
+            y1,
+            z1, // x2
+            x2, // y2
+            y2, // x3
+            z2, // y3
+            x3, // x4
+            y3, // y4
+            z3,
+            x4,
+            y4,
+            z4
+          ) {
+            if (arguments.length === 8) {
+              x4 = x3;
+              y4 = y3;
+              x3 = y2;
+              y3 = x2;
+              x2 = z1;
+              y2 = x2;
+              z1 = z2 = z3 = z4 = 0;
+            }
+            var curveDetail = this._pInst._curveDetail;
+            this.beginShape();
+            for (var i = 0; i <= curveDetail; i++) {
+              var c1 = Math.pow(i / curveDetail, 3) * 0.5;
+              var c2 = Math.pow(i / curveDetail, 2) * 0.5;
+              var c3 = i / curveDetail * 0.5;
+              var c4 = 0.5;
+              var vx =
+                c1 * (-x1 + 3 * x2 - 3 * x3 + x4) +
