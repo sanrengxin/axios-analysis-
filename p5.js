@@ -84902,3 +84902,140 @@
               var c4 = 0.5;
               var vx =
                 c1 * (-x1 + 3 * x2 - 3 * x3 + x4) +
+                c2 * (2 * x1 - 5 * x2 + 4 * x3 - x4) +
+                c3 * (-x1 + x3) +
+                c4 * (2 * x2);
+              var vy =
+                c1 * (-y1 + 3 * y2 - 3 * y3 + y4) +
+                c2 * (2 * y1 - 5 * y2 + 4 * y3 - y4) +
+                c3 * (-y1 + y3) +
+                c4 * (2 * y2);
+              var vz =
+                c1 * (-z1 + 3 * z2 - 3 * z3 + z4) +
+                c2 * (2 * z1 - 5 * z2 + 4 * z3 - z4) +
+                c3 * (-z1 + z3) +
+                c4 * (2 * z2);
+              this.vertex(vx, vy, vz);
+            }
+            this.endShape();
+            return this;
+          };
+
+          /**
+           * Draw a line given two points
+           * @private
+           * @param {Number} x0 x-coordinate of first vertex
+           * @param {Number} y0 y-coordinate of first vertex
+           * @param {Number} z0 z-coordinate of first vertex
+           * @param {Number} x1 x-coordinate of second vertex
+           * @param {Number} y1 y-coordinate of second vertex
+           * @param {Number} z1 z-coordinate of second vertex
+           * @chainable
+           * @example
+           * <div>
+           * <code>
+           * //draw a line
+           * function setup() {
+           *   createCanvas(100, 100, WEBGL);
+           * }
+           *
+           * function draw() {
+           *   background(200);
+           *   rotateX(frameCount * 0.01);
+           *   rotateY(frameCount * 0.01);
+           *   // Use fill instead of stroke to change the color of shape.
+           *   fill(255, 0, 0);
+           *   line(10, 10, 0, 60, 60, 20);
+           * }
+           * </code>
+           * </div>
+           */
+          _main.default.RendererGL.prototype.line = function() {
+            if (arguments.length === 6) {
+              this.beginShape(constants.LINES);
+              this.vertex(
+                arguments.length <= 0 ? undefined : arguments[0],
+                arguments.length <= 1 ? undefined : arguments[1],
+                arguments.length <= 2 ? undefined : arguments[2]
+              );
+              this.vertex(
+                arguments.length <= 3 ? undefined : arguments[3],
+                arguments.length <= 4 ? undefined : arguments[4],
+                arguments.length <= 5 ? undefined : arguments[5]
+              );
+              this.endShape();
+            } else if (arguments.length === 4) {
+              this.beginShape(constants.LINES);
+              this.vertex(
+                arguments.length <= 0 ? undefined : arguments[0],
+                arguments.length <= 1 ? undefined : arguments[1],
+                0
+              );
+              this.vertex(
+                arguments.length <= 2 ? undefined : arguments[2],
+                arguments.length <= 3 ? undefined : arguments[3],
+                0
+              );
+              this.endShape();
+            }
+            return this;
+          };
+
+          _main.default.RendererGL.prototype.bezierVertex = function() {
+            if (this.immediateMode._bezierVertex.length === 0) {
+              throw Error('vertex() must be used once before calling bezierVertex()');
+            } else {
+              var w_x = [];
+              var w_y = [];
+              var w_z = [];
+              var t, _x, _y, _z, i;
+              var argLength = arguments.length;
+
+              t = 0;
+
+              if (
+                this._lookUpTableBezier.length === 0 ||
+                this._lutBezierDetail !== this._pInst._curveDetail
+              ) {
+                this._lookUpTableBezier = [];
+                this._lutBezierDetail = this._pInst._curveDetail;
+                var step = 1 / this._lutBezierDetail;
+                var start = 0;
+                var end = 1;
+                var j = 0;
+                while (start < 1) {
+                  t = parseFloat(start.toFixed(6));
+                  this._lookUpTableBezier[j] = this._bezierCoefficients(t);
+                  if (end.toFixed(6) === step.toFixed(6)) {
+                    t = parseFloat(end.toFixed(6)) + parseFloat(start.toFixed(6));
+                    ++j;
+                    this._lookUpTableBezier[j] = this._bezierCoefficients(t);
+                    break;
+                  }
+                  start += step;
+                  end -= step;
+                  ++j;
+                }
+              }
+
+              var LUTLength = this._lookUpTableBezier.length;
+
+              if (argLength === 6) {
+                this.isBezier = true;
+
+                w_x = [
+                  this.immediateMode._bezierVertex[0],
+                  arguments.length <= 0 ? undefined : arguments[0],
+                  arguments.length <= 2 ? undefined : arguments[2],
+                  arguments.length <= 4 ? undefined : arguments[4]
+                ];
+                w_y = [
+                  this.immediateMode._bezierVertex[1],
+                  arguments.length <= 1 ? undefined : arguments[1],
+                  arguments.length <= 3 ? undefined : arguments[3],
+                  arguments.length <= 5 ? undefined : arguments[5]
+                ];
+
+                for (i = 0; i < LUTLength; i++) {
+                  _x =
+                    w_x[0] * this._lookUpTableBezier[i][0] +
