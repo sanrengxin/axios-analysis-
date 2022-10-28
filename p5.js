@@ -85039,3 +85039,136 @@
                 for (i = 0; i < LUTLength; i++) {
                   _x =
                     w_x[0] * this._lookUpTableBezier[i][0] +
+                    w_x[1] * this._lookUpTableBezier[i][1] +
+                    w_x[2] * this._lookUpTableBezier[i][2] +
+                    w_x[3] * this._lookUpTableBezier[i][3];
+                  _y =
+                    w_y[0] * this._lookUpTableBezier[i][0] +
+                    w_y[1] * this._lookUpTableBezier[i][1] +
+                    w_y[2] * this._lookUpTableBezier[i][2] +
+                    w_y[3] * this._lookUpTableBezier[i][3];
+                  this.vertex(_x, _y);
+                }
+                this.immediateMode._bezierVertex[0] =
+                  arguments.length <= 4 ? undefined : arguments[4];
+                this.immediateMode._bezierVertex[1] =
+                  arguments.length <= 5 ? undefined : arguments[5];
+              } else if (argLength === 9) {
+                this.isBezier = true;
+
+                w_x = [
+                  this.immediateMode._bezierVertex[0],
+                  arguments.length <= 0 ? undefined : arguments[0],
+                  arguments.length <= 3 ? undefined : arguments[3],
+                  arguments.length <= 6 ? undefined : arguments[6]
+                ];
+                w_y = [
+                  this.immediateMode._bezierVertex[1],
+                  arguments.length <= 1 ? undefined : arguments[1],
+                  arguments.length <= 4 ? undefined : arguments[4],
+                  arguments.length <= 7 ? undefined : arguments[7]
+                ];
+                w_z = [
+                  this.immediateMode._bezierVertex[2],
+                  arguments.length <= 2 ? undefined : arguments[2],
+                  arguments.length <= 5 ? undefined : arguments[5],
+                  arguments.length <= 8 ? undefined : arguments[8]
+                ];
+                for (i = 0; i < LUTLength; i++) {
+                  _x =
+                    w_x[0] * this._lookUpTableBezier[i][0] +
+                    w_x[1] * this._lookUpTableBezier[i][1] +
+                    w_x[2] * this._lookUpTableBezier[i][2] +
+                    w_x[3] * this._lookUpTableBezier[i][3];
+                  _y =
+                    w_y[0] * this._lookUpTableBezier[i][0] +
+                    w_y[1] * this._lookUpTableBezier[i][1] +
+                    w_y[2] * this._lookUpTableBezier[i][2] +
+                    w_y[3] * this._lookUpTableBezier[i][3];
+                  _z =
+                    w_z[0] * this._lookUpTableBezier[i][0] +
+                    w_z[1] * this._lookUpTableBezier[i][1] +
+                    w_z[2] * this._lookUpTableBezier[i][2] +
+                    w_z[3] * this._lookUpTableBezier[i][3];
+                  this.vertex(_x, _y, _z);
+                }
+                this.immediateMode._bezierVertex[0] =
+                  arguments.length <= 6 ? undefined : arguments[6];
+                this.immediateMode._bezierVertex[1] =
+                  arguments.length <= 7 ? undefined : arguments[7];
+                this.immediateMode._bezierVertex[2] =
+                  arguments.length <= 8 ? undefined : arguments[8];
+              }
+            }
+          };
+
+          _main.default.RendererGL.prototype.quadraticVertex = function() {
+            if (this.immediateMode._quadraticVertex.length === 0) {
+              throw Error('vertex() must be used once before calling quadraticVertex()');
+            } else {
+              var w_x = [];
+              var w_y = [];
+              var w_z = [];
+              var t, _x, _y, _z, i;
+              var argLength = arguments.length;
+
+              t = 0;
+
+              if (
+                this._lookUpTableQuadratic.length === 0 ||
+                this._lutQuadraticDetail !== this._pInst._curveDetail
+              ) {
+                this._lookUpTableQuadratic = [];
+                this._lutQuadraticDetail = this._pInst._curveDetail;
+                var step = 1 / this._lutQuadraticDetail;
+                var start = 0;
+                var end = 1;
+                var j = 0;
+                while (start < 1) {
+                  t = parseFloat(start.toFixed(6));
+                  this._lookUpTableQuadratic[j] = this._quadraticCoefficients(t);
+                  if (end.toFixed(6) === step.toFixed(6)) {
+                    t = parseFloat(end.toFixed(6)) + parseFloat(start.toFixed(6));
+                    ++j;
+                    this._lookUpTableQuadratic[j] = this._quadraticCoefficients(t);
+                    break;
+                  }
+                  start += step;
+                  end -= step;
+                  ++j;
+                }
+              }
+
+              var LUTLength = this._lookUpTableQuadratic.length;
+
+              if (argLength === 4) {
+                this.isQuadratic = true;
+
+                w_x = [
+                  this.immediateMode._quadraticVertex[0],
+                  arguments.length <= 0 ? undefined : arguments[0],
+                  arguments.length <= 2 ? undefined : arguments[2]
+                ];
+                w_y = [
+                  this.immediateMode._quadraticVertex[1],
+                  arguments.length <= 1 ? undefined : arguments[1],
+                  arguments.length <= 3 ? undefined : arguments[3]
+                ];
+
+                for (i = 0; i < LUTLength; i++) {
+                  _x =
+                    w_x[0] * this._lookUpTableQuadratic[i][0] +
+                    w_x[1] * this._lookUpTableQuadratic[i][1] +
+                    w_x[2] * this._lookUpTableQuadratic[i][2];
+                  _y =
+                    w_y[0] * this._lookUpTableQuadratic[i][0] +
+                    w_y[1] * this._lookUpTableQuadratic[i][1] +
+                    w_y[2] * this._lookUpTableQuadratic[i][2];
+                  this.vertex(_x, _y);
+                }
+
+                this.immediateMode._quadraticVertex[0] =
+                  arguments.length <= 2 ? undefined : arguments[2];
+                this.immediateMode._quadraticVertex[1] =
+                  arguments.length <= 3 ? undefined : arguments[3];
+              } else if (argLength === 6) {
