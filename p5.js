@@ -85691,3 +85691,127 @@
            *   camera(0, -30, 100, 0, 0, 0, 0, 1, 0);
            *   normalMaterial();
            *   debugMode(AXES);
+           * }
+           *
+           * function draw() {
+           *   background(200);
+           *   orbitControl();
+           *   box(15, 30);
+           * }
+           * </code>
+           * </div>
+           * @alt
+           * a 3D box is centered in a 3D sketch. an icon
+           * indicates the direction of each axis: a red line points +X,
+           * a green line +Y, and a blue line +Z.
+           *
+           * @example
+           * <div>
+           * <code>
+           * function setup() {
+           *   createCanvas(100, 100, WEBGL);
+           *   camera(0, -30, 100, 0, 0, 0, 0, 1, 0);
+           *   normalMaterial();
+           *   debugMode(GRID, 100, 10, 0, 0, 0);
+           * }
+           *
+           * function draw() {
+           *   background(200);
+           *   orbitControl();
+           *   box(15, 30);
+           * }
+           * </code>
+           * </div>
+           * @alt
+           * a 3D box is centered on a grid in a 3D sketch
+           *
+           * @example
+           * <div>
+           * <code>
+           * function setup() {
+           *   createCanvas(100, 100, WEBGL);
+           *   camera(0, -30, 100, 0, 0, 0, 0, 1, 0);
+           *   normalMaterial();
+           *   debugMode(100, 10, 0, 0, 0, 20, 0, -40, 0);
+           * }
+           *
+           * function draw() {
+           *   noStroke();
+           *   background(200);
+           *   orbitControl();
+           *   box(15, 30);
+           *   // set the stroke color and weight for the grid!
+           *   stroke(255, 0, 150);
+           *   strokeWeight(0.8);
+           * }
+           * </code>
+           * </div>
+           * @alt
+           * a 3D box is centered on a grid in a 3D sketch. an icon
+           * indicates the direction of each axis: a red line points +X,
+           * a green line +Y, and a blue line +Z.
+           */
+
+          /**
+           * @method debugMode
+           * @param {Constant} mode either GRID or AXES
+           */
+
+          /**
+           * @method debugMode
+           * @param {Constant} mode
+           * @param {Number} [gridSize] size of one side of the grid
+           * @param {Number} [gridDivisions] number of divisions in the grid
+           * @param {Number} [xOff] X axis offset from origin (0,0,0)
+           * @param {Number} [yOff] Y axis offset from origin (0,0,0)
+           * @param {Number} [zOff] Z axis offset from origin (0,0,0)
+           */
+
+          /**
+           * @method debugMode
+           * @param {Constant} mode
+           * @param {Number} [axesSize] size of axes icon
+           * @param {Number} [xOff]
+           * @param {Number} [yOff]
+           * @param {Number} [zOff]
+           */
+
+          /**
+           * @method debugMode
+           * @param {Number} [gridSize]
+           * @param {Number} [gridDivisions]
+           * @param {Number} [gridXOff]
+           * @param {Number} [gridYOff]
+           * @param {Number} [gridZOff]
+           * @param {Number} [axesSize]
+           * @param {Number} [axesXOff]
+           * @param {Number} [axesYOff]
+           * @param {Number} [axesZOff]
+           */
+
+          _main.default.prototype.debugMode = function() {
+            this._assert3d('debugMode');
+            for (
+              var _len = arguments.length, args = new Array(_len), _key = 0;
+              _key < _len;
+              _key++
+            ) {
+              args[_key] = arguments[_key];
+            }
+            _main.default._validateParameters('debugMode', args);
+
+            // start by removing existing 'post' registered debug methods
+            for (var i = this._registeredMethods.post.length - 1; i >= 0; i--) {
+              // test for equality...
+              if (
+                this._registeredMethods.post[i].toString() === this._grid().toString() ||
+                this._registeredMethods.post[i].toString() === this._axesIcon().toString()
+              ) {
+                this._registeredMethods.post.splice(i, 1);
+              }
+            }
+
+            // then add new debugMode functions according to the argument list
+            if (args[0] === constants.GRID) {
+              this.registerMethod(
+                'post',
