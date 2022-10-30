@@ -86231,3 +86231,147 @@
            *   directionalLight(250, 250, 250, -dirX, -dirY, -1);
            *   noStroke();
            *   sphere(40);
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * light source on canvas changeable with mouse position
+           */
+
+          /**
+           * @method directionalLight
+           * @param  {Number[]|String|p5.Color} color   color Array, CSS color string,
+           *                                             or <a href="#/p5.Color">p5.Color</a> value
+           * @param  {Number}                   x       x axis direction
+           * @param  {Number}                   y       y axis direction
+           * @param  {Number}                   z       z axis direction
+           * @chainable
+           */
+
+          /**
+           * @method directionalLight
+           * @param  {Number[]|String|p5.Color} color
+           * @param  {p5.Vector}                position
+           * @chainable
+           */
+
+          /**
+           * @method directionalLight
+           * @param  {Number}    v1
+           * @param  {Number}    v2
+           * @param  {Number}    v3
+           * @param  {Number}    x
+           * @param  {Number}    y
+           * @param  {Number}    z
+           * @chainable
+           */
+          _main.default.prototype.directionalLight = function(v1, v2, v3, x, y, z) {
+            this._assert3d('directionalLight');
+            _main.default._validateParameters('directionalLight', arguments);
+
+            //@TODO: check parameters number
+            var color;
+            if (v1 instanceof _main.default.Color) {
+              color = v1;
+            } else {
+              color = this.color(v1, v2, v3);
+            }
+
+            var _x, _y, _z;
+            var v = arguments[arguments.length - 1];
+            if (typeof v === 'number') {
+              _x = arguments[arguments.length - 3];
+              _y = arguments[arguments.length - 2];
+              _z = arguments[arguments.length - 1];
+            } else {
+              _x = v.x;
+              _y = v.y;
+              _z = v.z;
+            }
+
+            // normalize direction
+            var l = Math.sqrt(_x * _x + _y * _y + _z * _z);
+            this._renderer.directionalLightDirections.push(_x / l, _y / l, _z / l);
+
+            this._renderer.directionalLightDiffuseColors.push(
+              color._array[0],
+              color._array[1],
+              color._array[2]
+            );
+
+            Array.prototype.push.apply(
+              this._renderer.directionalLightSpecularColors,
+              this._renderer.specularColors
+            );
+
+            this._renderer._enableLighting = true;
+
+            return this;
+          };
+
+          /**
+           * Creates a point light with a color and a light position
+           *
+           * A maximum of 5 pointLight can be active at one time
+           * @method pointLight
+           * @param  {Number}    v1       red or hue value (depending on the current
+           * color mode),
+           * @param  {Number}    v2       green or saturation value
+           * @param  {Number}    v3       blue or brightness value
+           * @param  {Number}    x        x axis position
+           * @param  {Number}    y        y axis position
+           * @param  {Number}    z        z axis position
+           * @chainable
+           * @example
+           * <div>
+           * <code>
+           * function setup() {
+           *   createCanvas(100, 100, WEBGL);
+           * }
+           * function draw() {
+           *   background(0);
+           *   //move your mouse to change light position
+           *   let locX = mouseX - width / 2;
+           *   let locY = mouseY - height / 2;
+           *   // to set the light position,
+           *   // think of the world's coordinate as:
+           *   // -width/2,-height/2 -------- width/2,-height/2
+           *   //                |            |
+           *   //                |     0,0    |
+           *   //                |            |
+           *   // -width/2,height/2--------width/2,height/2
+           *   pointLight(250, 250, 250, locX, locY, 50);
+           *   noStroke();
+           *   sphere(40);
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * spot light on canvas changes position with mouse
+           */
+
+          /**
+           * @method pointLight
+           * @param  {Number}    v1
+           * @param  {Number}    v2
+           * @param  {Number}    v3
+           * @param  {p5.Vector} position the position of the light
+           * @chainable
+           */
+
+          /**
+           * @method pointLight
+           * @param  {Number[]|String|p5.Color} color   color Array, CSS color string,
+           * or <a href="#/p5.Color">p5.Color</a> value
+           * @param  {Number}                   x
+           * @param  {Number}                   y
+           * @param  {Number}                   z
+           * @chainable
+           */
+
+          /**
+           * @method pointLight
+           * @param  {Number[]|String|p5.Color} color
+           * @param  {p5.Vector}                position
