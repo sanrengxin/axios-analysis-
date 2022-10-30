@@ -85588,3 +85588,106 @@
               } else if (this.mouseButton === this.RIGHT) {
                 // PANNING BEHAVIOR along X/Z camera axes and restricted to X/Z plane
                 // in world space
+                var local = cam._getLocalAxes();
+
+                // normalize portions along X/Z axes
+                var xmag = Math.sqrt(local.x[0] * local.x[0] + local.x[2] * local.x[2]);
+                if (xmag !== 0) {
+                  local.x[0] /= xmag;
+                  local.x[2] /= xmag;
+                }
+
+                // normalize portions along X/Z axes
+                var ymag = Math.sqrt(local.y[0] * local.y[0] + local.y[2] * local.y[2]);
+                if (ymag !== 0) {
+                  local.y[0] /= ymag;
+                  local.y[2] /= ymag;
+                }
+
+                // move along those vectors by amount controlled by mouseX, pmouseY
+                var dx = -1 * sensitivityX * (this.mouseX - this.pmouseX);
+                var dz = -1 * sensitivityY * (this.mouseY - this.pmouseY);
+
+                // restrict movement to XZ plane in world space
+                cam.setPosition(
+                  cam.eyeX + dx * local.x[0] + dz * local.z[0],
+                  cam.eyeY,
+                  cam.eyeZ + dx * local.x[2] + dz * local.z[2]
+                );
+              }
+            }
+            return this;
+          };
+
+          /**
+           * debugMode() helps visualize 3D space by adding a grid to indicate where the
+           * ‘ground’ is in a sketch and an axes icon which indicates the +X, +Y, and +Z
+           * directions. This function can be called without parameters to create a
+           * default grid and axes icon, or it can be called according to the examples
+           * above to customize the size and position of the grid and/or axes icon.  The
+           * grid is drawn using the most recently set stroke color and weight.  To
+           * specify these parameters, add a call to stroke() and strokeWeight()
+           * just before the end of the draw() loop.
+           *
+           * By default, the grid will run through the origin (0,0,0) of the sketch
+           * along the XZ plane
+           * and the axes icon will be offset from the origin.  Both the grid and axes
+           * icon will be sized according to the current canvas size.  Note that because the
+           * grid runs parallel to the default camera view, it is often helpful to use
+           * debugMode along with orbitControl to allow full view of the grid.
+           * @method debugMode
+           * @example
+           * <div>
+           * <code>
+           * function setup() {
+           *   createCanvas(100, 100, WEBGL);
+           *   camera(0, -30, 100, 0, 0, 0, 0, 1, 0);
+           *   normalMaterial();
+           *   debugMode();
+           * }
+           *
+           * function draw() {
+           *   background(200);
+           *   orbitControl();
+           *   box(15, 30);
+           *   // Press the spacebar to turn debugMode off!
+           *   if (keyIsDown(32)) {
+           *     noDebugMode();
+           *   }
+           * }
+           * </code>
+           * </div>
+           * @alt
+           * a 3D box is centered on a grid in a 3D sketch. an icon
+           * indicates the direction of each axis: a red line points +X,
+           * a green line +Y, and a blue line +Z. the grid and icon disappear when the
+           * spacebar is pressed.
+           *
+           * @example
+           * <div>
+           * <code>
+           * function setup() {
+           *   createCanvas(100, 100, WEBGL);
+           *   camera(0, -30, 100, 0, 0, 0, 0, 1, 0);
+           *   normalMaterial();
+           *   debugMode(GRID);
+           * }
+           *
+           * function draw() {
+           *   background(200);
+           *   orbitControl();
+           *   box(15, 30);
+           * }
+           * </code>
+           * </div>
+           * @alt
+           * a 3D box is centered on a grid in a 3D sketch.
+           *
+           * @example
+           * <div>
+           * <code>
+           * function setup() {
+           *   createCanvas(100, 100, WEBGL);
+           *   camera(0, -30, 100, 0, 0, 0, 0, 1, 0);
+           *   normalMaterial();
+           *   debugMode(AXES);
