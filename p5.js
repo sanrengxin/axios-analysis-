@@ -85943,3 +85943,154 @@
                 this.beginShape(this.LINES);
                 this.vertex(-halfSize + xOff, yOff, q * spacing - halfSize + zOff);
                 this.vertex(+halfSize + xOff, yOff, q * spacing - halfSize + zOff);
+                this.endShape();
+              }
+
+              // Lines along Z axis
+              for (var i = 0; i <= numDivs; i++) {
+                this.beginShape(this.LINES);
+                this.vertex(i * spacing - halfSize + xOff, yOff, -halfSize + zOff);
+                this.vertex(i * spacing - halfSize + xOff, yOff, +halfSize + zOff);
+                this.endShape();
+              }
+
+              this.pop();
+            };
+          };
+
+          /**
+           * For use with debugMode
+           * @private
+           * @method _axesIcon
+           * @param {Number} [size] size of axes icon lines
+           * @param {Number} [xOff] offset of icon from origin in X axis
+           * @param {Number} [yOff] offset of icon from origin in Y axis
+           * @param {Number} [zOff] offset of icon from origin in Z axis
+           */
+          _main.default.prototype._axesIcon = function(size, xOff, yOff, zOff) {
+            if (typeof size === 'undefined') {
+              size = this.width / 20 > 40 ? this.width / 20 : 40;
+            }
+            if (typeof xOff === 'undefined') {
+              xOff = -this.width / 4;
+            }
+            if (typeof yOff === 'undefined') {
+              yOff = xOff;
+            }
+            if (typeof zOff === 'undefined') {
+              zOff = xOff;
+            }
+
+            return function() {
+              this.push();
+              this._renderer.uMVMatrix.set(
+                this._renderer._curCamera.cameraMatrix.mat4[0],
+                this._renderer._curCamera.cameraMatrix.mat4[1],
+                this._renderer._curCamera.cameraMatrix.mat4[2],
+                this._renderer._curCamera.cameraMatrix.mat4[3],
+                this._renderer._curCamera.cameraMatrix.mat4[4],
+                this._renderer._curCamera.cameraMatrix.mat4[5],
+                this._renderer._curCamera.cameraMatrix.mat4[6],
+                this._renderer._curCamera.cameraMatrix.mat4[7],
+                this._renderer._curCamera.cameraMatrix.mat4[8],
+                this._renderer._curCamera.cameraMatrix.mat4[9],
+                this._renderer._curCamera.cameraMatrix.mat4[10],
+                this._renderer._curCamera.cameraMatrix.mat4[11],
+                this._renderer._curCamera.cameraMatrix.mat4[12],
+                this._renderer._curCamera.cameraMatrix.mat4[13],
+                this._renderer._curCamera.cameraMatrix.mat4[14],
+                this._renderer._curCamera.cameraMatrix.mat4[15]
+              );
+
+              // X axis
+              this.strokeWeight(2);
+              this.stroke(255, 0, 0);
+              this.beginShape(this.LINES);
+              this.vertex(xOff, yOff, zOff);
+              this.vertex(xOff + size, yOff, zOff);
+              this.endShape();
+              // Y axis
+              this.stroke(0, 255, 0);
+              this.beginShape(this.LINES);
+              this.vertex(xOff, yOff, zOff);
+              this.vertex(xOff, yOff + size, zOff);
+              this.endShape();
+              // Z axis
+              this.stroke(0, 0, 255);
+              this.beginShape(this.LINES);
+              this.vertex(xOff, yOff, zOff);
+              this.vertex(xOff, yOff, zOff + size);
+              this.endShape();
+              this.pop();
+            };
+          };
+          var _default = _main.default;
+          exports.default = _default;
+        },
+        { '../core/constants': 48, '../core/main': 59 }
+      ],
+      104: [
+        function(_dereq_, module, exports) {
+          'use strict';
+          Object.defineProperty(exports, '__esModule', { value: true });
+          exports.default = void 0;
+
+          var _main = _interopRequireDefault(_dereq_('../core/main'));
+          function _interopRequireDefault(obj) {
+            return obj && obj.__esModule ? obj : { default: obj };
+          } /**
+           * @method ambientLight
+           * @param  {String}        value   a color string
+           * @chainable
+           */ /**
+           * @module Lights, Camera
+           * @submodule Lights
+           * @for p5
+           * @requires core
+           */ /**
+           * Creates an ambient light with a color. Ambient light is light that comes from everywhere on the canvas.
+           * It has no particular source.
+           * @method ambientLight
+           * @param  {Number}        v1      red or hue value relative to
+           *                                 the current color range
+           * @param  {Number}        v2      green or saturation value
+           *                                 relative to the current color range
+           * @param  {Number}        v3      blue or brightness value
+           *                                 relative to the current color range
+           * @param  {Number}        [alpha] the alpha value
+           * @chainable
+           *
+           * @example
+           * <div>
+           * <code>
+           * createCanvas(100, 100, WEBGL);
+           * ambientLight(0);
+           * ambientMaterial(250);
+           * sphere(40);
+           * </code>
+           * </div>
+           * <div>
+           * <code>
+           * function setup() {
+           *   createCanvas(100, 100, WEBGL);
+           * }
+           * function draw() {
+           *   background(51);
+           *   ambientLight(100); // white light
+           *   ambientMaterial(255, 102, 94); // magenta material
+           *   box(30);
+           * }
+           * </code>
+           * </div>
+           * @alt
+           * evenly distributed light across a sphere
+           * evenly distributed light across a rotating sphere
+           */
+          /**
+           * @method ambientLight
+           * @param  {Number}        gray   a gray value
+           * @param  {Number}        [alpha]
+           * @chainable
+           */
+
+          /**
