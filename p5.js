@@ -85441,3 +85441,150 @@
               return cache;
             };
             return cache;
+          }
+          function _interopRequireWildcard(obj) {
+            if (obj && obj.__esModule) {
+              return obj;
+            }
+            if (obj === null || (_typeof(obj) !== 'object' && typeof obj !== 'function')) {
+              return { default: obj };
+            }
+            var cache = _getRequireWildcardCache();
+            if (cache && cache.has(obj)) {
+              return cache.get(obj);
+            }
+            var newObj = {};
+            var hasPropertyDescriptor =
+              Object.defineProperty && Object.getOwnPropertyDescriptor;
+            for (var key in obj) {
+              if (Object.prototype.hasOwnProperty.call(obj, key)) {
+                var desc = hasPropertyDescriptor
+                  ? Object.getOwnPropertyDescriptor(obj, key)
+                  : null;
+                if (desc && (desc.get || desc.set)) {
+                  Object.defineProperty(newObj, key, desc);
+                } else {
+                  newObj[key] = obj[key];
+                }
+              }
+            }
+            newObj.default = obj;
+            if (cache) {
+              cache.set(obj, newObj);
+            }
+            return newObj;
+          }
+          function _interopRequireDefault(obj) {
+            return obj && obj.__esModule ? obj : { default: obj };
+          } /** // implementation based on three.js 'orbitControls':
+           * @module Lights, Camera
+           * @submodule Interaction
+           * @for p5
+           * @requires core
+           */ /**
+           * Allows movement around a 3D sketch using a mouse or trackpad.  Left-clicking
+           * and dragging will rotate the camera position about the center of the sketch,
+           * right-clicking and dragging will pan the camera position without rotation,
+           * and using the mouse wheel (scrolling) will move the camera closer or further
+           * from the center of the sketch. This function can be called with parameters
+           * dictating sensitivity to mouse movement along the X and Y axes.  Calling
+           * this function without parameters is equivalent to calling orbitControl(1,1).
+           * To reverse direction of movement in either axis, enter a negative number
+           * for sensitivity.
+           * @method orbitControl
+           * @for p5
+           * @param  {Number} [sensitivityX] sensitivity to mouse movement along X axis
+           * @param  {Number} [sensitivityY] sensitivity to mouse movement along Y axis
+           * @param  {Number} [sensitivityZ] sensitivity to scroll movement along Z axis
+           * @chainable
+           * @example
+           * <div>
+           * <code>
+           * function setup() {
+           *   createCanvas(100, 100, WEBGL);
+           *   normalMaterial();
+           * }
+           * function draw() {
+           *   background(200);
+           *   orbitControl();
+           *   rotateY(0.5);
+           *   box(30, 50);
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * Camera orbits around a box when mouse is hold-clicked & then moved.
+           */
+          // https://github.com/mrdoob/three.js/blob/dev/examples/js/controls/OrbitControls.js
+          _main.default.prototype.orbitControl = function(
+            sensitivityX,
+            sensitivityY,
+            sensitivityZ
+          ) {
+            this._assert3d('orbitControl');
+            _main.default._validateParameters('orbitControl', arguments);
+
+            // If the mouse is not in bounds of the canvas, disable all behaviors:
+            var mouseInCanvas =
+              this.mouseX < this.width &&
+              this.mouseX > 0 &&
+              this.mouseY < this.height &&
+              this.mouseY > 0;
+            if (!mouseInCanvas) return;
+
+            var cam = this._renderer._curCamera;
+
+            if (typeof sensitivityX === 'undefined') {
+              sensitivityX = 1;
+            }
+            if (typeof sensitivityY === 'undefined') {
+              sensitivityY = sensitivityX;
+            }
+            if (typeof sensitivityZ === 'undefined') {
+              sensitivityZ = 0.5;
+            }
+
+            // default right-mouse and mouse-wheel behaviors (context menu and scrolling,
+            // respectively) are disabled here to allow use of those events for panning and
+            // zooming
+
+            // disable context menu for canvas element and add 'contextMenuDisabled'
+            // flag to p5 instance
+            if (this.contextMenuDisabled !== true) {
+              this.canvas.oncontextmenu = function() {
+                return false;
+              };
+              this._setProperty('contextMenuDisabled', true);
+            }
+
+            // disable default scrolling behavior on the canvas element and add
+            // 'wheelDefaultDisabled' flag to p5 instance
+            if (this.wheelDefaultDisabled !== true) {
+              this.canvas.onwheel = function() {
+                return false;
+              };
+              this._setProperty('wheelDefaultDisabled', true);
+            }
+
+            var scaleFactor = this.height < this.width ? this.height : this.width;
+
+            // ZOOM if there is a change in mouseWheelDelta
+            if (this._mouseWheelDeltaY !== this._pmouseWheelDeltaY) {
+              // zoom according to direction of mouseWheelDeltaY rather than value
+              if (this._mouseWheelDeltaY > 0) {
+                this._renderer._curCamera._orbit(0, 0, sensitivityZ * scaleFactor);
+              } else {
+                this._renderer._curCamera._orbit(0, 0, -sensitivityZ * scaleFactor);
+              }
+            }
+
+            if (this.mouseIsPressed) {
+              // ORBIT BEHAVIOR
+              if (this.mouseButton === this.LEFT) {
+                var deltaTheta = -sensitivityX * (this.mouseX - this.pmouseX) / scaleFactor;
+                var deltaPhi = sensitivityY * (this.mouseY - this.pmouseY) / scaleFactor;
+                this._renderer._curCamera._orbit(deltaTheta, deltaPhi, 0);
+              } else if (this.mouseButton === this.RIGHT) {
+                // PANNING BEHAVIOR along X/Z camera axes and restricted to X/Z plane
+                // in world space
