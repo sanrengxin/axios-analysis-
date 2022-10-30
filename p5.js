@@ -85815,3 +85815,131 @@
             if (args[0] === constants.GRID) {
               this.registerMethod(
                 'post',
+                this._grid.call(this, args[1], args[2], args[3], args[4], args[5])
+              );
+            } else if (args[0] === constants.AXES) {
+              this.registerMethod(
+                'post',
+                this._axesIcon.call(this, args[1], args[2], args[3], args[4])
+              );
+            } else {
+              this.registerMethod(
+                'post',
+                this._grid.call(this, args[0], args[1], args[2], args[3], args[4])
+              );
+
+              this.registerMethod(
+                'post',
+                this._axesIcon.call(this, args[5], args[6], args[7], args[8])
+              );
+            }
+          };
+
+          /**
+           * Turns off debugMode() in a 3D sketch.
+           * @method noDebugMode
+           * @example
+           * <div>
+           * <code>
+           * function setup() {
+           *   createCanvas(100, 100, WEBGL);
+           *   camera(0, -30, 100, 0, 0, 0, 0, 1, 0);
+           *   normalMaterial();
+           *   debugMode();
+           * }
+           *
+           * function draw() {
+           *   background(200);
+           *   orbitControl();
+           *   box(15, 30);
+           *   // Press the spacebar to turn debugMode off!
+           *   if (keyIsDown(32)) {
+           *     noDebugMode();
+           *   }
+           * }
+           * </code>
+           * </div>
+           * @alt
+           * a 3D box is centered on a grid in a 3D sketch. an icon
+           * indicates the direction of each axis: a red line points +X,
+           * a green line +Y, and a blue line +Z. the grid and icon disappear when the
+           * spacebar is pressed.
+           */
+          _main.default.prototype.noDebugMode = function() {
+            this._assert3d('noDebugMode');
+
+            // start by removing existing 'post' registered debug methods
+            for (var i = this._registeredMethods.post.length - 1; i >= 0; i--) {
+              // test for equality...
+              if (
+                this._registeredMethods.post[i].toString() === this._grid().toString() ||
+                this._registeredMethods.post[i].toString() === this._axesIcon().toString()
+              ) {
+                this._registeredMethods.post.splice(i, 1);
+              }
+            }
+          };
+
+          /**
+           * For use with debugMode
+           * @private
+           * @method _grid
+           * @param {Number} [size] size of grid sides
+           * @param {Number} [div] number of grid divisions
+           * @param {Number} [xOff] offset of grid center from origin in X axis
+           * @param {Number} [yOff] offset of grid center from origin in Y axis
+           * @param {Number} [zOff] offset of grid center from origin in Z axis
+           */
+          _main.default.prototype._grid = function(size, numDivs, xOff, yOff, zOff) {
+            if (typeof size === 'undefined') {
+              size = this.width / 2;
+            }
+            if (typeof numDivs === 'undefined') {
+              // ensure at least 2 divisions
+              numDivs = Math.round(size / 30) < 4 ? 4 : Math.round(size / 30);
+            }
+            if (typeof xOff === 'undefined') {
+              xOff = 0;
+            }
+            if (typeof yOff === 'undefined') {
+              yOff = 0;
+            }
+            if (typeof zOff === 'undefined') {
+              zOff = 0;
+            }
+
+            var spacing = size / numDivs;
+            var halfSize = size / 2;
+
+            return function() {
+              this.push();
+              this.stroke(
+                this._renderer.curStrokeColor[0] * 255,
+                this._renderer.curStrokeColor[1] * 255,
+                this._renderer.curStrokeColor[2] * 255
+              );
+
+              this._renderer.uMVMatrix.set(
+                this._renderer._curCamera.cameraMatrix.mat4[0],
+                this._renderer._curCamera.cameraMatrix.mat4[1],
+                this._renderer._curCamera.cameraMatrix.mat4[2],
+                this._renderer._curCamera.cameraMatrix.mat4[3],
+                this._renderer._curCamera.cameraMatrix.mat4[4],
+                this._renderer._curCamera.cameraMatrix.mat4[5],
+                this._renderer._curCamera.cameraMatrix.mat4[6],
+                this._renderer._curCamera.cameraMatrix.mat4[7],
+                this._renderer._curCamera.cameraMatrix.mat4[8],
+                this._renderer._curCamera.cameraMatrix.mat4[9],
+                this._renderer._curCamera.cameraMatrix.mat4[10],
+                this._renderer._curCamera.cameraMatrix.mat4[11],
+                this._renderer._curCamera.cameraMatrix.mat4[12],
+                this._renderer._curCamera.cameraMatrix.mat4[13],
+                this._renderer._curCamera.cameraMatrix.mat4[14],
+                this._renderer._curCamera.cameraMatrix.mat4[15]
+              );
+
+              // Lines along X axis
+              for (var q = 0; q <= numDivs; q++) {
+                this.beginShape(this.LINES);
+                this.vertex(-halfSize + xOff, yOff, q * spacing - halfSize + zOff);
+                this.vertex(+halfSize + xOff, yOff, q * spacing - halfSize + zOff);
