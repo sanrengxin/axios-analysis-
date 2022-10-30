@@ -86094,3 +86094,140 @@
            */
 
           /**
+           * @method ambientLight
+           * @param  {Number[]}      values  an array containing the red,green,blue &
+           *                                 and alpha components of the color
+           * @chainable
+           */
+
+          /**
+           * @method ambientLight
+           * @param  {p5.Color}      color   the ambient light color
+           * @chainable
+           */
+          _main.default.prototype.ambientLight = function(v1, v2, v3, a) {
+            this._assert3d('ambientLight');
+            _main.default._validateParameters('ambientLight', arguments);
+            var color = this.color.apply(this, arguments);
+
+            this._renderer.ambientLightColors.push(
+              color._array[0],
+              color._array[1],
+              color._array[2]
+            );
+
+            this._renderer._enableLighting = true;
+
+            return this;
+          };
+
+          /**
+           * Set's the color of the specular highlight when using a specular material and
+           * specular light.
+           *
+           * This method can be combined with specularMaterial() and shininess()
+           * functions to set specular highlights. The default color is white, ie
+           * (255, 255, 255), which is used if this method is not called before
+           * specularMaterial(). If this method is called without specularMaterial(),
+           * There will be no effect.
+           *
+           * Note: specularColor is equivalent to the processing function
+           * <a href="https://processing.org/reference/lightSpecular_.html">lightSpecular</a>.
+           *
+           * @method specularColor
+           * @param  {Number}        v1      red or hue value relative to
+           *                                 the current color range
+           * @param  {Number}        v2      green or saturation value
+           *                                 relative to the current color range
+           * @param  {Number}        v3      blue or brightness value
+           *                                 relative to the current color range
+           * @chainable
+           * @example
+           * <div>
+           * <code>
+           * function setup() {
+           *   createCanvas(100, 100, WEBGL);
+           *   noStroke();
+           * }
+           *
+           * function draw() {
+           *   background(0);
+           *   shininess(20);
+           *   ambientLight(50);
+           *   specularColor(255, 0, 0);
+           *   pointLight(255, 0, 0, 0, -50, 50);
+           *   specularColor(0, 255, 0);
+           *   pointLight(0, 255, 0, 0, 50, 50);
+           *   specularMaterial(255);
+           *   sphere(40);
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * different specular light sources from top and bottom of canvas
+           */
+
+          /**
+           * @method specularColor
+           * @param  {String}        value   a color string
+           * @chainable
+           */
+
+          /**
+           * @method specularColor
+           * @param  {Number}        gray   a gray value
+           * @chainable
+           */
+
+          /**
+           * @method specularColor
+           * @param  {Number[]}      values  an array containing the red,green,blue &
+           *                                 and alpha components of the color
+           * @chainable
+           */
+
+          /**
+           * @method specularColor
+           * @param  {p5.Color}      color   the ambient light color
+           * @chainable
+           */
+          _main.default.prototype.specularColor = function(v1, v2, v3) {
+            this._assert3d('specularColor');
+            _main.default._validateParameters('specularColor', arguments);
+            var color = this.color.apply(this, arguments);
+
+            this._renderer.specularColors = [
+              color._array[0],
+              color._array[1],
+              color._array[2]
+            ];
+
+            return this;
+          };
+
+          /**
+           * Creates a directional light with a color and a direction
+           *
+           * A maximum of 5 directionalLight can be active at one time
+           * @method directionalLight
+           * @param  {Number}    v1       red or hue value (depending on the current
+           * color mode),
+           * @param  {Number}    v2       green or saturation value
+           * @param  {Number}    v3       blue or brightness value
+           * @param  {p5.Vector} position the direction of the light
+           * @chainable
+           * @example
+           * <div>
+           * <code>
+           * function setup() {
+           *   createCanvas(100, 100, WEBGL);
+           * }
+           * function draw() {
+           *   background(0);
+           *   //move your mouse to change light direction
+           *   let dirX = (mouseX / width - 0.5) * 2;
+           *   let dirY = (mouseY / height - 0.5) * 2;
+           *   directionalLight(250, 250, 250, -dirX, -dirY, -1);
+           *   noStroke();
+           *   sphere(40);
