@@ -85308,3 +85308,136 @@
                   this.immediateMode._curveVertex[3],
                   this.immediateMode._curveVertex[6],
                   this.immediateMode._curveVertex[9]
+                ]);
+
+                w_y = this._bezierToCatmull([
+                  this.immediateMode._curveVertex[1],
+                  this.immediateMode._curveVertex[4],
+                  this.immediateMode._curveVertex[7],
+                  this.immediateMode._curveVertex[10]
+                ]);
+
+                w_z = this._bezierToCatmull([
+                  this.immediateMode._curveVertex[2],
+                  this.immediateMode._curveVertex[5],
+                  this.immediateMode._curveVertex[8],
+                  this.immediateMode._curveVertex[11]
+                ]);
+
+                for (i = 0; i < LUTLength; i++) {
+                  _x =
+                    w_x[0] * this._lookUpTableBezier[i][0] +
+                    w_x[1] * this._lookUpTableBezier[i][1] +
+                    w_x[2] * this._lookUpTableBezier[i][2] +
+                    w_x[3] * this._lookUpTableBezier[i][3];
+                  _y =
+                    w_y[0] * this._lookUpTableBezier[i][0] +
+                    w_y[1] * this._lookUpTableBezier[i][1] +
+                    w_y[2] * this._lookUpTableBezier[i][2] +
+                    w_y[3] * this._lookUpTableBezier[i][3];
+                  _z =
+                    w_z[0] * this._lookUpTableBezier[i][0] +
+                    w_z[1] * this._lookUpTableBezier[i][1] +
+                    w_z[2] * this._lookUpTableBezier[i][2] +
+                    w_z[3] * this._lookUpTableBezier[i][3];
+                  this.vertex(_x, _y, _z);
+                }
+                for (i = 0; i < argLength; i++) {
+                  this.immediateMode._curveVertex.shift();
+                }
+              }
+            }
+          };
+
+          _main.default.RendererGL.prototype.image = function(
+            img,
+            sx,
+            sy,
+            sWidth,
+            sHeight,
+            dx,
+            dy,
+            dWidth,
+            dHeight
+          ) {
+            if (this._isErasing) {
+              this.blendMode(this._cachedBlendMode);
+            }
+
+            this._pInst.push();
+
+            this._pInst.noLights();
+
+            this._pInst.texture(img);
+            this._pInst.textureMode(constants.NORMAL);
+
+            var u0 = 0;
+            if (sx <= img.width) {
+              u0 = sx / img.width;
+            }
+
+            var u1 = 1;
+            if (sx + sWidth <= img.width) {
+              u1 = (sx + sWidth) / img.width;
+            }
+
+            var v0 = 0;
+            if (sy <= img.height) {
+              v0 = sy / img.height;
+            }
+
+            var v1 = 1;
+            if (sy + sHeight <= img.height) {
+              v1 = (sy + sHeight) / img.height;
+            }
+
+            this.beginShape();
+            this.vertex(dx, dy, 0, u0, v0);
+            this.vertex(dx + dWidth, dy, 0, u1, v0);
+            this.vertex(dx + dWidth, dy + dHeight, 0, u1, v1);
+            this.vertex(dx, dy + dHeight, 0, u0, v1);
+            this.endShape(constants.CLOSE);
+
+            this._pInst.pop();
+
+            if (this._isErasing) {
+              this.blendMode(constants.REMOVE);
+            }
+          };
+          var _default = _main.default;
+          exports.default = _default;
+        },
+        { '../core/constants': 48, '../core/main': 59, './p5.Geometry': 108 }
+      ],
+      103: [
+        function(_dereq_, module, exports) {
+          'use strict';
+          function _typeof(obj) {
+            if (typeof Symbol === 'function' && typeof Symbol.iterator === 'symbol') {
+              _typeof = function _typeof(obj) {
+                return typeof obj;
+              };
+            } else {
+              _typeof = function _typeof(obj) {
+                return obj &&
+                  typeof Symbol === 'function' &&
+                  obj.constructor === Symbol &&
+                  obj !== Symbol.prototype
+                  ? 'symbol'
+                  : typeof obj;
+              };
+            }
+            return _typeof(obj);
+          }
+          Object.defineProperty(exports, '__esModule', { value: true });
+          exports.default = void 0;
+
+          var _main = _interopRequireDefault(_dereq_('../core/main'));
+          var constants = _interopRequireWildcard(_dereq_('../core/constants'));
+          function _getRequireWildcardCache() {
+            if (typeof WeakMap !== 'function') return null;
+            var cache = new WeakMap();
+            _getRequireWildcardCache = function _getRequireWildcardCache() {
+              return cache;
+            };
+            return cache;
