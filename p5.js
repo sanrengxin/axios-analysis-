@@ -86375,3 +86375,151 @@
            * @method pointLight
            * @param  {Number[]|String|p5.Color} color
            * @param  {p5.Vector}                position
+           * @chainable
+           */
+          _main.default.prototype.pointLight = function(v1, v2, v3, x, y, z) {
+            this._assert3d('pointLight');
+            _main.default._validateParameters('pointLight', arguments);
+
+            //@TODO: check parameters number
+            var color;
+            if (v1 instanceof _main.default.Color) {
+              color = v1;
+            } else {
+              color = this.color(v1, v2, v3);
+            }
+
+            var _x, _y, _z;
+            var v = arguments[arguments.length - 1];
+            if (typeof v === 'number') {
+              _x = arguments[arguments.length - 3];
+              _y = arguments[arguments.length - 2];
+              _z = arguments[arguments.length - 1];
+            } else {
+              _x = v.x;
+              _y = v.y;
+              _z = v.z;
+            }
+
+            this._renderer.pointLightPositions.push(_x, _y, _z);
+            this._renderer.pointLightDiffuseColors.push(
+              color._array[0],
+              color._array[1],
+              color._array[2]
+            );
+
+            Array.prototype.push.apply(
+              this._renderer.pointLightSpecularColors,
+              this._renderer.specularColors
+            );
+
+            this._renderer._enableLighting = true;
+
+            return this;
+          };
+
+          /**
+           * Sets the default ambient and directional light. The defaults are <a href="#/p5/ambientLight">ambientLight(128, 128, 128)</a> and <a href="#/p5/directionalLight">directionalLight(128, 128, 128, 0, 0, -1)</a>. Lights need to be included in the <a href="#/p5/draw">draw()</a> to remain persistent in a looping program. Placing them in the <a href="#/p5/setup">setup()</a> of a looping program will cause them to only have an effect the first time through the loop.
+           * @method lights
+           * @chainable
+           * @example
+           * <div>
+           * <code>
+           * function setup() {
+           *   createCanvas(100, 100, WEBGL);
+           * }
+           * function draw() {
+           *   background(0);
+           *   lights();
+           *   rotateX(millis() / 1000);
+           *   rotateY(millis() / 1000);
+           *   rotateZ(millis() / 1000);
+           *   box();
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * the light is partially ambient and partially directional
+           */
+          _main.default.prototype.lights = function() {
+            this._assert3d('lights');
+            this.ambientLight(128, 128, 128);
+            this.directionalLight(128, 128, 128, 0, 0, -1);
+            return this;
+          };
+
+          /**
+           * Sets the falloff rates for point lights. It affects only the elements which are created after it in the code.
+           * The default value is lightFalloff(1.0, 0.0, 0.0), and the parameters are used to calculate the falloff with the following equation:
+           *
+           * d = distance from light position to vertex position
+           *
+           * falloff = 1 / (CONSTANT + d \* LINEAR + ( d \* d ) \* QUADRATIC)
+           *
+           * @method lightFalloff
+           * @param {Number} constant   constant value for determining falloff
+           * @param {Number} linear     linear value for determining falloff
+           * @param {Number} quadratic  quadratic value for determining falloff
+           * @chainable
+           * @example
+           * <div>
+           * <code>
+           * function setup() {
+           *   createCanvas(100, 100, WEBGL);
+           *   noStroke();
+           * }
+           * function draw() {
+           *   background(0);
+           *   let locX = mouseX - width / 2;
+           *   let locY = mouseY - height / 2;
+           *   translate(-25, 0, 0);
+           *   lightFalloff(1, 0, 0);
+           *   pointLight(250, 250, 250, locX, locY, 50);
+           *   sphere(20);
+           *   translate(50, 0, 0);
+           *   lightFalloff(0.9, 0.01, 0);
+           *   pointLight(250, 250, 250, locX, locY, 50);
+           *   sphere(20);
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * Two spheres with different falloff values show different intensity of light
+           */
+          _main.default.prototype.lightFalloff = function(
+            constantAttenuation,
+            linearAttenuation,
+            quadraticAttenuation
+          ) {
+            this._assert3d('lightFalloff');
+            _main.default._validateParameters('lightFalloff', arguments);
+
+            if (constantAttenuation < 0) {
+              constantAttenuation = 0;
+              console.warn(
+                'Value of constant argument in lightFalloff() should be never be negative. Set to 0.'
+              );
+            }
+
+            if (linearAttenuation < 0) {
+              linearAttenuation = 0;
+              console.warn(
+                'Value of linear argument in lightFalloff() should be never be negative. Set to 0.'
+              );
+            }
+
+            if (quadraticAttenuation < 0) {
+              quadraticAttenuation = 0;
+              console.warn(
+                'Value of quadratic argument in lightFalloff() should be never be negative. Set to 0.'
+              );
+            }
+
+            if (
+              constantAttenuation === 0 &&
+              linearAttenuation === 0 &&
+              quadraticAttenuation === 0
+            ) {
+              constantAttenuation = 1;
