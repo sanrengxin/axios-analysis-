@@ -86523,3 +86523,120 @@
               quadraticAttenuation === 0
             ) {
               constantAttenuation = 1;
+              console.warn(
+                'Either one of the three arguments in lightFalloff() should be greater than zero. Set constant argument to 1.'
+              );
+            }
+
+            this._renderer.constantAttenuation = constantAttenuation;
+            this._renderer.linearAttenuation = linearAttenuation;
+            this._renderer.quadraticAttenuation = quadraticAttenuation;
+
+            return this;
+          };
+
+          /**
+           * Creates a spotlight with a given color, position, direction of light,
+           * angle and concentration. Here, angle refers to the opening or aperture
+           * of the cone of the spotlight, and concentration is used to focus the
+           * light towards the center. Both angle and concentration are optional, but if
+           * you want to provide concentration, you will also have to specify the angle.
+           *
+           * A maximum of 5 spotLight can be active at one time
+           * @method spotLight
+           * @param  {Number}    v1       red or hue value (depending on the current
+           * color mode),
+           * @param  {Number}    v2       green or saturation value
+           * @param  {Number}    v3       blue or brightness value
+           * @param  {Number}    x        x axis position
+           * @param  {Number}    y        y axis position
+           * @param  {Number}    z        z axis position
+           * @param  {Number}    rx       x axis direction of light
+           * @param  {Number}    ry       y axis direction of light
+           * @param  {Number}    rz       z axis direction of light
+           * @param  {Number}    [angle]  optional parameter for angle. Defaults to PI/3
+           * @param  {Number}    [conc]   optional parameter for concentration. Defaults to 100
+           * @chainable
+           *
+           * @example
+           * <div>
+           * <code>
+           * function setup() {
+           *   createCanvas(100, 100, WEBGL);
+           * }
+           * function draw() {
+           *   background(0);
+           *   //move your mouse to change light position
+           *   let locX = mouseX - width / 2;
+           *   let locY = mouseY - height / 2;
+           *   // to set the light position,
+           *   // think of the world's coordinate as:
+           *   // -width/2,-height/2 -------- width/2,-height/2
+           *   //                |            |
+           *   //                |     0,0    |
+           *   //                |            |
+           *   // -width/2,height/2--------width/2,height/2
+           *   ambientLight(50);
+           *   spotLight(0, 250, 0, locX, locY, 100, 0, 0, -1, Math.PI / 16);
+           *   noStroke();
+           *   sphere(40);
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * Spot light on a sphere which changes position with mouse
+           */
+          /**
+           * @method spotLight
+           * @param  {Number[]|String|p5.Color} color color Array, CSS color string,
+           * or <a href="#/p5.Color">p5.Color</a> value
+           * @param  {p5.Vector}                position the position of the light
+           * @param  {p5.Vector}                direction the direction of the light
+           * @param  {Number}                   [angle]
+           * @param  {Number}                   [conc]
+           */
+          /**
+           * @method spotLight
+           * @param  {Number}     v1
+           * @param  {Number}     v2
+           * @param  {Number}     v3
+           * @param  {p5.Vector}  position
+           * @param  {p5.Vector}  direction
+           * @param  {Number}     [angle]
+           * @param  {Number}     [conc]
+           */
+          /**
+           * @method spotLight
+           * @param  {Number[]|String|p5.Color} color
+           * @param  {Number}                   x
+           * @param  {Number}                   y
+           * @param  {Number}                   z
+           * @param  {p5.Vector}                direction
+           * @param  {Number}                   [angle]
+           * @param  {Number}                   [conc]
+           */
+          /**
+           * @method spotLight
+           * @param  {Number[]|String|p5.Color} color
+           * @param  {p5.Vector}                position
+           * @param  {Number}                   rx
+           * @param  {Number}                   ry
+           * @param  {Number}                   rz
+           * @param  {Number}                   [angle]
+           * @param  {Number}                   [conc]
+           */
+          /**
+           * @method spotLight
+           * @param  {Number}     v1
+           * @param  {Number}     v2
+           * @param  {Number}     v3
+           * @param  {Number}     x
+           * @param  {Number}     y
+           * @param  {Number}     z
+           * @param  {p5.Vector}  direction
+           * @param  {Number}     [angle]
+           * @param  {Number}     [conc]
+           */
+          /**
+           * @method spotLight
