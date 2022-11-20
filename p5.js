@@ -86771,3 +86771,132 @@
                   position = x;
                   direction = new _main.default.Vector(y, z, nx);
                 } else {
+                  color = this.color(v1, v2, v3);
+                  position = new _main.default.Vector(x, y, z);
+                  direction = nx;
+                }
+                break;
+
+              case 6:
+                if (
+                  x instanceof _main.default.Vector &&
+                  y instanceof _main.default.Vector
+                ) {
+                  color = this.color(v1, v2, v3);
+                  position = x;
+                  direction = y;
+                  angle = z;
+                } else if (
+                  v1 instanceof _main.default.Color &&
+                  y instanceof _main.default.Vector
+                ) {
+                  color = v1;
+                  position = new _main.default.Vector(v2, v3, x);
+                  direction = y;
+                  angle = z;
+                } else if (
+                  v1 instanceof _main.default.Color &&
+                  v2 instanceof _main.default.Vector
+                ) {
+                  color = v1;
+                  position = v2;
+                  direction = new _main.default.Vector(v3, x, y);
+                  angle = z;
+                }
+                break;
+
+              case 5:
+                if (
+                  v1 instanceof _main.default.Color &&
+                  v2 instanceof _main.default.Vector &&
+                  v3 instanceof _main.default.Vector
+                ) {
+                  color = v1;
+                  position = v2;
+                  direction = v3;
+                  angle = x;
+                  concentration = y;
+                } else if (
+                  x instanceof _main.default.Vector &&
+                  y instanceof _main.default.Vector
+                ) {
+                  color = this.color(v1, v2, v3);
+                  position = x;
+                  direction = y;
+                } else if (
+                  v1 instanceof _main.default.Color &&
+                  y instanceof _main.default.Vector
+                ) {
+                  color = v1;
+                  position = new _main.default.Vector(v2, v3, x);
+                  direction = y;
+                } else if (
+                  v1 instanceof _main.default.Color &&
+                  v2 instanceof _main.default.Vector
+                ) {
+                  color = v1;
+                  position = v2;
+                  direction = new _main.default.Vector(v3, x, y);
+                }
+                break;
+
+              case 4:
+                color = v1;
+                position = v2;
+                direction = v3;
+                angle = x;
+                break;
+
+              case 3:
+                color = v1;
+                position = v2;
+                direction = v3;
+                break;
+
+              default:
+                console.warn(
+                  'Sorry, input for spotlight() is not in prescribed format. Too '.concat(
+                    length < 3 ? 'few' : 'many',
+                    ' arguments were provided'
+                  )
+                );
+
+                return this;
+            }
+
+            this._renderer.spotLightDiffuseColors.push(
+              color._array[0],
+              color._array[1],
+              color._array[2]
+            );
+
+            Array.prototype.push.apply(
+              this._renderer.spotLightSpecularColors,
+              this._renderer.specularColors
+            );
+
+            this._renderer.spotLightPositions.push(position.x, position.y, position.z);
+            direction.normalize();
+            this._renderer.spotLightDirections.push(direction.x, direction.y, direction.z);
+
+            if (angle === undefined) {
+              angle = Math.PI / 3;
+            }
+
+            if (concentration !== undefined && concentration < 1) {
+              concentration = 1;
+              console.warn(
+                'Value of concentration needs to be greater than 1. Setting it to 1'
+              );
+            } else if (concentration === undefined) {
+              concentration = 100;
+            }
+
+            angle = this._renderer._pInst._toRadians(angle);
+            this._renderer.spotLightAngle.push(Math.cos(angle));
+            this._renderer.spotLightConc.push(concentration);
+
+            this._renderer._enableLighting = true;
+
+            return this;
+          };
