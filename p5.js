@@ -86640,3 +86640,134 @@
            */
           /**
            * @method spotLight
+           * @param  {Number}     v1
+           * @param  {Number}     v2
+           * @param  {Number}     v3
+           * @param  {p5.Vector}  position
+           * @param  {Number}     rx
+           * @param  {Number}     ry
+           * @param  {Number}     rz
+           * @param  {Number}     [angle]
+           * @param  {Number}     [conc]
+           */
+          /**
+           * @method spotLight
+           * @param  {Number[]|String|p5.Color} color
+           * @param  {Number}                   x
+           * @param  {Number}                   y
+           * @param  {Number}                   z
+           * @param  {Number}                   rx
+           * @param  {Number}                   ry
+           * @param  {Number}                   rz
+           * @param  {Number}                   [angle]
+           * @param  {Number}                   [conc]
+           */
+          _main.default.prototype.spotLight = function(
+            v1,
+            v2,
+            v3,
+            x,
+            y,
+            z,
+            nx,
+            ny,
+            nz,
+            angle,
+            concentration
+          ) {
+            this._assert3d('spotLight');
+            _main.default._validateParameters('spotLight', arguments);
+
+            var color, position, direction;
+            var length = arguments.length;
+
+            switch (length) {
+              case 11:
+              case 10:
+                color = this.color(v1, v2, v3);
+                position = new _main.default.Vector(x, y, z);
+                direction = new _main.default.Vector(nx, ny, nz);
+                break;
+
+              case 9:
+                if (v1 instanceof _main.default.Color) {
+                  color = v1;
+                  position = new _main.default.Vector(v2, v3, x);
+                  direction = new _main.default.Vector(y, z, nx);
+                  angle = ny;
+                  concentration = nz;
+                } else if (x instanceof _main.default.Vector) {
+                  color = this.color(v1, v2, v3);
+                  position = x;
+                  direction = new _main.default.Vector(y, z, nx);
+                  angle = ny;
+                  concentration = nz;
+                } else if (nx instanceof _main.default.Vector) {
+                  color = this.color(v1, v2, v3);
+                  position = new _main.default.Vector(x, y, z);
+                  direction = nx;
+                  angle = ny;
+                  concentration = nz;
+                } else {
+                  color = this.color(v1, v2, v3);
+                  position = new _main.default.Vector(x, y, z);
+                  direction = new _main.default.Vector(nx, ny, nz);
+                }
+                break;
+
+              case 8:
+                if (v1 instanceof _main.default.Color) {
+                  color = v1;
+                  position = new _main.default.Vector(v2, v3, x);
+                  direction = new _main.default.Vector(y, z, nx);
+                  angle = ny;
+                } else if (x instanceof _main.default.Vector) {
+                  color = this.color(v1, v2, v3);
+                  position = x;
+                  direction = new _main.default.Vector(y, z, nx);
+                  angle = ny;
+                } else {
+                  color = this.color(v1, v2, v3);
+                  position = new _main.default.Vector(x, y, z);
+                  direction = nx;
+                  angle = ny;
+                }
+                break;
+
+              case 7:
+                if (
+                  v1 instanceof _main.default.Color &&
+                  v2 instanceof _main.default.Vector
+                ) {
+                  color = v1;
+                  position = v2;
+                  direction = new _main.default.Vector(v3, x, y);
+                  angle = z;
+                  concentration = nx;
+                } else if (
+                  v1 instanceof _main.default.Color &&
+                  y instanceof _main.default.Vector
+                ) {
+                  color = v1;
+                  position = new _main.default.Vector(v2, v3, x);
+                  direction = y;
+                  angle = z;
+                  concentration = nx;
+                } else if (
+                  x instanceof _main.default.Vector &&
+                  y instanceof _main.default.Vector
+                ) {
+                  color = this.color(v1, v2, v3);
+                  position = x;
+                  direction = y;
+                  angle = z;
+                  concentration = nx;
+                } else if (v1 instanceof _main.default.Color) {
+                  color = v1;
+                  position = new _main.default.Vector(v2, v3, x);
+                  direction = new _main.default.Vector(y, z, nx);
+                } else if (x instanceof _main.default.Vector) {
+                  color = this.color(v1, v2, v3);
+                  position = x;
+                  direction = new _main.default.Vector(y, z, nx);
+                } else {
