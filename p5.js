@@ -87027,3 +87027,144 @@
            *   octahedron = loadModel('assets/octahedron.obj');
            * }
            *
+           * function setup() {
+           *   createCanvas(100, 100, WEBGL);
+           * }
+           *
+           * function draw() {
+           *   background(200);
+           *   rotateX(frameCount * 0.01);
+           *   rotateY(frameCount * 0.01);
+           *   model(octahedron);
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * Vertically rotating 3-d octahedron.
+           *
+           * @example
+           * <div>
+           * <code>
+           * //draw a spinning teapot
+           * let teapot;
+           *
+           * function preload() {
+           *   // Load model with normalise parameter set to true
+           *   teapot = loadModel('assets/teapot.obj', true);
+           * }
+           *
+           * function setup() {
+           *   createCanvas(100, 100, WEBGL);
+           * }
+           *
+           * function draw() {
+           *   background(200);
+           *   scale(0.4); // Scaled to make model fit into canvas
+           *   rotateX(frameCount * 0.01);
+           *   rotateY(frameCount * 0.01);
+           *   normalMaterial(); // For effect
+           *   model(teapot);
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * Vertically rotating 3-d teapot with red, green and blue gradient.
+           */ /**
+           * @method loadModel
+           * @param  {String} path
+           * @param  {function(p5.Geometry)} [successCallback]
+           * @param  {function(Event)} [failureCallback]
+           * @param  {String} [fileType]
+           * @return {p5.Geometry} the <a href="#/p5.Geometry">p5.Geometry</a> object
+           */ _main.default.prototype.loadModel = function(path) {
+            _main.default._validateParameters('loadModel', arguments);
+            var normalize;
+            var successCallback;
+            var failureCallback;
+            var fileType = path.slice(-4);
+            if (typeof arguments[1] === 'boolean') {
+              normalize = arguments[1];
+              successCallback = arguments[2];
+              failureCallback = arguments[3];
+              if (typeof arguments[4] !== 'undefined') {
+                fileType = arguments[4];
+              }
+            } else {
+              normalize = false;
+              successCallback = arguments[1];
+              failureCallback = arguments[2];
+              if (typeof arguments[3] !== 'undefined') {
+                fileType = arguments[3];
+              }
+            }
+
+            var model = new _main.default.Geometry();
+            model.gid = ''.concat(path, '|').concat(normalize);
+            var self = this;
+
+            if (fileType.match(/\.stl$/i)) {
+              this.httpDo(
+                path,
+                'GET',
+                'arrayBuffer',
+                function(arrayBuffer) {
+                  parseSTL(model, arrayBuffer);
+
+                  if (normalize) {
+                    model.normalize();
+                  }
+                  self._decrementPreload();
+                  if (typeof successCallback === 'function') {
+                    successCallback(model);
+                  }
+                },
+                failureCallback
+              );
+            } else if (fileType.match(/\.obj$/i)) {
+              this.loadStrings(
+                path,
+                function(strings) {
+                  parseObj(model, strings);
+
+                  if (normalize) {
+                    model.normalize();
+                  }
+
+                  self._decrementPreload();
+                  if (typeof successCallback === 'function') {
+                    successCallback(model);
+                  }
+                },
+                failureCallback
+              );
+            } else {
+              _main.default._friendlyFileLoadError(3, path);
+
+              if (failureCallback) {
+                failureCallback();
+              } else {
+                console.error(
+                  'Sorry, the file type is invalid. Only OBJ and STL files are supported.'
+                );
+              }
+            }
+            return model;
+          };
+
+          /**
+           * Parse OBJ lines into model. For reference, this is what a simple model of a
+           * square might look like:
+           *
+           * v -0.5 -0.5 0.5
+           * v -0.5 -0.5 -0.5
+           * v -0.5 0.5 -0.5
+           * v -0.5 0.5 0.5
+           *
+           * f 4 3 2 1
+           */
+          function parseObj(model, lines) {
+            // OBJ allows a face to specify an index for a vertex (in the above example),
+            // but it also allows you to specify a custom combination of vertex, UV
+            // coordinate, and vertex normal. So, "3/4/3" would mean, "use vertex 3 with
