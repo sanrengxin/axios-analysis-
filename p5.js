@@ -86900,3 +86900,130 @@
 
             return this;
           };
+
+          /**
+           * This function will remove all the lights from the sketch for the
+           * subsequent materials rendered. It affects all the subsequent methods.
+           * Calls to lighting methods made after noLights() will re-enable lights
+           * in the sketch.
+           * @method noLights
+           * @chainable
+           * @example
+           * <div>
+           * <code>
+           * function setup() {
+           *   createCanvas(100, 100, WEBGL);
+           * }
+           * function draw() {
+           *   background(0);
+           *   noStroke();
+           *
+           *   ambientLight(150, 0, 0);
+           *   translate(-25, 0, 0);
+           *   ambientMaterial(250);
+           *   sphere(20);
+           *
+           *   noLights();
+           *   ambientLight(0, 150, 0);
+           *   translate(50, 0, 0);
+           *   ambientMaterial(250);
+           *   sphere(20);
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * Two spheres showing different colors
+           */
+          _main.default.prototype.noLights = function() {
+            this._assert3d('noLights');
+            _main.default._validateParameters('noLights', arguments);
+
+            this._renderer._enableLighting = false;
+
+            this._renderer.ambientLightColors.length = 0;
+            this._renderer.specularColors = [1, 1, 1];
+
+            this._renderer.directionalLightDirections.length = 0;
+            this._renderer.directionalLightDiffuseColors.length = 0;
+            this._renderer.directionalLightSpecularColors.length = 0;
+
+            this._renderer.pointLightPositions.length = 0;
+            this._renderer.pointLightDiffuseColors.length = 0;
+            this._renderer.pointLightSpecularColors.length = 0;
+
+            this._renderer.spotLightPositions.length = 0;
+            this._renderer.spotLightDirections.length = 0;
+            this._renderer.spotLightDiffuseColors.length = 0;
+            this._renderer.spotLightSpecularColors.length = 0;
+            this._renderer.spotLightAngle.length = 0;
+            this._renderer.spotLightConc.length = 0;
+
+            this._renderer.constantAttenuation = 1;
+            this._renderer.linearAttenuation = 0;
+            this._renderer.quadraticAttenuation = 0;
+            this._renderer._useShininess = 1;
+
+            return this;
+          };
+          var _default = _main.default;
+          exports.default = _default;
+        },
+        { '../core/main': 59 }
+      ],
+      105: [
+        function(_dereq_, module, exports) {
+          'use strict';
+          Object.defineProperty(exports, '__esModule', { value: true });
+          exports.default = void 0;
+
+          var _main = _interopRequireDefault(_dereq_('../core/main'));
+          _dereq_('./p5.Geometry');
+          function _interopRequireDefault(obj) {
+            return obj && obj.__esModule ? obj : { default: obj };
+          }
+          /**
+           * @module Shape
+           * @submodule 3D Models
+           * @for p5
+           * @requires core
+           * @requires p5.Geometry
+           */ /**
+           * Load a 3d model from an OBJ or STL file.
+           *
+           * <a href="#/p5/loadModel">loadModel()</a> should be placed inside of <a href="#/p5/preload">preload()</a>.
+           * This allows the model to load fully before the rest of your code is run.
+           *
+           * One of the limitations of the OBJ and STL format is that it doesn't have a built-in
+           * sense of scale. This means that models exported from different programs might
+           * be very different sizes. If your model isn't displaying, try calling
+           * <a href="#/p5/loadModel">loadModel()</a> with the normalized parameter set to true. This will resize the
+           * model to a scale appropriate for p5. You can also make additional changes to
+           * the final size of your model with the <a href="#/p5/scale">scale()</a> function.
+           *
+           * Also, the support for colored STL files is not present. STL files with color will be
+           * rendered without color properties.
+           *
+           * @method loadModel
+           * @param  {String} path              Path of the model to be loaded
+           * @param  {Boolean} normalize        If true, scale the model to a
+           *                                      standardized size when loading
+           * @param  {function(p5.Geometry)} [successCallback] Function to be called
+           *                                     once the model is loaded. Will be passed
+           *                                     the 3D model object.
+           * @param  {function(Event)} [failureCallback] called with event error if
+           *                                         the model fails to load.
+           * @param  {String} [fileType]          The file extension of the model
+           *                                      (<code>.stl</code>, <code>.obj</code>).
+           * @return {p5.Geometry} the <a href="#/p5.Geometry">p5.Geometry</a> object
+           *
+           * @example
+           * <div>
+           * <code>
+           * //draw a spinning octahedron
+           * let octahedron;
+           *
+           * function preload() {
+           *   octahedron = loadModel('assets/octahedron.obj');
+           * }
+           *
