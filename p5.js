@@ -88048,3 +88048,129 @@
            * let pg;
            *
            * function setup() {
+           *   createCanvas(100, 100, WEBGL);
+           *   pg = createGraphics(200, 200);
+           *   pg.textSize(75);
+           * }
+           *
+           * function draw() {
+           *   background(0);
+           *   pg.background(255);
+           *   pg.text('hello!', 0, 100);
+           *   //pass image as texture
+           *   texture(pg);
+           *   rotateX(0.5);
+           *   noStroke();
+           *   plane(50);
+           * }
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * let vid;
+           * function preload() {
+           *   vid = createVideo('assets/fingers.mov');
+           *   vid.hide();
+           * }
+           * function setup() {
+           *   createCanvas(100, 100, WEBGL);
+           * }
+           *
+           * function draw() {
+           *   background(0);
+           *   //pass video frame as texture
+           *   texture(vid);
+           *   rect(-40, -40, 80, 80);
+           * }
+           *
+           * function mousePressed() {
+           *   vid.loop();
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * Rotating view of many images umbrella and grid roof on a 3d plane
+           * black canvas
+           * black canvas
+           */
+          _main.default.prototype.texture = function(tex) {
+            this._assert3d('texture');
+            _main.default._validateParameters('texture', arguments);
+            if (tex.gifProperties) {
+              tex._animateGif(this);
+            }
+
+            this._renderer.drawMode = constants.TEXTURE;
+            this._renderer._useSpecularMaterial = false;
+            this._renderer._useEmissiveMaterial = false;
+            this._renderer._useNormalMaterial = false;
+            this._renderer._tex = tex;
+            this._renderer._setProperty('_doFill', true);
+
+            return this;
+          };
+
+          /**
+           * Sets the coordinate space for texture mapping. The default mode is IMAGE
+           * which refers to the actual coordinates of the image.
+           * NORMAL refers to a normalized space of values ranging from 0 to 1.
+           * This function only works in WEBGL mode.
+           *
+           * With IMAGE, if an image is 100 x 200 pixels, mapping the image onto the entire
+           * size of a quad would require the points (0,0) (100, 0) (100,200) (0,200).
+           * The same mapping in NORMAL is (0,0) (1,0) (1,1) (0,1).
+           * @method  textureMode
+           * @param {Constant} mode either IMAGE or NORMAL
+           * @example
+           * <div>
+           * <code>
+           * let img;
+           *
+           * function preload() {
+           *   img = loadImage('assets/laDefense.jpg');
+           * }
+           *
+           * function setup() {
+           *   createCanvas(100, 100, WEBGL);
+           * }
+           *
+           * function draw() {
+           *   texture(img);
+           *   textureMode(NORMAL);
+           *   beginShape();
+           *   vertex(-50, -50, 0, 0);
+           *   vertex(50, -50, 1, 0);
+           *   vertex(50, 50, 1, 1);
+           *   vertex(-50, 50, 0, 1);
+           *   endShape();
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * the underside of a white umbrella and gridded ceiling above
+           *
+           * <div>
+           * <code>
+           * let img;
+           *
+           * function preload() {
+           *   img = loadImage('assets/laDefense.jpg');
+           * }
+           *
+           * function setup() {
+           *   createCanvas(100, 100, WEBGL);
+           * }
+           *
+           * function draw() {
+           *   texture(img);
+           *   textureMode(NORMAL);
+           *   beginShape();
+           *   vertex(-50, -50, 0, 0);
+           *   vertex(50, -50, img.width, 0);
+           *   vertex(50, 50, img.width, img.height);
+           *   vertex(-50, 50, 0, img.height);
+           *   endShape();
+           * }
