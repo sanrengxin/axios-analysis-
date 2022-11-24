@@ -88300,3 +88300,140 @@
            *   createCanvas(100, 100, WEBGL);
            * }
            * function draw() {
+           *   background(70);
+           *   ambientLight(100); // white light
+           *   ambientMaterial(255, 0, 255); // pink material
+           *   box(30);
+           * }
+           * </code>
+           * </div>
+           * <div>
+           * <code>
+           * // ambientLight is green. Since object does not contain
+           * // green, it does not reflect any light
+           * function setup() {
+           *   createCanvas(100, 100, WEBGL);
+           * }
+           * function draw() {
+           *   background(70);
+           *   ambientLight(0, 255, 0); // green light
+           *   ambientMaterial(255, 0, 255); // pink material
+           *   box(30);
+           * }
+           * </code>
+           * </div>
+           * @alt
+           * radiating light source from top right of canvas
+           * box reflecting only red and blue light
+           * box reflecting no light
+           */
+          /**
+           * @method  ambientMaterial
+           * @param  {Number[]|String|p5.Color} color  color, color Array, or CSS color string
+           * @chainable
+           */
+          _main.default.prototype.ambientMaterial = function(v1, v2, v3) {
+            this._assert3d('ambientMaterial');
+            _main.default._validateParameters('ambientMaterial', arguments);
+
+            var color = _main.default.prototype.color.apply(this, arguments);
+            this._renderer.curFillColor = color._array;
+            this._renderer._useSpecularMaterial = false;
+            this._renderer._useEmissiveMaterial = false;
+            this._renderer._useNormalMaterial = false;
+            this._renderer._enableLighting = true;
+            this._renderer._tex = null;
+
+            return this;
+          };
+
+          /**
+           * Sets the emissive color of the material used for geometry drawn to
+           * the screen. This is a misnomer in the sense that the material does not
+           * actually emit light that effects surrounding polygons. Instead,
+           * it gives the appearance that the object is glowing. An emissive material
+           * will display at full strength even if there is no light for it to reflect.
+           * @method emissiveMaterial
+           * @param  {Number} v1  gray value, red or hue value
+           *                         (depending on the current color mode),
+           * @param  {Number} [v2] green or saturation value
+           * @param  {Number} [v3] blue or brightness value
+           * @param  {Number} [a]  opacity
+           * @chainable
+           * @example
+           * <div>
+           * <code>
+           * function setup() {
+           *   createCanvas(100, 100, WEBGL);
+           * }
+           * function draw() {
+           *   background(0);
+           *   noStroke();
+           *   ambientLight(0);
+           *   emissiveMaterial(130, 230, 0);
+           *   sphere(40);
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * radiating light source from top right of canvas
+           */
+          /**
+           * @method  emissiveMaterial
+           * @param  {Number[]|String|p5.Color} color  color, color Array, or CSS color string
+           * @chainable
+           */
+          _main.default.prototype.emissiveMaterial = function(v1, v2, v3, a) {
+            this._assert3d('emissiveMaterial');
+            _main.default._validateParameters('emissiveMaterial', arguments);
+
+            var color = _main.default.prototype.color.apply(this, arguments);
+            this._renderer.curFillColor = color._array;
+            this._renderer._useSpecularMaterial = false;
+            this._renderer._useEmissiveMaterial = true;
+            this._renderer._useNormalMaterial = false;
+            this._renderer._enableLighting = true;
+            this._renderer._tex = null;
+
+            return this;
+          };
+
+          /**
+           * Specular material for geometry with a given color. Specular material is a shiny reflective material.
+           * Like ambient material it also defines the color the object reflects under ambient lighting.
+           * For example, if the specular material of an object is pure red, but the ambient lighting only contains green, the object will not reflect any light.
+           * For all other types of light like point and directional light, a specular material will reflect the color of the light source to the viewer.
+           * Here's an <a href="https://p5js.org/examples/3d-materials.html">example containing all possible materials</a>.
+           *
+           * @method specularMaterial
+           * @param  {Number} gray number specifying value between white and black.
+           * @param  {Number} [alpha] alpha value relative to current color range
+           *                                 (default is 0-255)
+           * @chainable
+           */
+
+          /**
+           * @method specularMaterial
+           * @param  {Number}        v1      red or hue value relative to
+           *                                 the current color range
+           * @param  {Number}        v2      green or saturation value
+           *                                 relative to the current color range
+           * @param  {Number}        v3      blue or brightness value
+           *                                 relative to the current color range
+           * @param  {Number}        [alpha]
+           * @chainable
+           *
+           * @example
+           * <div>
+           * <code>
+           * function setup() {
+           *   createCanvas(100, 100, WEBGL);
+           * }
+           * function draw() {
+           *   background(0);
+           *   ambientLight(50);
+           *   pointLight(250, 250, 250, 100, 100, 30);
+           *   specularMaterial(250);
+           *   sphere(40);
+           * }
