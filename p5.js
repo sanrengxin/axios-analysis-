@@ -87810,3 +87810,124 @@
            *
            * // the vertex shader is called for each vertex
            * let vs =
+           *   varying +
+           *   'attribute vec3 aPosition;' +
+           *   'void main() { vPos = (gl_Position = vec4(aPosition,1.0)).xy; }';
+           *
+           * // the fragment shader is called for each pixel
+           * let fs =
+           *   varying +
+           *   'uniform vec2 p;' +
+           *   'uniform float r;' +
+           *   'const int I = 500;' +
+           *   'void main() {' +
+           *   '  vec2 c = p + vPos * r, z = c;' +
+           *   '  float n = 0.0;' +
+           *   '  for (int i = I; i > 0; i --) {' +
+           *   '    if(z.x*z.x+z.y*z.y > 4.0) {' +
+           *   '      n = float(i)/float(I);' +
+           *   '      break;' +
+           *   '    }' +
+           *   '    z = vec2(z.x*z.x-z.y*z.y, 2.0*z.x*z.y) + c;' +
+           *   '  }' +
+           *   '  gl_FragColor = vec4(0.5-cos(n*17.0)/2.0,0.5-cos(n*13.0)/2.0,0.5-cos(n*23.0)/2.0,1.0);' +
+           *   '}';
+           *
+           * let mandel;
+           * function setup() {
+           *   createCanvas(100, 100, WEBGL);
+           *
+           *   // create and initialize the shader
+           *   mandel = createShader(vs, fs);
+           *   shader(mandel);
+           *   noStroke();
+           *
+           *   // 'p' is the center point of the Mandelbrot image
+           *   mandel.setUniform('p', [-0.74364388703, 0.13182590421]);
+           * }
+           *
+           * function draw() {
+           *   // 'r' is the size of the image in Mandelbrot-space
+           *   mandel.setUniform('r', 1.5 * exp(-6.5 * (1 + sin(millis() / 2000))));
+           *   quad(-1, -1, 1, -1, 1, 1, -1, 1);
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * zooming Mandelbrot set. a colorful, infinitely detailed fractal.
+           */
+          _main.default.prototype.createShader = function(vertSrc, fragSrc) {
+            this._assert3d('createShader');
+            _main.default._validateParameters('createShader', arguments);
+            return new _main.default.Shader(this._renderer, vertSrc, fragSrc);
+          };
+
+          /**
+           * The <a href="#/p5/shader">shader()</a> function lets the user provide a custom shader
+           * to fill in shapes in WEBGL mode. Users can create their
+           * own shaders by loading vertex and fragment shaders with
+           * <a href="#/p5/loadShader">loadShader()</a>.
+           *
+           * @method shader
+           * @chainable
+           * @param {p5.Shader} [s] the desired <a href="#/p5.Shader">p5.Shader</a> to use for rendering
+           * shapes.
+           *
+           * @example
+           * <div modernizr='webgl'>
+           * <code>
+           * // Click within the image to toggle
+           * // the shader used by the quad shape
+           * // Note: for an alternative approach to the same example,
+           * // involving changing uniforms please refer to:
+           * // https://p5js.org/reference/#/p5.Shader/setUniform
+           *
+           * let redGreen;
+           * let orangeBlue;
+           * let showRedGreen = false;
+           *
+           * function preload() {
+           *   // note that we are using two instances
+           *   // of the same vertex and fragment shaders
+           *   redGreen = loadShader('assets/shader.vert', 'assets/shader-gradient.frag');
+           *   orangeBlue = loadShader('assets/shader.vert', 'assets/shader-gradient.frag');
+           * }
+           *
+           * function setup() {
+           *   createCanvas(100, 100, WEBGL);
+           *
+           *   // initialize the colors for redGreen shader
+           *   shader(redGreen);
+           *   redGreen.setUniform('colorCenter', [1.0, 0.0, 0.0]);
+           *   redGreen.setUniform('colorBackground', [0.0, 1.0, 0.0]);
+           *
+           *   // initialize the colors for orangeBlue shader
+           *   shader(orangeBlue);
+           *   orangeBlue.setUniform('colorCenter', [1.0, 0.5, 0.0]);
+           *   orangeBlue.setUniform('colorBackground', [0.226, 0.0, 0.615]);
+           *
+           *   noStroke();
+           * }
+           *
+           * function draw() {
+           *   // update the offset values for each shader,
+           *   // moving orangeBlue in vertical and redGreen
+           *   // in horizontal direction
+           *   orangeBlue.setUniform('offset', [0, sin(millis() / 2000) + 1]);
+           *   redGreen.setUniform('offset', [sin(millis() / 2000), 1]);
+           *
+           *   if (showRedGreen === true) {
+           *     shader(redGreen);
+           *   } else {
+           *     shader(orangeBlue);
+           *   }
+           *   quad(-1, -1, 1, -1, 1, 1, -1, 1);
+           * }
+           *
+           * function mouseClicked() {
+           *   showRedGreen = !showRedGreen;
+           * }
+           * </code>
+           * </div>
+           *
