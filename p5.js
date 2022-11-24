@@ -87432,3 +87432,143 @@
 
             for (var iterator = 0; iterator < lines.length; ++iterator) {
               var line = lines[iterator].trim();
+              var parts = line.split(' ');
+
+              for (var partsiterator = 0; partsiterator < parts.length; ++partsiterator) {
+                if (parts[partsiterator] === '') {
+                  // Ignoring multiple whitespaces
+                  parts.splice(partsiterator, 1);
+                }
+              }
+
+              if (parts.length === 0) {
+                // Remove newline
+                continue;
+              }
+
+              switch (state) {
+                case '': // First run
+                  if (parts[0] !== 'solid') {
+                    // Invalid state
+                    console.error(line);
+                    console.error(
+                      'Invalid state "'.concat(parts[0], '", should be "solid"')
+                    );
+                    return;
+                  } else {
+                    state = 'solid';
+                  }
+                  break;
+
+                case 'solid': // First face
+                  if (parts[0] !== 'facet' || parts[1] !== 'normal') {
+                    // Invalid state
+                    console.error(line);
+                    console.error(
+                      'Invalid state "'.concat(parts[0], '", should be "facet normal"')
+                    );
+
+                    return;
+                  } else {
+                    // Push normal for first face
+                    newNormal = new _main.default.Vector(
+                      parseFloat(parts[2]),
+                      parseFloat(parts[3]),
+                      parseFloat(parts[4])
+                    );
+
+                    model.vertexNormals.push(newNormal, newNormal, newNormal);
+                    state = 'facet normal';
+                  }
+                  break;
+
+                case 'facet normal': // After normal is defined
+                  if (parts[0] !== 'outer' || parts[1] !== 'loop') {
+                    // Invalid State
+                    console.error(line);
+                    console.error(
+                      'Invalid state "'.concat(parts[0], '", should be "outer loop"')
+                    );
+                    return;
+                  } else {
+                    // Next should be vertices
+                    state = 'vertex';
+                  }
+                  break;
+
+                case 'vertex':
+                  if (parts[0] === 'vertex') {
+                    //Vertex of triangle
+                    newVertex = new _main.default.Vector(
+                      parseFloat(parts[1]),
+                      parseFloat(parts[2]),
+                      parseFloat(parts[3])
+                    );
+
+                    model.vertices.push(newVertex);
+                    model.uvs.push([0, 0]);
+                    curVertexIndex.push(model.vertices.indexOf(newVertex));
+                  } else if (parts[0] === 'endloop') {
+                    // End of vertices
+                    model.faces.push(curVertexIndex);
+                    curVertexIndex = [];
+                    state = 'endloop';
+                  } else {
+                    // Invalid State
+                    console.error(line);
+                    console.error(
+                      'Invalid state "'.concat(
+                        parts[0],
+                        '", should be "vertex" or "endloop"'
+                      )
+                    );
+
+                    return;
+                  }
+                  break;
+
+                case 'endloop':
+                  if (parts[0] !== 'endfacet') {
+                    // End of face
+                    console.error(line);
+                    console.error(
+                      'Invalid state "'.concat(parts[0], '", should be "endfacet"')
+                    );
+                    return;
+                  } else {
+                    state = 'endfacet';
+                  }
+                  break;
+
+                case 'endfacet':
+                  if (parts[0] === 'endsolid') {
+                    // End of solid
+                  } else if (parts[0] === 'facet' && parts[1] === 'normal') {
+                    // Next face
+                    newNormal = new _main.default.Vector(
+                      parseFloat(parts[2]),
+                      parseFloat(parts[3]),
+                      parseFloat(parts[4])
+                    );
+
+                    model.vertexNormals.push(newNormal, newNormal, newNormal);
+                    state = 'facet normal';
+                  } else {
+                    // Invalid State
+                    console.error(line);
+                    console.error(
+                      'Invalid state "'.concat(
+                        parts[0],
+                        '", should be "endsolid" or "facet normal"'
+                      )
+                    );
+
+                    return;
+                  }
+                  break;
+
+                default:
+                  console.error('Invalid state "'.concat(state, '"'));
+                  break;
+              }
+            }
