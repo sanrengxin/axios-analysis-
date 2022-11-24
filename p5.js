@@ -87572,3 +87572,146 @@
                   break;
               }
             }
+            return model;
+          }
+
+          /**
+           * Render a 3d model to the screen.
+           *
+           * @method model
+           * @param  {p5.Geometry} model Loaded 3d model to be rendered
+           * @example
+           * <div>
+           * <code>
+           * //draw a spinning octahedron
+           * let octahedron;
+           *
+           * function preload() {
+           *   octahedron = loadModel('assets/octahedron.obj');
+           * }
+           *
+           * function setup() {
+           *   createCanvas(100, 100, WEBGL);
+           * }
+           *
+           * function draw() {
+           *   background(200);
+           *   rotateX(frameCount * 0.01);
+           *   rotateY(frameCount * 0.01);
+           *   model(octahedron);
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * Vertically rotating 3-d octahedron.
+           */
+          _main.default.prototype.model = function(model) {
+            this._assert3d('model');
+            _main.default._validateParameters('model', arguments);
+            if (model.vertices.length > 0) {
+              if (!this._renderer.geometryInHash(model.gid)) {
+                model._makeTriangleEdges()._edgesToVertices();
+                this._renderer.createBuffers(model.gid, model);
+              }
+
+              this._renderer.drawBuffers(model.gid);
+            }
+          };
+          var _default = _main.default;
+          exports.default = _default;
+        },
+        { '../core/main': 59, './p5.Geometry': 108 }
+      ],
+      106: [
+        function(_dereq_, module, exports) {
+          'use strict';
+          function _typeof(obj) {
+            if (typeof Symbol === 'function' && typeof Symbol.iterator === 'symbol') {
+              _typeof = function _typeof(obj) {
+                return typeof obj;
+              };
+            } else {
+              _typeof = function _typeof(obj) {
+                return obj &&
+                  typeof Symbol === 'function' &&
+                  obj.constructor === Symbol &&
+                  obj !== Symbol.prototype
+                  ? 'symbol'
+                  : typeof obj;
+              };
+            }
+            return _typeof(obj);
+          }
+          Object.defineProperty(exports, '__esModule', { value: true });
+          exports.default = void 0;
+
+          var _main = _interopRequireDefault(_dereq_('../core/main'));
+          var constants = _interopRequireWildcard(_dereq_('../core/constants'));
+          _dereq_('./p5.Texture');
+          function _getRequireWildcardCache() {
+            if (typeof WeakMap !== 'function') return null;
+            var cache = new WeakMap();
+            _getRequireWildcardCache = function _getRequireWildcardCache() {
+              return cache;
+            };
+            return cache;
+          }
+          function _interopRequireWildcard(obj) {
+            if (obj && obj.__esModule) {
+              return obj;
+            }
+            if (obj === null || (_typeof(obj) !== 'object' && typeof obj !== 'function')) {
+              return { default: obj };
+            }
+            var cache = _getRequireWildcardCache();
+            if (cache && cache.has(obj)) {
+              return cache.get(obj);
+            }
+            var newObj = {};
+            var hasPropertyDescriptor =
+              Object.defineProperty && Object.getOwnPropertyDescriptor;
+            for (var key in obj) {
+              if (Object.prototype.hasOwnProperty.call(obj, key)) {
+                var desc = hasPropertyDescriptor
+                  ? Object.getOwnPropertyDescriptor(obj, key)
+                  : null;
+                if (desc && (desc.get || desc.set)) {
+                  Object.defineProperty(newObj, key, desc);
+                } else {
+                  newObj[key] = obj[key];
+                }
+              }
+            }
+            newObj.default = obj;
+            if (cache) {
+              cache.set(obj, newObj);
+            }
+            return newObj;
+          }
+          function _interopRequireDefault(obj) {
+            return obj && obj.__esModule ? obj : { default: obj };
+          }
+          /**
+           * @module Lights, Camera
+           * @submodule Material
+           * @for p5
+           * @requires core
+           */ /**
+           * Loads a custom shader from the provided vertex and fragment
+           * shader paths. The shader files are loaded asynchronously in the
+           * background, so this method should be used in <a href="#/p5/preload">preload()</a>.
+           *
+           * For now, there are three main types of shaders. p5 will automatically
+           * supply appropriate vertices, normals, colors, and lighting attributes
+           * if the parameters defined in the shader match the names.
+           *
+           * @method loadShader
+           * @param {String} vertFilename path to file containing vertex shader
+           * source code
+           * @param {String} fragFilename path to file containing fragment shader
+           * source code
+           * @param {function} [callback] callback to be executed after loadShader
+           * completes. On success, the Shader object is passed as the first argument.
+           * @param {function} [errorCallback] callback to be executed when an error
+           * occurs inside loadShader. On error, the error is passed as the first
