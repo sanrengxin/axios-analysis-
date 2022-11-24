@@ -87931,3 +87931,120 @@
            * </code>
            * </div>
            *
+           * @alt
+           * canvas toggles between a circular gradient of orange and blue vertically. and a circular gradient of red and green moving horizontally when mouse is clicked/pressed.
+           */
+          _main.default.prototype.shader = function(s) {
+            this._assert3d('shader');
+            _main.default._validateParameters('shader', arguments);
+
+            if (s._renderer === undefined) {
+              s._renderer = this._renderer;
+            }
+
+            if (s.isStrokeShader()) {
+              this._renderer.userStrokeShader = s;
+            } else {
+              this._renderer.userFillShader = s;
+              this._renderer._useNormalMaterial = false;
+            }
+
+            s.init();
+
+            return this;
+          };
+
+          /**
+           * This function restores the default shaders in WEBGL mode. Code that runs
+           * after resetShader() will not be affected by previously defined
+           * shaders. Should be run after <a href="#/p5/shader">shader()</a>.
+           *
+           * @method resetShader
+           * @chainable
+           */
+          _main.default.prototype.resetShader = function() {
+            this._renderer.userFillShader = this._renderer.userStrokeShader = null;
+            return this;
+          };
+
+          /**
+           * Normal material for geometry is a material that is not affected by light.
+           * It is not reflective and is a placeholder material often used for debugging.
+           * Surfaces facing the X-axis, become red, those facing the Y-axis, become green and those facing the Z-axis, become blue.
+           * You can view all possible materials in this
+           * <a href="https://p5js.org/examples/3d-materials.html">example</a>.
+           * @method normalMaterial
+           * @chainable
+           * @example
+           * <div>
+           * <code>
+           * function setup() {
+           *   createCanvas(100, 100, WEBGL);
+           * }
+           *
+           * function draw() {
+           *   background(200);
+           *   normalMaterial();
+           *   sphere(40);
+           * }
+           * </code>
+           * </div>
+           * @alt
+           * Red, green and blue gradient.
+           */
+          _main.default.prototype.normalMaterial = function() {
+            this._assert3d('normalMaterial');
+            for (
+              var _len = arguments.length, args = new Array(_len), _key = 0;
+              _key < _len;
+              _key++
+            ) {
+              args[_key] = arguments[_key];
+            }
+            _main.default._validateParameters('normalMaterial', args);
+            this._renderer.drawMode = constants.FILL;
+            this._renderer._useSpecularMaterial = false;
+            this._renderer._useEmissiveMaterial = false;
+            this._renderer._useNormalMaterial = true;
+            this._renderer.curFillColor = [1, 1, 1, 1];
+            this._renderer._setProperty('_doFill', true);
+            this.noStroke();
+            return this;
+          };
+
+          /**
+           * Texture for geometry.  You can view other possible materials in this
+           * <a href="https://p5js.org/examples/3d-materials.html">example</a>.
+           * @method texture
+           * @param {p5.Image|p5.MediaElement|p5.Graphics} tex 2-dimensional graphics
+           *                    to render as texture
+           * @chainable
+           * @example
+           * <div>
+           * <code>
+           * let img;
+           * function preload() {
+           *   img = loadImage('assets/laDefense.jpg');
+           * }
+           *
+           * function setup() {
+           *   createCanvas(100, 100, WEBGL);
+           * }
+           *
+           * function draw() {
+           *   background(0);
+           *   rotateZ(frameCount * 0.01);
+           *   rotateX(frameCount * 0.01);
+           *   rotateY(frameCount * 0.01);
+           *   //pass image as texture
+           *   texture(img);
+           *   box(200, 200, 200);
+           * }
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * let pg;
+           *
+           * function setup() {
