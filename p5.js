@@ -88174,3 +88174,129 @@
            *   vertex(-50, 50, 0, img.height);
            *   endShape();
            * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * the underside of a white umbrella and gridded ceiling above
+           */
+          _main.default.prototype.textureMode = function(mode) {
+            if (mode !== constants.IMAGE && mode !== constants.NORMAL) {
+              console.warn(
+                'You tried to set '.concat(
+                  mode,
+                  ' textureMode only supports IMAGE & NORMAL '
+                )
+              );
+            } else {
+              this._renderer.textureMode = mode;
+            }
+          };
+
+          /**
+           * Sets the global texture wrapping mode. This controls how textures behave
+           * when their uv's go outside of the 0 - 1 range. There are three options:
+           * CLAMP, REPEAT, and MIRROR.
+           *
+           * CLAMP causes the pixels at the edge of the texture to extend to the bounds
+           * REPEAT causes the texture to tile repeatedly until reaching the bounds
+           * MIRROR works similarly to REPEAT but it flips the texture with every new tile
+           *
+           * REPEAT & MIRROR are only available if the texture
+           * is a power of two size (128, 256, 512, 1024, etc.).
+           *
+           * This method will affect all textures in your sketch until a subsequent
+           * textureWrap call is made.
+           *
+           * If only one argument is provided, it will be applied to both the
+           * horizontal and vertical axes.
+           * @method textureWrap
+           * @param {Constant} wrapX either CLAMP, REPEAT, or MIRROR
+           * @param {Constant} [wrapY] either CLAMP, REPEAT, or MIRROR
+           * @example
+           * <div>
+           * <code>
+           * let img;
+           * function preload() {
+           *   img = loadImage('assets/rockies128.jpg');
+           * }
+           *
+           * function setup() {
+           *   createCanvas(100, 100, WEBGL);
+           *   textureWrap(MIRROR);
+           * }
+           *
+           * function draw() {
+           *   background(0);
+           *
+           *   let dX = mouseX;
+           *   let dY = mouseY;
+           *
+           *   let u = lerp(1.0, 2.0, dX);
+           *   let v = lerp(1.0, 2.0, dY);
+           *
+           *   scale(width / 2);
+           *
+           *   texture(img);
+           *
+           *   beginShape(TRIANGLES);
+           *   vertex(-1, -1, 0, 0, 0);
+           *   vertex(1, -1, 0, u, 0);
+           *   vertex(1, 1, 0, u, v);
+           *
+           *   vertex(1, 1, 0, u, v);
+           *   vertex(-1, 1, 0, 0, v);
+           *   vertex(-1, -1, 0, 0, 0);
+           *   endShape();
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * an image of the rocky mountains repeated in mirrored tiles
+           */
+          _main.default.prototype.textureWrap = function(wrapX) {
+            var wrapY =
+              arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : wrapX;
+            this._renderer.textureWrapX = wrapX;
+            this._renderer.textureWrapY = wrapY;
+
+            var textures = this._renderer.textures;
+            for (var i = 0; i < textures.length; i++) {
+              textures[i].setWrapMode(wrapX, wrapY);
+            }
+          };
+
+          /**
+           * Ambient material for geometry with a given color. Ambient material defines the color the object reflects under any lighting.
+           * For example, if the ambient material of an object is pure red, but the ambient lighting only contains green, the object will not reflect any light.
+           * Here's an <a href="https://p5js.org/examples/3d-materials.html">example containing all possible materials</a>.
+           * @method  ambientMaterial
+           * @param  {Number} v1  gray value, red or hue value
+           *                         (depending on the current color mode),
+           * @param  {Number} [v2] green or saturation value
+           * @param  {Number} [v3] blue or brightness value
+           * @chainable
+           * @example
+           * <div>
+           * <code>
+           * function setup() {
+           *   createCanvas(100, 100, WEBGL);
+           * }
+           * function draw() {
+           *   background(0);
+           *   noStroke();
+           *   ambientLight(200);
+           *   ambientMaterial(70, 130, 230);
+           *   sphere(40);
+           * }
+           * </code>
+           * </div>
+           * <div>
+           * <code>
+           * // ambientLight is both red and blue (magenta),
+           * // so object only reflects it's red and blue components
+           * function setup() {
+           *   createCanvas(100, 100, WEBGL);
+           * }
+           * function draw() {
