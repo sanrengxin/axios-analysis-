@@ -88576,3 +88576,131 @@
                 );
 
                 break;
+              case constants.REPLACE:
+                gl.blendEquation(gl.FUNC_ADD);
+                gl.blendFunc(gl.ONE, gl.ZERO);
+                break;
+              case constants.SUBTRACT:
+                gl.blendEquationSeparate(gl.FUNC_REVERSE_SUBTRACT, gl.FUNC_ADD);
+                gl.blendFuncSeparate(gl.SRC_ALPHA, gl.ONE, gl.ONE, gl.ONE);
+                break;
+              case constants.DARKEST:
+                if (this.blendExt) {
+                  gl.blendEquationSeparate(this.blendExt.MIN_EXT, gl.FUNC_ADD);
+                  gl.blendFuncSeparate(gl.ONE, gl.ONE, gl.ONE, gl.ONE);
+                } else {
+                  console.warn(
+                    'blendMode(DARKEST) does not work in your browser in WEBGL mode.'
+                  );
+                }
+                break;
+              case constants.LIGHTEST:
+                if (this.blendExt) {
+                  gl.blendEquationSeparate(this.blendExt.MAX_EXT, gl.FUNC_ADD);
+                  gl.blendFuncSeparate(gl.ONE, gl.ONE, gl.ONE, gl.ONE);
+                } else {
+                  console.warn(
+                    'blendMode(LIGHTEST) does not work in your browser in WEBGL mode.'
+                  );
+                }
+                break;
+              default:
+                console.error(
+                  'Oops! Somehow RendererGL set curBlendMode to an unsupported mode.'
+                );
+
+                break;
+            }
+
+            if (!this._isErasing) {
+              this._cachedBlendMode = this.curBlendMode;
+            }
+          };
+          var _default = _main.default;
+          exports.default = _default;
+        },
+        { '../core/constants': 48, '../core/main': 59, './p5.Texture': 115 }
+      ],
+      107: [
+        function(_dereq_, module, exports) {
+          'use strict';
+          Object.defineProperty(exports, '__esModule', { value: true });
+          exports.default = void 0;
+
+          var _main = _interopRequireDefault(_dereq_('../core/main'));
+          function _interopRequireDefault(obj) {
+            return obj && obj.__esModule ? obj : { default: obj };
+          } /** ////////////////////////////////////////////////////////////////////////////////
+           * @module Lights, Camera
+           * @submodule Camera
+           * @requires core
+           */
+          // p5.Prototype Methods
+          ////////////////////////////////////////////////////////////////////////////////
+          /**
+           * Sets the camera position for a 3D sketch. Parameters for this function define
+           * the position for the camera, the center of the sketch (where the camera is
+           * pointing), and an up direction (the orientation of the camera).
+           *
+           * This function simulates the movements of the camera, allowing objects to be
+           * viewed from various angles. Remember, it does not move the objects themselves
+           * but the camera instead. For example when centerX value is positive, the camera
+           * is rotating to the right side of the sketch, so the object would seem like
+           * moving to the left.
+           *
+           * See this <a href = "https://www.openprocessing.org/sketch/740258">example</a>
+           * to view the position of your camera.
+           *
+           * When called with no arguments, this function creates a default camera
+           * equivalent to
+           * camera(0, 0, (height/2.0) / tan(PI*30.0 / 180.0), 0, 0, 0, 0, 1, 0);
+           * @method camera
+           * @constructor
+           * @for p5
+           * @param  {Number} [x]        camera position value on x axis
+           * @param  {Number} [y]        camera position value on y axis
+           * @param  {Number} [z]        camera position value on z axis
+           * @param  {Number} [centerX]  x coordinate representing center of the sketch
+           * @param  {Number} [centerY]  y coordinate representing center of the sketch
+           * @param  {Number} [centerZ]  z coordinate representing center of the sketch
+           * @param  {Number} [upX]      x component of direction 'up' from camera
+           * @param  {Number} [upY]      y component of direction 'up' from camera
+           * @param  {Number} [upZ]      z component of direction 'up' from camera
+           * @chainable
+           * @example
+           * <div>
+           * <code>
+           * function setup() {
+           *   createCanvas(100, 100, WEBGL);
+           * }
+           * function draw() {
+           *   background(204);
+           *   //move the camera away from the plane by a sin wave
+           *   camera(0, 0, 20 + sin(frameCount * 0.01) * 10, 0, 0, 0, 0, 1, 0);
+           *   plane(10, 10);
+           * }
+           * </code>
+           * </div>
+           *
+           * @example
+           * <div>
+           * <code>
+           * //move slider to see changes!
+           * //sliders control the first 6 parameters of camera()
+           * let sliderGroup = [];
+           * let X;
+           * let Y;
+           * let Z;
+           * let centerX;
+           * let centerY;
+           * let centerZ;
+           * let h = 20;
+           *
+           * function setup() {
+           *   createCanvas(100, 100, WEBGL);
+           *   //create sliders
+           *   for (var i = 0; i < 6; i++) {
+           *     if (i === 2) {
+           *       sliderGroup[i] = createSlider(10, 400, 200);
+           *     } else {
+           *       sliderGroup[i] = createSlider(-400, 400, 0);
