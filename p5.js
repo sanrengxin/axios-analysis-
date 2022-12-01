@@ -88437,3 +88437,142 @@
            *   specularMaterial(250);
            *   sphere(40);
            * }
+           * </code>
+           * </div>
+           * @alt
+           * diffused radiating light source from top right of canvas
+           */
+
+          /**
+           * @method specularMaterial
+           * @param  {Number[]|String|p5.Color} color color Array, or CSS color string
+           * @chainable
+           */
+          _main.default.prototype.specularMaterial = function(v1, v2, v3, alpha) {
+            this._assert3d('specularMaterial');
+            _main.default._validateParameters('specularMaterial', arguments);
+
+            var color = _main.default.prototype.color.apply(this, arguments);
+            this._renderer.curFillColor = color._array;
+            this._renderer._useSpecularMaterial = true;
+            this._renderer._useEmissiveMaterial = false;
+            this._renderer._useNormalMaterial = false;
+            this._renderer._enableLighting = true;
+            this._renderer._tex = null;
+
+            return this;
+          };
+
+          /**
+           * Sets the amount of gloss in the surface of shapes.
+           * Used in combination with specularMaterial() in setting
+           * the material properties of shapes. The default and minimum value is 1.
+           * @method shininess
+           * @param {Number} shine Degree of Shininess.
+           *                       Defaults to 1.
+           * @chainable
+           * @example
+           * <div>
+           * <code>
+           * function setup() {
+           *   createCanvas(100, 100, WEBGL);
+           * }
+           * function draw() {
+           *   background(0);
+           *   noStroke();
+           *   let locX = mouseX - width / 2;
+           *   let locY = mouseY - height / 2;
+           *   ambientLight(60, 60, 60);
+           *   pointLight(255, 255, 255, locX, locY, 50);
+           *   specularMaterial(250);
+           *   translate(-25, 0, 0);
+           *   shininess(1);
+           *   sphere(20);
+           *   translate(50, 0, 0);
+           *   shininess(20);
+           *   sphere(20);
+           * }
+           * </code>
+           * </div>
+           * @alt
+           * Shininess on Camera changes position with mouse
+           */
+          _main.default.prototype.shininess = function(shine) {
+            this._assert3d('shininess');
+            _main.default._validateParameters('shininess', arguments);
+
+            if (shine < 1) {
+              shine = 1;
+            }
+            this._renderer._useShininess = shine;
+            return this;
+          };
+
+          /**
+           * @private blends colors according to color components.
+           * If alpha value is less than 1, or non-standard blendMode
+           * we need to enable blending on our gl context.
+           * @param  {Number[]} color [description]
+           * @return {Number[]]}  Normalized numbers array
+           */
+          _main.default.RendererGL.prototype._applyColorBlend = function(colors) {
+            var gl = this.GL;
+
+            var isTexture = this.drawMode === constants.TEXTURE;
+            var doBlend = isTexture || colors[colors.length - 1] < 1.0 || this._isErasing;
+
+            if (doBlend !== this._isBlending) {
+              if (
+                doBlend ||
+                (this.curBlendMode !== constants.BLEND &&
+                  this.curBlendMode !== constants.ADD)
+              ) {
+                gl.enable(gl.BLEND);
+              } else {
+                gl.disable(gl.BLEND);
+              }
+              gl.depthMask(true);
+              this._isBlending = doBlend;
+            }
+            this._applyBlendMode();
+            return colors;
+          };
+
+          /**
+           * @private sets blending in gl context to curBlendMode
+           * @param  {Number[]} color [description]
+           * @return {Number[]]}  Normalized numbers array
+           */
+          _main.default.RendererGL.prototype._applyBlendMode = function() {
+            if (this._cachedBlendMode === this.curBlendMode) {
+              return;
+            }
+            var gl = this.GL;
+            switch (this.curBlendMode) {
+              case constants.BLEND:
+              case constants.ADD:
+                gl.blendEquation(gl.FUNC_ADD);
+                gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+                break;
+              case constants.REMOVE:
+                gl.blendEquation(gl.FUNC_REVERSE_SUBTRACT);
+                gl.blendFunc(gl.SRC_ALPHA, gl.DST_ALPHA);
+                break;
+              case constants.MULTIPLY:
+                gl.blendEquationSeparate(gl.FUNC_ADD, gl.FUNC_ADD);
+                gl.blendFuncSeparate(gl.ZERO, gl.SRC_COLOR, gl.ONE, gl.ONE);
+                break;
+              case constants.SCREEN:
+                gl.blendEquationSeparate(gl.FUNC_ADD, gl.FUNC_ADD);
+                gl.blendFuncSeparate(gl.ONE_MINUS_DST_COLOR, gl.ONE, gl.ONE, gl.ONE);
+                break;
+              case constants.EXCLUSION:
+                gl.blendEquationSeparate(gl.FUNC_ADD, gl.FUNC_ADD);
+                gl.blendFuncSeparate(
+                  gl.ONE_MINUS_DST_COLOR,
+                  gl.ONE_MINUS_SRC_COLOR,
+                  gl.ONE,
+                  gl.ONE
+                );
+
+                break;
