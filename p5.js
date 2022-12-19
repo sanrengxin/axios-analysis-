@@ -88704,3 +88704,140 @@
            *       sliderGroup[i] = createSlider(10, 400, 200);
            *     } else {
            *       sliderGroup[i] = createSlider(-400, 400, 0);
+           *     }
+           *     h = map(i, 0, 6, 5, 85);
+           *     sliderGroup[i].position(10, height + h);
+           *     sliderGroup[i].style('width', '80px');
+           *   }
+           * }
+           *
+           * function draw() {
+           *   background(60);
+           *   // assigning sliders' value to each parameters
+           *   X = sliderGroup[0].value();
+           *   Y = sliderGroup[1].value();
+           *   Z = sliderGroup[2].value();
+           *   centerX = sliderGroup[3].value();
+           *   centerY = sliderGroup[4].value();
+           *   centerZ = sliderGroup[5].value();
+           *   camera(X, Y, Z, centerX, centerY, centerZ, 0, 1, 0);
+           *   stroke(255);
+           *   fill(255, 102, 94);
+           *   box(85);
+           * }
+           * </code>
+           * </div>
+           * @alt
+           * White square repeatedly grows to fill canvas and then shrinks.
+           * An interactive example of a red cube with 3 sliders for moving it across x, y,
+           * z axis and 3 sliders for shifting it's center.
+           */ _main.default.prototype.camera = function() {
+            var _this$_renderer$_curC;
+            this._assert3d('camera');
+            for (
+              var _len = arguments.length, args = new Array(_len), _key = 0;
+              _key < _len;
+              _key++
+            ) {
+              args[_key] = arguments[_key];
+            }
+            _main.default._validateParameters('camera', args);
+            (_this$_renderer$_curC = this._renderer._curCamera).camera.apply(
+              _this$_renderer$_curC,
+              args
+            );
+            return this;
+          };
+
+          /**
+           * Sets a perspective projection for the camera in a 3D sketch. This projection
+           * represents depth through foreshortening: objects that are close to the camera
+           * appear their actual size while those that are further away from the camera
+           * appear smaller. The parameters to this function define the viewing frustum
+           * (the truncated pyramid within which objects are seen by the camera) through
+           * vertical field of view, aspect ratio (usually width/height), and near and far
+           * clipping planes.
+           *
+           * When called with no arguments, the defaults
+           * provided are equivalent to
+           * perspective(PI/3.0, width/height, eyeZ/10.0, eyeZ*10.0), where eyeZ
+           * is equal to ((height/2.0) / tan(PI*60.0/360.0));
+           * @method  perspective
+           * @for p5
+           * @param  {Number} [fovy]   camera frustum vertical field of view,
+           *                           from bottom to top of view, in <a href="#/p5/angleMode">angleMode</a> units
+           * @param  {Number} [aspect] camera frustum aspect ratio
+           * @param  {Number} [near]   frustum near plane length
+           * @param  {Number} [far]    frustum far plane length
+           * @chainable
+           * @example
+           * <div>
+           * <code>
+           * //drag the mouse to look around!
+           * function setup() {
+           *   createCanvas(100, 100, WEBGL);
+           *   perspective(PI / 3.0, width / height, 0.1, 500);
+           * }
+           * function draw() {
+           *   background(200);
+           *   orbitControl();
+           *   normalMaterial();
+           *
+           *   rotateX(-0.3);
+           *   rotateY(-0.2);
+           *   translate(0, 0, -50);
+           *
+           *   push();
+           *   translate(-15, 0, sin(frameCount / 30) * 95);
+           *   box(30);
+           *   pop();
+           *   push();
+           *   translate(15, 0, sin(frameCount / 30 + PI) * 95);
+           *   box(30);
+           *   pop();
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * two colored 3D boxes move back and forth, rotating as mouse is dragged.
+           */
+          _main.default.prototype.perspective = function() {
+            var _this$_renderer$_curC2;
+            this._assert3d('perspective');
+            for (
+              var _len2 = arguments.length, args = new Array(_len2), _key2 = 0;
+              _key2 < _len2;
+              _key2++
+            ) {
+              args[_key2] = arguments[_key2];
+            }
+            _main.default._validateParameters('perspective', args);
+            (_this$_renderer$_curC2 = this._renderer._curCamera).perspective.apply(
+              _this$_renderer$_curC2,
+              args
+            );
+            return this;
+          };
+
+          /**
+           * Sets an orthographic projection for the camera in a 3D sketch and defines a
+           * box-shaped viewing frustum within which objects are seen. In this projection,
+           * all objects with the same dimension appear the same size, regardless of
+           * whether they are near or far from the camera. The parameters to this
+           * function specify the viewing frustum where left and right are the minimum and
+           * maximum x values, top and bottom are the minimum and maximum y values, and near
+           * and far are the minimum and maximum z values. If no parameters are given, the
+           * default is used: ortho(-width/2, width/2, -height/2, height/2).
+           * @method  ortho
+           * @for p5
+           * @param  {Number} [left]   camera frustum left plane
+           * @param  {Number} [right]  camera frustum right plane
+           * @param  {Number} [bottom] camera frustum bottom plane
+           * @param  {Number} [top]    camera frustum top plane
+           * @param  {Number} [near]   camera frustum near plane
+           * @param  {Number} [far]    camera frustum far plane
+           * @chainable
+           * @example
+           * <div>
+           * <code>
