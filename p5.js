@@ -88841,3 +88841,124 @@
            * @example
            * <div>
            * <code>
+           * //drag the mouse to look around!
+           * //there's no vanishing point
+           * function setup() {
+           *   createCanvas(100, 100, WEBGL);
+           *   ortho(-width / 2, width / 2, height / 2, -height / 2, 0, 500);
+           * }
+           * function draw() {
+           *   background(200);
+           *   orbitControl();
+           *   normalMaterial();
+           *
+           *   rotateX(0.2);
+           *   rotateY(-0.2);
+           *   push();
+           *   translate(-15, 0, sin(frameCount / 30) * 65);
+           *   box(30);
+           *   pop();
+           *   push();
+           *   translate(15, 0, sin(frameCount / 30 + PI) * 65);
+           *   box(30);
+           *   pop();
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * two 3D boxes move back and forth along same plane, rotating as mouse is dragged.
+           */
+          _main.default.prototype.ortho = function() {
+            var _this$_renderer$_curC3;
+            this._assert3d('ortho');
+            for (
+              var _len3 = arguments.length, args = new Array(_len3), _key3 = 0;
+              _key3 < _len3;
+              _key3++
+            ) {
+              args[_key3] = arguments[_key3];
+            }
+            _main.default._validateParameters('ortho', args);
+            (_this$_renderer$_curC3 = this._renderer._curCamera).ortho.apply(
+              _this$_renderer$_curC3,
+              args
+            );
+            return this;
+          };
+
+          /**
+           * Sets a perspective matrix as defined by the parameters.
+           *
+           * A frustum is a geometric form: a pyramid with its top
+           * cut off. With the viewer's eye at the imaginary top of
+           * the pyramid, the six planes of the frustum act as clipping
+           * planes when rendering a 3D view. Thus, any form inside the
+           * clipping planes is visible; anything outside
+           * those planes is not visible.
+           *
+           * Setting the frustum changes the perspective of the scene being rendered.
+           * This can be achieved more simply in many cases by using
+           * <a href="https://p5js.org/reference/#/p5/perspective">perspective()</a>.
+           *
+           * @method frustum
+           * @for p5
+           * @param  {Number} [left]   camera frustum left plane
+           * @param  {Number} [right]  camera frustum right plane
+           * @param  {Number} [bottom] camera frustum bottom plane
+           * @param  {Number} [top]    camera frustum top plane
+           * @param  {Number} [near]   camera frustum near plane
+           * @param  {Number} [far]    camera frustum far plane
+           * @chainable
+           * @example
+           * <div>
+           * <code>
+           * function setup() {
+           *   createCanvas(100, 100, WEBGL);
+           *   setAttributes('antialias', true);
+           *   frustum(-0.1, 0.1, -0.1, 0.1, 0.1, 200);
+           * }
+           * function draw() {
+           *   background(200);
+           *   orbitControl();
+           *   strokeWeight(10);
+           *   stroke(0, 0, 255);
+           *   noFill();
+           *
+           *   rotateY(-0.2);
+           *   rotateX(-0.3);
+           *   push();
+           *   translate(-15, 0, sin(frameCount / 30) * 25);
+           *   box(30);
+           *   pop();
+           *   push();
+           *   translate(15, 0, sin(frameCount / 30 + PI) * 25);
+           *   box(30);
+           *   pop();
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * two 3D boxes move back and forth along same plane, rotating as mouse is dragged.
+           */
+          _main.default.prototype.frustum = function() {
+            var _this$_renderer$_curC4;
+            this._assert3d('frustum');
+            for (
+              var _len4 = arguments.length, args = new Array(_len4), _key4 = 0;
+              _key4 < _len4;
+              _key4++
+            ) {
+              args[_key4] = arguments[_key4];
+            }
+            _main.default._validateParameters('frustum', args);
+            (_this$_renderer$_curC4 = this._renderer._curCamera).frustum.apply(
+              _this$_renderer$_curC4,
+              args
+            );
+            return this;
+          };
+
+          ////////////////////////////////////////////////////////////////////////////////
+          // p5.Camera
