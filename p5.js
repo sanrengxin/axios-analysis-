@@ -88962,3 +88962,138 @@
 
           ////////////////////////////////////////////////////////////////////////////////
           // p5.Camera
+          ////////////////////////////////////////////////////////////////////////////////
+
+          /**
+           * Creates a new <a href="#/p5.Camera">p5.Camera</a> object and tells the
+           * renderer to use that camera.
+           * Returns the p5.Camera object.
+           * @method createCamera
+           * @return {p5.Camera} The newly created camera object.
+           * @for p5
+           * @example
+           * <div><code>
+           * // Creates a camera object and animates it around a box.
+           * let camera;
+           * function setup() {
+           *   createCanvas(100, 100, WEBGL);
+           *   background(0);
+           *   camera = createCamera();
+           *   setCamera(camera);
+           * }
+           *
+           * function draw() {
+           *   camera.lookAt(0, 0, 0);
+           *   camera.setPosition(sin(frameCount / 60) * 200, 0, 100);
+           *   box(20);
+           * }
+           * </code></div>
+           *
+           * @alt
+           * An example that creates a camera and moves it around the box.
+           */
+          _main.default.prototype.createCamera = function() {
+            this._assert3d('createCamera');
+            var _cam = new _main.default.Camera(this._renderer);
+
+            // compute default camera settings, then set a default camera
+            _cam._computeCameraDefaultSettings();
+            _cam._setDefaultCamera();
+
+            // set renderer current camera to the new camera
+            this._renderer._curCamera = _cam;
+
+            return _cam;
+          };
+
+          /**
+           * This class describes a camera for use in p5's
+           * <a href="https://github.com/processing/p5.js/wiki/Getting-started-with-WebGL-in-p5">
+           * WebGL mode</a>. It contains camera position, orientation, and projection
+           * information necessary for rendering a 3D scene.
+           *
+           * New p5.Camera objects can be made through the
+           * <a href="#/p5/createCamera">createCamera()</a> function and controlled through
+           * the methods described below. A camera created in this way will use a default
+           * position in the scene and a default perspective projection until these
+           * properties are changed through the various methods available. It is possible
+           * to create multiple cameras, in which case the current camera
+           * can be set through the <a href="#/p5/setCamera">setCamera()</a> method.
+           *
+           * Note:
+           * The methods below operate in two coordinate systems: the 'world' coordinate
+           * system describe positions in terms of their relationship to the origin along
+           * the X, Y and Z axes whereas the camera's 'local' coordinate system
+           * describes positions from the camera's point of view: left-right, up-down,
+           * and forward-backward. The <a href="#/p5.Camera/move">move()</a> method,
+           * for instance, moves the camera along its own axes, whereas the
+           * <a href="#/p5.Camera/setPosition">setPosition()</a>
+           * method sets the camera's position in world-space.
+           *
+           * @class p5.Camera
+           * @param {rendererGL} rendererGL instance of WebGL renderer
+           * @example
+           * <div>
+           * <code>
+           * let cam;
+           * let delta = 0.01;
+           *
+           * function setup() {
+           *   createCanvas(100, 100, WEBGL);
+           *   normalMaterial();
+           *   cam = createCamera();
+           *   // set initial pan angle
+           *   cam.pan(-0.8);
+           * }
+           *
+           * function draw() {
+           *   background(200);
+           *
+           *   // pan camera according to angle 'delta'
+           *   cam.pan(delta);
+           *
+           *   // every 160 frames, switch direction
+           *   if (frameCount % 160 === 0) {
+           *     delta *= -1;
+           *   }
+           *
+           *   rotateX(frameCount * 0.01);
+           *   translate(-100, 0, 0);
+           *   box(20);
+           *   translate(35, 0, 0);
+           *   box(20);
+           *   translate(35, 0, 0);
+           *   box(20);
+           *   translate(35, 0, 0);
+           *   box(20);
+           *   translate(35, 0, 0);
+           *   box(20);
+           *   translate(35, 0, 0);
+           *   box(20);
+           *   translate(35, 0, 0);
+           *   box(20);
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * camera view pans left and right across a series of rotating 3D boxes.
+           */
+          _main.default.Camera = function(renderer) {
+            this._renderer = renderer;
+
+            this.cameraType = 'default';
+
+            this.cameraMatrix = new _main.default.Matrix();
+            this.projMatrix = new _main.default.Matrix();
+          };
+
+          ////////////////////////////////////////////////////////////////////////////////
+          // Camera Projection Methods
+          ////////////////////////////////////////////////////////////////////////////////
+
+          /**
+           * Sets a perspective projection for a p5.Camera object and sets parameters
+           * for that projection according to <a href="#/p5/perspective">perspective()</a>
+           * syntax.
+           * @method perspective
