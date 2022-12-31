@@ -89213,3 +89213,142 @@
   0, -y, 0, 0,
   0, 0, z, 0,
   tx, ty, tz, 1);
+
+            if (this._isActive()) {
+              this._renderer.uPMatrix.set(
+                this.projMatrix.mat4[0],
+                this.projMatrix.mat4[1],
+                this.projMatrix.mat4[2],
+                this.projMatrix.mat4[3],
+                this.projMatrix.mat4[4],
+                this.projMatrix.mat4[5],
+                this.projMatrix.mat4[6],
+                this.projMatrix.mat4[7],
+                this.projMatrix.mat4[8],
+                this.projMatrix.mat4[9],
+                this.projMatrix.mat4[10],
+                this.projMatrix.mat4[11],
+                this.projMatrix.mat4[12],
+                this.projMatrix.mat4[13],
+                this.projMatrix.mat4[14],
+                this.projMatrix.mat4[15]
+              );
+            }
+
+            this.cameraType = 'custom';
+          };
+
+          /**
+           * @method frustum
+           * @for p5.Camera
+           */
+          _main.default.Camera.prototype.frustum = function(
+            left,
+            right,
+            bottom,
+            top,
+            near,
+            far
+          ) {
+            if (left === undefined) left = -this._renderer.width / 2;
+            if (right === undefined) right = +this._renderer.width / 2;
+            if (bottom === undefined) bottom = -this._renderer.height / 2;
+            if (top === undefined) top = +this._renderer.height / 2;
+            if (near === undefined) near = 0;
+            if (far === undefined)
+              far = Math.max(this._renderer.width, this._renderer.height);
+
+            var w = right - left;
+            var h = top - bottom;
+            var d = far - near;
+
+            var x = +(2.0 * near) / w;
+            var y = +(2.0 * near) / h;
+            var z = -(2.0 * far * near) / d;
+
+            var tx = (right + left) / w;
+            var ty = (top + bottom) / h;
+            var tz = -(far + near) / d;
+
+            this.projMatrix = _main.default.Matrix.identity();
+
+            // prettier-ignore
+            this.projMatrix.set(x, 0, 0, 0,
+  0, y, 0, 0,
+  tx, ty, tz, -1,
+  0, 0, z, 0);
+
+            if (this._isActive()) {
+              this._renderer.uPMatrix.set(
+                this.projMatrix.mat4[0],
+                this.projMatrix.mat4[1],
+                this.projMatrix.mat4[2],
+                this.projMatrix.mat4[3],
+                this.projMatrix.mat4[4],
+                this.projMatrix.mat4[5],
+                this.projMatrix.mat4[6],
+                this.projMatrix.mat4[7],
+                this.projMatrix.mat4[8],
+                this.projMatrix.mat4[9],
+                this.projMatrix.mat4[10],
+                this.projMatrix.mat4[11],
+                this.projMatrix.mat4[12],
+                this.projMatrix.mat4[13],
+                this.projMatrix.mat4[14],
+                this.projMatrix.mat4[15]
+              );
+            }
+
+            this.cameraType = 'custom';
+          };
+
+          ////////////////////////////////////////////////////////////////////////////////
+          // Camera Orientation Methods
+          ////////////////////////////////////////////////////////////////////////////////
+
+          /**
+           * Rotate camera view about arbitrary axis defined by x,y,z
+           * based on http://learnwebgl.brown37.net/07_cameras/camera_rotating_motion.html
+           * @method _rotateView
+           * @private
+           */
+          _main.default.Camera.prototype._rotateView = function(a, x, y, z) {
+            var centerX = this.centerX;
+            var centerY = this.centerY;
+            var centerZ = this.centerZ;
+
+            // move center by eye position such that rotation happens around eye position
+            centerX -= this.eyeX;
+            centerY -= this.eyeY;
+            centerZ -= this.eyeZ;
+
+            var rotation = _main.default.Matrix.identity(this._renderer._pInst);
+            rotation.rotate(this._renderer._pInst._toRadians(a), x, y, z);
+
+            // prettier-ignore
+            var rotatedCenter = [
+  centerX * rotation.mat4[0] + centerY * rotation.mat4[4] + centerZ * rotation.mat4[8],
+  centerX * rotation.mat4[1] + centerY * rotation.mat4[5] + centerZ * rotation.mat4[9],
+  centerX * rotation.mat4[2] + centerY * rotation.mat4[6] + centerZ * rotation.mat4[10]];
+
+            // add eye position back into center
+            rotatedCenter[0] += this.eyeX;
+            rotatedCenter[1] += this.eyeY;
+            rotatedCenter[2] += this.eyeZ;
+
+            this.camera(
+              this.eyeX,
+              this.eyeY,
+              this.eyeZ,
+              rotatedCenter[0],
+              rotatedCenter[1],
+              rotatedCenter[2],
+              this.upX,
+              this.upY,
+              this.upZ
+            );
+          };
+
+          /**
+           * Panning rotates the camera view to the left and right.
+           * @method pan
