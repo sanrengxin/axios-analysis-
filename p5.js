@@ -89352,3 +89352,134 @@
           /**
            * Panning rotates the camera view to the left and right.
            * @method pan
+           * @param {Number} angle amount to rotate camera in current
+           * <a href="#/p5/angleMode">angleMode</a> units.
+           * Greater than 0 values rotate counterclockwise (to the left).
+           * @example
+           * <div>
+           * <code>
+           * let cam;
+           * let delta = 0.01;
+           *
+           * function setup() {
+           *   createCanvas(100, 100, WEBGL);
+           *   normalMaterial();
+           *   cam = createCamera();
+           *   // set initial pan angle
+           *   cam.pan(-0.8);
+           * }
+           *
+           * function draw() {
+           *   background(200);
+           *
+           *   // pan camera according to angle 'delta'
+           *   cam.pan(delta);
+           *
+           *   // every 160 frames, switch direction
+           *   if (frameCount % 160 === 0) {
+           *     delta *= -1;
+           *   }
+           *
+           *   rotateX(frameCount * 0.01);
+           *   translate(-100, 0, 0);
+           *   box(20);
+           *   translate(35, 0, 0);
+           *   box(20);
+           *   translate(35, 0, 0);
+           *   box(20);
+           *   translate(35, 0, 0);
+           *   box(20);
+           *   translate(35, 0, 0);
+           *   box(20);
+           *   translate(35, 0, 0);
+           *   box(20);
+           *   translate(35, 0, 0);
+           *   box(20);
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * camera view pans left and right across a series of rotating 3D boxes.
+           */
+          _main.default.Camera.prototype.pan = function(amount) {
+            var local = this._getLocalAxes();
+            this._rotateView(amount, local.y[0], local.y[1], local.y[2]);
+          };
+
+          /**
+           * Tilting rotates the camera view up and down.
+           * @method tilt
+           * @param {Number} angle amount to rotate camera in current
+           * <a href="#/p5/angleMode">angleMode</a> units.
+           * Greater than 0 values rotate counterclockwise (to the left).
+           * @example
+           * <div>
+           * <code>
+           * let cam;
+           * let delta = 0.01;
+           *
+           * function setup() {
+           *   createCanvas(100, 100, WEBGL);
+           *   normalMaterial();
+           *   cam = createCamera();
+           *   // set initial tilt
+           *   cam.tilt(-0.8);
+           * }
+           *
+           * function draw() {
+           *   background(200);
+           *
+           *   // pan camera according to angle 'delta'
+           *   cam.tilt(delta);
+           *
+           *   // every 160 frames, switch direction
+           *   if (frameCount % 160 === 0) {
+           *     delta *= -1;
+           *   }
+           *
+           *   rotateY(frameCount * 0.01);
+           *   translate(0, -100, 0);
+           *   box(20);
+           *   translate(0, 35, 0);
+           *   box(20);
+           *   translate(0, 35, 0);
+           *   box(20);
+           *   translate(0, 35, 0);
+           *   box(20);
+           *   translate(0, 35, 0);
+           *   box(20);
+           *   translate(0, 35, 0);
+           *   box(20);
+           *   translate(0, 35, 0);
+           *   box(20);
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * camera view tilts up and down across a series of rotating 3D boxes.
+           */
+          _main.default.Camera.prototype.tilt = function(amount) {
+            var local = this._getLocalAxes();
+            this._rotateView(amount, local.x[0], local.x[1], local.x[2]);
+          };
+
+          /**
+           * Reorients the camera to look at a position in world space.
+           * @method lookAt
+           * @for p5.Camera
+           * @param {Number} x x position of a point in world space
+           * @param {Number} y y position of a point in world space
+           * @param {Number} z z position of a point in world space
+           * @example
+           * <div>
+           * <code>
+           * let cam;
+           *
+           * function setup() {
+           *   createCanvas(100, 100, WEBGL);
+           *   normalMaterial();
+           *   cam = createCamera();
+           * }
+           *
