@@ -89097,3 +89097,119 @@
            * for that projection according to <a href="#/p5/perspective">perspective()</a>
            * syntax.
            * @method perspective
+           * @for p5.Camera
+           */
+          _main.default.Camera.prototype.perspective = function(fovy, aspect, near, far) {
+            this.cameraType = arguments.length > 0 ? 'custom' : 'default';
+            if (typeof fovy === 'undefined') {
+              fovy = this.defaultCameraFOV;
+              // this avoids issue where setting angleMode(DEGREES) before calling
+              // perspective leads to a smaller than expected FOV (because
+              // _computeCameraDefaultSettings computes in radians)
+              this.cameraFOV = fovy;
+            } else {
+              this.cameraFOV = this._renderer._pInst._toRadians(fovy);
+            }
+            if (typeof aspect === 'undefined') {
+              aspect = this.defaultAspectRatio;
+            }
+            if (typeof near === 'undefined') {
+              near = this.defaultCameraNear;
+            }
+            if (typeof far === 'undefined') {
+              far = this.defaultCameraFar;
+            }
+
+            if (near <= 0.0001) {
+              near = 0.01;
+              console.log(
+                'Avoid perspective near plane values close to or below 0. ' +
+                  'Setting value to 0.01.'
+              );
+            }
+
+            if (far < near) {
+              console.log(
+                'Perspective far plane value is less than near plane value. ' +
+                  'Nothing will be shown.'
+              );
+            }
+
+            this.aspectRatio = aspect;
+            this.cameraNear = near;
+            this.cameraFar = far;
+
+            this.projMatrix = _main.default.Matrix.identity();
+
+            var f = 1.0 / Math.tan(this.cameraFOV / 2);
+            var nf = 1.0 / (this.cameraNear - this.cameraFar);
+
+            // prettier-ignore
+            this.projMatrix.set(f / aspect, 0, 0, 0,
+  0, -f, 0, 0,
+  0, 0, (far + near) * nf, -1,
+  0, 0, 2 * far * near * nf, 0);
+
+            if (this._isActive()) {
+              this._renderer.uPMatrix.set(
+                this.projMatrix.mat4[0],
+                this.projMatrix.mat4[1],
+                this.projMatrix.mat4[2],
+                this.projMatrix.mat4[3],
+                this.projMatrix.mat4[4],
+                this.projMatrix.mat4[5],
+                this.projMatrix.mat4[6],
+                this.projMatrix.mat4[7],
+                this.projMatrix.mat4[8],
+                this.projMatrix.mat4[9],
+                this.projMatrix.mat4[10],
+                this.projMatrix.mat4[11],
+                this.projMatrix.mat4[12],
+                this.projMatrix.mat4[13],
+                this.projMatrix.mat4[14],
+                this.projMatrix.mat4[15]
+              );
+            }
+          };
+
+          /**
+           * Sets an orthographic projection for a p5.Camera object and sets parameters
+           * for that projection according to <a href="#/p5/ortho">ortho()</a> syntax.
+           * @method ortho
+           * @for p5.Camera
+           */
+          _main.default.Camera.prototype.ortho = function(
+            left,
+            right,
+            bottom,
+            top,
+            near,
+            far
+          ) {
+            if (left === undefined) left = -this._renderer.width / 2;
+            if (right === undefined) right = +this._renderer.width / 2;
+            if (bottom === undefined) bottom = -this._renderer.height / 2;
+            if (top === undefined) top = +this._renderer.height / 2;
+            if (near === undefined) near = 0;
+            if (far === undefined)
+              far = Math.max(this._renderer.width, this._renderer.height);
+
+            var w = right - left;
+            var h = top - bottom;
+            var d = far - near;
+
+            var x = +2.0 / w;
+            var y = +2.0 / h;
+            var z = -2.0 / d;
+
+            var tx = -(right + left) / w;
+            var ty = -(top + bottom) / h;
+            var tz = -(far + near) / d;
+
+            this.projMatrix = _main.default.Matrix.identity();
+
+            // prettier-ignore
+            this.projMatrix.set(x, 0, 0, 0,
+  0, -y, 0, 0,
+  0, 0, z, 0,
+  tx, ty, tz, 1);
