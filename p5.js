@@ -89603,3 +89603,131 @@
                 this.cameraMatrix.mat4[4],
                 this.cameraMatrix.mat4[5],
                 this.cameraMatrix.mat4[6],
+                this.cameraMatrix.mat4[7],
+                this.cameraMatrix.mat4[8],
+                this.cameraMatrix.mat4[9],
+                this.cameraMatrix.mat4[10],
+                this.cameraMatrix.mat4[11],
+                this.cameraMatrix.mat4[12],
+                this.cameraMatrix.mat4[13],
+                this.cameraMatrix.mat4[14],
+                this.cameraMatrix.mat4[15]
+              );
+            }
+            return this;
+          };
+
+          /**
+           * Move camera along its local axes while maintaining current camera orientation.
+           * @method move
+           * @param {Number} x amount to move along camera's left-right axis
+           * @param {Number} y amount to move along camera's up-down axis
+           * @param {Number} z amount to move along camera's forward-backward axis
+           * @example
+           * <div>
+           * <code>
+           * // see the camera move along its own axes while maintaining its orientation
+           * let cam;
+           * let delta = 0.5;
+           *
+           * function setup() {
+           *   createCanvas(100, 100, WEBGL);
+           *   normalMaterial();
+           *   cam = createCamera();
+           * }
+           *
+           * function draw() {
+           *   background(200);
+           *
+           *   // move the camera along its local axes
+           *   cam.move(delta, delta, 0);
+           *
+           *   // every 100 frames, switch direction
+           *   if (frameCount % 150 === 0) {
+           *     delta *= -1;
+           *   }
+           *
+           *   translate(-10, -10, 0);
+           *   box(50, 8, 50);
+           *   translate(15, 15, 0);
+           *   box(50, 8, 50);
+           *   translate(15, 15, 0);
+           *   box(50, 8, 50);
+           *   translate(15, 15, 0);
+           *   box(50, 8, 50);
+           *   translate(15, 15, 0);
+           *   box(50, 8, 50);
+           *   translate(15, 15, 0);
+           *   box(50, 8, 50);
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * camera view moves along a series of 3D boxes, maintaining the same
+           * orientation throughout the move
+           */
+          _main.default.Camera.prototype.move = function(x, y, z) {
+            var local = this._getLocalAxes();
+
+            // scale local axes by movement amounts
+            // based on http://learnwebgl.brown37.net/07_cameras/camera_linear_motion.html
+            var dx = [local.x[0] * x, local.x[1] * x, local.x[2] * x];
+            var dy = [local.y[0] * y, local.y[1] * y, local.y[2] * y];
+            var dz = [local.z[0] * z, local.z[1] * z, local.z[2] * z];
+
+            this.camera(
+              this.eyeX + dx[0] + dy[0] + dz[0],
+              this.eyeY + dx[1] + dy[1] + dz[1],
+              this.eyeZ + dx[2] + dy[2] + dz[2],
+              this.centerX + dx[0] + dy[0] + dz[0],
+              this.centerY + dx[1] + dy[1] + dz[1],
+              this.centerZ + dx[2] + dy[2] + dz[2],
+              0,
+              1,
+              0
+            );
+          };
+
+          /**
+           * Set camera position in world-space while maintaining current camera
+           * orientation.
+           * @method setPosition
+           * @param {Number} x x position of a point in world space
+           * @param {Number} y y position of a point in world space
+           * @param {Number} z z position of a point in world space
+           * @example
+           * <div>
+           * <code>
+           * // press '1' '2' or '3' keys to set camera position
+           *
+           * let cam;
+           *
+           * function setup() {
+           *   createCanvas(100, 100, WEBGL);
+           *   normalMaterial();
+           *   cam = createCamera();
+           * }
+           *
+           * function draw() {
+           *   background(200);
+           *
+           *   // '1' key
+           *   if (keyIsDown(49)) {
+           *     cam.setPosition(30, 0, 80);
+           *   }
+           *   // '2' key
+           *   if (keyIsDown(50)) {
+           *     cam.setPosition(0, 0, 80);
+           *   }
+           *   // '3' key
+           *   if (keyIsDown(51)) {
+           *     cam.setPosition(-30, 0, 80);
+           *   }
+           *
+           *   box(20);
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
