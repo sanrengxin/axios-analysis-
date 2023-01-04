@@ -89483,3 +89483,123 @@
            *   cam = createCamera();
            * }
            *
+           * function draw() {
+           *   background(200);
+           *
+           *   // look at a new random point every 60 frames
+           *   if (frameCount % 60 === 0) {
+           *     cam.lookAt(random(-100, 100), random(-50, 50), 0);
+           *   }
+           *
+           *   rotateX(frameCount * 0.01);
+           *   translate(-100, 0, 0);
+           *   box(20);
+           *   translate(35, 0, 0);
+           *   box(20);
+           *   translate(35, 0, 0);
+           *   box(20);
+           *   translate(35, 0, 0);
+           *   box(20);
+           *   translate(35, 0, 0);
+           *   box(20);
+           *   translate(35, 0, 0);
+           *   box(20);
+           *   translate(35, 0, 0);
+           *   box(20);
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * camera view of rotating 3D cubes changes to look at a new random
+           * point every second .
+           */
+          _main.default.Camera.prototype.lookAt = function(x, y, z) {
+            this.camera(
+              this.eyeX,
+              this.eyeY,
+              this.eyeZ,
+              x,
+              y,
+              z,
+              this.upX,
+              this.upY,
+              this.upZ
+            );
+          };
+
+          ////////////////////////////////////////////////////////////////////////////////
+          // Camera Position Methods
+          ////////////////////////////////////////////////////////////////////////////////
+
+          /**
+           * Sets a camera's position and orientation.  This is equivalent to calling
+           * <a href="#/p5/camera">camera()</a> on a p5.Camera object.
+           * @method camera
+           * @for p5.Camera
+           */
+          _main.default.Camera.prototype.camera = function(
+            eyeX,
+            eyeY,
+            eyeZ,
+            centerX,
+            centerY,
+            centerZ,
+            upX,
+            upY,
+            upZ
+          ) {
+            if (typeof eyeX === 'undefined') {
+              eyeX = this.defaultEyeX;
+              eyeY = this.defaultEyeY;
+              eyeZ = this.defaultEyeZ;
+              centerX = eyeX;
+              centerY = eyeY;
+              centerZ = 0;
+              upX = 0;
+              upY = 1;
+              upZ = 0;
+            }
+
+            this.eyeX = eyeX;
+            this.eyeY = eyeY;
+            this.eyeZ = eyeZ;
+
+            if (typeof centerX !== 'undefined') {
+              this.centerX = centerX;
+              this.centerY = centerY;
+              this.centerZ = centerZ;
+            }
+
+            if (typeof upX !== 'undefined') {
+              this.upX = upX;
+              this.upY = upY;
+              this.upZ = upZ;
+            }
+
+            var local = this._getLocalAxes();
+
+            // the camera affects the model view matrix, insofar as it
+            // inverse translates the world to the eye position of the camera
+            // and rotates it.
+            // prettier-ignore
+            this.cameraMatrix.set(local.x[0], local.y[0], local.z[0], 0,
+  local.x[1], local.y[1], local.z[1], 0,
+  local.x[2], local.y[2], local.z[2], 0,
+  0, 0, 0, 1);
+
+            var tx = -eyeX;
+            var ty = -eyeY;
+            var tz = -eyeZ;
+
+            this.cameraMatrix.translate([tx, ty, tz]);
+
+            if (this._isActive()) {
+              this._renderer.uMVMatrix.set(
+                this.cameraMatrix.mat4[0],
+                this.cameraMatrix.mat4[1],
+                this.cameraMatrix.mat4[2],
+                this.cameraMatrix.mat4[3],
+                this.cameraMatrix.mat4[4],
+                this.cameraMatrix.mat4[5],
+                this.cameraMatrix.mat4[6],
