@@ -89731,3 +89731,155 @@
            * </div>
            *
            * @alt
+           * camera position changes as the user presses keys, altering view of a 3D box
+           */
+          _main.default.Camera.prototype.setPosition = function(x, y, z) {
+            var diffX = x - this.eyeX;
+            var diffY = y - this.eyeY;
+            var diffZ = z - this.eyeZ;
+
+            this.camera(
+              x,
+              y,
+              z,
+              this.centerX + diffX,
+              this.centerY + diffY,
+              this.centerZ + diffZ,
+              0,
+              1,
+              0
+            );
+          };
+
+          ////////////////////////////////////////////////////////////////////////////////
+          // Camera Helper Methods
+          ////////////////////////////////////////////////////////////////////////////////
+
+          // @TODO: combine this function with _setDefaultCamera to compute these values
+          // as-needed
+          _main.default.Camera.prototype._computeCameraDefaultSettings = function() {
+            this.defaultCameraFOV = 60 / 180 * Math.PI;
+            this.defaultAspectRatio = this._renderer.width / this._renderer.height;
+            this.defaultEyeX = 0;
+            this.defaultEyeY = 0;
+            this.defaultEyeZ =
+              this._renderer.height / 2.0 / Math.tan(this.defaultCameraFOV / 2.0);
+            this.defaultCenterX = 0;
+            this.defaultCenterY = 0;
+            this.defaultCenterZ = 0;
+            this.defaultCameraNear = this.defaultEyeZ * 0.1;
+            this.defaultCameraFar = this.defaultEyeZ * 10;
+          };
+
+          //detect if user didn't set the camera
+          //then call this function below
+          _main.default.Camera.prototype._setDefaultCamera = function() {
+            this.cameraFOV = this.defaultCameraFOV;
+            this.aspectRatio = this.defaultAspectRatio;
+            this.eyeX = this.defaultEyeX;
+            this.eyeY = this.defaultEyeY;
+            this.eyeZ = this.defaultEyeZ;
+            this.centerX = this.defaultCenterX;
+            this.centerY = this.defaultCenterY;
+            this.centerZ = this.defaultCenterZ;
+            this.upX = 0;
+            this.upY = 1;
+            this.upZ = 0;
+            this.cameraNear = this.defaultCameraNear;
+            this.cameraFar = this.defaultCameraFar;
+
+            this.perspective();
+            this.camera();
+
+            this.cameraType = 'default';
+          };
+
+          _main.default.Camera.prototype._resize = function() {
+            // If we're using the default camera, update the aspect ratio
+            if (this.cameraType === 'default') {
+              this._computeCameraDefaultSettings();
+              this._setDefaultCamera();
+            } else {
+              this.perspective(
+                this.cameraFOV,
+                this._renderer.width / this._renderer.height
+              );
+            }
+          };
+
+          /**
+           * Returns a copy of a camera.
+           * @method copy
+           * @private
+           */
+          _main.default.Camera.prototype.copy = function() {
+            var _cam = new _main.default.Camera(this._renderer);
+            _cam.cameraFOV = this.cameraFOV;
+            _cam.aspectRatio = this.aspectRatio;
+            _cam.eyeX = this.eyeX;
+            _cam.eyeY = this.eyeY;
+            _cam.eyeZ = this.eyeZ;
+            _cam.centerX = this.centerX;
+            _cam.centerY = this.centerY;
+            _cam.centerZ = this.centerZ;
+            _cam.cameraNear = this.cameraNear;
+            _cam.cameraFar = this.cameraFar;
+
+            _cam.cameraType = this.cameraType;
+
+            _cam.cameraMatrix = this.cameraMatrix.copy();
+            _cam.projMatrix = this.projMatrix.copy();
+
+            return _cam;
+          };
+
+          /**
+           * Returns a camera's local axes: left-right, up-down, and forward-backward,
+           * as defined by vectors in world-space.
+           * @method _getLocalAxes
+           * @private
+           */
+          _main.default.Camera.prototype._getLocalAxes = function() {
+            // calculate camera local Z vector
+            var z0 = this.eyeX - this.centerX;
+            var z1 = this.eyeY - this.centerY;
+            var z2 = this.eyeZ - this.centerZ;
+
+            // normalize camera local Z vector
+            var eyeDist = Math.sqrt(z0 * z0 + z1 * z1 + z2 * z2);
+            if (eyeDist !== 0) {
+              z0 /= eyeDist;
+              z1 /= eyeDist;
+              z2 /= eyeDist;
+            }
+
+            // calculate camera Y vector
+            var y0 = this.upX;
+            var y1 = this.upY;
+            var y2 = this.upZ;
+
+            // compute camera local X vector as up vector (local Y) cross local Z
+            var x0 = y1 * z2 - y2 * z1;
+            var x1 = -y0 * z2 + y2 * z0;
+            var x2 = y0 * z1 - y1 * z0;
+
+            // recompute y = z cross x
+            y0 = z1 * x2 - z2 * x1;
+            y1 = -z0 * x2 + z2 * x0;
+            y2 = z0 * x1 - z1 * x0;
+
+            // cross product gives area of parallelogram, which is < 1.0 for
+            // non-perpendicular unit-length vectors; so normalize x, y here:
+            var xmag = Math.sqrt(x0 * x0 + x1 * x1 + x2 * x2);
+            if (xmag !== 0) {
+              x0 /= xmag;
+              x1 /= xmag;
+              x2 /= xmag;
+            }
+
+            var ymag = Math.sqrt(y0 * y0 + y1 * y1 + y2 * y2);
+            if (ymag !== 0) {
+              y0 /= ymag;
+              y1 /= ymag;
+              y2 /= ymag;
+            }
