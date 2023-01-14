@@ -89883,3 +89883,125 @@
               y1 /= ymag;
               y2 /= ymag;
             }
+
+            return {
+              x: [x0, x1, x2],
+              y: [y0, y1, y2],
+              z: [z0, z1, z2]
+            };
+          };
+
+          /**
+           * Orbits the camera about center point. For use with orbitControl().
+           * @method _orbit
+           * @private
+           * @param {Number} dTheta change in spherical coordinate theta
+           * @param {Number} dPhi change in spherical coordinate phi
+           * @param {Number} dRadius change in radius
+           */
+          _main.default.Camera.prototype._orbit = function(dTheta, dPhi, dRadius) {
+            var diffX = this.eyeX - this.centerX;
+            var diffY = this.eyeY - this.centerY;
+            var diffZ = this.eyeZ - this.centerZ;
+
+            // get spherical coorinates for current camera position about origin
+            var camRadius = Math.sqrt(diffX * diffX + diffY * diffY + diffZ * diffZ);
+            // from https://github.com/mrdoob/three.js/blob/dev/src/math/Spherical.js#L72-L73
+            var camTheta = Math.atan2(diffX, diffZ); // equatorial angle
+            var camPhi = Math.acos(Math.max(-1, Math.min(1, diffY / camRadius))); // polar angle
+
+            // add change
+            camTheta += dTheta;
+            camPhi += dPhi;
+            camRadius += dRadius;
+
+            // prevent zooming through the center:
+            if (camRadius < 0) {
+              camRadius = 0.1;
+            }
+
+            // prevent rotation over the zenith / under bottom
+            if (camPhi > Math.PI) {
+              camPhi = Math.PI;
+            } else if (camPhi <= 0) {
+              camPhi = 0.001;
+            }
+
+            // from https://github.com/mrdoob/three.js/blob/dev/src/math/Vector3.js#L628-L632
+            var _x = Math.sin(camPhi) * camRadius * Math.sin(camTheta);
+            var _y = Math.cos(camPhi) * camRadius;
+            var _z = Math.sin(camPhi) * camRadius * Math.cos(camTheta);
+
+            this.camera(
+              _x + this.centerX,
+              _y + this.centerY,
+              _z + this.centerZ,
+              this.centerX,
+              this.centerY,
+              this.centerZ,
+              0,
+              1,
+              0
+            );
+          };
+
+          /**
+           * Returns true if camera is currently attached to renderer.
+           * @method _isActive
+           * @private
+           */
+          _main.default.Camera.prototype._isActive = function() {
+            return this === this._renderer._curCamera;
+          };
+
+          /**
+           * Sets rendererGL's current camera to a p5.Camera object.  Allows switching
+           * between multiple cameras.
+           * @method setCamera
+           * @param  {p5.Camera} cam  p5.Camera object
+           * @for p5
+           * @example
+           * <div>
+           * <code>
+           * let cam1, cam2;
+           * let currentCamera;
+           *
+           * function setup() {
+           *   createCanvas(100, 100, WEBGL);
+           *   normalMaterial();
+           *
+           *   cam1 = createCamera();
+           *   cam2 = createCamera();
+           *   cam2.setPosition(30, 0, 50);
+           *   cam2.lookAt(0, 0, 0);
+           *   cam2.ortho();
+           *
+           *   // set variable for previously active camera:
+           *   currentCamera = 1;
+           * }
+           *
+           * function draw() {
+           *   background(200);
+           *
+           *   // camera 1:
+           *   cam1.lookAt(0, 0, 0);
+           *   cam1.setPosition(sin(frameCount / 60) * 200, 0, 100);
+           *
+           *   // every 100 frames, switch between the two cameras
+           *   if (frameCount % 100 === 0) {
+           *     if (currentCamera === 1) {
+           *       setCamera(cam1);
+           *       currentCamera = 0;
+           *     } else {
+           *       setCamera(cam2);
+           *       currentCamera = 1;
+           *     }
+           *   }
+           *
+           *   drawBoxes();
+           * }
+           *
+           * function drawBoxes() {
+           *   rotateX(frameCount * 0.01);
+           *   translate(-100, 0, 0);
+           *   box(20);
