@@ -90394,3 +90394,135 @@
            * @constructor
            * @param {Array} [mat4] array literal of our 4x4 matrix
            */
+          _main.default.Matrix = function() {
+            var args = new Array(arguments.length);
+            for (var i = 0; i < args.length; ++i) {
+              args[i] = arguments[i];
+            }
+
+            // This is default behavior when object
+            // instantiated using createMatrix()
+            // @todo implement createMatrix() in core/math.js
+            if (args.length && args[args.length - 1] instanceof _main.default) {
+              this.p5 = args[args.length - 1];
+            }
+
+            if (args[0] === 'mat3') {
+              this.mat3 = Array.isArray(args[1])
+                ? args[1]
+                : new GLMAT_ARRAY_TYPE([1, 0, 0, 0, 1, 0, 0, 0, 1]);
+            } else {
+              this.mat4 = Array.isArray(args[0])
+                ? args[0]
+                : new GLMAT_ARRAY_TYPE([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
+            }
+            return this;
+          };
+
+          /**
+           * Sets the x, y, and z component of the vector using two or three separate
+           * variables, the data from a p5.Matrix, or the values from a float array.
+           *
+           * @method set
+           * @param {p5.Matrix|Float32Array|Number[]} [inMatrix] the input p5.Matrix or
+           *                                     an Array of length 16
+           * @chainable
+           */
+          /**
+           * @method set
+           * @param {Number[]} elements 16 numbers passed by value to avoid
+           *                                     array copying.
+           * @chainable
+           */
+          _main.default.Matrix.prototype.set = function(inMatrix) {
+            if (inMatrix instanceof _main.default.Matrix) {
+              this.mat4 = inMatrix.mat4;
+              return this;
+            } else if (isMatrixArray(inMatrix)) {
+              this.mat4 = inMatrix;
+              return this;
+            } else if (arguments.length === 16) {
+              this.mat4[0] = arguments[0];
+              this.mat4[1] = arguments[1];
+              this.mat4[2] = arguments[2];
+              this.mat4[3] = arguments[3];
+              this.mat4[4] = arguments[4];
+              this.mat4[5] = arguments[5];
+              this.mat4[6] = arguments[6];
+              this.mat4[7] = arguments[7];
+              this.mat4[8] = arguments[8];
+              this.mat4[9] = arguments[9];
+              this.mat4[10] = arguments[10];
+              this.mat4[11] = arguments[11];
+              this.mat4[12] = arguments[12];
+              this.mat4[13] = arguments[13];
+              this.mat4[14] = arguments[14];
+              this.mat4[15] = arguments[15];
+            }
+            return this;
+          };
+
+          /**
+           * Gets a copy of the vector, returns a p5.Matrix object.
+           *
+           * @method get
+           * @return {p5.Matrix} the copy of the p5.Matrix object
+           */
+          _main.default.Matrix.prototype.get = function() {
+            return new _main.default.Matrix(this.mat4, this.p5);
+          };
+
+          /**
+           * return a copy of a matrix
+           * @method copy
+           * @return {p5.Matrix}   the result matrix
+           */
+          _main.default.Matrix.prototype.copy = function() {
+            var copied = new _main.default.Matrix(this.p5);
+            copied.mat4[0] = this.mat4[0];
+            copied.mat4[1] = this.mat4[1];
+            copied.mat4[2] = this.mat4[2];
+            copied.mat4[3] = this.mat4[3];
+            copied.mat4[4] = this.mat4[4];
+            copied.mat4[5] = this.mat4[5];
+            copied.mat4[6] = this.mat4[6];
+            copied.mat4[7] = this.mat4[7];
+            copied.mat4[8] = this.mat4[8];
+            copied.mat4[9] = this.mat4[9];
+            copied.mat4[10] = this.mat4[10];
+            copied.mat4[11] = this.mat4[11];
+            copied.mat4[12] = this.mat4[12];
+            copied.mat4[13] = this.mat4[13];
+            copied.mat4[14] = this.mat4[14];
+            copied.mat4[15] = this.mat4[15];
+            return copied;
+          };
+
+          /**
+           * return an identity matrix
+           * @method identity
+           * @return {p5.Matrix}   the result matrix
+           */
+          _main.default.Matrix.identity = function(pInst) {
+            return new _main.default.Matrix(pInst);
+          };
+
+          /**
+           * transpose according to a given matrix
+           * @method transpose
+           * @param  {p5.Matrix|Float32Array|Number[]} a  the matrix to be
+           *                                               based on to transpose
+           * @chainable
+           */
+          _main.default.Matrix.prototype.transpose = function(a) {
+            var a01, a02, a03, a12, a13, a23;
+            if (a instanceof _main.default.Matrix) {
+              a01 = a.mat4[1];
+              a02 = a.mat4[2];
+              a03 = a.mat4[3];
+              a12 = a.mat4[6];
+              a13 = a.mat4[7];
+              a23 = a.mat4[11];
+
+              this.mat4[0] = a.mat4[0];
+              this.mat4[1] = a.mat4[4];
