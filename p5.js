@@ -90005,3 +90005,284 @@
            *   rotateX(frameCount * 0.01);
            *   translate(-100, 0, 0);
            *   box(20);
+           *   translate(35, 0, 0);
+           *   box(20);
+           *   translate(35, 0, 0);
+           *   box(20);
+           *   translate(35, 0, 0);
+           *   box(20);
+           *   translate(35, 0, 0);
+           *   box(20);
+           *   translate(35, 0, 0);
+           *   box(20);
+           *   translate(35, 0, 0);
+           *   box(20);
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * Canvas switches between two camera views, each showing a series of spinning
+           * 3D boxes.
+           */
+          _main.default.prototype.setCamera = function(cam) {
+            this._renderer._curCamera = cam;
+
+            // set the projection matrix (which is not normally updated each frame)
+            this._renderer.uPMatrix.set(
+              cam.projMatrix.mat4[0],
+              cam.projMatrix.mat4[1],
+              cam.projMatrix.mat4[2],
+              cam.projMatrix.mat4[3],
+              cam.projMatrix.mat4[4],
+              cam.projMatrix.mat4[5],
+              cam.projMatrix.mat4[6],
+              cam.projMatrix.mat4[7],
+              cam.projMatrix.mat4[8],
+              cam.projMatrix.mat4[9],
+              cam.projMatrix.mat4[10],
+              cam.projMatrix.mat4[11],
+              cam.projMatrix.mat4[12],
+              cam.projMatrix.mat4[13],
+              cam.projMatrix.mat4[14],
+              cam.projMatrix.mat4[15]
+            );
+          };
+          var _default = _main.default.Camera;
+          exports.default = _default;
+        },
+        { '../core/main': 59 }
+      ],
+      108: [
+        function(_dereq_, module, exports) {
+          'use strict';
+          Object.defineProperty(exports, '__esModule', { value: true });
+          exports.default = void 0;
+
+          var _main = _interopRequireDefault(_dereq_('../core/main'));
+          function _interopRequireDefault(obj) {
+            return obj && obj.__esModule ? obj : { default: obj };
+          } /** //some of the functions are adjusted from Three.js(http://threejs.org)
+           * @module Lights, Camera
+           * @submodule Material
+           * @for p5
+           * @requires core
+           * @requires p5.Geometry
+           */
+          /**
+           * p5 Geometry class
+           * @class p5.Geometry
+           * @constructor
+           * @param  {Integer} [detailX] number of vertices on horizontal surface
+           * @param  {Integer} [detailY] number of vertices on horizontal surface
+           * @param {function} [callback] function to call upon object instantiation.
+           */ _main.default.Geometry = function(detailX, detailY, callback) {
+            //an array containing every vertex
+            //@type [p5.Vector]
+            this.vertices = []; //an array containing every vertex for stroke drawing
+            this.lineVertices = []; //an array 1 normal per lineVertex with
+            //final position representing which direction to
+            //displace for strokeWeight
+            //[[0,0,-1,1], [0,1,0,-1] ...];
+            this.lineNormals = [];
+
+            //an array containing 1 normal per vertex
+            //@type [p5.Vector]
+            //[p5.Vector, p5.Vector, p5.Vector,p5.Vector, p5.Vector, p5.Vector,...]
+            this.vertexNormals = [];
+            //an array containing each three vertex indices that form a face
+            //[[0, 1, 2], [2, 1, 3], ...]
+            this.faces = [];
+            //a 2D array containing uvs for every vertex
+            //[[0.0,0.0],[1.0,0.0], ...]
+            this.uvs = [];
+            // a 2D array containing edge connectivity pattern for create line vertices
+            //based on faces for most objects;
+            this.edges = [];
+            this.vertexColors = [];
+            this.detailX = detailX !== undefined ? detailX : 1;
+            this.detailY = detailY !== undefined ? detailY : 1;
+            this.dirtyFlags = {};
+
+            if (callback instanceof Function) {
+              callback.call(this);
+            }
+            return this; // TODO: is this a constructor?
+          };
+
+          _main.default.Geometry.prototype.reset = function() {
+            this.lineVertices.length = 0;
+            this.lineNormals.length = 0;
+
+            this.vertices.length = 0;
+            this.edges.length = 0;
+            this.vertexColors.length = 0;
+            this.vertexNormals.length = 0;
+            this.uvs.length = 0;
+
+            this.dirtyFlags = {};
+          };
+
+          /**
+           * computes faces for geometry objects based on the vertices.
+           * @method computeFaces
+           * @chainable
+           */
+          _main.default.Geometry.prototype.computeFaces = function() {
+            this.faces.length = 0;
+            var sliceCount = this.detailX + 1;
+            var a, b, c, d;
+            for (var i = 0; i < this.detailY; i++) {
+              for (var j = 0; j < this.detailX; j++) {
+                a = i * sliceCount + j; // + offset;
+                b = i * sliceCount + j + 1; // + offset;
+                c = (i + 1) * sliceCount + j + 1; // + offset;
+                d = (i + 1) * sliceCount + j; // + offset;
+                this.faces.push([a, b, d]);
+                this.faces.push([d, b, c]);
+              }
+            }
+            return this;
+          };
+
+          _main.default.Geometry.prototype._getFaceNormal = function(faceId) {
+            //This assumes that vA->vB->vC is a counter-clockwise ordering
+            var face = this.faces[faceId];
+            var vA = this.vertices[face[0]];
+            var vB = this.vertices[face[1]];
+            var vC = this.vertices[face[2]];
+            var ab = _main.default.Vector.sub(vB, vA);
+            var ac = _main.default.Vector.sub(vC, vA);
+            var n = _main.default.Vector.cross(ab, ac);
+            var ln = _main.default.Vector.mag(n);
+            var sinAlpha =
+              ln / (_main.default.Vector.mag(ab) * _main.default.Vector.mag(ac));
+            if (sinAlpha === 0 || isNaN(sinAlpha)) {
+              console.warn(
+                'p5.Geometry.prototype._getFaceNormal:',
+                'face has colinear sides or a repeated vertex'
+              );
+
+              return n;
+            }
+            if (sinAlpha > 1) sinAlpha = 1; // handle float rounding error
+            return n.mult(Math.asin(sinAlpha) / ln);
+          };
+          /**
+           * computes smooth normals per vertex as an average of each
+           * face.
+           * @method computeNormals
+           * @chainable
+           */
+          _main.default.Geometry.prototype.computeNormals = function() {
+            var vertexNormals = this.vertexNormals;
+            var vertices = this.vertices;
+            var faces = this.faces;
+            var iv;
+
+            // initialize the vertexNormals array with empty vectors
+            vertexNormals.length = 0;
+            for (iv = 0; iv < vertices.length; ++iv) {
+              vertexNormals.push(new _main.default.Vector());
+            }
+
+            // loop through all the faces adding its normal to the normal
+            // of each of its vertices
+            for (var f = 0; f < faces.length; ++f) {
+              var face = faces[f];
+              var faceNormal = this._getFaceNormal(f);
+
+              // all three vertices get the normal added
+              for (var fv = 0; fv < 3; ++fv) {
+                var vertexIndex = face[fv];
+                vertexNormals[vertexIndex].add(faceNormal);
+              }
+            }
+
+            // normalize the normals
+            for (iv = 0; iv < vertices.length; ++iv) {
+              vertexNormals[iv].normalize();
+            }
+
+            return this;
+          };
+
+          /**
+           * Averages the vertex normals. Used in curved
+           * surfaces
+           * @method averageNormals
+           * @chainable
+           */
+          _main.default.Geometry.prototype.averageNormals = function() {
+            for (var i = 0; i <= this.detailY; i++) {
+              var offset = this.detailX + 1;
+              var temp = _main.default.Vector.add(
+                this.vertexNormals[i * offset],
+                this.vertexNormals[i * offset + this.detailX]
+              );
+
+              temp = _main.default.Vector.div(temp, 2);
+              this.vertexNormals[i * offset] = temp;
+              this.vertexNormals[i * offset + this.detailX] = temp;
+            }
+            return this;
+          };
+
+          /**
+           * Averages pole normals.  Used in spherical primitives
+           * @method averagePoleNormals
+           * @chainable
+           */
+          _main.default.Geometry.prototype.averagePoleNormals = function() {
+            //average the north pole
+            var sum = new _main.default.Vector(0, 0, 0);
+            for (var i = 0; i < this.detailX; i++) {
+              sum.add(this.vertexNormals[i]);
+            }
+            sum = _main.default.Vector.div(sum, this.detailX);
+
+            for (var _i = 0; _i < this.detailX; _i++) {
+              this.vertexNormals[_i] = sum;
+            }
+
+            //average the south pole
+            sum = new _main.default.Vector(0, 0, 0);
+            for (
+              var _i2 = this.vertices.length - 1;
+              _i2 > this.vertices.length - 1 - this.detailX;
+              _i2--
+            ) {
+              sum.add(this.vertexNormals[_i2]);
+            }
+            sum = _main.default.Vector.div(sum, this.detailX);
+
+            for (
+              var _i3 = this.vertices.length - 1;
+              _i3 > this.vertices.length - 1 - this.detailX;
+              _i3--
+            ) {
+              this.vertexNormals[_i3] = sum;
+            }
+            return this;
+          };
+
+          /**
+           * Create a 2D array for establishing stroke connections
+           * @private
+           * @chainable
+           */
+          _main.default.Geometry.prototype._makeTriangleEdges = function() {
+            this.edges.length = 0;
+            if (Array.isArray(this.strokeIndices)) {
+              for (var i = 0, max = this.strokeIndices.length; i < max; i++) {
+                this.edges.push(this.strokeIndices[i]);
+              }
+            } else {
+              for (var j = 0; j < this.faces.length; j++) {
+                this.edges.push([this.faces[j][0], this.faces[j][1]]);
+                this.edges.push([this.faces[j][1], this.faces[j][2]]);
+                this.edges.push([this.faces[j][2], this.faces[j][0]]);
+              }
+            }
+            return this;
+          };
