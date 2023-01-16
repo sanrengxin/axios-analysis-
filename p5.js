@@ -90526,3 +90526,142 @@
 
               this.mat4[0] = a.mat4[0];
               this.mat4[1] = a.mat4[4];
+              this.mat4[2] = a.mat4[8];
+              this.mat4[3] = a.mat4[12];
+              this.mat4[4] = a01;
+              this.mat4[5] = a.mat4[5];
+              this.mat4[6] = a.mat4[9];
+              this.mat4[7] = a.mat4[13];
+              this.mat4[8] = a02;
+              this.mat4[9] = a12;
+              this.mat4[10] = a.mat4[10];
+              this.mat4[11] = a.mat4[14];
+              this.mat4[12] = a03;
+              this.mat4[13] = a13;
+              this.mat4[14] = a23;
+              this.mat4[15] = a.mat4[15];
+            } else if (isMatrixArray(a)) {
+              a01 = a[1];
+              a02 = a[2];
+              a03 = a[3];
+              a12 = a[6];
+              a13 = a[7];
+              a23 = a[11];
+
+              this.mat4[0] = a[0];
+              this.mat4[1] = a[4];
+              this.mat4[2] = a[8];
+              this.mat4[3] = a[12];
+              this.mat4[4] = a01;
+              this.mat4[5] = a[5];
+              this.mat4[6] = a[9];
+              this.mat4[7] = a[13];
+              this.mat4[8] = a02;
+              this.mat4[9] = a12;
+              this.mat4[10] = a[10];
+              this.mat4[11] = a[14];
+              this.mat4[12] = a03;
+              this.mat4[13] = a13;
+              this.mat4[14] = a23;
+              this.mat4[15] = a[15];
+            }
+            return this;
+          };
+
+          /**
+           * invert  matrix according to a give matrix
+           * @method invert
+           * @param  {p5.Matrix|Float32Array|Number[]} a   the matrix to be
+           *                                                based on to invert
+           * @chainable
+           */
+          _main.default.Matrix.prototype.invert = function(a) {
+            var a00, a01, a02, a03, a10, a11, a12, a13;
+            var a20, a21, a22, a23, a30, a31, a32, a33;
+            if (a instanceof _main.default.Matrix) {
+              a00 = a.mat4[0];
+              a01 = a.mat4[1];
+              a02 = a.mat4[2];
+              a03 = a.mat4[3];
+              a10 = a.mat4[4];
+              a11 = a.mat4[5];
+              a12 = a.mat4[6];
+              a13 = a.mat4[7];
+              a20 = a.mat4[8];
+              a21 = a.mat4[9];
+              a22 = a.mat4[10];
+              a23 = a.mat4[11];
+              a30 = a.mat4[12];
+              a31 = a.mat4[13];
+              a32 = a.mat4[14];
+              a33 = a.mat4[15];
+            } else if (isMatrixArray(a)) {
+              a00 = a[0];
+              a01 = a[1];
+              a02 = a[2];
+              a03 = a[3];
+              a10 = a[4];
+              a11 = a[5];
+              a12 = a[6];
+              a13 = a[7];
+              a20 = a[8];
+              a21 = a[9];
+              a22 = a[10];
+              a23 = a[11];
+              a30 = a[12];
+              a31 = a[13];
+              a32 = a[14];
+              a33 = a[15];
+            }
+            var b00 = a00 * a11 - a01 * a10;
+            var b01 = a00 * a12 - a02 * a10;
+            var b02 = a00 * a13 - a03 * a10;
+            var b03 = a01 * a12 - a02 * a11;
+            var b04 = a01 * a13 - a03 * a11;
+            var b05 = a02 * a13 - a03 * a12;
+            var b06 = a20 * a31 - a21 * a30;
+            var b07 = a20 * a32 - a22 * a30;
+            var b08 = a20 * a33 - a23 * a30;
+            var b09 = a21 * a32 - a22 * a31;
+            var b10 = a21 * a33 - a23 * a31;
+            var b11 = a22 * a33 - a23 * a32;
+
+            // Calculate the determinant
+            var det = b00 * b11 - b01 * b10 + b02 * b09 + b03 * b08 - b04 * b07 + b05 * b06;
+
+            if (!det) {
+              return null;
+            }
+            det = 1.0 / det;
+
+            this.mat4[0] = (a11 * b11 - a12 * b10 + a13 * b09) * det;
+            this.mat4[1] = (a02 * b10 - a01 * b11 - a03 * b09) * det;
+            this.mat4[2] = (a31 * b05 - a32 * b04 + a33 * b03) * det;
+            this.mat4[3] = (a22 * b04 - a21 * b05 - a23 * b03) * det;
+            this.mat4[4] = (a12 * b08 - a10 * b11 - a13 * b07) * det;
+            this.mat4[5] = (a00 * b11 - a02 * b08 + a03 * b07) * det;
+            this.mat4[6] = (a32 * b02 - a30 * b05 - a33 * b01) * det;
+            this.mat4[7] = (a20 * b05 - a22 * b02 + a23 * b01) * det;
+            this.mat4[8] = (a10 * b10 - a11 * b08 + a13 * b06) * det;
+            this.mat4[9] = (a01 * b08 - a00 * b10 - a03 * b06) * det;
+            this.mat4[10] = (a30 * b04 - a31 * b02 + a33 * b00) * det;
+            this.mat4[11] = (a21 * b02 - a20 * b04 - a23 * b00) * det;
+            this.mat4[12] = (a11 * b07 - a10 * b09 - a12 * b06) * det;
+            this.mat4[13] = (a00 * b09 - a01 * b07 + a02 * b06) * det;
+            this.mat4[14] = (a31 * b01 - a30 * b03 - a32 * b00) * det;
+            this.mat4[15] = (a20 * b03 - a21 * b01 + a22 * b00) * det;
+
+            return this;
+          };
+
+          /**
+           * Inverts a 3x3 matrix
+           * @method invert3x3
+           * @chainable
+           */
+          _main.default.Matrix.prototype.invert3x3 = function() {
+            var a00 = this.mat3[0];
+            var a01 = this.mat3[1];
+            var a02 = this.mat3[2];
+            var a10 = this.mat3[3];
+            var a11 = this.mat3[4];
