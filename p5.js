@@ -90286,3 +90286,111 @@
             }
             return this;
           };
+
+          /**
+           * Create 4 vertices for each stroke line, two at the beginning position
+           * and two at the end position. These vertices are displaced relative to
+           * that line's normal on the GPU
+           * @private
+           * @chainable
+           */
+          _main.default.Geometry.prototype._edgesToVertices = function() {
+            this.lineVertices.length = 0;
+            this.lineNormals.length = 0;
+
+            for (var i = 0; i < this.edges.length; i++) {
+              var begin = this.vertices[this.edges[i][0]];
+              var end = this.vertices[this.edges[i][1]];
+              var dir = end
+                .copy()
+                .sub(begin)
+                .normalize();
+              var a = begin.array();
+              var b = begin.array();
+              var c = end.array();
+              var d = end.array();
+              var dirAdd = dir.array();
+              var dirSub = dir.array();
+              // below is used to displace the pair of vertices at beginning and end
+              // in opposite directions
+              dirAdd.push(1);
+              dirSub.push(-1);
+              this.lineNormals.push(dirAdd, dirSub, dirAdd, dirAdd, dirSub, dirSub);
+              this.lineVertices.push(a, b, c, c, b, d);
+            }
+            return this;
+          };
+
+          /**
+           * Modifies all vertices to be centered within the range -100 to 100.
+           * @method normalize
+           * @chainable
+           */
+          _main.default.Geometry.prototype.normalize = function() {
+            if (this.vertices.length > 0) {
+              // Find the corners of our bounding box
+              var maxPosition = this.vertices[0].copy();
+              var minPosition = this.vertices[0].copy();
+
+              for (var i = 0; i < this.vertices.length; i++) {
+                maxPosition.x = Math.max(maxPosition.x, this.vertices[i].x);
+                minPosition.x = Math.min(minPosition.x, this.vertices[i].x);
+                maxPosition.y = Math.max(maxPosition.y, this.vertices[i].y);
+                minPosition.y = Math.min(minPosition.y, this.vertices[i].y);
+                maxPosition.z = Math.max(maxPosition.z, this.vertices[i].z);
+                minPosition.z = Math.min(minPosition.z, this.vertices[i].z);
+              }
+
+              var center = _main.default.Vector.lerp(maxPosition, minPosition, 0.5);
+              var dist = _main.default.Vector.sub(maxPosition, minPosition);
+              var longestDist = Math.max(Math.max(dist.x, dist.y), dist.z);
+              var scale = 200 / longestDist;
+
+              for (var _i4 = 0; _i4 < this.vertices.length; _i4++) {
+                this.vertices[_i4].sub(center);
+                this.vertices[_i4].mult(scale);
+              }
+            }
+            return this;
+          };
+          var _default = _main.default.Geometry;
+          exports.default = _default;
+        },
+        { '../core/main': 59 }
+      ],
+      109: [
+        function(_dereq_, module, exports) {
+          'use strict';
+          Object.defineProperty(exports, '__esModule', { value: true });
+          exports.default = void 0;
+
+          var _main = _interopRequireDefault(_dereq_('../core/main'));
+          function _interopRequireDefault(obj) {
+            return obj && obj.__esModule ? obj : { default: obj };
+          }
+          /**
+           * @requires constants
+           * @todo see methods below needing further implementation.
+           * future consideration: implement SIMD optimizations
+           * when browser compatibility becomes available
+           * https://developer.mozilla.org/en-US/docs/Web/JavaScript/
+           *   Reference/Global_Objects/SIMD
+           */ var GLMAT_ARRAY_TYPE = Array;
+          var isMatrixArray = function isMatrixArray(x) {
+            return x instanceof Array;
+          };
+          if (typeof Float32Array !== 'undefined') {
+            GLMAT_ARRAY_TYPE = Float32Array;
+            isMatrixArray = function isMatrixArray(x) {
+              return x instanceof Array || x instanceof Float32Array;
+            };
+          }
+
+          /**
+           * A class to describe a 4x4 matrix
+           * for model and view matrix manipulation in the p5js webgl renderer.
+           * @class p5.Matrix
+           * @private
+           * @constructor
+           * @param {Array} [mat4] array literal of our 4x4 matrix
+           */
