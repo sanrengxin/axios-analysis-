@@ -90808,3 +90808,156 @@
             b3 = this.mat4[7];
             this.mat4[4] = b0 * _src[0] + b1 * _src[4] + b2 * _src[8] + b3 * _src[12];
             this.mat4[5] = b0 * _src[1] + b1 * _src[5] + b2 * _src[9] + b3 * _src[13];
+            this.mat4[6] = b0 * _src[2] + b1 * _src[6] + b2 * _src[10] + b3 * _src[14];
+            this.mat4[7] = b0 * _src[3] + b1 * _src[7] + b2 * _src[11] + b3 * _src[15];
+
+            b0 = this.mat4[8];
+            b1 = this.mat4[9];
+            b2 = this.mat4[10];
+            b3 = this.mat4[11];
+            this.mat4[8] = b0 * _src[0] + b1 * _src[4] + b2 * _src[8] + b3 * _src[12];
+            this.mat4[9] = b0 * _src[1] + b1 * _src[5] + b2 * _src[9] + b3 * _src[13];
+            this.mat4[10] = b0 * _src[2] + b1 * _src[6] + b2 * _src[10] + b3 * _src[14];
+            this.mat4[11] = b0 * _src[3] + b1 * _src[7] + b2 * _src[11] + b3 * _src[15];
+
+            b0 = this.mat4[12];
+            b1 = this.mat4[13];
+            b2 = this.mat4[14];
+            b3 = this.mat4[15];
+            this.mat4[12] = b0 * _src[0] + b1 * _src[4] + b2 * _src[8] + b3 * _src[12];
+            this.mat4[13] = b0 * _src[1] + b1 * _src[5] + b2 * _src[9] + b3 * _src[13];
+            this.mat4[14] = b0 * _src[2] + b1 * _src[6] + b2 * _src[10] + b3 * _src[14];
+            this.mat4[15] = b0 * _src[3] + b1 * _src[7] + b2 * _src[11] + b3 * _src[15];
+
+            return this;
+          };
+
+          _main.default.Matrix.prototype.apply = function(multMatrix) {
+            var _src;
+
+            if (multMatrix === this || multMatrix === this.mat4) {
+              _src = this.copy().mat4; // only need to allocate in this rare case
+            } else if (multMatrix instanceof _main.default.Matrix) {
+              _src = multMatrix.mat4;
+            } else if (isMatrixArray(multMatrix)) {
+              _src = multMatrix;
+            } else if (arguments.length === 16) {
+              _src = arguments;
+            } else {
+              return; // nothing to do.
+            }
+
+            var mat4 = this.mat4;
+
+            // each row is used for the multiplier
+            var m0 = mat4[0];
+            var m4 = mat4[4];
+            var m8 = mat4[8];
+            var m12 = mat4[12];
+            mat4[0] = _src[0] * m0 + _src[1] * m4 + _src[2] * m8 + _src[3] * m12;
+            mat4[4] = _src[4] * m0 + _src[5] * m4 + _src[6] * m8 + _src[7] * m12;
+            mat4[8] = _src[8] * m0 + _src[9] * m4 + _src[10] * m8 + _src[11] * m12;
+            mat4[12] = _src[12] * m0 + _src[13] * m4 + _src[14] * m8 + _src[15] * m12;
+
+            var m1 = mat4[1];
+            var m5 = mat4[5];
+            var m9 = mat4[9];
+            var m13 = mat4[13];
+            mat4[1] = _src[0] * m1 + _src[1] * m5 + _src[2] * m9 + _src[3] * m13;
+            mat4[5] = _src[4] * m1 + _src[5] * m5 + _src[6] * m9 + _src[7] * m13;
+            mat4[9] = _src[8] * m1 + _src[9] * m5 + _src[10] * m9 + _src[11] * m13;
+            mat4[13] = _src[12] * m1 + _src[13] * m5 + _src[14] * m9 + _src[15] * m13;
+
+            var m2 = mat4[2];
+            var m6 = mat4[6];
+            var m10 = mat4[10];
+            var m14 = mat4[14];
+            mat4[2] = _src[0] * m2 + _src[1] * m6 + _src[2] * m10 + _src[3] * m14;
+            mat4[6] = _src[4] * m2 + _src[5] * m6 + _src[6] * m10 + _src[7] * m14;
+            mat4[10] = _src[8] * m2 + _src[9] * m6 + _src[10] * m10 + _src[11] * m14;
+            mat4[14] = _src[12] * m2 + _src[13] * m6 + _src[14] * m10 + _src[15] * m14;
+
+            var m3 = mat4[3];
+            var m7 = mat4[7];
+            var m11 = mat4[11];
+            var m15 = mat4[15];
+            mat4[3] = _src[0] * m3 + _src[1] * m7 + _src[2] * m11 + _src[3] * m15;
+            mat4[7] = _src[4] * m3 + _src[5] * m7 + _src[6] * m11 + _src[7] * m15;
+            mat4[11] = _src[8] * m3 + _src[9] * m7 + _src[10] * m11 + _src[11] * m15;
+            mat4[15] = _src[12] * m3 + _src[13] * m7 + _src[14] * m11 + _src[15] * m15;
+
+            return this;
+          };
+
+          /**
+           * scales a p5.Matrix by scalars or a vector
+           * @method scale
+           * @param  {p5.Vector|Float32Array|Number[]} s vector to scale by
+           * @chainable
+           */
+          _main.default.Matrix.prototype.scale = function(x, y, z) {
+            if (x instanceof _main.default.Vector) {
+              // x is a vector, extract the components from it.
+              y = x.y;
+              z = x.z;
+              x = x.x; // must be last
+            } else if (x instanceof Array) {
+              // x is an array, extract the components from it.
+              y = x[1];
+              z = x[2];
+              x = x[0]; // must be last
+            }
+
+            this.mat4[0] *= x;
+            this.mat4[1] *= x;
+            this.mat4[2] *= x;
+            this.mat4[3] *= x;
+            this.mat4[4] *= y;
+            this.mat4[5] *= y;
+            this.mat4[6] *= y;
+            this.mat4[7] *= y;
+            this.mat4[8] *= z;
+            this.mat4[9] *= z;
+            this.mat4[10] *= z;
+            this.mat4[11] *= z;
+
+            return this;
+          };
+
+          /**
+           * rotate our Matrix around an axis by the given angle.
+           * @method rotate
+           * @param  {Number} a The angle of rotation in radians
+           * @param  {p5.Vector|Number[]} axis  the axis(es) to rotate around
+           * @chainable
+           * inspired by Toji's gl-matrix lib, mat4 rotation
+           */
+          _main.default.Matrix.prototype.rotate = function(a, x, y, z) {
+            if (x instanceof _main.default.Vector) {
+              // x is a vector, extract the components from it.
+              y = x.y;
+              z = x.z;
+              x = x.x; //must be last
+            } else if (x instanceof Array) {
+              // x is an array, extract the components from it.
+              y = x[1];
+              z = x[2];
+              x = x[0]; //must be last
+            }
+
+            var len = Math.sqrt(x * x + y * y + z * z);
+            x *= 1 / len;
+            y *= 1 / len;
+            z *= 1 / len;
+
+            var a00 = this.mat4[0];
+            var a01 = this.mat4[1];
+            var a02 = this.mat4[2];
+            var a03 = this.mat4[3];
+            var a10 = this.mat4[4];
+            var a11 = this.mat4[5];
+            var a12 = this.mat4[6];
+            var a13 = this.mat4[7];
+            var a20 = this.mat4[8];
+            var a21 = this.mat4[9];
+            var a22 = this.mat4[10];
