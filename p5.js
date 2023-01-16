@@ -90665,3 +90665,146 @@
             var a02 = this.mat3[2];
             var a10 = this.mat3[3];
             var a11 = this.mat3[4];
+            var a12 = this.mat3[5];
+            var a20 = this.mat3[6];
+            var a21 = this.mat3[7];
+            var a22 = this.mat3[8];
+            var b01 = a22 * a11 - a12 * a21;
+            var b11 = -a22 * a10 + a12 * a20;
+            var b21 = a21 * a10 - a11 * a20;
+
+            // Calculate the determinant
+            var det = a00 * b01 + a01 * b11 + a02 * b21;
+            if (!det) {
+              return null;
+            }
+            det = 1.0 / det;
+            this.mat3[0] = b01 * det;
+            this.mat3[1] = (-a22 * a01 + a02 * a21) * det;
+            this.mat3[2] = (a12 * a01 - a02 * a11) * det;
+            this.mat3[3] = b11 * det;
+            this.mat3[4] = (a22 * a00 - a02 * a20) * det;
+            this.mat3[5] = (-a12 * a00 + a02 * a10) * det;
+            this.mat3[6] = b21 * det;
+            this.mat3[7] = (-a21 * a00 + a01 * a20) * det;
+            this.mat3[8] = (a11 * a00 - a01 * a10) * det;
+            return this;
+          };
+
+          /**
+           * transposes a 3x3 p5.Matrix by a mat3
+           * @method transpose3x3
+           * @param  {Number[]} mat3 1-dimensional array
+           * @chainable
+           */
+          _main.default.Matrix.prototype.transpose3x3 = function(mat3) {
+            var a01 = mat3[1],
+              a02 = mat3[2],
+              a12 = mat3[5];
+            this.mat3[1] = mat3[3];
+            this.mat3[2] = mat3[6];
+            this.mat3[3] = a01;
+            this.mat3[5] = mat3[7];
+            this.mat3[6] = a02;
+            this.mat3[7] = a12;
+            return this;
+          };
+
+          /**
+           * converts a 4x4 matrix to its 3x3 inverse transform
+           * commonly used in MVMatrix to NMatrix conversions.
+           * @method invertTranspose
+           * @param  {p5.Matrix} mat4 the matrix to be based on to invert
+           * @chainable
+           * @todo  finish implementation
+           */
+          _main.default.Matrix.prototype.inverseTranspose = function(matrix) {
+            if (this.mat3 === undefined) {
+              console.error('sorry, this function only works with mat3');
+            } else {
+              //convert mat4 -> mat3
+              this.mat3[0] = matrix.mat4[0];
+              this.mat3[1] = matrix.mat4[1];
+              this.mat3[2] = matrix.mat4[2];
+              this.mat3[3] = matrix.mat4[4];
+              this.mat3[4] = matrix.mat4[5];
+              this.mat3[5] = matrix.mat4[6];
+              this.mat3[6] = matrix.mat4[8];
+              this.mat3[7] = matrix.mat4[9];
+              this.mat3[8] = matrix.mat4[10];
+            }
+
+            var inverse = this.invert3x3();
+            // check inverse succeeded
+            if (inverse) {
+              inverse.transpose3x3(this.mat3);
+            } else {
+              // in case of singularity, just zero the matrix
+              for (var i = 0; i < 9; i++) {
+                this.mat3[i] = 0;
+              }
+            }
+            return this;
+          };
+
+          /**
+           * inspired by Toji's mat4 determinant
+           * @method determinant
+           * @return {Number} Determinant of our 4x4 matrix
+           */
+          _main.default.Matrix.prototype.determinant = function() {
+            var d00 = this.mat4[0] * this.mat4[5] - this.mat4[1] * this.mat4[4],
+              d01 = this.mat4[0] * this.mat4[6] - this.mat4[2] * this.mat4[4],
+              d02 = this.mat4[0] * this.mat4[7] - this.mat4[3] * this.mat4[4],
+              d03 = this.mat4[1] * this.mat4[6] - this.mat4[2] * this.mat4[5],
+              d04 = this.mat4[1] * this.mat4[7] - this.mat4[3] * this.mat4[5],
+              d05 = this.mat4[2] * this.mat4[7] - this.mat4[3] * this.mat4[6],
+              d06 = this.mat4[8] * this.mat4[13] - this.mat4[9] * this.mat4[12],
+              d07 = this.mat4[8] * this.mat4[14] - this.mat4[10] * this.mat4[12],
+              d08 = this.mat4[8] * this.mat4[15] - this.mat4[11] * this.mat4[12],
+              d09 = this.mat4[9] * this.mat4[14] - this.mat4[10] * this.mat4[13],
+              d10 = this.mat4[9] * this.mat4[15] - this.mat4[11] * this.mat4[13],
+              d11 = this.mat4[10] * this.mat4[15] - this.mat4[11] * this.mat4[14];
+
+            // Calculate the determinant
+            return d00 * d11 - d01 * d10 + d02 * d09 + d03 * d08 - d04 * d07 + d05 * d06;
+          };
+
+          /**
+           * multiply two mat4s
+           * @method mult
+           * @param {p5.Matrix|Float32Array|Number[]} multMatrix The matrix
+           *                                                we want to multiply by
+           * @chainable
+           */
+          _main.default.Matrix.prototype.mult = function(multMatrix) {
+            var _src;
+
+            if (multMatrix === this || multMatrix === this.mat4) {
+              _src = this.copy().mat4; // only need to allocate in this rare case
+            } else if (multMatrix instanceof _main.default.Matrix) {
+              _src = multMatrix.mat4;
+            } else if (isMatrixArray(multMatrix)) {
+              _src = multMatrix;
+            } else if (arguments.length === 16) {
+              _src = arguments;
+            } else {
+              return; // nothing to do.
+            }
+
+            // each row is used for the multiplier
+            var b0 = this.mat4[0],
+              b1 = this.mat4[1],
+              b2 = this.mat4[2],
+              b3 = this.mat4[3];
+            this.mat4[0] = b0 * _src[0] + b1 * _src[4] + b2 * _src[8] + b3 * _src[12];
+            this.mat4[1] = b0 * _src[1] + b1 * _src[5] + b2 * _src[9] + b3 * _src[13];
+            this.mat4[2] = b0 * _src[2] + b1 * _src[6] + b2 * _src[10] + b3 * _src[14];
+            this.mat4[3] = b0 * _src[3] + b1 * _src[7] + b2 * _src[11] + b3 * _src[15];
+
+            b0 = this.mat4[4];
+            b1 = this.mat4[5];
+            b2 = this.mat4[6];
+            b3 = this.mat4[7];
+            this.mat4[4] = b0 * _src[0] + b1 * _src[4] + b2 * _src[8] + b3 * _src[12];
+            this.mat4[5] = b0 * _src[1] + b1 * _src[5] + b2 * _src[9] + b3 * _src[13];
