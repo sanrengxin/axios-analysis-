@@ -90961,3 +90961,141 @@
             var a20 = this.mat4[8];
             var a21 = this.mat4[9];
             var a22 = this.mat4[10];
+            var a23 = this.mat4[11];
+
+            //sin,cos, and tan of respective angle
+            var sA = Math.sin(a);
+            var cA = Math.cos(a);
+            var tA = 1 - cA;
+            // Construct the elements of the rotation matrix
+            var b00 = x * x * tA + cA;
+            var b01 = y * x * tA + z * sA;
+            var b02 = z * x * tA - y * sA;
+            var b10 = x * y * tA - z * sA;
+            var b11 = y * y * tA + cA;
+            var b12 = z * y * tA + x * sA;
+            var b20 = x * z * tA + y * sA;
+            var b21 = y * z * tA - x * sA;
+            var b22 = z * z * tA + cA;
+
+            // rotation-specific matrix multiplication
+            this.mat4[0] = a00 * b00 + a10 * b01 + a20 * b02;
+            this.mat4[1] = a01 * b00 + a11 * b01 + a21 * b02;
+            this.mat4[2] = a02 * b00 + a12 * b01 + a22 * b02;
+            this.mat4[3] = a03 * b00 + a13 * b01 + a23 * b02;
+            this.mat4[4] = a00 * b10 + a10 * b11 + a20 * b12;
+            this.mat4[5] = a01 * b10 + a11 * b11 + a21 * b12;
+            this.mat4[6] = a02 * b10 + a12 * b11 + a22 * b12;
+            this.mat4[7] = a03 * b10 + a13 * b11 + a23 * b12;
+            this.mat4[8] = a00 * b20 + a10 * b21 + a20 * b22;
+            this.mat4[9] = a01 * b20 + a11 * b21 + a21 * b22;
+            this.mat4[10] = a02 * b20 + a12 * b21 + a22 * b22;
+            this.mat4[11] = a03 * b20 + a13 * b21 + a23 * b22;
+
+            return this;
+          };
+
+          /**
+           * @todo  finish implementing this method!
+           * translates
+           * @method translate
+           * @param  {Number[]} v vector to translate by
+           * @chainable
+           */
+          _main.default.Matrix.prototype.translate = function(v) {
+            var x = v[0],
+              y = v[1],
+              z = v[2] || 0;
+            this.mat4[12] += this.mat4[0] * x + this.mat4[4] * y + this.mat4[8] * z;
+            this.mat4[13] += this.mat4[1] * x + this.mat4[5] * y + this.mat4[9] * z;
+            this.mat4[14] += this.mat4[2] * x + this.mat4[6] * y + this.mat4[10] * z;
+            this.mat4[15] += this.mat4[3] * x + this.mat4[7] * y + this.mat4[11] * z;
+          };
+
+          _main.default.Matrix.prototype.rotateX = function(a) {
+            this.rotate(a, 1, 0, 0);
+          };
+          _main.default.Matrix.prototype.rotateY = function(a) {
+            this.rotate(a, 0, 1, 0);
+          };
+          _main.default.Matrix.prototype.rotateZ = function(a) {
+            this.rotate(a, 0, 0, 1);
+          };
+
+          /**
+           * sets the perspective matrix
+           * @method perspective
+           * @param  {Number} fovy   [description]
+           * @param  {Number} aspect [description]
+           * @param  {Number} near   near clipping plane
+           * @param  {Number} far    far clipping plane
+           * @chainable
+           */
+          _main.default.Matrix.prototype.perspective = function(fovy, aspect, near, far) {
+            var f = 1.0 / Math.tan(fovy / 2),
+              nf = 1 / (near - far);
+
+            this.mat4[0] = f / aspect;
+            this.mat4[1] = 0;
+            this.mat4[2] = 0;
+            this.mat4[3] = 0;
+            this.mat4[4] = 0;
+            this.mat4[5] = f;
+            this.mat4[6] = 0;
+            this.mat4[7] = 0;
+            this.mat4[8] = 0;
+            this.mat4[9] = 0;
+            this.mat4[10] = (far + near) * nf;
+            this.mat4[11] = -1;
+            this.mat4[12] = 0;
+            this.mat4[13] = 0;
+            this.mat4[14] = 2 * far * near * nf;
+            this.mat4[15] = 0;
+
+            return this;
+          };
+
+          /**
+           * sets the ortho matrix
+           * @method ortho
+           * @param  {Number} left   [description]
+           * @param  {Number} right  [description]
+           * @param  {Number} bottom [description]
+           * @param  {Number} top    [description]
+           * @param  {Number} near   near clipping plane
+           * @param  {Number} far    far clipping plane
+           * @chainable
+           */
+          _main.default.Matrix.prototype.ortho = function(
+            left,
+            right,
+            bottom,
+            top,
+            near,
+            far
+          ) {
+            var lr = 1 / (left - right),
+              bt = 1 / (bottom - top),
+              nf = 1 / (near - far);
+            this.mat4[0] = -2 * lr;
+            this.mat4[1] = 0;
+            this.mat4[2] = 0;
+            this.mat4[3] = 0;
+            this.mat4[4] = 0;
+            this.mat4[5] = -2 * bt;
+            this.mat4[6] = 0;
+            this.mat4[7] = 0;
+            this.mat4[8] = 0;
+            this.mat4[9] = 0;
+            this.mat4[10] = 2 * nf;
+            this.mat4[11] = 0;
+            this.mat4[12] = (left + right) * lr;
+            this.mat4[13] = (top + bottom) * bt;
+            this.mat4[14] = (far + near) * nf;
+            this.mat4[15] = 1;
+
+            return this;
+          };
+
+          /**
+           * PRIVATE
