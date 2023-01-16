@@ -91247,3 +91247,132 @@
 
           var _main = _interopRequireDefault(_dereq_('../core/main'));
           var constants = _interopRequireWildcard(_dereq_('../core/constants'));
+          _dereq_('./p5.RenderBuffer');
+          function _getRequireWildcardCache() {
+            if (typeof WeakMap !== 'function') return null;
+            var cache = new WeakMap();
+            _getRequireWildcardCache = function _getRequireWildcardCache() {
+              return cache;
+            };
+            return cache;
+          }
+          function _interopRequireWildcard(obj) {
+            if (obj && obj.__esModule) {
+              return obj;
+            }
+            if (obj === null || (_typeof(obj) !== 'object' && typeof obj !== 'function')) {
+              return { default: obj };
+            }
+            var cache = _getRequireWildcardCache();
+            if (cache && cache.has(obj)) {
+              return cache.get(obj);
+            }
+            var newObj = {};
+            var hasPropertyDescriptor =
+              Object.defineProperty && Object.getOwnPropertyDescriptor;
+            for (var key in obj) {
+              if (Object.prototype.hasOwnProperty.call(obj, key)) {
+                var desc = hasPropertyDescriptor
+                  ? Object.getOwnPropertyDescriptor(obj, key)
+                  : null;
+                if (desc && (desc.get || desc.set)) {
+                  Object.defineProperty(newObj, key, desc);
+                } else {
+                  newObj[key] = obj[key];
+                }
+              }
+            }
+            newObj.default = obj;
+            if (cache) {
+              cache.set(obj, newObj);
+            }
+            return newObj;
+          }
+          function _interopRequireDefault(obj) {
+            return obj && obj.__esModule ? obj : { default: obj };
+          }
+          /**
+           * Welcome to RendererGL Immediate Mode.
+           * Immediate mode is used for drawing custom shapes
+           * from a set of vertices.  Immediate Mode is activated
+           * when you call <a href="#/p5/beginShape">beginShape()</a> & de-activated when you call <a href="#/p5/endShape">endShape()</a>.
+           * Immediate mode is a style of programming borrowed
+           * from OpenGL's (now-deprecated) immediate mode.
+           * It differs from p5.js' default, Retained Mode, which caches
+           * geometries and buffers on the CPU to reduce the number of webgl
+           * draw calls. Retained mode is more efficient & performative,
+           * however, Immediate Mode is useful for sketching quick
+           * geometric ideas.
+           */ /**
+           * Begin shape drawing.  This is a helpful way of generating
+           * custom shapes quickly.  However in WEBGL mode, application
+           * performance will likely drop as a result of too many calls to
+           * <a href="#/p5/beginShape">beginShape()</a> / <a href="#/p5/endShape">endShape()</a>.  As a high performance alternative,
+           * please use p5.js geometry primitives.
+           * @private
+           * @method beginShape
+           * @param  {Number} mode webgl primitives mode.  beginShape supports the
+           *                       following modes:
+           *                       POINTS,LINES,LINE_STRIP,LINE_LOOP,TRIANGLES,
+           *                       TRIANGLE_STRIP, TRIANGLE_FAN and TESS(WEBGL only)
+           * @chainable
+           */ _main.default.RendererGL.prototype.beginShape = function(mode) {
+            this.immediateMode.shapeMode =
+              mode !== undefined ? mode : constants.TRIANGLE_FAN;
+            this.immediateMode.geometry.reset();
+            return this;
+          };
+          /**
+           * adds a vertex to be drawn in a custom Shape.
+           * @private
+           * @method vertex
+           * @param  {Number} x x-coordinate of vertex
+           * @param  {Number} y y-coordinate of vertex
+           * @param  {Number} z z-coordinate of vertex
+           * @chainable
+           * @TODO implement handling of <a href="#/p5.Vector">p5.Vector</a> args
+           */ _main.default.RendererGL.prototype.vertex = function(x, y) {
+            var z, u, v;
+
+            // default to (x, y) mode: all other arugments assumed to be 0.
+            z = u = v = 0;
+
+            if (arguments.length === 3) {
+              // (x, y, z) mode: (u, v) assumed to be 0.
+              z = arguments[2];
+            } else if (arguments.length === 4) {
+              // (x, y, u, v) mode: z assumed to be 0.
+              u = arguments[2];
+              v = arguments[3];
+            } else if (arguments.length === 5) {
+              // (x, y, z, u, v) mode
+              z = arguments[2];
+              u = arguments[3];
+              v = arguments[4];
+            }
+            var vert = new _main.default.Vector(x, y, z);
+            this.immediateMode.geometry.vertices.push(vert);
+            var vertexColor = this.curFillColor || [0.5, 0.5, 0.5, 1.0];
+            this.immediateMode.geometry.vertexColors.push(
+              vertexColor[0],
+              vertexColor[1],
+              vertexColor[2],
+              vertexColor[3]
+            );
+
+            if (this.textureMode === constants.IMAGE) {
+              if (this._tex !== null) {
+                if (this._tex.width > 0 && this._tex.height > 0) {
+                  u /= this._tex.width;
+                  v /= this._tex.height;
+                }
+              } else if (this._tex === null && arguments.length >= 4) {
+                // Only throw this warning if custom uv's have  been provided
+                console.warn(
+                  'You must first call texture() before using' +
+                    ' vertex() with image based u and v coordinates'
+                );
+              }
+            }
+
+            this.immediateMode.geometry.uvs.push(u, v);
