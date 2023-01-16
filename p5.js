@@ -91099,3 +91099,151 @@
 
           /**
            * PRIVATE
+           */
+          // matrix methods adapted from:
+          // https://developer.mozilla.org/en-US/docs/Web/WebGL/
+          // gluPerspective
+          //
+          // function _makePerspective(fovy, aspect, znear, zfar){
+          //    const ymax = znear * Math.tan(fovy * Math.PI / 360.0);
+          //    const ymin = -ymax;
+          //    const xmin = ymin * aspect;
+          //    const xmax = ymax * aspect;
+          //    return _makeFrustum(xmin, xmax, ymin, ymax, znear, zfar);
+          //  }
+
+          ////
+          //// glFrustum
+          ////
+          //function _makeFrustum(left, right, bottom, top, znear, zfar){
+          //  const X = 2*znear/(right-left);
+          //  const Y = 2*znear/(top-bottom);
+          //  const A = (right+left)/(right-left);
+          //  const B = (top+bottom)/(top-bottom);
+          //  const C = -(zfar+znear)/(zfar-znear);
+          //  const D = -2*zfar*znear/(zfar-znear);
+          //  const frustrumMatrix =[
+          //  X, 0, A, 0,
+          //  0, Y, B, 0,
+          //  0, 0, C, D,
+          //  0, 0, -1, 0
+          //];
+          //return frustrumMatrix;
+          // }
+
+          // function _setMVPMatrices(){
+          ////an identity matrix
+          ////@TODO use the p5.Matrix class to abstract away our MV matrices and
+          ///other math
+          //const _mvMatrix =
+          //[
+          //  1.0,0.0,0.0,0.0,
+          //  0.0,1.0,0.0,0.0,
+          //  0.0,0.0,1.0,0.0,
+          //  0.0,0.0,0.0,1.0
+          //];
+          var _default = _main.default.Matrix;
+          exports.default = _default;
+        },
+        { '../core/main': 59 }
+      ],
+      110: [
+        function(_dereq_, module, exports) {
+          'use strict';
+          Object.defineProperty(exports, '__esModule', { value: true });
+          exports.default = void 0;
+          var _main = _interopRequireDefault(_dereq_('../core/main'));
+          function _interopRequireDefault(obj) {
+            return obj && obj.__esModule ? obj : { default: obj };
+          }
+
+          _main.default.RenderBuffer = function(size, src, dst, attr, renderer, map) {
+            this.size = size; // the number of FLOATs in each vertex
+            this.src = src; // the name of the model's source array
+            this.dst = dst; // the name of the geometry's buffer
+            this.attr = attr; // the name of the vertex attribute
+            this._renderer = renderer;
+            this.map = map; // optional, a transformation function to apply to src
+          };
+
+          /**
+           * Enables and binds the buffers used by shader when the appropriate data exists in geometry.
+           * Must always be done prior to drawing geometry in WebGL.
+           * @param {p5.Geometry} geometry Geometry that is going to be drawn
+           * @param {p5.Shader} shader Active shader
+           * @private
+           */
+          _main.default.RenderBuffer.prototype._prepareBuffer = function(geometry, shader) {
+            var attributes = shader.attributes;
+            var gl = this._renderer.GL;
+            var model;
+            if (geometry.model) {
+              model = geometry.model;
+            } else {
+              model = geometry;
+            }
+
+            // loop through each of the buffer definitions
+            var attr = attributes[this.attr];
+            if (!attr) {
+              return;
+            }
+
+            // check if the model has the appropriate source array
+            var buffer = geometry[this.dst];
+            var src = model[this.src];
+            if (src.length > 0) {
+              // check if we need to create the GL buffer
+              var createBuffer = !buffer;
+              if (createBuffer) {
+                // create and remember the buffer
+                geometry[this.dst] = buffer = gl.createBuffer();
+              }
+              // bind the buffer
+              gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+
+              // check if we need to fill the buffer with data
+              if (createBuffer || model.dirtyFlags[this.src] !== false) {
+                var map = this.map;
+                // get the values from the model, possibly transformed
+                var values = map ? map(src) : src;
+                // fill the buffer with the values
+                this._renderer._bindBuffer(buffer, gl.ARRAY_BUFFER, values);
+
+                // mark the model's source array as clean
+                model.dirtyFlags[this.src] = false;
+              }
+              // enable the attribute
+              shader.enableAttrib(attr, this.size);
+            }
+          };
+          var _default = _main.default.RenderBuffer;
+          exports.default = _default;
+        },
+        { '../core/main': 59 }
+      ],
+      111: [
+        function(_dereq_, module, exports) {
+          'use strict';
+          function _typeof(obj) {
+            if (typeof Symbol === 'function' && typeof Symbol.iterator === 'symbol') {
+              _typeof = function _typeof(obj) {
+                return typeof obj;
+              };
+            } else {
+              _typeof = function _typeof(obj) {
+                return obj &&
+                  typeof Symbol === 'function' &&
+                  obj.constructor === Symbol &&
+                  obj !== Symbol.prototype
+                  ? 'symbol'
+                  : typeof obj;
+              };
+            }
+            return _typeof(obj);
+          }
+          Object.defineProperty(exports, '__esModule', { value: true });
+          exports.default = void 0;
+
+          var _main = _interopRequireDefault(_dereq_('../core/main'));
+          var constants = _interopRequireWildcard(_dereq_('../core/constants'));
