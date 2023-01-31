@@ -91376,3 +91376,135 @@
             }
 
             this.immediateMode.geometry.uvs.push(u, v);
+
+            this.immediateMode._bezierVertex[0] = x;
+            this.immediateMode._bezierVertex[1] = y;
+            this.immediateMode._bezierVertex[2] = z;
+
+            this.immediateMode._quadraticVertex[0] = x;
+            this.immediateMode._quadraticVertex[1] = y;
+            this.immediateMode._quadraticVertex[2] = z;
+
+            return this;
+          };
+
+          /**
+           * End shape drawing and render vertices to screen.
+           * @chainable
+           */
+          _main.default.RendererGL.prototype.endShape = function(
+            mode,
+            isCurve,
+            isBezier,
+            isQuadratic,
+            isContour,
+            shapeKind
+          ) {
+            if (this.immediateMode.shapeMode === constants.POINTS) {
+              this._drawPoints(
+                this.immediateMode.geometry.vertices,
+                this.immediateMode.buffers.point
+              );
+
+              return this;
+            }
+            this._processVertices.apply(this, arguments);
+            if (this._doFill) {
+              if (this.immediateMode.geometry.vertices.length > 1) {
+                this._drawImmediateFill();
+              }
+            }
+            if (this._doStroke) {
+              if (this.immediateMode.geometry.lineVertices.length > 1) {
+                this._drawImmediateStroke();
+              }
+            }
+
+            this.isBezier = false;
+            this.isQuadratic = false;
+            this.isCurve = false;
+            this.immediateMode._bezierVertex.length = 0;
+            this.immediateMode._quadraticVertex.length = 0;
+            this.immediateMode._curveVertex.length = 0;
+            return this;
+          };
+
+          /**
+           * Called from endShape(). This function calculates the stroke vertices for custom shapes and
+           * tesselates shapes when applicable.
+           * @private
+           * @param  {Number} mode webgl primitives mode.  beginShape supports the
+           *                       following modes:
+           *                       POINTS,LINES,LINE_STRIP,LINE_LOOP,TRIANGLES,
+           *                       TRIANGLE_STRIP, TRIANGLE_FAN and TESS(WEBGL only)
+           */
+          _main.default.RendererGL.prototype._processVertices = function(mode) {
+            if (this.immediateMode.geometry.vertices.length === 0) return;
+
+            var calculateStroke = this._doStroke && this.drawMode !== constants.TEXTURE;
+            var shouldClose = mode === constants.CLOSE;
+            if (calculateStroke) {
+              this.immediateMode.geometry.edges = this._calculateEdges(
+                this.immediateMode.shapeMode,
+                this.immediateMode.geometry.vertices,
+                shouldClose
+              );
+
+              this.immediateMode.geometry._edgesToVertices();
+            }
+            // For hollow shapes, user must set mode to TESS
+            var convexShape = this.immediateMode.shapeMode === constants.TESS;
+            // We tesselate when drawing curves or convex shapes
+            var shouldTess =
+              (this.isBezier || this.isQuadratic || this.isCurve || convexShape) &&
+              this.immediateMode.shapeMode !== constants.LINES;
+
+            if (shouldTess) {
+              this._tesselateShape();
+            }
+          };
+
+          /**
+           * Called from _processVertices(). This function calculates the stroke vertices for custom shapes and
+           * tesselates shapes when applicable.
+           * @private
+           * @returns  {Array[Number]} indices for custom shape vertices indicating edges.
+           */
+          _main.default.RendererGL.prototype._calculateEdges = function(
+            shapeMode,
+            verts,
+            shouldClose
+          ) {
+            var res = [];
+            var i = 0;
+            switch (shapeMode) {
+              case constants.TRIANGLE_STRIP:
+                for (i = 0; i < verts.length - 2; i++) {
+                  res.push([i, i + 1]);
+                  res.push([i, i + 2]);
+                }
+                res.push([i, i + 1]);
+                break;
+              case constants.TRIANGLES:
+                for (i = 0; i < verts.length - 2; i = i + 3) {
+                  res.push([i, i + 1]);
+                  res.push([i + 1, i + 2]);
+                  res.push([i + 2, i]);
+                }
+                break;
+              case constants.LINES:
+                for (i = 0; i < verts.length - 1; i = i + 2) {
+                  res.push([i, i + 1]);
+                }
+                break;
+              default:
+                for (i = 0; i < verts.length - 1; i++) {
+                  res.push([i, i + 1]);
+                }
+                break;
+            }
+
+            if (shouldClose) {
+              res.push([verts.length - 1, 0]);
+            }
+            return res;
