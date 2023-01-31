@@ -91508,3 +91508,120 @@
               res.push([verts.length - 1, 0]);
             }
             return res;
+          };
+
+          /**
+           * Called from _processVertices() when applicable. This function tesselates immediateMode.geometry.
+           * @private
+           */
+          _main.default.RendererGL.prototype._tesselateShape = function() {
+            this.immediateMode.shapeMode = constants.TRIANGLES;
+            var contours = [
+              new Float32Array(this._vToNArray(this.immediateMode.geometry.vertices))
+            ];
+
+            var polyTriangles = this._triangulate(contours);
+            this.immediateMode.geometry.vertices = [];
+            for (
+              var j = 0, polyTriLength = polyTriangles.length;
+              j < polyTriLength;
+              j = j + 3
+            ) {
+              this.vertex(polyTriangles[j], polyTriangles[j + 1], polyTriangles[j + 2]);
+            }
+          };
+
+          /**
+           * Called from endShape(). Responsible for calculating normals, setting shader uniforms,
+           * enabling all appropriate buffers, applying color blend, and drawing the fill geometry.
+           * @private
+           */
+          _main.default.RendererGL.prototype._drawImmediateFill = function() {
+            var gl = this.GL;
+            var shader = this._getImmediateFillShader();
+
+            this._calculateNormals(this.immediateMode.geometry);
+            this._setFillUniforms(shader);
+            var _iteratorNormalCompletion = true;
+            var _didIteratorError = false;
+            var _iteratorError = undefined;
+            try {
+              for (
+                var _iterator = this.immediateMode.buffers.fill[Symbol.iterator](), _step;
+                !(_iteratorNormalCompletion = (_step = _iterator.next()).done);
+                _iteratorNormalCompletion = true
+              ) {
+                var buff = _step.value;
+                buff._prepareBuffer(this.immediateMode.geometry, shader);
+              }
+
+              // LINE_STRIP and LINES are not used for rendering, instead
+              // they only indicate a way to modify vertices during the _processVertices() step
+            } catch (err) {
+              _didIteratorError = true;
+              _iteratorError = err;
+            } finally {
+              try {
+                if (!_iteratorNormalCompletion && _iterator.return != null) {
+                  _iterator.return();
+                }
+              } finally {
+                if (_didIteratorError) {
+                  throw _iteratorError;
+                }
+              }
+            }
+            if (
+              this.immediateMode.shapeMode === constants.LINE_STRIP ||
+              this.immediateMode.shapeMode === constants.LINES
+            ) {
+              this.immediateMode.shapeMode = constants.TRIANGLE_FAN;
+            }
+
+            this._applyColorBlend(this.curFillColor);
+            gl.drawArrays(
+              this.immediateMode.shapeMode,
+              0,
+              this.immediateMode.geometry.vertices.length
+            );
+
+            shader.unbindShader();
+          };
+
+          /**
+           * Called from endShape(). Responsible for calculating normals, setting shader uniforms,
+           * enabling all appropriate buffers, applying color blend, and drawing the stroke geometry.
+           * @private
+           */
+          _main.default.RendererGL.prototype._drawImmediateStroke = function() {
+            var gl = this.GL;
+            var shader = this._getImmediateStrokeShader();
+            this._setStrokeUniforms(shader);
+            var _iteratorNormalCompletion2 = true;
+            var _didIteratorError2 = false;
+            var _iteratorError2 = undefined;
+            try {
+              for (
+                var _iterator2 = this.immediateMode.buffers.stroke[Symbol.iterator](),
+                  _step2;
+                !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done);
+                _iteratorNormalCompletion2 = true
+              ) {
+                var buff = _step2.value;
+                buff._prepareBuffer(this.immediateMode.geometry, shader);
+              }
+            } catch (err) {
+              _didIteratorError2 = true;
+              _iteratorError2 = err;
+            } finally {
+              try {
+                if (!_iteratorNormalCompletion2 && _iterator2.return != null) {
+                  _iterator2.return();
+                }
+              } finally {
+                if (_didIteratorError2) {
+                  throw _iteratorError2;
+                }
+              }
+            }
+            this._applyColorBlend(this.curStrokeColor);
