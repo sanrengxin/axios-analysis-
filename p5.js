@@ -91751,3 +91751,149 @@
 
             if (model.faces.length) {
               // allocate space for faces
+              if (!indexBuffer) indexBuffer = buffers.indexBuffer = gl.createBuffer();
+              var vals = _main.default.RendererGL.prototype._flatten(model.faces);
+              this._bindBuffer(indexBuffer, gl.ELEMENT_ARRAY_BUFFER, vals, Uint16Array);
+
+              // the vertex count is based on the number of faces
+              buffers.vertexCount = model.faces.length * 3;
+            } else {
+              // the index buffer is unused, remove it
+              if (indexBuffer) {
+                gl.deleteBuffer(indexBuffer);
+                buffers.indexBuffer = null;
+              }
+              // the vertex count comes directly from the model
+              buffers.vertexCount = model.vertices ? model.vertices.length : 0;
+            }
+
+            buffers.lineVertexCount = model.lineVertices ? model.lineVertices.length : 0;
+
+            return buffers;
+          };
+
+          /**
+           * Draws buffers given a geometry key ID
+           * @private
+           * @param  {String} gId     ID in our geom hash
+           * @chainable
+           */
+          _main.default.RendererGL.prototype.drawBuffers = function(gId) {
+            var gl = this.GL;
+            var geometry = this.retainedMode.geometry[gId];
+
+            if (this._doStroke && geometry.lineVertexCount > 0) {
+              var strokeShader = this._getRetainedStrokeShader();
+              this._setStrokeUniforms(strokeShader);
+              var _iteratorNormalCompletion2 = true;
+              var _didIteratorError2 = false;
+              var _iteratorError2 = undefined;
+              try {
+                for (
+                  var _iterator2 = this.retainedMode.buffers.stroke[Symbol.iterator](),
+                    _step2;
+                  !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done);
+                  _iteratorNormalCompletion2 = true
+                ) {
+                  var buff = _step2.value;
+                  buff._prepareBuffer(geometry, strokeShader);
+                }
+              } catch (err) {
+                _didIteratorError2 = true;
+                _iteratorError2 = err;
+              } finally {
+                try {
+                  if (!_iteratorNormalCompletion2 && _iterator2.return != null) {
+                    _iterator2.return();
+                  }
+                } finally {
+                  if (_didIteratorError2) {
+                    throw _iteratorError2;
+                  }
+                }
+              }
+              this._applyColorBlend(this.curStrokeColor);
+              this._drawArrays(gl.TRIANGLES, gId);
+              strokeShader.unbindShader();
+            }
+
+            if (this._doFill) {
+              var fillShader = this._getRetainedFillShader();
+              this._setFillUniforms(fillShader);
+              var _iteratorNormalCompletion3 = true;
+              var _didIteratorError3 = false;
+              var _iteratorError3 = undefined;
+              try {
+                for (
+                  var _iterator3 = this.retainedMode.buffers.fill[Symbol.iterator](),
+                    _step3;
+                  !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done);
+                  _iteratorNormalCompletion3 = true
+                ) {
+                  var _buff = _step3.value;
+                  _buff._prepareBuffer(geometry, fillShader);
+                }
+              } catch (err) {
+                _didIteratorError3 = true;
+                _iteratorError3 = err;
+              } finally {
+                try {
+                  if (!_iteratorNormalCompletion3 && _iterator3.return != null) {
+                    _iterator3.return();
+                  }
+                } finally {
+                  if (_didIteratorError3) {
+                    throw _iteratorError3;
+                  }
+                }
+              }
+              if (geometry.indexBuffer) {
+                //vertex index buffer
+                this._bindBuffer(geometry.indexBuffer, gl.ELEMENT_ARRAY_BUFFER);
+              }
+              this._applyColorBlend(this.curFillColor);
+              this._drawElements(gl.TRIANGLES, gId);
+              fillShader.unbindShader();
+            }
+            return this;
+          };
+
+          /**
+           * Calls drawBuffers() with a scaled model/view matrix.
+           *
+           * This is used by various 3d primitive methods (in primitives.js, eg. plane,
+           * box, torus, etc...) to allow caching of un-scaled geometries. Those
+           * geometries are generally created with unit-length dimensions, cached as
+           * such, and then scaled appropriately in this method prior to rendering.
+           *
+           * @private
+           * @method drawBuffersScaled
+           * @param {String} gId     ID in our geom hash
+           * @param {Number} scaleX  the amount to scale in the X direction
+           * @param {Number} scaleY  the amount to scale in the Y direction
+           * @param {Number} scaleZ  the amount to scale in the Z direction
+           */
+          _main.default.RendererGL.prototype.drawBuffersScaled = function(
+            gId,
+            scaleX,
+            scaleY,
+            scaleZ
+          ) {
+            var uMVMatrix = this.uMVMatrix.copy();
+            try {
+              this.uMVMatrix.scale(scaleX, scaleY, scaleZ);
+              this.drawBuffers(gId);
+            } finally {
+              this.uMVMatrix = uMVMatrix;
+            }
+          };
+
+          _main.default.RendererGL.prototype._drawArrays = function(drawMode, gId) {
+            this.GL.drawArrays(
+              drawMode,
+              0,
+              this.retainedMode.geometry[gId].lineVertexCount
+            );
+
+            return this;
+          };
