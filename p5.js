@@ -91625,3 +91625,129 @@
               }
             }
             this._applyColorBlend(this.curStrokeColor);
+            gl.drawArrays(gl.TRIANGLES, 0, this.immediateMode.geometry.lineVertices.length);
+
+            shader.unbindShader();
+          };
+
+          /**
+           * Called from _drawImmediateFill(). Currently adds default normals which
+           * only work for flat shapes.
+           * @parem
+           * @private
+           */
+          _main.default.RendererGL.prototype._calculateNormals = function(geometry) {
+            geometry.vertices.forEach(function() {
+              geometry.vertexNormals.push(new _main.default.Vector(0, 0, 1));
+            });
+          };
+          var _default = _main.default.RendererGL;
+          exports.default = _default;
+        },
+        { '../core/constants': 48, '../core/main': 59, './p5.RenderBuffer': 110 }
+      ],
+      112: [
+        function(_dereq_, module, exports) {
+          'use strict';
+          Object.defineProperty(exports, '__esModule', { value: true });
+          exports.default = void 0;
+
+          var _main = _interopRequireDefault(_dereq_('../core/main'));
+          _dereq_('./p5.RendererGL');
+          _dereq_('./p5.RenderBuffer');
+          function _interopRequireDefault(obj) {
+            return obj && obj.__esModule ? obj : { default: obj };
+          } //Retained Mode. The default mode for rendering 3D primitives
+          //in WEBGL.
+          var hashCount = 0;
+          /**
+           * _initBufferDefaults
+           * @private
+           * @description initializes buffer defaults. runs each time a new geometry is
+           * registered
+           * @param  {String} gId  key of the geometry object
+           * @returns {Object} a new buffer object
+           */
+          _main.default.RendererGL.prototype._initBufferDefaults = function(gId) {
+            this._freeBuffers(gId);
+
+            //@TODO remove this limit on hashes in retainedMode.geometry
+            hashCount++;
+            if (hashCount > 1000) {
+              var key = Object.keys(this.retainedMode.geometry)[0];
+              delete this.retainedMode.geometry[key];
+              hashCount--;
+            }
+
+            //create a new entry in our retainedMode.geometry
+            return (this.retainedMode.geometry[gId] = {});
+          };
+
+          _main.default.RendererGL.prototype._freeBuffers = function(gId) {
+            var buffers = this.retainedMode.geometry[gId];
+            if (!buffers) {
+              return;
+            }
+
+            delete this.retainedMode.geometry[gId];
+            hashCount--;
+
+            var gl = this.GL;
+            if (buffers.indexBuffer) {
+              gl.deleteBuffer(buffers.indexBuffer);
+            }
+
+            function freeBuffers(defs) {
+              var _iteratorNormalCompletion = true;
+              var _didIteratorError = false;
+              var _iteratorError = undefined;
+              try {
+                for (
+                  var _iterator = defs[Symbol.iterator](), _step;
+                  !(_iteratorNormalCompletion = (_step = _iterator.next()).done);
+                  _iteratorNormalCompletion = true
+                ) {
+                  var def = _step.value;
+                  if (buffers[def.dst]) {
+                    gl.deleteBuffer(buffers[def.dst]);
+                    buffers[def.dst] = null;
+                  }
+                }
+              } catch (err) {
+                _didIteratorError = true;
+                _iteratorError = err;
+              } finally {
+                try {
+                  if (!_iteratorNormalCompletion && _iterator.return != null) {
+                    _iterator.return();
+                  }
+                } finally {
+                  if (_didIteratorError) {
+                    throw _iteratorError;
+                  }
+                }
+              }
+            }
+
+            // free all the buffers
+            freeBuffers(this.retainedMode.buffers.stroke);
+            freeBuffers(this.retainedMode.buffers.fill);
+          };
+
+          /**
+           * creates a buffers object that holds the WebGL render buffers
+           * for a geometry.
+           * @private
+           * @param  {String} gId    key of the geometry object
+           * @param  {p5.Geometry}  model contains geometry data
+           */
+          _main.default.RendererGL.prototype.createBuffers = function(gId, model) {
+            var gl = this.GL;
+            //initialize the gl buffers for our geom groups
+            var buffers = this._initBufferDefaults(gId);
+            buffers.model = model;
+
+            var indexBuffer = buffers.indexBuffer;
+
+            if (model.faces.length) {
+              // allocate space for faces
