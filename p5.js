@@ -91897,3 +91897,134 @@
 
             return this;
           };
+
+          _main.default.RendererGL.prototype._drawElements = function(drawMode, gId) {
+            var buffers = this.retainedMode.geometry[gId];
+            var gl = this.GL;
+            // render the fill
+            if (buffers.indexBuffer) {
+              // we're drawing faces
+              gl.drawElements(gl.TRIANGLES, buffers.vertexCount, gl.UNSIGNED_SHORT, 0);
+            } else {
+              // drawing vertices
+              gl.drawArrays(drawMode || gl.TRIANGLES, 0, buffers.vertexCount);
+            }
+          };
+
+          _main.default.RendererGL.prototype._drawPoints = function(
+            vertices,
+            vertexBuffer
+          ) {
+            var gl = this.GL;
+            var pointShader = this._getImmediatePointShader();
+            this._setPointUniforms(pointShader);
+
+            this._bindBuffer(
+              vertexBuffer,
+              gl.ARRAY_BUFFER,
+              this._vToNArray(vertices),
+              Float32Array,
+              gl.STATIC_DRAW
+            );
+
+            pointShader.enableAttrib(pointShader.attributes.aPosition, 3);
+
+            gl.drawArrays(gl.Points, 0, vertices.length);
+
+            pointShader.unbindShader();
+          };
+          var _default = _main.default.RendererGL;
+          exports.default = _default;
+        },
+        { '../core/main': 59, './p5.RenderBuffer': 110, './p5.RendererGL': 113 }
+      ],
+      113: [
+        function(_dereq_, module, exports) {
+          'use strict';
+          function _typeof(obj) {
+            if (typeof Symbol === 'function' && typeof Symbol.iterator === 'symbol') {
+              _typeof = function _typeof(obj) {
+                return typeof obj;
+              };
+            } else {
+              _typeof = function _typeof(obj) {
+                return obj &&
+                  typeof Symbol === 'function' &&
+                  obj.constructor === Symbol &&
+                  obj !== Symbol.prototype
+                  ? 'symbol'
+                  : typeof obj;
+              };
+            }
+            return _typeof(obj);
+          }
+          Object.defineProperty(exports, '__esModule', { value: true });
+          exports.default = void 0;
+          var _main = _interopRequireDefault(_dereq_('../core/main'));
+          var constants = _interopRequireWildcard(_dereq_('../core/constants'));
+          var _libtess = _interopRequireDefault(_dereq_('libtess'));
+          _dereq_('./p5.Shader');
+          _dereq_('./p5.Camera');
+          _dereq_('../core/p5.Renderer');
+          _dereq_('./p5.Matrix');
+
+          var _path = _dereq_('path');
+          function _getRequireWildcardCache() {
+            if (typeof WeakMap !== 'function') return null;
+            var cache = new WeakMap();
+            _getRequireWildcardCache = function _getRequireWildcardCache() {
+              return cache;
+            };
+            return cache;
+          }
+          function _interopRequireWildcard(obj) {
+            if (obj && obj.__esModule) {
+              return obj;
+            }
+            if (obj === null || (_typeof(obj) !== 'object' && typeof obj !== 'function')) {
+              return { default: obj };
+            }
+            var cache = _getRequireWildcardCache();
+            if (cache && cache.has(obj)) {
+              return cache.get(obj);
+            }
+            var newObj = {};
+            var hasPropertyDescriptor =
+              Object.defineProperty && Object.getOwnPropertyDescriptor;
+            for (var key in obj) {
+              if (Object.prototype.hasOwnProperty.call(obj, key)) {
+                var desc = hasPropertyDescriptor
+                  ? Object.getOwnPropertyDescriptor(obj, key)
+                  : null;
+                if (desc && (desc.get || desc.set)) {
+                  Object.defineProperty(newObj, key, desc);
+                } else {
+                  newObj[key] = obj[key];
+                }
+              }
+            }
+            newObj.default = obj;
+            if (cache) {
+              cache.set(obj, newObj);
+            }
+            return newObj;
+          }
+          function _interopRequireDefault(obj) {
+            return obj && obj.__esModule ? obj : { default: obj };
+          }
+          function _toConsumableArray(arr) {
+            return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread();
+          }
+          function _nonIterableSpread() {
+            throw new TypeError('Invalid attempt to spread non-iterable instance');
+          }
+          function _iterableToArray(iter) {
+            if (
+              Symbol.iterator in Object(iter) ||
+              Object.prototype.toString.call(iter) === '[object Arguments]'
+            )
+              return Array.from(iter);
+          }
+          function _arrayWithoutHoles(arr) {
+            if (Array.isArray(arr)) {
+              for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) {
