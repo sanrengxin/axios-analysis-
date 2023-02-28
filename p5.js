@@ -92284,3 +92284,134 @@
 
           _main.default.RendererGL.prototype._initContext = function() {
             try {
+              this.drawingContext =
+                this.canvas.getContext('webgl', this._pInst._glAttributes) ||
+                this.canvas.getContext('experimental-webgl', this._pInst._glAttributes);
+              if (this.drawingContext === null) {
+                throw new Error('Error creating webgl context');
+              } else {
+                var gl = this.drawingContext;
+                gl.enable(gl.DEPTH_TEST);
+                gl.depthFunc(gl.LEQUAL);
+                gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
+                this._viewport = this.drawingContext.getParameter(
+                  this.drawingContext.VIEWPORT
+                );
+              }
+            } catch (er) {
+              throw er;
+            }
+          };
+
+          //This is helper function to reset the context anytime the attributes
+          //are changed with setAttributes()
+
+          _main.default.RendererGL.prototype._resetContext = function(options, callback) {
+            var w = this.width;
+            var h = this.height;
+            var defaultId = this.canvas.id;
+            var isPGraphics = this._pInst instanceof _main.default.Graphics;
+
+            if (isPGraphics) {
+              var pg = this._pInst;
+              pg.canvas.parentNode.removeChild(pg.canvas);
+              pg.canvas = document.createElement('canvas');
+              var node = pg._pInst._userNode || document.body;
+              node.appendChild(pg.canvas);
+              _main.default.Element.call(pg, pg.canvas, pg._pInst);
+              pg.width = w;
+              pg.height = h;
+            } else {
+              var c = this.canvas;
+              if (c) {
+                c.parentNode.removeChild(c);
+              }
+              c = document.createElement('canvas');
+              c.id = defaultId;
+              if (this._pInst._userNode) {
+                this._pInst._userNode.appendChild(c);
+              } else {
+                document.body.appendChild(c);
+              }
+              this._pInst.canvas = c;
+            }
+
+            var renderer = new _main.default.RendererGL(
+              this._pInst.canvas,
+              this._pInst,
+              !isPGraphics
+            );
+
+            this._pInst._setProperty('_renderer', renderer);
+            renderer.resize(w, h);
+            renderer._applyDefaults();
+
+            if (!isPGraphics) {
+              this._pInst._elements.push(renderer);
+            }
+
+            if (typeof callback === 'function') {
+              //setTimeout with 0 forces the task to the back of the queue, this ensures that
+              //we finish switching out the renderer
+              setTimeout(function() {
+                callback.apply(window._renderer, options);
+              }, 0);
+            }
+          };
+          /**
+           * @module Rendering
+           * @submodule Rendering
+           * @for p5
+           */
+          /**
+           * Set attributes for the WebGL Drawing context.
+           * This is a way of adjusting how the WebGL
+           * renderer works to fine-tune the display and performance.
+           *
+           * Note that this will reinitialize the drawing context
+           * if called after the WebGL canvas is made.
+           *
+           * If an object is passed as the parameter, all attributes
+           * not declared in the object will be set to defaults.
+           *
+           * The available attributes are:
+           * <br>
+           * alpha - indicates if the canvas contains an alpha buffer
+           * default is true
+           *
+           * depth - indicates whether the drawing buffer has a depth buffer
+           * of at least 16 bits - default is true
+           *
+           * stencil - indicates whether the drawing buffer has a stencil buffer
+           * of at least 8 bits
+           *
+           * antialias - indicates whether or not to perform anti-aliasing
+           * default is false (true in Safari)
+           *
+           * premultipliedAlpha - indicates that the page compositor will assume
+           * the drawing buffer contains colors with pre-multiplied alpha
+           * default is false
+           *
+           * preserveDrawingBuffer - if true the buffers will not be cleared and
+           * and will preserve their values until cleared or overwritten by author
+           * (note that p5 clears automatically on draw loop)
+           * default is true
+           *
+           * perPixelLighting - if true, per-pixel lighting will be used in the
+           * lighting shader otherwise per-vertex lighting is used.
+           * default is true.
+           *
+           * @method setAttributes
+           * @for p5
+           * @param  {String}  key Name of attribute
+           * @param  {Boolean}        value New value of named attribute
+           * @example
+           * <div>
+           * <code>
+           * function setup() {
+           *   createCanvas(100, 100, WEBGL);
+           * }
+           *
+           * function draw() {
+           *   background(255);
+           *   push();
