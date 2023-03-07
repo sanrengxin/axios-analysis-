@@ -92415,3 +92415,134 @@
            * function draw() {
            *   background(255);
            *   push();
+           *   rotateZ(frameCount * 0.02);
+           *   rotateX(frameCount * 0.02);
+           *   rotateY(frameCount * 0.02);
+           *   fill(0, 0, 0);
+           *   box(50);
+           *   pop();
+           * }
+           * </code>
+           * </div>
+           * <br>
+           * Now with the antialias attribute set to true.
+           * <br>
+           * <div>
+           * <code>
+           * function setup() {
+           *   setAttributes('antialias', true);
+           *   createCanvas(100, 100, WEBGL);
+           * }
+           *
+           * function draw() {
+           *   background(255);
+           *   push();
+           *   rotateZ(frameCount * 0.02);
+           *   rotateX(frameCount * 0.02);
+           *   rotateY(frameCount * 0.02);
+           *   fill(0, 0, 0);
+           *   box(50);
+           *   pop();
+           * }
+           * </code>
+           * </div>
+           *
+           * <div>
+           * <code>
+           * // press the mouse button to disable perPixelLighting
+           * function setup() {
+           *   createCanvas(100, 100, WEBGL);
+           *   noStroke();
+           *   fill(255);
+           * }
+           *
+           * let lights = [
+           *   { c: '#f00', t: 1.12, p: 1.91, r: 0.2 },
+           *   { c: '#0f0', t: 1.21, p: 1.31, r: 0.2 },
+           *   { c: '#00f', t: 1.37, p: 1.57, r: 0.2 },
+           *   { c: '#ff0', t: 1.12, p: 1.91, r: 0.7 },
+           *   { c: '#0ff', t: 1.21, p: 1.31, r: 0.7 },
+           *   { c: '#f0f', t: 1.37, p: 1.57, r: 0.7 }
+           * ];
+           *
+           * function draw() {
+           *   let t = millis() / 1000 + 1000;
+           *   background(0);
+           *   directionalLight(color('#222'), 1, 1, 1);
+           *
+           *   for (let i = 0; i < lights.length; i++) {
+           *     let light = lights[i];
+           *     pointLight(
+           *       color(light.c),
+           *       p5.Vector.fromAngles(t * light.t, t * light.p, width * light.r)
+           *     );
+           *   }
+           *
+           *   specularMaterial(255);
+           *   sphere(width * 0.1);
+           *
+           *   rotateX(t * 0.77);
+           *   rotateY(t * 0.83);
+           *   rotateZ(t * 0.91);
+           *   torus(width * 0.3, width * 0.07, 24, 10);
+           * }
+           *
+           * function mousePressed() {
+           *   setAttributes('perPixelLighting', false);
+           *   noStroke();
+           *   fill(255);
+           * }
+           * function mouseReleased() {
+           *   setAttributes('perPixelLighting', true);
+           *   noStroke();
+           *   fill(255);
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt a rotating cube with smoother edges
+           */
+          /**
+           * @method setAttributes
+           * @for p5
+           * @param  {Object}  obj object with key-value pairs
+           */
+
+          _main.default.prototype.setAttributes = function(key, value) {
+            if (typeof this._glAttributes === 'undefined') {
+              console.log(
+                'You are trying to use setAttributes on a p5.Graphics object ' +
+                  'that does not use a WEBGL renderer.'
+              );
+
+              return;
+            }
+            var unchanged = true;
+            if (typeof value !== 'undefined') {
+              //first time modifying the attributes
+              if (this._glAttributes === null) {
+                this._glAttributes = {};
+              }
+              if (this._glAttributes[key] !== value) {
+                //changing value of previously altered attribute
+                this._glAttributes[key] = value;
+                unchanged = false;
+              }
+              //setting all attributes with some change
+            } else if (key instanceof Object) {
+              if (this._glAttributes !== key) {
+                this._glAttributes = key;
+                unchanged = false;
+              }
+            }
+            //@todo_FES
+            if (!this._renderer.isP3D || unchanged) {
+              return;
+            }
+
+            if (!this._setupDone) {
+              for (var x in this._renderer.retainedMode.geometry) {
+                if (this._renderer.retainedMode.geometry.hasOwnProperty(x)) {
+                  console.error(
+                    'Sorry, Could not set the attributes, you need to call setAttributes() ' +
+                      'before calling the other drawing methods in setup()'
