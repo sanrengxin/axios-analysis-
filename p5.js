@@ -92546,3 +92546,135 @@
                   console.error(
                     'Sorry, Could not set the attributes, you need to call setAttributes() ' +
                       'before calling the other drawing methods in setup()'
+                  );
+
+                  return;
+                }
+              }
+            }
+
+            this.push();
+            this._renderer._resetContext();
+            this.pop();
+
+            if (this._renderer._curCamera) {
+              this._renderer._curCamera._renderer = this._renderer;
+            }
+          };
+
+          /**
+           * @class p5.RendererGL
+           */
+
+          _main.default.RendererGL.prototype._update = function() {
+            // reset model view and apply initial camera transform
+            // (containing only look at info; no projection).
+            this.uMVMatrix.set(
+              this._curCamera.cameraMatrix.mat4[0],
+              this._curCamera.cameraMatrix.mat4[1],
+              this._curCamera.cameraMatrix.mat4[2],
+              this._curCamera.cameraMatrix.mat4[3],
+              this._curCamera.cameraMatrix.mat4[4],
+              this._curCamera.cameraMatrix.mat4[5],
+              this._curCamera.cameraMatrix.mat4[6],
+              this._curCamera.cameraMatrix.mat4[7],
+              this._curCamera.cameraMatrix.mat4[8],
+              this._curCamera.cameraMatrix.mat4[9],
+              this._curCamera.cameraMatrix.mat4[10],
+              this._curCamera.cameraMatrix.mat4[11],
+              this._curCamera.cameraMatrix.mat4[12],
+              this._curCamera.cameraMatrix.mat4[13],
+              this._curCamera.cameraMatrix.mat4[14],
+              this._curCamera.cameraMatrix.mat4[15]
+            );
+
+            // reset light data for new frame.
+
+            this.ambientLightColors.length = 0;
+            this.specularColors = [1, 1, 1];
+
+            this.directionalLightDirections.length = 0;
+            this.directionalLightDiffuseColors.length = 0;
+            this.directionalLightSpecularColors.length = 0;
+
+            this.pointLightPositions.length = 0;
+            this.pointLightDiffuseColors.length = 0;
+            this.pointLightSpecularColors.length = 0;
+
+            this.spotLightPositions.length = 0;
+            this.spotLightDirections.length = 0;
+            this.spotLightDiffuseColors.length = 0;
+            this.spotLightSpecularColors.length = 0;
+            this.spotLightAngle.length = 0;
+            this.spotLightConc.length = 0;
+
+            this._enableLighting = false;
+
+            //reset tint value for new frame
+            this._tint = [255, 255, 255, 255];
+
+            //Clear depth every frame
+            this.GL.clear(this.GL.DEPTH_BUFFER_BIT);
+          };
+
+          /**
+           * [background description]
+           */
+          _main.default.RendererGL.prototype.background = function() {
+            var _this$_pInst;
+            var _col = (_this$_pInst = this._pInst).color.apply(_this$_pInst, arguments);
+            var _r = _col.levels[0] / 255;
+            var _g = _col.levels[1] / 255;
+            var _b = _col.levels[2] / 255;
+            var _a = _col.levels[3] / 255;
+            this.GL.clearColor(_r, _g, _b, _a);
+
+            this.GL.clear(this.GL.COLOR_BUFFER_BIT);
+          };
+
+          //////////////////////////////////////////////
+          // COLOR
+          //////////////////////////////////////////////
+          /**
+           * Basic fill material for geometry with a given color
+           * @method  fill
+           * @class p5.RendererGL
+           * @param  {Number|Number[]|String|p5.Color} v1  gray value,
+           * red or hue value (depending on the current color mode),
+           * or color Array, or CSS color string
+           * @param  {Number}            [v2] green or saturation value
+           * @param  {Number}            [v3] blue or brightness value
+           * @param  {Number}            [a]  opacity
+           * @chainable
+           * @example
+           * <div>
+           * <code>
+           * function setup() {
+           *   createCanvas(200, 200, WEBGL);
+           * }
+           *
+           * function draw() {
+           *   background(0);
+           *   noStroke();
+           *   fill(100, 100, 240);
+           *   rotateX(frameCount * 0.01);
+           *   rotateY(frameCount * 0.01);
+           *   box(75, 75, 75);
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * black canvas with purple cube spinning
+           */
+          _main.default.RendererGL.prototype.fill = function(v1, v2, v3, a) {
+            //see material.js for more info on color blending in webgl
+            var color = _main.default.prototype.color.apply(this._pInst, arguments);
+            this.curFillColor = color._array;
+            this.drawMode = constants.FILL;
+            this._useNormalMaterial = false;
+            this._tex = null;
+          };
+
+          /**
+           * Basic stroke material for geometry with a given color
