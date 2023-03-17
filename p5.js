@@ -92678,3 +92678,142 @@
 
           /**
            * Basic stroke material for geometry with a given color
+           * @method  stroke
+           * @param  {Number|Number[]|String|p5.Color} v1  gray value,
+           * red or hue value (depending on the current color mode),
+           * or color Array, or CSS color string
+           * @param  {Number}            [v2] green or saturation value
+           * @param  {Number}            [v3] blue or brightness value
+           * @param  {Number}            [a]  opacity
+           * @example
+           * <div>
+           * <code>
+           * function setup() {
+           *   createCanvas(200, 200, WEBGL);
+           * }
+           *
+           * function draw() {
+           *   background(0);
+           *   stroke(240, 150, 150);
+           *   fill(100, 100, 240);
+           *   rotateX(frameCount * 0.01);
+           *   rotateY(frameCount * 0.01);
+           *   box(75, 75, 75);
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * black canvas with purple cube with pink outline spinning
+           */
+          _main.default.RendererGL.prototype.stroke = function(r, g, b, a) {
+            //@todo allow transparency in stroking currently doesn't have
+            //any impact and causes problems with specularMaterial
+            arguments[3] = 255;
+            var color = _main.default.prototype.color.apply(this._pInst, arguments);
+            this.curStrokeColor = color._array;
+          };
+
+          _main.default.RendererGL.prototype.strokeCap = function(cap) {
+            // @TODO : to be implemented
+            console.error('Sorry, strokeCap() is not yet implemented in WEBGL mode');
+          };
+
+          _main.default.RendererGL.prototype.strokeJoin = function(join) {
+            // @TODO : to be implemented
+            // https://processing.org/reference/strokeJoin_.html
+            console.error('Sorry, strokeJoin() is not yet implemented in WEBGL mode');
+          };
+
+          _main.default.RendererGL.prototype.filter = function(filterType) {
+            // filter can be achieved using custom shaders.
+            // https://github.com/aferriss/p5jsShaderExamples
+            // https://itp-xstory.github.io/p5js-shaders/#/
+            console.error('filter() does not work in WEBGL mode');
+          };
+
+          _main.default.RendererGL.prototype.blendMode = function(mode) {
+            if (
+              mode === constants.DARKEST ||
+              mode === constants.LIGHTEST ||
+              mode === constants.ADD ||
+              mode === constants.BLEND ||
+              mode === constants.SUBTRACT ||
+              mode === constants.SCREEN ||
+              mode === constants.EXCLUSION ||
+              mode === constants.REPLACE ||
+              mode === constants.MULTIPLY ||
+              mode === constants.REMOVE
+            )
+              this.curBlendMode = mode;
+            else if (
+              mode === constants.BURN ||
+              mode === constants.OVERLAY ||
+              mode === constants.HARD_LIGHT ||
+              mode === constants.SOFT_LIGHT ||
+              mode === constants.DODGE
+            ) {
+              console.warn(
+                'BURN, OVERLAY, HARD_LIGHT, SOFT_LIGHT, and DODGE only work for blendMode in 2D mode.'
+              );
+            }
+          };
+
+          _main.default.RendererGL.prototype.erase = function(opacityFill, opacityStroke) {
+            if (!this._isErasing) {
+              this._applyBlendMode(constants.REMOVE);
+              this._isErasing = true;
+
+              this._cachedFillStyle = this.curFillColor.slice();
+              this.curFillColor = [1, 1, 1, opacityFill / 255];
+
+              this._cachedStrokeStyle = this.curStrokeColor.slice();
+              this.curStrokeColor = [1, 1, 1, opacityStroke / 255];
+            }
+          };
+
+          _main.default.RendererGL.prototype.noErase = function() {
+            if (this._isErasing) {
+              this._isErasing = false;
+              this.curFillColor = this._cachedFillStyle.slice();
+              this.curStrokeColor = this._cachedStrokeStyle.slice();
+              this.blendMode(this._cachedBlendMode);
+            }
+          };
+
+          /**
+           * Change weight of stroke
+           * @method  strokeWeight
+           * @param  {Number} stroke weight to be used for drawing
+           * @example
+           * <div>
+           * <code>
+           * function setup() {
+           *   createCanvas(200, 400, WEBGL);
+           *   setAttributes('antialias', true);
+           * }
+           *
+           * function draw() {
+           *   background(0);
+           *   noStroke();
+           *   translate(0, -100, 0);
+           *   stroke(240, 150, 150);
+           *   fill(100, 100, 240);
+           *   push();
+           *   strokeWeight(8);
+           *   rotateX(frameCount * 0.01);
+           *   rotateY(frameCount * 0.01);
+           *   sphere(75);
+           *   pop();
+           *   push();
+           *   translate(0, 200, 0);
+           *   strokeWeight(1);
+           *   rotateX(frameCount * 0.01);
+           *   rotateY(frameCount * 0.01);
+           *   sphere(75);
+           *   pop();
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
