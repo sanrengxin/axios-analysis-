@@ -92817,3 +92817,130 @@
            * </div>
            *
            * @alt
+           * black canvas with two purple rotating spheres with pink
+           * outlines the sphere on top has much heavier outlines,
+           */
+          _main.default.RendererGL.prototype.strokeWeight = function(w) {
+            if (this.curStrokeWeight !== w) {
+              this.pointSize = w;
+              this.curStrokeWeight = w;
+            }
+          };
+
+          // x,y are canvas-relative (pre-scaled by _pixelDensity)
+          _main.default.RendererGL.prototype._getPixel = function(x, y) {
+            var imageData, index;
+            imageData = new Uint8Array(4);
+            // prettier-ignore
+            this.drawingContext.readPixels(
+  x, y, 1, 1,
+  this.drawingContext.RGBA, this.drawingContext.UNSIGNED_BYTE,
+  imageData);
+
+            index = 0;
+            return [
+              imageData[index + 0],
+              imageData[index + 1],
+              imageData[index + 2],
+              imageData[index + 3]
+            ];
+          };
+
+          /**
+           * Loads the pixels data for this canvas into the pixels[] attribute.
+           * Note that updatePixels() and set() do not work.
+           * Any pixel manipulation must be done directly to the pixels[] array.
+           *
+           * @private
+           * @method loadPixels
+           */
+
+          _main.default.RendererGL.prototype.loadPixels = function() {
+            var pixelsState = this._pixelsState;
+
+            //@todo_FES
+            if (this._pInst._glAttributes.preserveDrawingBuffer !== true) {
+              console.log(
+                'loadPixels only works in WebGL when preserveDrawingBuffer ' + 'is true.'
+              );
+
+              return;
+            }
+
+            //if there isn't a renderer-level temporary pixels buffer
+            //make a new one
+            var pixels = pixelsState.pixels;
+            var len = this.GL.drawingBufferWidth * this.GL.drawingBufferHeight * 4;
+            if (!(pixels instanceof Uint8Array) || pixels.length !== len) {
+              pixels = new Uint8Array(len);
+              this._pixelsState._setProperty('pixels', pixels);
+            }
+
+            var pd = this._pInst._pixelDensity;
+            // prettier-ignore
+            this.GL.readPixels(
+  0, 0, this.width * pd, this.height * pd,
+  this.GL.RGBA, this.GL.UNSIGNED_BYTE,
+  pixels);
+          };
+
+          //////////////////////////////////////////////
+          // HASH | for geometry
+          //////////////////////////////////////////////
+
+          _main.default.RendererGL.prototype.geometryInHash = function(gId) {
+            return this.retainedMode.geometry[gId] !== undefined;
+          };
+
+          /**
+           * [resize description]
+           * @private
+           * @param  {Number} w [description]
+           * @param  {Number} h [description]
+           */
+          _main.default.RendererGL.prototype.resize = function(w, h) {
+            _main.default.Renderer.prototype.resize.call(this, w, h);
+            this.GL.viewport(0, 0, this.GL.drawingBufferWidth, this.GL.drawingBufferHeight);
+
+            this._viewport = this.GL.getParameter(this.GL.VIEWPORT);
+
+            this._curCamera._resize();
+
+            //resize pixels buffer
+            var pixelsState = this._pixelsState;
+            if (typeof pixelsState.pixels !== 'undefined') {
+              pixelsState._setProperty(
+                'pixels',
+                new Uint8Array(this.GL.drawingBufferWidth * this.GL.drawingBufferHeight * 4)
+              );
+            }
+          };
+
+          /**
+           * clears color and depth buffers
+           * with r,g,b,a
+           * @private
+           * @param {Number} r normalized red val.
+           * @param {Number} g normalized green val.
+           * @param {Number} b normalized blue val.
+           * @param {Number} a normalized alpha val.
+           */
+          _main.default.RendererGL.prototype.clear = function() {
+            var _r = (arguments.length <= 0 ? undefined : arguments[0]) || 0;
+            var _g = (arguments.length <= 1 ? undefined : arguments[1]) || 0;
+            var _b = (arguments.length <= 2 ? undefined : arguments[2]) || 0;
+            var _a = (arguments.length <= 3 ? undefined : arguments[3]) || 0;
+            this.GL.clearColor(_r, _g, _b, _a);
+            this.GL.clear(this.GL.COLOR_BUFFER_BIT | this.GL.DEPTH_BUFFER_BIT);
+          };
+
+          _main.default.RendererGL.prototype.applyMatrix = function(a, b, c, d, e, f) {
+            if (arguments.length === 16) {
+              _main.default.Matrix.prototype.apply.apply(this.uMVMatrix, arguments);
+            } else {
+              // prettier-ignore
+              this.uMVMatrix.apply([
+    a, b, 0, 0,
+    c, d, 0, 0,
+    0, 0, 1, 0,
+    e, f, 0, 1]);
