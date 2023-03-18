@@ -93953,3 +93953,154 @@
             if (this._renderer._curShader !== this) {
               gl.useProgram(this._glProgram);
               this._renderer._curShader = this;
+            }
+            return this;
+          };
+
+          /**
+           * Wrapper around gl.uniform functions.
+           * As we store uniform info in the shader we can use that
+           * to do type checking on the supplied data and call
+           * the appropriate function.
+           * @method setUniform
+           * @chainable
+           * @param {String} uniformName the name of the uniform in the
+           * shader program
+           * @param {Object|Number|Boolean|Number[]} data the data to be associated
+           * with that uniform; type varies (could be a single numerical value, array,
+           * matrix, or texture / sampler reference)
+           *
+           * @example
+           * <div modernizr='webgl'>
+           * <code>
+           * // Click within the image to toggle the value of uniforms
+           * // Note: for an alternative approach to the same example,
+           * // involving toggling between shaders please refer to:
+           * // https://p5js.org/reference/#/p5/shader
+           *
+           * let grad;
+           * let showRedGreen = false;
+           *
+           * function preload() {
+           *   // note that we are using two instances
+           *   // of the same vertex and fragment shaders
+           *   grad = loadShader('assets/shader.vert', 'assets/shader-gradient.frag');
+           * }
+           *
+           * function setup() {
+           *   createCanvas(100, 100, WEBGL);
+           *   shader(grad);
+           *   noStroke();
+           * }
+           *
+           * function draw() {
+           *   // update the offset values for each scenario,
+           *   // moving the "grad" shader in either vertical or
+           *   // horizontal direction each with differing colors
+           *
+           *   if (showRedGreen === true) {
+           *     grad.setUniform('colorCenter', [1, 0, 0]);
+           *     grad.setUniform('colorBackground', [0, 1, 0]);
+           *     grad.setUniform('offset', [sin(millis() / 2000), 1]);
+           *   } else {
+           *     grad.setUniform('colorCenter', [1, 0.5, 0]);
+           *     grad.setUniform('colorBackground', [0.226, 0, 0.615]);
+           *     grad.setUniform('offset', [0, sin(millis() / 2000) + 1]);
+           *   }
+           *   quad(-1, -1, 1, -1, 1, 1, -1, 1);
+           * }
+           *
+           * function mouseClicked() {
+           *   showRedGreen = !showRedGreen;
+           * }
+           * </code>
+           * </div>
+           *
+           * @alt
+           * canvas toggles between a circular gradient of orange and blue vertically. and a circular gradient of red and green moving horizontally when mouse is clicked/pressed.
+           */
+          _main.default.Shader.prototype.setUniform = function(uniformName, data) {
+            var uniform = this.uniforms[uniformName];
+            if (!uniform) {
+              return;
+            }
+            var gl = this._renderer.GL;
+
+            if (uniform.isArray) {
+              if (
+                uniform._cachedData &&
+                this._renderer._arraysEqual(uniform._cachedData, data)
+              ) {
+                return;
+              } else {
+                uniform._cachedData = data.slice(0);
+              }
+            } else if (uniform._cachedData && uniform._cachedData === data) {
+              return;
+            } else {
+              uniform._cachedData = data;
+            }
+
+            var location = uniform.location;
+
+            this.useProgram();
+
+            switch (uniform.type) {
+              case gl.BOOL:
+                if (data === true) {
+                  gl.uniform1i(location, 1);
+                } else {
+                  gl.uniform1i(location, 0);
+                }
+                break;
+              case gl.INT:
+                if (uniform.size > 1) {
+                  data.length && gl.uniform1iv(location, data);
+                } else {
+                  gl.uniform1i(location, data);
+                }
+                break;
+              case gl.FLOAT:
+                if (uniform.size > 1) {
+                  data.length && gl.uniform1fv(location, data);
+                } else {
+                  gl.uniform1f(location, data);
+                }
+                break;
+              case gl.FLOAT_MAT3:
+                gl.uniformMatrix3fv(location, false, data);
+                break;
+              case gl.FLOAT_MAT4:
+                gl.uniformMatrix4fv(location, false, data);
+                break;
+              case gl.FLOAT_VEC2:
+                if (uniform.size > 1) {
+                  data.length && gl.uniform2fv(location, data);
+                } else {
+                  gl.uniform2f(location, data[0], data[1]);
+                }
+                break;
+              case gl.FLOAT_VEC3:
+                if (uniform.size > 1) {
+                  data.length && gl.uniform3fv(location, data);
+                } else {
+                  gl.uniform3f(location, data[0], data[1], data[2]);
+                }
+                break;
+              case gl.FLOAT_VEC4:
+                if (uniform.size > 1) {
+                  data.length && gl.uniform4fv(location, data);
+                } else {
+                  gl.uniform4f(location, data[0], data[1], data[2], data[3]);
+                }
+                break;
+              case gl.INT_VEC2:
+                if (uniform.size > 1) {
+                  data.length && gl.uniform2iv(location, data);
+                } else {
+                  gl.uniform2i(location, data[0], data[1]);
+                }
+                break;
+              case gl.INT_VEC3:
+                if (uniform.size > 1) {
+                  data.length && gl.uniform3iv(location, data);
