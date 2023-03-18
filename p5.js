@@ -93223,3 +93223,147 @@
                 defaultShaders.lineFrag
               );
             }
+
+            return this._defaultLineShader;
+          };
+
+          _main.default.RendererGL.prototype._getFontShader = function() {
+            if (!this._defaultFontShader) {
+              this.GL.getExtension('OES_standard_derivatives');
+              this._defaultFontShader = new _main.default.Shader(
+                this,
+                defaultShaders.fontVert,
+                defaultShaders.fontFrag
+              );
+            }
+            return this._defaultFontShader;
+          };
+
+          _main.default.RendererGL.prototype._getEmptyTexture = function() {
+            if (!this._emptyTexture) {
+              // a plain white texture RGBA, full alpha, single pixel.
+              var im = new _main.default.Image(1, 1);
+              im.set(0, 0, 255);
+              this._emptyTexture = new _main.default.Texture(this, im);
+            }
+            return this._emptyTexture;
+          };
+
+          _main.default.RendererGL.prototype.getTexture = function(img) {
+            var textures = this.textures;
+            var _iteratorNormalCompletion = true;
+            var _didIteratorError = false;
+            var _iteratorError = undefined;
+            try {
+              for (
+                var _iterator = textures[Symbol.iterator](), _step;
+                !(_iteratorNormalCompletion = (_step = _iterator.next()).done);
+                _iteratorNormalCompletion = true
+              ) {
+                var texture = _step.value;
+                if (texture.src === img) return texture;
+              }
+            } catch (err) {
+              _didIteratorError = true;
+              _iteratorError = err;
+            } finally {
+              try {
+                if (!_iteratorNormalCompletion && _iterator.return != null) {
+                  _iterator.return();
+                }
+              } finally {
+                if (_didIteratorError) {
+                  throw _iteratorError;
+                }
+              }
+            }
+
+            var tex = new _main.default.Texture(this, img);
+            textures.push(tex);
+            return tex;
+          };
+
+          _main.default.RendererGL.prototype._setStrokeUniforms = function(strokeShader) {
+            strokeShader.bindShader();
+
+            // set the uniform values
+            strokeShader.setUniform('uMaterialColor', this.curStrokeColor);
+            strokeShader.setUniform('uStrokeWeight', this.curStrokeWeight);
+          };
+
+          _main.default.RendererGL.prototype._setFillUniforms = function(fillShader) {
+            fillShader.bindShader();
+
+            // TODO: optimize
+            fillShader.setUniform('uMaterialColor', this.curFillColor);
+            fillShader.setUniform('isTexture', !!this._tex);
+            if (this._tex) {
+              fillShader.setUniform('uSampler', this._tex);
+            }
+            fillShader.setUniform('uTint', this._tint);
+
+            fillShader.setUniform('uSpecular', this._useSpecularMaterial);
+            fillShader.setUniform('uEmissive', this._useEmissiveMaterial);
+            fillShader.setUniform('uShininess', this._useShininess);
+
+            fillShader.setUniform('uUseLighting', this._enableLighting);
+
+            var pointLightCount = this.pointLightDiffuseColors.length / 3;
+            fillShader.setUniform('uPointLightCount', pointLightCount);
+            fillShader.setUniform('uPointLightLocation', this.pointLightPositions);
+            fillShader.setUniform('uPointLightDiffuseColors', this.pointLightDiffuseColors);
+
+            fillShader.setUniform(
+              'uPointLightSpecularColors',
+              this.pointLightSpecularColors
+            );
+
+            var directionalLightCount = this.directionalLightDiffuseColors.length / 3;
+            fillShader.setUniform('uDirectionalLightCount', directionalLightCount);
+            fillShader.setUniform('uLightingDirection', this.directionalLightDirections);
+            fillShader.setUniform(
+              'uDirectionalDiffuseColors',
+              this.directionalLightDiffuseColors
+            );
+
+            fillShader.setUniform(
+              'uDirectionalSpecularColors',
+              this.directionalLightSpecularColors
+            );
+
+            // TODO: sum these here...
+            var ambientLightCount = this.ambientLightColors.length / 3;
+            fillShader.setUniform('uAmbientLightCount', ambientLightCount);
+            fillShader.setUniform('uAmbientColor', this.ambientLightColors);
+
+            var spotLightCount = this.spotLightDiffuseColors.length / 3;
+            fillShader.setUniform('uSpotLightCount', spotLightCount);
+            fillShader.setUniform('uSpotLightAngle', this.spotLightAngle);
+            fillShader.setUniform('uSpotLightConc', this.spotLightConc);
+            fillShader.setUniform('uSpotLightDiffuseColors', this.spotLightDiffuseColors);
+            fillShader.setUniform('uSpotLightSpecularColors', this.spotLightSpecularColors);
+
+            fillShader.setUniform('uSpotLightLocation', this.spotLightPositions);
+            fillShader.setUniform('uSpotLightDirection', this.spotLightDirections);
+
+            fillShader.setUniform('uConstantAttenuation', this.constantAttenuation);
+            fillShader.setUniform('uLinearAttenuation', this.linearAttenuation);
+            fillShader.setUniform('uQuadraticAttenuation', this.quadraticAttenuation);
+
+            fillShader.bindTextures();
+          };
+
+          _main.default.RendererGL.prototype._setPointUniforms = function(pointShader) {
+            pointShader.bindShader();
+
+            // set the uniform values
+            pointShader.setUniform('uMaterialColor', this.curStrokeColor);
+            // @todo is there an instance where this isn't stroke weight?
+            // should be they be same var?
+            pointShader.setUniform(
+              'uPointSize',
+              this.pointSize * this._pInst._pixelDensity
+            );
+          };
+
+          /* Binds a buffer to the drawing context
