@@ -93666,3 +93666,157 @@
           _main.default.Shader.prototype.init = function() {
             if (this._glProgram === 0 /* or context is stale? */) {
               var gl = this._renderer.GL;
+
+              // @todo: once custom shading is allowed,
+              // friendly error messages should be used here to share
+              // compiler and linker errors.
+
+              //set up the shader by
+              // 1. creating and getting a gl id for the shader program,
+              // 2. compliling its vertex & fragment sources,
+              // 3. linking the vertex and fragment shaders
+              this._vertShader = gl.createShader(gl.VERTEX_SHADER);
+              //load in our default vertex shader
+              gl.shaderSource(this._vertShader, this._vertSrc);
+              gl.compileShader(this._vertShader);
+              // if our vertex shader failed compilation?
+              if (!gl.getShaderParameter(this._vertShader, gl.COMPILE_STATUS)) {
+                console.error(
+                  'Yikes! An error occurred compiling the vertex shader:'.concat(
+                    gl.getShaderInfoLog(this._vertShader)
+                  )
+                );
+
+                return null;
+              }
+
+              this._fragShader = gl.createShader(gl.FRAGMENT_SHADER);
+              //load in our material frag shader
+              gl.shaderSource(this._fragShader, this._fragSrc);
+              gl.compileShader(this._fragShader);
+              // if our frag shader failed compilation?
+              if (!gl.getShaderParameter(this._fragShader, gl.COMPILE_STATUS)) {
+                console.error(
+                  'Darn! An error occurred compiling the fragment shader:'.concat(
+                    gl.getShaderInfoLog(this._fragShader)
+                  )
+                );
+
+                return null;
+              }
+
+              this._glProgram = gl.createProgram();
+              gl.attachShader(this._glProgram, this._vertShader);
+              gl.attachShader(this._glProgram, this._fragShader);
+              gl.linkProgram(this._glProgram);
+              if (!gl.getProgramParameter(this._glProgram, gl.LINK_STATUS)) {
+                console.error(
+                  'Snap! Error linking shader program: '.concat(
+                    gl.getProgramInfoLog(this._glProgram)
+                  )
+                );
+              }
+
+              this._loadAttributes();
+              this._loadUniforms();
+            }
+            return this;
+          };
+
+          /**
+           * Queries the active attributes for this shader and loads
+           * their names and locations into the attributes array.
+           * @method _loadAttributes
+           * @private
+           */
+          _main.default.Shader.prototype._loadAttributes = function() {
+            if (this._loadedAttributes) {
+              return;
+            }
+
+            this.attributes = {};
+
+            var gl = this._renderer.GL;
+
+            var numAttributes = gl.getProgramParameter(
+              this._glProgram,
+              gl.ACTIVE_ATTRIBUTES
+            );
+
+            for (var i = 0; i < numAttributes; ++i) {
+              var attributeInfo = gl.getActiveAttrib(this._glProgram, i);
+              var name = attributeInfo.name;
+              var location = gl.getAttribLocation(this._glProgram, name);
+              var attribute = {};
+              attribute.name = name;
+              attribute.location = location;
+              attribute.index = i;
+              attribute.type = attributeInfo.type;
+              attribute.size = attributeInfo.size;
+              this.attributes[name] = attribute;
+            }
+
+            this._loadedAttributes = true;
+          };
+
+          /**
+           * Queries the active uniforms for this shader and loads
+           * their names and locations into the uniforms array.
+           * @method _loadUniforms
+           * @private
+           */
+          _main.default.Shader.prototype._loadUniforms = function() {
+            if (this._loadedUniforms) {
+              return;
+            }
+
+            var gl = this._renderer.GL;
+
+            // Inspect shader and cache uniform info
+            var numUniforms = gl.getProgramParameter(this._glProgram, gl.ACTIVE_UNIFORMS);
+
+            var samplerIndex = 0;
+            for (var i = 0; i < numUniforms; ++i) {
+              var uniformInfo = gl.getActiveUniform(this._glProgram, i);
+              var uniform = {};
+              uniform.location = gl.getUniformLocation(this._glProgram, uniformInfo.name);
+              uniform.size = uniformInfo.size;
+              var uniformName = uniformInfo.name;
+              //uniforms thats are arrays have their name returned as
+              //someUniform[0] which is a bit silly so we trim it
+              //off here. The size property tells us that its an array
+              //so we dont lose any information by doing this
+              if (uniformInfo.size > 1) {
+                uniformName = uniformName.substring(0, uniformName.indexOf('[0]'));
+              }
+              uniform.name = uniformName;
+              uniform.type = uniformInfo.type;
+              uniform._cachedData = undefined;
+              if (uniform.type === gl.SAMPLER_2D) {
+                uniform.samplerIndex = samplerIndex;
+                samplerIndex++;
+                this.samplers.push(uniform);
+              }
+              uniform.isArray =
+                uniform.type === gl.FLOAT_MAT3 ||
+                uniform.type === gl.FLOAT_MAT4 ||
+                uniform.type === gl.FLOAT_VEC2 ||
+                uniform.type === gl.FLOAT_VEC3 ||
+                uniform.type === gl.FLOAT_VEC4 ||
+                uniform.type === gl.INT_VEC2 ||
+                uniform.type === gl.INT_VEC3 ||
+                uniform.type === gl.INT_VEC4;
+
+              this.uniforms[uniformName] = uniform;
+            }
+            this._loadedUniforms = true;
+          };
+
+          _main.default.Shader.prototype.compile = function() {
+            // TODO
+          };
+
+          /**
+           * initializes (if needed) and binds the shader program.
+           * @method bindShader
+           * @private
