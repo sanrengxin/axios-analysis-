@@ -93367,3 +93367,160 @@
           };
 
           /* Binds a buffer to the drawing context
+    * when passed more than two arguments it also updates or initializes
+    * the data associated with the buffer
+    */
+          _main.default.RendererGL.prototype._bindBuffer = function(
+            buffer,
+            target,
+            values,
+            type,
+            usage
+          ) {
+            if (!target) target = this.GL.ARRAY_BUFFER;
+            this.GL.bindBuffer(target, buffer);
+            if (values !== undefined) {
+              var data = new (type || Float32Array)(values);
+              this.GL.bufferData(target, data, usage || this.GL.STATIC_DRAW);
+            }
+          };
+
+          ///////////////////////////////
+          //// UTILITY FUNCTIONS
+          //////////////////////////////
+          _main.default.RendererGL.prototype._arraysEqual = function(a, b) {
+            var aLength = a.length;
+            if (aLength !== b.length) return false;
+            for (var i = 0; i < aLength; i++) {
+              if (a[i] !== b[i]) return false;
+            }
+            return true;
+          };
+
+          _main.default.RendererGL.prototype._isTypedArray = function(arr) {
+            var res = false;
+            res = arr instanceof Float32Array;
+            res = arr instanceof Float64Array;
+            res = arr instanceof Int16Array;
+            res = arr instanceof Uint16Array;
+            res = arr instanceof Uint32Array;
+            return res;
+          };
+          /**
+           * turn a two dimensional array into one dimensional array
+           * @private
+           * @param  {Array} arr 2-dimensional array
+           * @return {Array}     1-dimensional array
+           * [[1, 2, 3],[4, 5, 6]] -> [1, 2, 3, 4, 5, 6]
+           */
+          _main.default.RendererGL.prototype._flatten = function(arr) {
+            //when empty, return empty
+            if (arr.length === 0) {
+              return [];
+            } else if (arr.length > 20000) {
+              //big models , load slower to avoid stack overflow
+              //faster non-recursive flatten via axelduch
+              //stackoverflow.com/questions/27266550/how-to-flatten-nested-array-in-javascript
+              var _toString = Object.prototype.toString;
+              var arrayTypeStr = '[object Array]';
+              var result = [];
+              var nodes = arr.slice();
+              var node;
+              node = nodes.pop();
+              do {
+                if (_toString.call(node) === arrayTypeStr) {
+                  nodes.push.apply(nodes, _toConsumableArray(node));
+                } else {
+                  result.push(node);
+                }
+              } while (nodes.length && (node = nodes.pop()) !== undefined);
+              result.reverse(); // we reverse result to restore the original order
+              return result;
+            } else {
+              var _ref;
+              //otherwise if model within limits for browser
+              //use faster recursive loading
+              return (_ref = []).concat.apply(_ref, _toConsumableArray(arr));
+            }
+          };
+
+          /**
+           * turn a p5.Vector Array into a one dimensional number array
+           * @private
+           * @param  {p5.Vector[]} arr  an array of p5.Vector
+           * @return {Number[]}     a one dimensional array of numbers
+           * [p5.Vector(1, 2, 3), p5.Vector(4, 5, 6)] ->
+           * [1, 2, 3, 4, 5, 6]
+           */
+          _main.default.RendererGL.prototype._vToNArray = function(arr) {
+            var ret = [];
+            var _iteratorNormalCompletion2 = true;
+            var _didIteratorError2 = false;
+            var _iteratorError2 = undefined;
+            try {
+              for (
+                var _iterator2 = arr[Symbol.iterator](), _step2;
+                !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done);
+                _iteratorNormalCompletion2 = true
+              ) {
+                var item = _step2.value;
+                ret.push(item.x, item.y, item.z);
+              }
+            } catch (err) {
+              _didIteratorError2 = true;
+              _iteratorError2 = err;
+            } finally {
+              try {
+                if (!_iteratorNormalCompletion2 && _iterator2.return != null) {
+                  _iterator2.return();
+                }
+              } finally {
+                if (_didIteratorError2) {
+                  throw _iteratorError2;
+                }
+              }
+            }
+
+            return ret;
+          };
+
+          /**
+           * ensures that p5 is using a 3d renderer. throws an error if not.
+           */
+          _main.default.prototype._assert3d = function(name) {
+            if (!this._renderer.isP3D)
+              throw new Error(
+                ''.concat(
+                  name,
+                  "() is only supported in WEBGL mode. If you'd like to use 3D graphics and WebGL, see  https://p5js.org/examples/form-3d-primitives.html for more information."
+                )
+              );
+          };
+
+          // function to initialize GLU Tesselator
+
+          _main.default.RendererGL.prototype._initTessy = function initTesselator() {
+            // function called for each vertex of tesselator output
+            function vertexCallback(data, polyVertArray) {
+              polyVertArray[polyVertArray.length] = data[0];
+              polyVertArray[polyVertArray.length] = data[1];
+              polyVertArray[polyVertArray.length] = data[2];
+            }
+
+            function begincallback(type) {
+              if (type !== _libtess.default.primitiveType.GL_TRIANGLES) {
+                console.log('expected TRIANGLES but got type: '.concat(type));
+              }
+            }
+
+            function errorcallback(errno) {
+              console.log('error callback');
+              console.log('error number: '.concat(errno));
+            }
+            // callback for when segments intersect and must be split
+            function combinecallback(coords, data, weight) {
+              return [coords[0], coords[1], coords[2]];
+            }
+
+            function edgeCallback(flag) {
+              // don't really care about the flag, but need no-strip/no-fan behavior
