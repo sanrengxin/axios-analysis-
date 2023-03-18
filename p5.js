@@ -92944,3 +92944,156 @@
     c, d, 0, 0,
     0, 0, 1, 0,
     e, f, 0, 1]);
+            }
+          };
+
+          /**
+           * [translate description]
+           * @private
+           * @param  {Number} x [description]
+           * @param  {Number} y [description]
+           * @param  {Number} z [description]
+           * @chainable
+           * @todo implement handle for components or vector as args
+           */
+          _main.default.RendererGL.prototype.translate = function(x, y, z) {
+            if (x instanceof _main.default.Vector) {
+              z = x.z;
+              y = x.y;
+              x = x.x;
+            }
+            this.uMVMatrix.translate([x, y, z]);
+            return this;
+          };
+
+          /**
+           * Scales the Model View Matrix by a vector
+           * @private
+           * @param  {Number | p5.Vector | Array} x [description]
+           * @param  {Number} [y] y-axis scalar
+           * @param  {Number} [z] z-axis scalar
+           * @chainable
+           */
+          _main.default.RendererGL.prototype.scale = function(x, y, z) {
+            this.uMVMatrix.scale(x, y, z);
+            return this;
+          };
+
+          _main.default.RendererGL.prototype.rotate = function(rad, axis) {
+            if (typeof axis === 'undefined') {
+              return this.rotateZ(rad);
+            }
+            _main.default.Matrix.prototype.rotate.apply(this.uMVMatrix, arguments);
+            return this;
+          };
+
+          _main.default.RendererGL.prototype.rotateX = function(rad) {
+            this.rotate(rad, 1, 0, 0);
+            return this;
+          };
+
+          _main.default.RendererGL.prototype.rotateY = function(rad) {
+            this.rotate(rad, 0, 1, 0);
+            return this;
+          };
+
+          _main.default.RendererGL.prototype.rotateZ = function(rad) {
+            this.rotate(rad, 0, 0, 1);
+            return this;
+          };
+
+          _main.default.RendererGL.prototype.push = function() {
+            // get the base renderer style
+            var style = _main.default.Renderer.prototype.push.apply(this);
+
+            // add webgl-specific style properties
+            var properties = style.properties;
+
+            properties.uMVMatrix = this.uMVMatrix.copy();
+            properties.uPMatrix = this.uPMatrix.copy();
+            properties._curCamera = this._curCamera;
+
+            // make a copy of the current camera for the push state
+            // this preserves any references stored using 'createCamera'
+            this._curCamera = this._curCamera.copy();
+
+            properties.ambientLightColors = this.ambientLightColors.slice();
+            properties.specularColors = this.specularColors.slice();
+
+            properties.directionalLightDirections = this.directionalLightDirections.slice();
+            properties.directionalLightDiffuseColors = this.directionalLightDiffuseColors.slice();
+            properties.directionalLightSpecularColors = this.directionalLightSpecularColors.slice();
+
+            properties.pointLightPositions = this.pointLightPositions.slice();
+            properties.pointLightDiffuseColors = this.pointLightDiffuseColors.slice();
+            properties.pointLightSpecularColors = this.pointLightSpecularColors.slice();
+
+            properties.spotLightPositions = this.spotLightPositions.slice();
+            properties.spotLightDirections = this.spotLightDirections.slice();
+            properties.spotLightDiffuseColors = this.spotLightDiffuseColors.slice();
+            properties.spotLightSpecularColors = this.spotLightSpecularColors.slice();
+            properties.spotLightAngle = this.spotLightAngle.slice();
+            properties.spotLightConc = this.spotLightConc.slice();
+
+            properties.userFillShader = this.userFillShader;
+            properties.userStrokeShader = this.userStrokeShader;
+            properties.userPointShader = this.userPointShader;
+
+            properties.pointSize = this.pointSize;
+            properties.curStrokeWeight = this.curStrokeWeight;
+            properties.curStrokeColor = this.curStrokeColor;
+            properties.curFillColor = this.curFillColor;
+
+            properties._useSpecularMaterial = this._useSpecularMaterial;
+            properties._useEmissiveMaterial = this._useEmissiveMaterial;
+            properties._useShininess = this._useShininess;
+
+            properties.constantAttenuation = this.constantAttenuation;
+            properties.linearAttenuation = this.linearAttenuation;
+            properties.quadraticAttenuation = this.quadraticAttenuation;
+
+            properties._enableLighting = this._enableLighting;
+            properties._useNormalMaterial = this._useNormalMaterial;
+            properties._tex = this._tex;
+            properties.drawMode = this.drawMode;
+
+            return style;
+          };
+
+          _main.default.RendererGL.prototype.resetMatrix = function() {
+            this.uMVMatrix = _main.default.Matrix.identity(this._pInst);
+            return this;
+          };
+
+          //////////////////////////////////////////////
+          // SHADER
+          //////////////////////////////////////////////
+
+          /*
+ * shaders are created and cached on a per-renderer basis,
+ * on the grounds that each renderer will have its own gl context
+ * and the shader must be valid in that context.
+ */
+
+          _main.default.RendererGL.prototype._getImmediateStrokeShader = function() {
+            // select the stroke shader to use
+            var stroke = this.userStrokeShader;
+            if (!stroke || !stroke.isStrokeShader()) {
+              return this._getLineShader();
+            }
+            return stroke;
+          };
+
+          _main.default.RendererGL.prototype._getRetainedStrokeShader =
+            _main.default.RendererGL.prototype._getImmediateStrokeShader;
+
+          /*
+                                                               * selects which fill shader should be used based on renderer state,
+                                                               * for use with begin/endShape and immediate vertex mode.
+                                                               */
+          _main.default.RendererGL.prototype._getImmediateFillShader = function() {
+            var fill = this.userFillShader;
+            if (this._useNormalMaterial) {
+              if (!fill || !fill.isNormalShader()) {
+                return this._getNormalShader();
+              }
