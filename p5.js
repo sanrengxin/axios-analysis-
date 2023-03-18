@@ -93524,3 +93524,145 @@
 
             function edgeCallback(flag) {
               // don't really care about the flag, but need no-strip/no-fan behavior
+            }
+
+            var tessy = new _libtess.default.GluTesselator();
+            tessy.gluTessCallback(
+              _libtess.default.gluEnum.GLU_TESS_VERTEX_DATA,
+              vertexCallback
+            );
+            tessy.gluTessCallback(_libtess.default.gluEnum.GLU_TESS_BEGIN, begincallback);
+            tessy.gluTessCallback(_libtess.default.gluEnum.GLU_TESS_ERROR, errorcallback);
+            tessy.gluTessCallback(
+              _libtess.default.gluEnum.GLU_TESS_COMBINE,
+              combinecallback
+            );
+            tessy.gluTessCallback(
+              _libtess.default.gluEnum.GLU_TESS_EDGE_FLAG,
+              edgeCallback
+            );
+
+            return tessy;
+          };
+
+          _main.default.RendererGL.prototype._triangulate = function(contours) {
+            // libtess will take 3d verts and flatten to a plane for tesselation
+            // since only doing 2d tesselation here, provide z=1 normal to skip
+            // iterating over verts only to get the same answer.
+            // comment out to test normal-generation code
+            this._tessy.gluTessNormal(0, 0, 1);
+
+            var triangleVerts = [];
+            this._tessy.gluTessBeginPolygon(triangleVerts);
+
+            for (var i = 0; i < contours.length; i++) {
+              this._tessy.gluTessBeginContour();
+              var contour = contours[i];
+              for (var j = 0; j < contour.length; j += 3) {
+                var coords = [contour[j], contour[j + 1], contour[j + 2]];
+                this._tessy.gluTessVertex(coords, coords);
+              }
+              this._tessy.gluTessEndContour();
+            }
+
+            // finish polygon
+            this._tessy.gluTessEndPolygon();
+
+            return triangleVerts;
+          };
+
+          // function to calculate BezierVertex Coefficients
+          _main.default.RendererGL.prototype._bezierCoefficients = function(t) {
+            var t2 = t * t;
+            var t3 = t2 * t;
+            var mt = 1 - t;
+            var mt2 = mt * mt;
+            var mt3 = mt2 * mt;
+            return [mt3, 3 * mt2 * t, 3 * mt * t2, t3];
+          };
+
+          // function to calculate QuadraticVertex Coefficients
+          _main.default.RendererGL.prototype._quadraticCoefficients = function(t) {
+            var t2 = t * t;
+            var mt = 1 - t;
+            var mt2 = mt * mt;
+            return [mt2, 2 * mt * t, t2];
+          };
+
+          // function to convert Bezier coordinates to Catmull Rom Splines
+          _main.default.RendererGL.prototype._bezierToCatmull = function(w) {
+            var p1 = w[1];
+            var p2 = w[1] + (w[2] - w[0]) / this._curveTightness;
+            var p3 = w[2] - (w[3] - w[1]) / this._curveTightness;
+            var p4 = w[2];
+            var p = [p1, p2, p3, p4];
+            return p;
+          };
+          var _default = _main.default.RendererGL;
+          exports.default = _default;
+        },
+        {
+          '../core/constants': 48,
+          '../core/main': 59,
+          '../core/p5.Renderer': 62,
+          './p5.Camera': 107,
+          './p5.Matrix': 109,
+          './p5.Shader': 114,
+          libtess: 32,
+          path: 35
+        }
+      ],
+      114: [
+        function(_dereq_, module, exports) {
+          'use strict';
+          Object.defineProperty(exports, '__esModule', { value: true });
+          exports.default = void 0;
+
+          var _main = _interopRequireDefault(_dereq_('../core/main'));
+          function _interopRequireDefault(obj) {
+            return obj && obj.__esModule ? obj : { default: obj };
+          }
+          /**
+           * This module defines the p5.Shader class
+           * @module Lights, Camera
+           * @submodule Material
+           * @for p5
+           * @requires core
+           */ /**
+           * Shader class for WEBGL Mode
+           * @class p5.Shader
+           * @constructor
+           * @param {p5.RendererGL} renderer an instance of p5.RendererGL that
+           * will provide the GL context for this new p5.Shader
+           * @param {String} vertSrc source code for the vertex shader (as a string)
+           * @param {String} fragSrc source code for the fragment shader (as a string)
+           */ _main.default.Shader = function(renderer, vertSrc, fragSrc) {
+            // TODO: adapt this to not take ids, but rather,
+            // to take the source for a vertex and fragment shader
+            // to enable custom shaders at some later date
+            this._renderer = renderer;
+            this._vertSrc = vertSrc;
+            this._fragSrc = fragSrc;
+            this._vertShader = -1;
+            this._fragShader = -1;
+            this._glProgram = 0;
+            this._loadedAttributes = false;
+            this.attributes = {};
+            this._loadedUniforms = false;
+            this.uniforms = {};
+            this._bound = false;
+            this.samplers = [];
+          };
+
+          /**
+           * Creates, compiles, and links the shader based on its
+           * sources for the vertex and fragment shaders (provided
+           * to the constructor). Populates known attributes and
+           * uniforms from the shader.
+           * @method init
+           * @chainable
+           * @private
+           */
+          _main.default.Shader.prototype.init = function() {
+            if (this._glProgram === 0 /* or context is stale? */) {
+              var gl = this._renderer.GL;
