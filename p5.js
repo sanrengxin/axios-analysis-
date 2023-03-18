@@ -93820,3 +93820,136 @@
            * initializes (if needed) and binds the shader program.
            * @method bindShader
            * @private
+           */
+          _main.default.Shader.prototype.bindShader = function() {
+            this.init();
+            if (!this._bound) {
+              this.useProgram();
+              this._bound = true;
+
+              this._setMatrixUniforms();
+
+              this.setUniform('uViewport', this._renderer._viewport);
+            }
+          };
+
+          /**
+           * @method unbindShader
+           * @chainable
+           * @private
+           */
+          _main.default.Shader.prototype.unbindShader = function() {
+            if (this._bound) {
+              this.unbindTextures();
+              //this._renderer.GL.useProgram(0); ??
+              this._bound = false;
+            }
+            return this;
+          };
+
+          _main.default.Shader.prototype.bindTextures = function() {
+            var gl = this._renderer.GL;
+            var _iteratorNormalCompletion = true;
+            var _didIteratorError = false;
+            var _iteratorError = undefined;
+            try {
+              for (
+                var _iterator = this.samplers[Symbol.iterator](), _step;
+                !(_iteratorNormalCompletion = (_step = _iterator.next()).done);
+                _iteratorNormalCompletion = true
+              ) {
+                var uniform = _step.value;
+                var tex = uniform.texture;
+                if (tex === undefined) {
+                  // user hasn't yet supplied a texture for this slot.
+                  // (or there may not be one--maybe just lighting),
+                  // so we supply a default texture instead.
+                  tex = this._renderer._getEmptyTexture();
+                }
+                gl.activeTexture(gl.TEXTURE0 + uniform.samplerIndex);
+                tex.bindTexture();
+                tex.update();
+                gl.uniform1i(uniform.location, uniform.samplerIndex);
+              }
+            } catch (err) {
+              _didIteratorError = true;
+              _iteratorError = err;
+            } finally {
+              try {
+                if (!_iteratorNormalCompletion && _iterator.return != null) {
+                  _iterator.return();
+                }
+              } finally {
+                if (_didIteratorError) {
+                  throw _iteratorError;
+                }
+              }
+            }
+          };
+
+          _main.default.Shader.prototype.updateTextures = function() {
+            var _iteratorNormalCompletion2 = true;
+            var _didIteratorError2 = false;
+            var _iteratorError2 = undefined;
+            try {
+              for (
+                var _iterator2 = this.samplers[Symbol.iterator](), _step2;
+                !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done);
+                _iteratorNormalCompletion2 = true
+              ) {
+                var uniform = _step2.value;
+                var tex = uniform.texture;
+                if (tex) {
+                  tex.update();
+                }
+              }
+            } catch (err) {
+              _didIteratorError2 = true;
+              _iteratorError2 = err;
+            } finally {
+              try {
+                if (!_iteratorNormalCompletion2 && _iterator2.return != null) {
+                  _iterator2.return();
+                }
+              } finally {
+                if (_didIteratorError2) {
+                  throw _iteratorError2;
+                }
+              }
+            }
+          };
+
+          _main.default.Shader.prototype.unbindTextures = function() {
+            // TODO: migrate stuff from material.js here
+            // - OR - have material.js define this function
+          };
+
+          _main.default.Shader.prototype._setMatrixUniforms = function() {
+            this.setUniform('uProjectionMatrix', this._renderer.uPMatrix.mat4);
+            if (this.isStrokeShader()) {
+              if (this._renderer._curCamera.cameraType === 'default') {
+                // strokes scale up as they approach camera, default
+                this.setUniform('uPerspective', 1);
+              } else {
+                // strokes have uniform scale regardless of distance from camera
+                this.setUniform('uPerspective', 0);
+              }
+            }
+            this.setUniform('uModelViewMatrix', this._renderer.uMVMatrix.mat4);
+            this.setUniform('uViewMatrix', this._renderer._curCamera.cameraMatrix.mat4);
+            if (this.uniforms.uNormalMatrix) {
+              this._renderer.uNMatrix.inverseTranspose(this._renderer.uMVMatrix);
+              this.setUniform('uNormalMatrix', this._renderer.uNMatrix.mat3);
+            }
+          };
+
+          /**
+           * @method useProgram
+           * @chainable
+           * @private
+           */
+          _main.default.Shader.prototype.useProgram = function() {
+            var gl = this._renderer.GL;
+            if (this._renderer._curShader !== this) {
+              gl.useProgram(this._glProgram);
+              this._renderer._curShader = this;
