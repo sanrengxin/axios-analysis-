@@ -93097,3 +93097,129 @@
               if (!fill || !fill.isNormalShader()) {
                 return this._getNormalShader();
               }
+            }
+            if (this._enableLighting) {
+              if (!fill || !fill.isLightShader()) {
+                return this._getLightShader();
+              }
+            } else if (this._tex) {
+              if (!fill || !fill.isTextureShader()) {
+                return this._getLightShader();
+              }
+            } else if (!fill /*|| !fill.isColorShader()*/) {
+              return this._getImmediateModeShader();
+            }
+            return fill;
+          };
+
+          /*
+    * selects which fill shader should be used based on renderer state
+    * for retained mode.
+    */
+          _main.default.RendererGL.prototype._getRetainedFillShader = function() {
+            if (this._useNormalMaterial) {
+              return this._getNormalShader();
+            }
+
+            var fill = this.userFillShader;
+            if (this._enableLighting) {
+              if (!fill || !fill.isLightShader()) {
+                return this._getLightShader();
+              }
+            } else if (this._tex) {
+              if (!fill || !fill.isTextureShader()) {
+                return this._getLightShader();
+              }
+            } else if (!fill /* || !fill.isColorShader()*/) {
+              return this._getColorShader();
+            }
+            return fill;
+          };
+
+          _main.default.RendererGL.prototype._getImmediatePointShader = function() {
+            // select the point shader to use
+            var point = this.userPointShader;
+            if (!point || !point.isPointShader()) {
+              return this._getPointShader();
+            }
+            return point;
+          };
+
+          _main.default.RendererGL.prototype._getRetainedLineShader =
+            _main.default.RendererGL.prototype._getImmediateLineShader;
+
+          _main.default.RendererGL.prototype._getLightShader = function() {
+            if (!this._defaultLightShader) {
+              if (this._pInst._glAttributes.perPixelLighting) {
+                this._defaultLightShader = new _main.default.Shader(
+                  this,
+                  defaultShaders.phongVert,
+                  defaultShaders.phongFrag
+                );
+              } else {
+                this._defaultLightShader = new _main.default.Shader(
+                  this,
+                  defaultShaders.lightVert,
+                  defaultShaders.lightTextureFrag
+                );
+              }
+            }
+
+            return this._defaultLightShader;
+          };
+
+          _main.default.RendererGL.prototype._getImmediateModeShader = function() {
+            if (!this._defaultImmediateModeShader) {
+              this._defaultImmediateModeShader = new _main.default.Shader(
+                this,
+                defaultShaders.immediateVert,
+                defaultShaders.vertexColorFrag
+              );
+            }
+
+            return this._defaultImmediateModeShader;
+          };
+
+          _main.default.RendererGL.prototype._getNormalShader = function() {
+            if (!this._defaultNormalShader) {
+              this._defaultNormalShader = new _main.default.Shader(
+                this,
+                defaultShaders.normalVert,
+                defaultShaders.normalFrag
+              );
+            }
+
+            return this._defaultNormalShader;
+          };
+
+          _main.default.RendererGL.prototype._getColorShader = function() {
+            if (!this._defaultColorShader) {
+              this._defaultColorShader = new _main.default.Shader(
+                this,
+                defaultShaders.normalVert,
+                defaultShaders.basicFrag
+              );
+            }
+
+            return this._defaultColorShader;
+          };
+
+          _main.default.RendererGL.prototype._getPointShader = function() {
+            if (!this._defaultPointShader) {
+              this._defaultPointShader = new _main.default.Shader(
+                this,
+                defaultShaders.pointVert,
+                defaultShaders.pointFrag
+              );
+            }
+            return this._defaultPointShader;
+          };
+
+          _main.default.RendererGL.prototype._getLineShader = function() {
+            if (!this._defaultLineShader) {
+              this._defaultLineShader = new _main.default.Shader(
+                this,
+                defaultShaders.lineVert,
+                defaultShaders.lineFrag
+              );
+            }
