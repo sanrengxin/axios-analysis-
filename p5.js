@@ -94385,3 +94385,150 @@
             if (
               this.width === 0 ||
               this.height === 0 ||
+              (this.isSrcMediaElement && !this.src.loadedmetadata)
+            ) {
+              // assign a 1x1 empty texture initially, because data is not yet ready,
+              // so that no errors occur in gl console!
+              var tmpdata = new Uint8Array([1, 1, 1, 1]);
+              gl.texImage2D(
+                this.glTarget,
+                0,
+                gl.RGBA,
+                1,
+                1,
+                0,
+                this.glFormat,
+                gl.UNSIGNED_BYTE,
+                tmpdata
+              );
+            } else {
+              // data is ready: just push the texture!
+              gl.texImage2D(
+                this.glTarget,
+                0,
+                this.glFormat,
+                this.glFormat,
+                gl.UNSIGNED_BYTE,
+                data
+              );
+            }
+          };
+
+          /**
+           * Checks if the source data for this texture has changed (if it's
+           * easy to do so) and reuploads the texture if necessary. If it's not
+           * possible or to expensive to do a calculation to determine wheter or
+           * not the data has occurred, this method simply re-uploads the texture.
+           * @method update
+           */
+          _main.default.Texture.prototype.update = function() {
+            var data = this.src;
+            if (data.width === 0 || data.height === 0) {
+              return false; // nothing to do!
+            }
+
+            var textureData = this._getTextureDataFromSource();
+            var updated = false;
+
+            var gl = this._renderer.GL;
+            // pull texture from data, make sure width & height are appropriate
+            if (textureData.width !== this.width || textureData.height !== this.height) {
+              updated = true;
+
+              // make sure that if the width and height of this.src have changed
+              // for some reason, we update our metadata and upload the texture again
+              this.width = textureData.width;
+              this.height = textureData.height;
+
+              if (this.isSrcP5Image) {
+                data.setModified(false);
+              } else if (this.isSrcMediaElement || this.isSrcHTMLElement) {
+                // on the first frame the metadata comes in, the size will be changed
+                // from 0 to actual size, but pixels may not be available.
+                // flag for update in a future frame.
+                // if we don't do this, a paused video, for example, may not
+                // send the first frame to texture memory.
+                data.setModified(true);
+              }
+            } else if (this.isSrcP5Image) {
+              // for an image, we only update if the modified field has been set,
+              // for example, by a call to p5.Image.set
+              if (data.isModified()) {
+                updated = true;
+                data.setModified(false);
+              }
+            } else if (this.isSrcMediaElement) {
+              // for a media element (video), we'll check if the current time in
+              // the video frame matches the last time. if it doesn't match, the
+              // video has advanced or otherwise been taken to a new frame,
+              // and we need to upload it.
+              if (data.isModified()) {
+                // p5.MediaElement may have also had set/updatePixels, etc. called
+                // on it and should be updated, or may have been set for the first
+                // time!
+                updated = true;
+                data.setModified(false);
+              } else if (data.loadedmetadata) {
+                // if the meta data has been loaded, we can ask the video
+                // what it's current position (in time) is.
+                if (this._videoPrevUpdateTime !== data.time()) {
+                  // update the texture in gpu mem only if the current
+                  // video timestamp does not match the timestamp of the last
+                  // time we uploaded this texture (and update the time we
+                  // last uploaded, too)
+                  this._videoPrevUpdateTime = data.time();
+                  updated = true;
+                }
+              }
+            } else if (this.isImageData) {
+              if (data._dirty) {
+                data._dirty = false;
+                updated = true;
+              }
+            } else {
+              /* data instanceof p5.Graphics, probably */
+              // there is not enough information to tell if the texture can be
+              // conditionally updated; so to be safe, we just go ahead and upload it.
+              updated = true;
+            }
+
+            if (updated) {
+              this.bindTexture();
+              gl.texImage2D(
+                this.glTarget,
+                0,
+                this.glFormat,
+                this.glFormat,
+                gl.UNSIGNED_BYTE,
+                textureData
+              );
+            }
+
+            return updated;
+          };
+
+          /**
+           * Binds the texture to the appropriate GL target.
+           * @method bindTexture
+           */
+          _main.default.Texture.prototype.bindTexture = function() {
+            // bind texture using gl context + glTarget and
+            // generated gl texture object
+            var gl = this._renderer.GL;
+            gl.bindTexture(this.glTarget, this.glTex);
+
+            return this;
+          };
+
+          /**
+           * Unbinds the texture from the appropriate GL target.
+           * @method unbindTexture
+           */
+          _main.default.Texture.prototype.unbindTexture = function() {
+            // unbind per above, disable texturing on glTarget
+            var gl = this._renderer.GL;
+            gl.bindTexture(this.glTarget, null);
+          };
+
+          /**
+           * Sets how a texture is be interpolated when upscaled or downscaled.
