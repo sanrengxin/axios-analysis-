@@ -94239,3 +94239,149 @@
                   typeof Symbol === 'function' &&
                   obj.constructor === Symbol &&
                   obj !== Symbol.prototype
+                  ? 'symbol'
+                  : typeof obj;
+              };
+            }
+            return _typeof(obj);
+          }
+          Object.defineProperty(exports, '__esModule', { value: true });
+          exports.default = void 0;
+
+          var _main = _interopRequireDefault(_dereq_('../core/main'));
+          var constants = _interopRequireWildcard(_dereq_('../core/constants'));
+          function _getRequireWildcardCache() {
+            if (typeof WeakMap !== 'function') return null;
+            var cache = new WeakMap();
+            _getRequireWildcardCache = function _getRequireWildcardCache() {
+              return cache;
+            };
+            return cache;
+          }
+          function _interopRequireWildcard(obj) {
+            if (obj && obj.__esModule) {
+              return obj;
+            }
+            if (obj === null || (_typeof(obj) !== 'object' && typeof obj !== 'function')) {
+              return { default: obj };
+            }
+            var cache = _getRequireWildcardCache();
+            if (cache && cache.has(obj)) {
+              return cache.get(obj);
+            }
+            var newObj = {};
+            var hasPropertyDescriptor =
+              Object.defineProperty && Object.getOwnPropertyDescriptor;
+            for (var key in obj) {
+              if (Object.prototype.hasOwnProperty.call(obj, key)) {
+                var desc = hasPropertyDescriptor
+                  ? Object.getOwnPropertyDescriptor(obj, key)
+                  : null;
+                if (desc && (desc.get || desc.set)) {
+                  Object.defineProperty(newObj, key, desc);
+                } else {
+                  newObj[key] = obj[key];
+                }
+              }
+            }
+            newObj.default = obj;
+            if (cache) {
+              cache.set(obj, newObj);
+            }
+            return newObj;
+          }
+          function _interopRequireDefault(obj) {
+            return obj && obj.__esModule ? obj : { default: obj };
+          }
+          /**
+           * This module defines the p5.Texture class
+           * @module Lights, Camera
+           * @submodule Material
+           * @for p5
+           * @requires core
+           */ /**
+           * Texture class for WEBGL Mode
+           * @private
+           * @class p5.Texture
+           * @param {p5.RendererGL} renderer an instance of p5.RendererGL that
+           * will provide the GL context for this new p5.Texture
+           * @param {p5.Image|p5.Graphics|p5.Element|p5.MediaElement|ImageData} [obj] the
+           * object containing the image data to store in the texture.
+           */ _main.default.Texture = function(renderer, obj) {
+            this._renderer = renderer;
+            var gl = this._renderer.GL;
+
+            this.src = obj;
+            this.glTex = undefined;
+            this.glTarget = gl.TEXTURE_2D;
+            this.glFormat = gl.RGBA;
+            this.mipmaps = false;
+            this.glMinFilter = gl.LINEAR;
+            this.glMagFilter = gl.LINEAR;
+            this.glWrapS = gl.CLAMP_TO_EDGE;
+            this.glWrapT = gl.CLAMP_TO_EDGE;
+
+            // used to determine if this texture might need constant updating
+            // because it is a video or gif.
+            this.isSrcMediaElement =
+              typeof _main.default.MediaElement !== 'undefined' &&
+              obj instanceof _main.default.MediaElement;
+            this._videoPrevUpdateTime = 0;
+            this.isSrcHTMLElement =
+              typeof _main.default.Element !== 'undefined' &&
+              obj instanceof _main.default.Element &&
+              !(obj instanceof _main.default.Graphics);
+            this.isSrcP5Image = obj instanceof _main.default.Image;
+            this.isSrcP5Graphics = obj instanceof _main.default.Graphics;
+            this.isImageData = typeof ImageData !== 'undefined' && obj instanceof ImageData;
+
+            var textureData = this._getTextureDataFromSource();
+            this.width = textureData.width;
+            this.height = textureData.height;
+
+            this.init(textureData);
+            return this;
+          };
+
+          _main.default.Texture.prototype._getTextureDataFromSource = function() {
+            var textureData;
+            if (this.isSrcP5Image) {
+              // param is a p5.Image
+              textureData = this.src.canvas;
+            } else if (
+              this.isSrcMediaElement ||
+              this.isSrcP5Graphics ||
+              this.isSrcHTMLElement
+            ) {
+              // if param is a video HTML element
+              textureData = this.src.elt;
+            } else if (this.isImageData) {
+              textureData = this.src;
+            }
+            return textureData;
+          };
+
+          /**
+           * Initializes common texture parameters, creates a gl texture,
+           * tries to upload the texture for the first time if data is
+           * already available.
+           * @private
+           * @method init
+           */
+          _main.default.Texture.prototype.init = function(data) {
+            var gl = this._renderer.GL;
+            this.glTex = gl.createTexture();
+
+            this.glWrapS = this._renderer.textureWrapX;
+            this.glWrapT = this._renderer.textureWrapY;
+
+            this.setWrapMode(this.glWrapS, this.glWrapT);
+            this.bindTexture();
+
+            //gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, this.glMagFilter);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, this.glMinFilter);
+
+            if (
+              this.width === 0 ||
+              this.height === 0 ||
