@@ -94670,3 +94670,134 @@
           _dereq_('./p5.RendererGL.Retained');
           function _getRequireWildcardCache() {
             if (typeof WeakMap !== 'function') return null;
+            var cache = new WeakMap();
+            _getRequireWildcardCache = function _getRequireWildcardCache() {
+              return cache;
+            };
+            return cache;
+          }
+          function _interopRequireWildcard(obj) {
+            if (obj && obj.__esModule) {
+              return obj;
+            }
+            if (obj === null || (_typeof(obj) !== 'object' && typeof obj !== 'function')) {
+              return { default: obj };
+            }
+            var cache = _getRequireWildcardCache();
+            if (cache && cache.has(obj)) {
+              return cache.get(obj);
+            }
+            var newObj = {};
+            var hasPropertyDescriptor =
+              Object.defineProperty && Object.getOwnPropertyDescriptor;
+            for (var key in obj) {
+              if (Object.prototype.hasOwnProperty.call(obj, key)) {
+                var desc = hasPropertyDescriptor
+                  ? Object.getOwnPropertyDescriptor(obj, key)
+                  : null;
+                if (desc && (desc.get || desc.set)) {
+                  Object.defineProperty(newObj, key, desc);
+                } else {
+                  newObj[key] = obj[key];
+                }
+              }
+            }
+            newObj.default = obj;
+            if (cache) {
+              cache.set(obj, newObj);
+            }
+            return newObj;
+          }
+          function _interopRequireDefault(obj) {
+            return obj && obj.__esModule ? obj : { default: obj };
+          }
+
+          // Text/Typography
+          // @TODO:
+          _main.default.RendererGL.prototype._applyTextProperties = function() {
+            //@TODO finish implementation
+            //console.error('text commands not yet implemented in webgl');
+          };
+
+          _main.default.RendererGL.prototype.textWidth = function(s) {
+            if (this._isOpenType()) {
+              return this._textFont._textWidth(s, this._textSize);
+            }
+
+            return 0; // TODO: error
+          };
+
+          // rendering constants
+
+          // the number of rows/columns dividing each glyph
+          var charGridWidth = 9;
+          var charGridHeight = charGridWidth;
+
+          // size of the image holding the bezier stroke info
+          var strokeImageWidth = 64;
+          var strokeImageHeight = 64;
+
+          // size of the image holding the stroke indices for each row/col
+          var gridImageWidth = 64;
+          var gridImageHeight = 64;
+
+          // size of the image holding the offset/length of each row/col stripe
+          var cellImageWidth = 64;
+          var cellImageHeight = 64;
+
+          /**
+           * @private
+           * @class ImageInfos
+           * @param {Integer} width
+           * @param {Integer} height
+           *
+           * the ImageInfos class holds a list of ImageDatas of a given size.
+           */
+          function ImageInfos(width, height) {
+            this.width = width;
+            this.height = height;
+            this.infos = []; // the list of images
+
+            /**
+             *
+             * @method findImage
+             * @param {Integer} space
+             * @return {Object} contains the ImageData, and pixel index into that
+             *                  ImageData where the free space was allocated.
+             *
+             * finds free space of a given size in the ImageData list
+             */
+            this.findImage = function(space) {
+              var imageSize = this.width * this.height;
+              if (space > imageSize) throw new Error('font is too complex to render in 3D');
+
+              // search through the list of images, looking for one with
+              // anough unused space.
+              var imageInfo, imageData;
+              for (var ii = this.infos.length - 1; ii >= 0; --ii) {
+                var imageInfoTest = this.infos[ii];
+                if (imageInfoTest.index + space < imageSize) {
+                  // found one
+                  imageInfo = imageInfoTest;
+                  imageData = imageInfoTest.imageData;
+                  break;
+                }
+              }
+
+              if (!imageInfo) {
+                try {
+                  // create a new image
+                  imageData = new ImageData(this.width, this.height);
+                } catch (err) {
+                  // for browsers that don't support ImageData constructors (ie IE11)
+                  // create an ImageData using the old method
+                  var canvas = document.getElementsByTagName('canvas')[0];
+                  var created = !canvas;
+                  if (!canvas) {
+                    // create a temporary canvas
+                    canvas = document.createElement('canvas');
+                    canvas.style.display = 'none';
+                    document.body.appendChild(canvas);
+                  }
+                  var ctx = canvas.getContext('2d');
+                  if (ctx) {
