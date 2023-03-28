@@ -94801,3 +94801,134 @@
                   }
                   var ctx = canvas.getContext('2d');
                   if (ctx) {
+                    imageData = ctx.createImageData(this.width, this.height);
+                  }
+                  if (created) {
+                    // distroy the temporary canvas, if necessary
+                    document.body.removeChild(canvas);
+                  }
+                }
+                // construct & dd the new image info
+                imageInfo = { index: 0, imageData: imageData };
+                this.infos.push(imageInfo);
+              }
+
+              var index = imageInfo.index;
+              imageInfo.index += space; // move to the start of the next image
+              imageData._dirty = true;
+              return { imageData: imageData, index: index };
+            };
+          }
+
+          /**
+           * @function setPixel
+           * @param {Object} imageInfo
+           * @param {Number} r
+           * @param {Number} g
+           * @param {Number} b
+           * @param {Number} a
+           *
+           * writes the next pixel into an indexed ImageData
+           */
+          function setPixel(imageInfo, r, g, b, a) {
+            var imageData = imageInfo.imageData;
+            var pixels = imageData.data;
+            var index = imageInfo.index++ * 4;
+            pixels[index++] = r;
+            pixels[index++] = g;
+            pixels[index++] = b;
+            pixels[index++] = a;
+          }
+
+          var SQRT3 = Math.sqrt(3);
+
+          /**
+           * @private
+           * @class FontInfo
+           * @param {Object} font an opentype.js font object
+           *
+           * contains cached images and glyph information for an opentype font
+           */
+          var FontInfo = function FontInfo(font) {
+            this.font = font;
+            // the bezier curve coordinates
+            this.strokeImageInfos = new ImageInfos(strokeImageWidth, strokeImageHeight);
+            // lists of curve indices for each row/column slice
+            this.colDimImageInfos = new ImageInfos(gridImageWidth, gridImageHeight);
+            this.rowDimImageInfos = new ImageInfos(gridImageWidth, gridImageHeight);
+            // the offset & length of each row/col slice in the glyph
+            this.colCellImageInfos = new ImageInfos(cellImageWidth, cellImageHeight);
+            this.rowCellImageInfos = new ImageInfos(cellImageWidth, cellImageHeight);
+
+            // the cached information for each glyph
+            this.glyphInfos = {};
+
+            /**
+             * @method getGlyphInfo
+             * @param {Glyph} glyph the x positions of points in the curve
+             * @returns {Object} the glyphInfo for that glyph
+             *
+             * calculates rendering info for a glyph, including the curve information,
+             * row & column stripes compiled into textures.
+             */
+
+            this.getGlyphInfo = function(glyph) {
+              // check the cache
+              var gi = this.glyphInfos[glyph.index];
+              if (gi) return gi;
+
+              // get the bounding box of the glyph from opentype.js
+              var bb = glyph.getBoundingBox();
+              var xMin = bb.x1;
+              var yMin = bb.y1;
+              var gWidth = bb.x2 - xMin;
+              var gHeight = bb.y2 - yMin;
+              var cmds = glyph.path.commands;
+              // don't bother rendering invisible glyphs
+              if (gWidth === 0 || gHeight === 0 || !cmds.length) {
+                return (this.glyphInfos[glyph.index] = {});
+              }
+
+              var i;
+              var strokes = []; // the strokes in this glyph
+              var rows = []; // the indices of strokes in each row
+              var cols = []; // the indices of strokes in each column
+              for (i = charGridWidth - 1; i >= 0; --i) {
+                cols.push([]);
+              }
+              for (i = charGridHeight - 1; i >= 0; --i) {
+                rows.push([]);
+              }
+
+              /**
+               * @function push
+               * @param {Number[]} xs the x positions of points in the curve
+               * @param {Number[]} ys the y positions of points in the curve
+               * @param {Object} v    the curve information
+               *
+               * adds a curve to the rows & columns that it intersects with
+               */
+              function push(xs, ys, v) {
+                var index = strokes.length; // the index of this stroke
+                strokes.push(v); // add this stroke to the list
+
+                /**
+                 * @function minMax
+                 * @param {Number[]} rg the list of values to compare
+                 * @param {Number} min the initial minimum value
+                 * @param {Number} max the initial maximum value
+                 *
+                 * find the minimum & maximum value in a list of values
+                 */
+                function minMax(rg, min, max) {
+                  for (var _i = rg.length; _i-- > 0; ) {
+                    var _v = rg[_i];
+                    if (min > _v) min = _v;
+                    if (max < _v) max = _v;
+                  }
+                  return { min: min, max: max };
+                }
+
+                // loop through the rows & columns that the curve intersects
+                // adding the curve to those slices
+                var mmX = minMax(xs, 1, 0);
