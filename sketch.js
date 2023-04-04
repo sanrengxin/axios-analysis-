@@ -273,3 +273,117 @@ function draw() {
   let square15 = square(965,835,50);*/
   
   
+}
+
+function pickOutfit9(){
+    top1.show();
+    top2.hide();
+    top3.hide();
+    top4.hide();
+    top5.hide();
+} 
+
+function pickOutfit10(){
+  top2.show();
+  top1.hide();
+  top3.hide();
+  top4.hide();
+  top5.hide();
+}
+function pickOutfit8(){
+  top1.hide();
+    top2.hide();
+    top3.show();
+    top4.hide();
+    top5.hide();
+}
+function pickOutfit7(){
+  top1.hide();
+    top2.hide();
+    top3.hide();
+    top4.show();
+    top5.hide();
+}
+function pickOutfit6(){
+  top1.hide();
+    top2.hide();
+    top3.hide();
+    top4.hide();
+    top5.show();
+}
+function pickOutfit5(){
+  hair1.show();
+  hair2.hide();
+  hair3.hide();
+  hair4.hide();
+  hair5.hide();
+}
+function pickOutfit4(){
+  hair1.hide();
+  hair2.show();
+  hair3.hide();
+  hair4.hide();
+  hair5.hide();
+}
+function pickOutfit3(){
+  hair1.hide();
+  hair2.hide();
+  hair3.show();
+  hair4.hide();
+  hair5.hide();
+}
+function pickOutfit2(){
+  hair1.hide();
+  hair2.hide();
+  hair3.hide();
+  hair4.show();
+  hair5.hide();
+}
+function pickOutfit(){
+  hair1.hide();
+  hair2.hide();
+  hair3.hide();
+  hair4.hide();
+  hair5.show();
+}
+function pickOutfit11(){
+  bottoms1.show();
+  bottoms2.hide();
+  bottoms3.hide();
+  bottoms4.hide();
+  bottoms5.hide();
+}
+function pickOutfit12(){
+  bottoms1.hide();
+  bottoms2.show();
+  bottoms3.hide();
+  bottoms4.hide();
+  bottoms5.hide();
+}
+function pickOutfit13(){
+  bottoms1.hide();
+  bottoms2.hide();
+  bottoms3.show();
+  bottoms4.hide();
+  bottoms5.hide();
+}
+function pickOutfit14(){
+  bottoms1.hide();
+  bottoms2.hide();
+  bottoms3.hide();
+  bottoms4.show();
+  bottoms5.hide();
+}
+function pickOutfit15(){
+  bottoms1.hide();
+  bottoms2.hide();
+  bottoms3.hide();
+  bottoms4.hide();
+  bottoms5.show();
+}
+
+
+
+
+
+
