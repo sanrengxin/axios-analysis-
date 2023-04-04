@@ -121,3 +121,155 @@ function preload(){
   button11.position(0,0);
   button12= createImg("Untitled_Artwork 33.png","main");
   button12.position(0,0);
+  button13= createImg("Untitled_Artwork 34.png","main");
+  button13.position(0,0);
+  button14= createImg("Untitled_Artwork 35.png","main");
+  button14.position(0,0);
+  button15= createImg("Untitled_Artwork 36.png","main");
+  button15.position(0,0); 
+  
+  button = createButton(".");
+  button.position(505,330);
+  button.mousePressed(pickOutfit);
+  button.style('height','80px');
+  button.style('width','80px');
+  button.style('background','url("Untitled_Artwork 22.png") no-repeat');
+  
+  button1 = createButton(".");
+  button1.position(623,327);
+  button1.mousePressed(pickOutfit2);
+  button1.style('height','85px');
+  button1.style('width','85px');
+  button1.style('background','url("Untitled_Artwork 23.png") no-repeat');
+  
+  button2 = createButton(".");
+  button2.position(743,330);
+  button2.mousePressed(pickOutfit3);
+  button2.style('height','80px');
+  button2.style('width','80px');
+  button2.style('background','url("Untitled_Artwork 24.png") no-repeat');
+    
+  button3 = createButton(".");
+  button3.position(850,333);
+  button3.mousePressed(pickOutfit4);
+  button3.style('height','80px');
+  button3.style('width','80px');
+  button3.style('background','url("Untitled_Artwork 25.png") no-repeat');
+  
+  button4 = createButton(".");
+  button4.position(950,330);
+  button4.mousePressed(pickOutfit5);
+  button4.style('height','80px');
+  button4.style('width','80px');
+  button4.style('background','url("Untitled_Artwork 26.png") no-repeat');
+  
+  button5 = createButton(".");
+  button5.position(500,575);
+  button5.mousePressed(pickOutfit6);
+  button5.style('height','85px');
+  button5.style('width','85px');
+  button5.style('background','url("Untitled_Artwork 27.png") no-repeat');
+  
+  button6 = createButton(".");
+  button6.position(620,575);
+  button6.mousePressed(pickOutfit7);
+  button6.style('height','85px');
+  button6.style('width','85px');
+  button6.style('background','url("Untitled_Artwork 28.png") no-repeat');
+  
+  button7 = createButton(".");
+  button7.position(740,570);
+  button7.mousePressed(pickOutfit8);
+  button7.style('height','85px');
+  button7.style('width','85px');
+  button7.style('background','url("Untitled_Artwork 29.png") no-repeat');
+
+  button8 = createButton(".");
+  button8.position(850,577);
+  button8.mousePressed(pickOutfit9);
+  button8.style('height','80px');
+  button8.style('width','80px');
+  button8.style('background','url("Untitled_Artwork 30.png") no-repeat');
+ 
+  button9 = createButton(".");
+  button9.position(955,575);
+  button9.mousePressed(pickOutfit10);
+  button9.style('height','80px');
+  button9.style('width','80px');
+  button9.style('background','url("Untitled_Artwork 31.png") no-repeat');
+  
+  button10 = createButton(".");
+  button10.position(496,825);
+  button10.mousePressed(pickOutfit11);
+  button10.style('height','80px');
+  button10.style('width','80px');
+  button10.style('background','url("Untitled_Artwork 32.png") no-repeat');
+  
+  button11 = createButton(".");
+  button11.position(605,815);
+  button11.mousePressed(pickOutfit12);
+  button11.style('height','80px');
+  button11.style('width','80px');
+  button11.style('background','url("Untitled_Artwork 33.png") no-repeat');
+  
+  button12 = createButton(".");
+  button12.position(730,810);
+  button12.mousePressed(pickOutfit13);
+  button12.style('height','85px');
+  button12.style('width','85px');
+  button12.style('background','url("Untitled_Artwork 34.png") no-repeat');
+  
+  button13 = createButton(".");
+  button13.position(850,815);
+  button13.mousePressed(pickOutfit14);
+  button13.style('height','85px');
+  button13.style('width','85px');
+  button13.style('background','url("Untitled_Artwork 35.png") no-repeat');
+  
+  button14 = createButton(".");
+  button14.position(957,815);
+  button14.mousePressed(pickOutfit15);
+  button14.style('height','80px');
+  button14.style('width','80px');
+  button14.style('background','url("Untitled_Artwork 36.png") no-repeat');
+  
+}
+
+function setup() {
+  //noCanvas();
+  createCanvas(1000,1000);
+  background(0);
+  //button1.position(0,0);
+  song.play();
+  song.loop();
+  
+  main.position(0,0);
+  
+ 
+}
+
+function draw() {
+  background(220);
+  
+  //print(mouseX, mouseY);
+  
+  /*fill(255);
+  let square1 = square(520,345,50);
+  let square2 = square(645,345,50);
+  let square3 = square(760,345,50);
+  let square4 = square(870,345,50);
+  let square5 = square(965,345,50);
+  
+  let square6 = square(520,595,50);
+  let square7 = square(635,595,50);
+  let square8 = square(755,590,50);
+  let square9 = square(870,595,50);
+  let square10 = square(965,345,50);
+  
+  let square11 = square(515,845,50);
+  let square12 = square(625,835,50);
+  let square13 = square(750,835,50);
+  let square14 = square(870,835,50);
+  let square15 = square(965,835,50);*/
+  
+  
