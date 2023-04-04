@@ -95042,3 +95042,133 @@
                   this.c0 = _main.default.Vector.lerp(m2, this.c1, t);
                   var pt = _main.default.Vector.lerp(mm1, this.c0, t);
                   var part1 = new Cubic(this.p0, m1, mm1, pt);
+                  this.p0 = pt;
+                  return part1;
+                };
+
+                /**
+                 * @method splitInflections
+                 * @return {Cubic[]} the non-inflecting pieces of this cubic
+                 *
+                 * returns an array containing 0, 1 or 2 cubics split resulting
+                 * from splitting this cubic at its inflection points.
+                 * this cubic is (potentially) altered and returned in the list.
+                 */
+                this.splitInflections = function() {
+                  var a = _main.default.Vector.sub(this.c0, this.p0);
+                  var b = _main.default.Vector.sub(
+                    _main.default.Vector.sub(this.c1, this.c0),
+                    a
+                  );
+                  var c = _main.default.Vector.sub(
+                    _main.default.Vector.sub(_main.default.Vector.sub(this.p1, this.c1), a),
+                    _main.default.Vector.mult(b, 2)
+                  );
+
+                  var cubics = [];
+
+                  // find the derivative coefficients
+                  var A = b.x * c.y - b.y * c.x;
+                  if (A !== 0) {
+                    var B = a.x * c.y - a.y * c.x;
+                    var C = a.x * b.y - a.y * b.x;
+                    var disc = B * B - 4 * A * C;
+                    if (disc >= 0) {
+                      if (A < 0) {
+                        A = -A;
+                        B = -B;
+                        C = -C;
+                      }
+
+                      var Q = Math.sqrt(disc);
+                      var t0 = (-B - Q) / (2 * A); // the first inflection point
+                      var t1 = (-B + Q) / (2 * A); // the second inflection point
+
+                      // test if the first inflection point lies on the curve
+                      if (t0 > 0 && t0 < 1) {
+                        // split at the first inflection point
+                        cubics.push(this.split(t0));
+                        // scale t2 into the second part
+                        t1 = 1 - (1 - t1) / (1 - t0);
+                      }
+
+                      // test if the second inflection point lies on the curve
+                      if (t1 > 0 && t1 < 1) {
+                        // split at the second inflection point
+                        cubics.push(this.split(t1));
+                      }
+                    }
+                  }
+
+                  cubics.push(this);
+                  return cubics;
+                };
+              }
+
+              /**
+               * @function cubicToQuadratics
+               * @param {Number} x0
+               * @param {Number} y0
+               * @param {Number} cx0
+               * @param {Number} cy0
+               * @param {Number} cx1
+               * @param {Number} cy1
+               * @param {Number} x1
+               * @param {Number} y1
+               * @returns {Cubic[]} an array of cubics whose quadratic approximations
+               *                    closely match the civen cubic.
+               *
+               * converts a cubic curve to a list of quadratics.
+               */
+              function cubicToQuadratics(x0, y0, cx0, cy0, cx1, cy1, x1, y1) {
+                // create the Cubic object and split it at its inflections
+                var cubics = new Cubic(
+                  new _main.default.Vector(x0, y0),
+                  new _main.default.Vector(cx0, cy0),
+                  new _main.default.Vector(cx1, cy1),
+                  new _main.default.Vector(x1, y1)
+                ).splitInflections();
+
+                var qs = []; // the final list of quadratics
+                var precision = 30 / SQRT3;
+
+                // for each of the non-inflected pieces of the original cubic
+                var _iteratorNormalCompletion = true;
+                var _didIteratorError = false;
+                var _iteratorError = undefined;
+                try {
+                  for (
+                    var _iterator = cubics[Symbol.iterator](), _step;
+                    !(_iteratorNormalCompletion = (_step = _iterator.next()).done);
+                    _iteratorNormalCompletion = true
+                  ) {
+                    var cubic = _step.value;
+                    // the cubic is iteratively split in 3 pieces:
+                    // the first piece is accumulated in 'qs', the result.
+                    // the last piece is accumulated in 'tail', temporarily.
+                    // the middle piece is repeatedly split again, while necessary.
+                    var tail = [];
+
+                    var t3 = void 0;
+                    for (;;) {
+                      // calculate this cubic's precision
+                      t3 = precision / cubic.quadError();
+                      if (t3 >= 0.5 * 0.5 * 0.5) {
+                        break; // not too bad, we're done
+                      }
+
+                      // find a split point based on the error
+                      var t = Math.pow(t3, 1.0 / 3.0);
+                      // split the cubic in 3
+                      var start = cubic.split(t);
+                      var middle = cubic.split(1 - t / (1 - t));
+
+                      qs.push(start); // the first part
+                      tail.push(cubic); // the last part
+                      cubic = middle; // iterate on the middle piece
+                    }
+
+                    if (t3 < 1) {
+                      // a little excess error, split the middle in two
+                      qs.push(cubic.split(0.5));
+                    }
