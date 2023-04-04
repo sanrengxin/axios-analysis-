@@ -95172,3 +95172,136 @@
                       // a little excess error, split the middle in two
                       qs.push(cubic.split(0.5));
                     }
+                    // add the middle piece to the result
+                    qs.push(cubic);
+
+                    // finally add the tail, reversed, onto the result
+                    Array.prototype.push.apply(qs, tail.reverse());
+                  }
+                } catch (err) {
+                  _didIteratorError = true;
+                  _iteratorError = err;
+                } finally {
+                  try {
+                    if (!_iteratorNormalCompletion && _iterator.return != null) {
+                      _iterator.return();
+                    }
+                  } finally {
+                    if (_didIteratorError) {
+                      throw _iteratorError;
+                    }
+                  }
+                }
+
+                return qs;
+              }
+
+              /**
+               * @function pushLine
+               * @param {Number} x0
+               * @param {Number} y0
+               * @param {Number} x1
+               * @param {Number} y1
+               *
+               * add a straight line to the row/col grid of a glyph
+               */
+              function pushLine(x0, y0, x1, y1) {
+                var mx = (x0 + x1) / 2;
+                var my = (y0 + y1) / 2;
+                push([x0, x1], [y0, y1], { x: x0, y: y0, cx: mx, cy: my });
+              }
+
+              /**
+               * @function samePoint
+               * @param {Number} x0
+               * @param {Number} y0
+               * @param {Number} x1
+               * @param {Number} y1
+               * @return {Boolean} true if the two points are sufficiently close
+               *
+               * tests if two points are close enough to be considered the same
+               */
+              function samePoint(x0, y0, x1, y1) {
+                return Math.abs(x1 - x0) < 0.00001 && Math.abs(y1 - y0) < 0.00001;
+              }
+
+              var x0, y0, xs, ys;
+              var _iteratorNormalCompletion2 = true;
+              var _didIteratorError2 = false;
+              var _iteratorError2 = undefined;
+              try {
+                for (
+                  var _iterator2 = cmds[Symbol.iterator](), _step2;
+                  !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done);
+                  _iteratorNormalCompletion2 = true
+                ) {
+                  var cmd = _step2.value;
+                  // scale the coordinates to the range 0-1
+                  var x1 = (cmd.x - xMin) / gWidth;
+                  var y1 = (cmd.y - yMin) / gHeight;
+
+                  // don't bother if this point is the same as the last
+                  if (samePoint(x0, y0, x1, y1)) continue;
+
+                  switch (cmd.type) {
+                    case 'M': {
+                      // move
+                      xs = x1;
+                      ys = y1;
+                      break;
+                    }
+                    case 'L': {
+                      // line
+                      pushLine(x0, y0, x1, y1);
+                      break;
+                    }
+                    case 'Q': {
+                      // quadratic
+                      var cx = (cmd.x1 - xMin) / gWidth;
+                      var cy = (cmd.y1 - yMin) / gHeight;
+                      push([x0, x1, cx], [y0, y1, cy], { x: x0, y: y0, cx: cx, cy: cy });
+                      break;
+                    }
+                    case 'Z': {
+                      // end
+                      if (!samePoint(x0, y0, xs, ys)) {
+                        // add an extra line closing the loop, if necessary
+                        pushLine(x0, y0, xs, ys);
+                        strokes.push({ x: xs, y: ys });
+                      } else {
+                        strokes.push({ x: x0, y: y0 });
+                      }
+                      break;
+                    }
+                    case 'C': {
+                      // cubic
+                      var cx1 = (cmd.x1 - xMin) / gWidth;
+                      var cy1 = (cmd.y1 - yMin) / gHeight;
+                      var cx2 = (cmd.x2 - xMin) / gWidth;
+                      var cy2 = (cmd.y2 - yMin) / gHeight;
+                      var qs = cubicToQuadratics(x0, y0, cx1, cy1, cx2, cy2, x1, y1);
+                      for (var iq = 0; iq < qs.length; iq++) {
+                        var q = qs[iq].toQuadratic();
+                        push([q.x, q.x1, q.cx], [q.y, q.y1, q.cy], q);
+                      }
+                      break;
+                    }
+                    default:
+                      throw new Error('unknown command type: '.concat(cmd.type));
+                  }
+
+                  x0 = x1;
+                  y0 = y1;
+                }
+
+                // allocate space for the strokes
+              } catch (err) {
+                _didIteratorError2 = true;
+                _iteratorError2 = err;
+              } finally {
+                try {
+                  if (!_iteratorNormalCompletion2 && _iterator2.return != null) {
+                    _iterator2.return();
+                  }
+                } finally {
+                  if (_didIteratorError2) {
