@@ -95429,3 +95429,117 @@
             var fontSize = this._textSize;
             var scale = fontSize / font.unitsPerEm;
             this.translate(pos.x, pos.y, 0);
+            this.scale(scale, scale, 1);
+
+            // initialize the font shader
+            var gl = this.GL;
+            var initializeShader = !this._defaultFontShader;
+            var sh = this._getFontShader();
+            sh.init();
+            sh.bindShader(); // first time around, bind the shader fully
+
+            if (initializeShader) {
+              // these are constants, really. just initialize them one-time.
+              sh.setUniform('uGridImageSize', [gridImageWidth, gridImageHeight]);
+              sh.setUniform('uCellsImageSize', [cellImageWidth, cellImageHeight]);
+              sh.setUniform('uStrokeImageSize', [strokeImageWidth, strokeImageHeight]);
+              sh.setUniform('uGridSize', [charGridWidth, charGridHeight]);
+            }
+            this._applyColorBlend(this.curFillColor);
+
+            var g = this.retainedMode.geometry['glyph'];
+            if (!g) {
+              // create the geometry for rendering a quad
+              var geom = (this._textGeom = new _main.default.Geometry(1, 1, function() {
+                for (var i = 0; i <= 1; i++) {
+                  for (var j = 0; j <= 1; j++) {
+                    this.vertices.push(new _main.default.Vector(j, i, 0));
+                    this.uvs.push(j, i);
+                  }
+                }
+              }));
+              geom.computeFaces().computeNormals();
+              g = this.createBuffers('glyph', geom);
+            }
+
+            // bind the shader buffers
+            var _iteratorNormalCompletion3 = true;
+            var _didIteratorError3 = false;
+            var _iteratorError3 = undefined;
+            try {
+              for (
+                var _iterator3 = this.retainedMode.buffers.text[Symbol.iterator](), _step3;
+                !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done);
+                _iteratorNormalCompletion3 = true
+              ) {
+                var buff = _step3.value;
+                buff._prepareBuffer(g, sh);
+              }
+            } catch (err) {
+              _didIteratorError3 = true;
+              _iteratorError3 = err;
+            } finally {
+              try {
+                if (!_iteratorNormalCompletion3 && _iterator3.return != null) {
+                  _iterator3.return();
+                }
+              } finally {
+                if (_didIteratorError3) {
+                  throw _iteratorError3;
+                }
+              }
+            }
+            this._bindBuffer(g.indexBuffer, gl.ELEMENT_ARRAY_BUFFER);
+
+            // this will have to do for now...
+            sh.setUniform('uMaterialColor', this.curFillColor);
+
+            try {
+              var dx = 0; // the x position in the line
+              var glyphPrev = null; // the previous glyph, used for kerning
+              // fetch the glyphs in the line of text
+              var glyphs = font.stringToGlyphs(line);
+              var _iteratorNormalCompletion4 = true;
+              var _didIteratorError4 = false;
+              var _iteratorError4 = undefined;
+              try {
+                for (
+                  var _iterator4 = glyphs[Symbol.iterator](), _step4;
+                  !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done);
+                  _iteratorNormalCompletion4 = true
+                ) {
+                  var glyph = _step4.value;
+                  // kern
+                  if (glyphPrev) dx += font.getKerningValue(glyphPrev, glyph);
+
+                  var gi = fontInfo.getGlyphInfo(glyph);
+                  if (gi.uGlyphRect) {
+                    var rowInfo = gi.rowInfo;
+                    var colInfo = gi.colInfo;
+                    sh.setUniform('uSamplerStrokes', gi.strokeImageInfo.imageData);
+                    sh.setUniform('uSamplerRowStrokes', rowInfo.cellImageInfo.imageData);
+                    sh.setUniform('uSamplerRows', rowInfo.dimImageInfo.imageData);
+                    sh.setUniform('uSamplerColStrokes', colInfo.cellImageInfo.imageData);
+                    sh.setUniform('uSamplerCols', colInfo.dimImageInfo.imageData);
+                    sh.setUniform('uGridOffset', gi.uGridOffset);
+                    sh.setUniform('uGlyphRect', gi.uGlyphRect);
+                    sh.setUniform('uGlyphOffset', dx);
+
+                    sh.bindTextures(); // afterwards, only textures need updating
+
+                    // draw it
+                    gl.drawElements(gl.TRIANGLES, 6, this.GL.UNSIGNED_SHORT, 0);
+                  }
+                  dx += glyph.advanceWidth;
+                  glyphPrev = glyph;
+                }
+              } catch (err) {
+                _didIteratorError4 = true;
+                _iteratorError4 = err;
+              } finally {
+                try {
+                  if (!_iteratorNormalCompletion4 && _iterator4.return != null) {
+                    _iterator4.return();
+                  }
+                } finally {
+                  if (_didIteratorError4) {
