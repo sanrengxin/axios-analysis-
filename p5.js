@@ -94932,3 +94932,113 @@
                 // loop through the rows & columns that the curve intersects
                 // adding the curve to those slices
                 var mmX = minMax(xs, 1, 0);
+                var ixMin = Math.max(Math.floor(mmX.min * charGridWidth), 0);
+                var ixMax = Math.min(Math.ceil(mmX.max * charGridWidth), charGridWidth);
+                for (var iCol = ixMin; iCol < ixMax; ++iCol) {
+                  cols[iCol].push(index);
+                }
+
+                var mmY = minMax(ys, 1, 0);
+                var iyMin = Math.max(Math.floor(mmY.min * charGridHeight), 0);
+                var iyMax = Math.min(Math.ceil(mmY.max * charGridHeight), charGridHeight);
+
+                for (var iRow = iyMin; iRow < iyMax; ++iRow) {
+                  rows[iRow].push(index);
+                }
+              }
+
+              /**
+               * @function clamp
+               * @param {Number} v the value to clamp
+               * @param {Number} min the minimum value
+               * @param {Number} max the maxmimum value
+               *
+               * clamps a value between a minimum & maximum value
+               */
+              function clamp(v, min, max) {
+                if (v < min) return min;
+                if (v > max) return max;
+                return v;
+              }
+
+              /**
+               * @function byte
+               * @param {Number} v the value to scale
+               *
+               * converts a floating-point number in the range 0-1 to a byte 0-255
+               */
+              function byte(v) {
+                return clamp(255 * v, 0, 255);
+              }
+
+              /**
+               * @private
+               * @class Cubic
+               * @param {Number} p0 the start point of the curve
+               * @param {Number} c0 the first control point
+               * @param {Number} c1 the second control point
+               * @param {Number} p1 the end point
+               *
+               * a cubic curve
+               */
+              function Cubic(p0, c0, c1, p1) {
+                this.p0 = p0;
+                this.c0 = c0;
+                this.c1 = c1;
+                this.p1 = p1;
+
+                /**
+                 * @method toQuadratic
+                 * @return {Object} the quadratic approximation
+                 *
+                 * converts the cubic to a quadtratic approximation by
+                 * picking an appropriate quadratic control point
+                 */
+                this.toQuadratic = function() {
+                  return {
+                    x: this.p0.x,
+                    y: this.p0.y,
+                    x1: this.p1.x,
+                    y1: this.p1.y,
+                    cx: ((this.c0.x + this.c1.x) * 3 - (this.p0.x + this.p1.x)) / 4,
+                    cy: ((this.c0.y + this.c1.y) * 3 - (this.p0.y + this.p1.y)) / 4
+                  };
+                };
+
+                /**
+                 * @method quadError
+                 * @return {Number} the error
+                 *
+                 * calculates the magnitude of error of this curve's
+                 * quadratic approximation.
+                 */
+                this.quadError = function() {
+                  return (
+                    _main.default.Vector.sub(
+                      _main.default.Vector.sub(this.p1, this.p0),
+                      _main.default.Vector.mult(
+                        _main.default.Vector.sub(this.c1, this.c0),
+                        3
+                      )
+                    ).mag() / 2
+                  );
+                };
+
+                /**
+                 * @method split
+                 * @param {Number} t the value (0-1) at which to split
+                 * @return {Cubic} the second part of the curve
+                 *
+                 * splits the cubic into two parts at a point 't' along the curve.
+                 * this cubic keeps its start point and its end point becomes the
+                 * point at 't'. the 'end half is returned.
+                 */
+                this.split = function(t) {
+                  var m1 = _main.default.Vector.lerp(this.p0, this.c0, t);
+                  var m2 = _main.default.Vector.lerp(this.c0, this.c1, t);
+                  var mm1 = _main.default.Vector.lerp(m1, m2, t);
+
+                  this.c1 = _main.default.Vector.lerp(this.c1, this.p1, t);
+                  this.c0 = _main.default.Vector.lerp(m2, this.c1, t);
+                  var pt = _main.default.Vector.lerp(mm1, this.c0, t);
+                  var part1 = new Cubic(this.p0, m1, mm1, pt);
