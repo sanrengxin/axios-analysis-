@@ -95305,3 +95305,127 @@
                   }
                 } finally {
                   if (_didIteratorError2) {
+                    throw _iteratorError2;
+                  }
+                }
+              }
+              var strokeCount = strokes.length;
+              var strokeImageInfo = this.strokeImageInfos.findImage(strokeCount);
+              var strokeOffset = strokeImageInfo.index;
+
+              // fill the stroke image
+              for (var il = 0; il < strokeCount; ++il) {
+                var s = strokes[il];
+                setPixel(strokeImageInfo, byte(s.x), byte(s.y), byte(s.cx), byte(s.cy));
+              }
+
+              /**
+               * @function layout
+               * @param {Number[][]} dim
+               * @param {ImageInfo[]} dimImageInfos
+               * @param {ImageInfo[]} cellImageInfos
+               * @return {Object}
+               *
+               * lays out the curves in a dimension (row or col) into two
+               * images, one for the indices of the curves themselves, and
+               * one containing the offset and length of those index spans.
+               */
+              function layout(dim, dimImageInfos, cellImageInfos) {
+                var dimLength = dim.length; // the number of slices in this dimension
+                var dimImageInfo = dimImageInfos.findImage(dimLength);
+                var dimOffset = dimImageInfo.index;
+                // calculate the total number of stroke indices in this dimension
+                var totalStrokes = 0;
+                for (var id = 0; id < dimLength; ++id) {
+                  totalStrokes += dim[id].length;
+                }
+
+                // allocate space for the stroke indices
+                var cellImageInfo = cellImageInfos.findImage(totalStrokes);
+
+                // for each slice in the glyph
+                for (var _i2 = 0; _i2 < dimLength; ++_i2) {
+                  var strokeIndices = dim[_i2];
+                  var _strokeCount = strokeIndices.length;
+                  var cellLineIndex = cellImageInfo.index;
+
+                  // write the offset and count into the glyph slice image
+                  setPixel(
+                    dimImageInfo,
+                    cellLineIndex >> 7,
+                    cellLineIndex & 0x7f,
+                    _strokeCount >> 7,
+                    _strokeCount & 0x7f
+                  );
+
+                  // for each stroke index in that slice
+                  for (var iil = 0; iil < _strokeCount; ++iil) {
+                    // write the stroke index into the slice's image
+                    var strokeIndex = strokeIndices[iil] + strokeOffset;
+                    setPixel(cellImageInfo, strokeIndex >> 7, strokeIndex & 0x7f, 0, 0);
+                  }
+                }
+
+                return {
+                  cellImageInfo: cellImageInfo,
+                  dimOffset: dimOffset,
+                  dimImageInfo: dimImageInfo
+                };
+              }
+
+              // initialize the info for this glyph
+              gi = this.glyphInfos[glyph.index] = {
+                glyph: glyph,
+                uGlyphRect: [bb.x1, -bb.y1, bb.x2, -bb.y2],
+                strokeImageInfo: strokeImageInfo,
+                strokes: strokes,
+                colInfo: layout(cols, this.colDimImageInfos, this.colCellImageInfos),
+                rowInfo: layout(rows, this.rowDimImageInfos, this.rowCellImageInfos)
+              };
+
+              gi.uGridOffset = [gi.colInfo.dimOffset, gi.rowInfo.dimOffset];
+              return gi;
+            };
+          };
+
+          _main.default.RendererGL.prototype._renderText = function(p, line, x, y, maxY) {
+            if (!this._textFont || typeof this._textFont === 'string') {
+              console.log(
+                'WEBGL: you must load and set a font before drawing text. See `loadFont` and `textFont` for more details.'
+              );
+
+              return;
+            }
+            if (y >= maxY || !this._doFill) {
+              return; // don't render lines beyond our maxY position
+            }
+
+            if (!this._isOpenType()) {
+              console.log(
+                'WEBGL: only Opentype (.otf) and Truetype (.ttf) fonts are supported'
+              );
+
+              return p;
+            }
+
+            p.push(); // fix to #803
+
+            // remember this state, so it can be restored later
+            var doStroke = this._doStroke;
+            var drawMode = this.drawMode;
+
+            this._doStroke = false;
+            this.drawMode = constants.TEXTURE;
+
+            // get the cached FontInfo object
+            var font = this._textFont.font;
+            var fontInfo = this._textFont._fontInfo;
+            if (!fontInfo) {
+              fontInfo = this._textFont._fontInfo = new FontInfo(font);
+            }
+
+            // calculate the alignment and move/scale the view accordingly
+            var pos = this._textFont._handleAlignment(this, line, x, y);
+            var fontSize = this._textSize;
+            var scale = fontSize / font.unitsPerEm;
+            this.translate(pos.x, pos.y, 0);
